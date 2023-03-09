@@ -36,7 +36,7 @@ public class ToiletEntity {
     @Column(name = "CompanyId", nullable = false)
     private int companyId;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CompanyId", referencedColumnName = "Id", nullable = false, insertable=false, updatable=false)
+    @JoinColumn(name = "CompanyId", referencedColumnName = "Id", insertable = false, updatable = false)
     private CompanyEntity companyByCompanyId;
     @OneToMany(mappedBy = "toiletByToiletId")
     private Collection<ToiletServiceEntity> toiletServicesById;

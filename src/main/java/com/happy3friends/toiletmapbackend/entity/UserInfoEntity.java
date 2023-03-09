@@ -35,7 +35,7 @@ public class UserInfoEntity {
     @Column(name = "DefaultPayment", nullable = false, length = 20)
     private String defaultPayment;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "AccountId", referencedColumnName = "Id", nullable = false, insertable=false, updatable=false)
+    @JoinColumn(name = "AccountId", referencedColumnName = "Id", insertable = false, updatable = false)
     private AccountEntity accountByAccountId;
 
 }

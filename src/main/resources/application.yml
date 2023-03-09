@@ -1,32 +1,32 @@
 server:
-    port: 8081
+  port: 8081
 
 spring:
-    datasource:
-        driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-        password: 1234567890
-        url: jdbc:sqlserver://localhost:1433;databaseName=ToiletMap;instanceName=TIENHUYNHTN;encrypt=true;trustServerCertificate=true;
-        username: sa
-    jpa:
-        hibernate:
-            ddl-auto: none
-            naming:
-                implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
-                physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-        properties:
-            hibernate:
-                dialect: org.hibernate.dialect.SQLServer2012Dialect
-                format_sql: false
-        show-sql: false
+  datasource:
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    password: 1234567890
+    url: jdbc:sqlserver://localhost:1433;databaseName=ToiletMap;instanceName=TIENHUYNHTN;encrypt=true;trustServerCertificate=true;
+    username: sa
+  jpa:
+    hibernate:
+      ddl-auto: none
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.SQLServer2012Dialect
+        format_sql: false
+    show-sql: false
 
 springdoc:
-    packages-to-scan: com.happy3friends.toiletmapbackend.controller
-    default-consumes-media-type: application/json
-    default-produces-media-type: application/json
-    model-and-view-allowed: false
-    swagger-ui:
-        operations-sorter: method
-        tags-sorter: alpha
-        try-it-out-enabled: true
-        filter: true
-        default-models-expand-depth: -1
+  packages-to-scan: com.happy3friends.toiletmapbackend.controller
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  model-and-view-allowed: false
+  swagger-ui:
+    operations-sorter: method
+    tags-sorter: alpha
+    try-it-out-enabled: true
+    filter: true
+    default-models-expand-depth: -1

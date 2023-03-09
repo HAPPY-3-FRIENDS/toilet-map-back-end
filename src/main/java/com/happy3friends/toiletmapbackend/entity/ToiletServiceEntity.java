@@ -24,10 +24,10 @@ public class ToiletServiceEntity {
     @Column(name = "ToiletId", nullable = false)
     private int toiletId;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ServiceId", referencedColumnName = "Id", nullable = false, insertable=false, updatable=false)
+    @JoinColumn(name = "ServiceId", referencedColumnName = "Id", insertable = false, updatable = false)
     private ServiceEntity serviceByServiceId;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ToiletId", referencedColumnName = "Id", nullable = false, insertable=false, updatable=false)
+    @JoinColumn(name = "ToiletId", referencedColumnName = "Id", insertable = false, updatable = false)
     private ToiletEntity toiletByToiletId;
     @OneToMany(mappedBy = "toiletServiceByToiletServiceId")
     private Collection<CheckInEntity> checkInsById;

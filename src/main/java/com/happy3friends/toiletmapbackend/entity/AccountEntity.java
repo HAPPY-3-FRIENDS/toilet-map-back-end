@@ -30,7 +30,7 @@ public class AccountEntity {
     @Column(name = "RoleId", nullable = false)
     private int roleId;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "RoleId", referencedColumnName = "Id", nullable = false, insertable=false, updatable=false)
+    @JoinColumn(name = "RoleId", referencedColumnName = "Id", insertable = false, updatable = false)
     private RoleEntity roleByRoleId;
     @OneToMany(mappedBy = "accountByAccountId")
     private Collection<UserInfoEntity> userInfosById;

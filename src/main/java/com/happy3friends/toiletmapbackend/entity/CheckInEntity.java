@@ -35,10 +35,10 @@ public class CheckInEntity {
     @Basic
     @Column(name = "Turn", nullable = true)
     private Integer turn;
-    @ManyToOne
-    @JoinColumn(name = "AccountId", referencedColumnName = "Id", nullable = false, insertable=false, updatable=false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "AccountId", referencedColumnName = "Id", insertable = false, updatable = false)
     private AccountEntity accountByAccountId;
-    @ManyToOne
-    @JoinColumn(name = "ToiletServiceId", referencedColumnName = "Id", nullable = false, insertable=false, updatable=false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ToiletServiceId", referencedColumnName = "Id", insertable = false, updatable = false)
     private ToiletServiceEntity toiletServiceByToiletServiceId;
 }

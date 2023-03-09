@@ -33,6 +33,6 @@ public class OpenApiConfig {
                                 .name("The GNU General Public License v3.0")
                                 .url("https://www.gnu.org/licenses/gpl-3.0.html"))
                         .version("1.0.0"))
-                        .servers(List.of(localServer/*, productionServer*/));
+                .servers(List.of(localServer/*, productionServer*/));
     }
 }

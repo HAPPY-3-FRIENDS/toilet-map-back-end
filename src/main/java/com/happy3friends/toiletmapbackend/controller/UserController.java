@@ -23,12 +23,13 @@ public class UserController {
     public ResponseEntity<BaseResponse<CheckInEntity>> checkIn(
             @PathVariable("userId") int userId,
             @RequestBody CheckInRequest checkInRequest) {
+
         CheckInEntity response = userService.checkIn(checkInRequest);
 
         return ResponseBuilder.generateResponse(
-            "Check in successfully!",
-            HttpStatus.CREATED,
-            response
+                "Check in successfully!",
+                HttpStatus.CREATED,
+                response
         );
     }
 }
