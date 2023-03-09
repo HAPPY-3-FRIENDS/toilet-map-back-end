@@ -24,13 +24,13 @@ public class CompanyEntity {
     @Column(name = "Address", nullable = false, length = 100)
     private String address;
     @Basic
-    @Column(name = "District", nullable = false, length = 20)
+    @Column(name = "District", nullable = false, length = 50)
     private String district;
     @Basic
-    @Column(name = "Province", nullable = false, length = 20)
+    @Column(name = "Province", nullable = false, length = 50)
     private String province;
     @Basic
-    @Column(name = "Phone", nullable = true, length = 10)
+    @Column(name = "Phone", nullable = true, length = 20)
     private String phone;
     @OneToMany(mappedBy = "companyByCompanyId")
     private Collection<ToiletEntity> toiletsById;

@@ -8,6 +8,7 @@ GO;
 CREATE TABLE [Account](
     Id INT IDENTITY(1, 1) NOT NULL,
     Username VARCHAR(20) NOT NULL,
+    Password VARCHAR(20) NULL,
     Status NVARCHAR(20) NULL,
     RoleId INT NOT NULL
 )
@@ -34,8 +35,8 @@ CREATE TABLE [Toilet](
     Id INT IDENTITY(1, 1) NOT NULL,
     Name NVARCHAR(50) NOT NULL,
     Address NVARCHAR(100) NOT NULL,
-    District NVARCHAR(20) NOT NULL,
-    Province NVARCHAR(20) NOT NULL,
+    District NVARCHAR(50) NOT NULL,
+    Province NVARCHAR(50) NOT NULL,
     Status NVARCHAR(20) NULL,
     CompanyId INT NOT NULL
 )
@@ -45,9 +46,9 @@ CREATE TABLE [Company](
     Id INT IDENTITY(1, 1) NOT NULL,
     Name NVARCHAR(50) NOT NULL,
     Address NVARCHAR(100) NOT NULL,
-    District NVARCHAR(20) NOT NULL,
-    Province NVARCHAR(20) NOT NULL,
-    Phone VARCHAR(10) NULL
+    District NVARCHAR(50) NOT NULL,
+    Province NVARCHAR(50) NOT NULL,
+    Phone VARCHAR(20) NULL
 )
 GO;
 
@@ -108,3 +109,55 @@ ALTER TABLE [CheckIn] ADD CONSTRAINT FK_CheckIn_Account
 
 ALTER TABLE [CheckIn] ADD CONSTRAINT FK_CheckIn_ToiletService
     FOREIGN KEY (ToiletServiceId) REFERENCES ToiletService(Id);
+
+------------------------------ INSERT VALUE ------------------------------
+INSERT INTO Role (Name) VALUES (N'Admin')
+GO;
+
+INSERT INTO Role (Name) VALUES (N'Manager')
+GO;
+
+INSERT INTO Role (Name) VALUES (N'Staff')
+GO;
+
+INSERT INTO Role (Name) VALUES (N'User')
+GO;
+
+INSERT INTO Account (Username, Password, Status, RoleId) VALUES (N'0849666957', null, null, 4)
+GO;
+
+INSERT INTO Account (Username, Password, Status, RoleId) VALUES (N'dvciq1', N'123', null, 2)
+GO;
+
+INSERT INTO Account (Username, Password, Status, RoleId) VALUES (N'nvsld', N'123', null, 3)
+GO;
+
+INSERT INTO UserInfo (AccountId, Gmail, Avatar, AccountBalance, AccountTurn, DefaultPayment)
+VALUES (1, null, null, 20000, 20, N'BALANCE')
+GO;
+
+INSERT INTO Company (Name, Address, District, Province, Phone)
+VALUES (N'Công ty dịch vụ công ích quận 1', N'28-30 Nguyễn Thái Bình, P. Nguyễn Thái Bình', N'Quận 1', N'Thành phố Hồ Chí Minh', N'(028) 38.215.611')
+GO;
+
+INSERT INTO Toilet (Name, Address, District, Province, Status, CompanyId)
+VALUES (N'Nhà vệ sinh lưu động', N'44 Trần Đình Xu, phường Cô Giang', N'Quận 1', N'Thành phố Hồ Chí Minh', null, 1)
+GO;
+
+INSERT INTO Service (Name, Price) VALUES (N'Đi vệ sinh (tiểu tiện)', 2000)
+GO;
+
+INSERT INTO Service (Name, Price) VALUES (N'Đi vệ sinh (Đại tiện)', 4000)
+GO;
+
+INSERT INTO Service (Name, Price) VALUES (N'Đi tắm', 8000)
+GO;
+
+INSERT INTO ToiletService (ServiceId, ToiletId) VALUES (1, 1)
+GO;
+
+INSERT INTO ToiletService (ServiceId, ToiletId) VALUES (2, 1)
+GO;
+
+INSERT INTO ToiletService (ServiceId, ToiletId) VALUES (3, 1)
+GO;

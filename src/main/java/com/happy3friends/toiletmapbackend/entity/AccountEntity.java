@@ -21,6 +21,9 @@ public class AccountEntity {
     @Column(name = "Username", nullable = false, length = 20)
     private String username;
     @Basic
+    @Column(name = "Password", nullable = true, length = 20)
+    private String password;
+    @Basic
     @Column(name = "Status", nullable = true, length = 20)
     private String status;
     @Basic

@@ -24,10 +24,10 @@ public class ToiletEntity {
     @Column(name = "Address", nullable = false, length = 100)
     private String address;
     @Basic
-    @Column(name = "District", nullable = false, length = 20)
+    @Column(name = "District", nullable = false, length = 50)
     private String district;
     @Basic
-    @Column(name = "Province", nullable = false, length = 20)
+    @Column(name = "Province", nullable = false, length = 50)
     private String province;
     @Basic
     @Column(name = "Status", nullable = true, length = 20)
@@ -35,7 +35,7 @@ public class ToiletEntity {
     @Basic
     @Column(name = "CompanyId", nullable = false)
     private int companyId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CompanyId", referencedColumnName = "Id", nullable = false, insertable=false, updatable=false)
     private CompanyEntity companyByCompanyId;
     @OneToMany(mappedBy = "toiletByToiletId")
