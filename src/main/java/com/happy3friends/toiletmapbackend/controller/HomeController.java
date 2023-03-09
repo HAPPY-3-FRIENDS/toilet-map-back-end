@@ -1,0 +1,27 @@
+package com.happy3friends.toiletmapbackend.controller;
+
+import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
+import com.happy3friends.toiletmapbackend.response.BaseResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@Tag(name = "Home", description = "Home API")
+@RestController
+@RequestMapping(value = "/api")
+public class HomeController {
+
+    @Operation(summary = "Home API", description = "Home API")
+    @GetMapping(value = "/")
+    public ResponseEntity<BaseResponse<String>> home() {
+        return ResponseBuilder.generateResponse(
+                "Successfully!",
+                HttpStatus.OK,
+                "Toilet Map API - tienhuynh-tn"
+        );
+    }
+}
