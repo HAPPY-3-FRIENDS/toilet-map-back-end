@@ -30,7 +30,7 @@ public class ToiletController {
         List<CheckInResponse> response = toiletService.toiletCheckInHistoriesByToiletId(toiletId);
 
         return ResponseBuilder.generateResponse(
-                "Get list of check-in histories by toilet successfully!",
+                "Get list of check-in histories by toiletId successfully!",
                 HttpStatus.OK,
                 response
         );

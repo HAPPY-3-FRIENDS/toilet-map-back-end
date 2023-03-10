@@ -9,7 +9,7 @@ import java.util.Map;
 @Getter
 @AllArgsConstructor
 public enum PaymentTypeEnum {
-    BALANCE("Số dư tài khoản"),
+    BALANCE("Số dư"),
     TURN("Số lượt"),
     CASH("Tiền mặt");
 
