@@ -1,8 +1,8 @@
 CREATE DATABASE ToiletMap
-GO;
+GO
 
 USE ToiletMap
-GO;
+GO
 
 ------------------------------ CREATE TABLE ------------------------------
 CREATE TABLE [Account](
@@ -12,7 +12,7 @@ CREATE TABLE [Account](
     Status NVARCHAR(20) NULL,
     RoleId INT NOT NULL
 )
-GO;
+GO
 
 CREATE TABLE [UserInfo](
    Id INT IDENTITY(1, 1) NOT NULL,
@@ -23,13 +23,13 @@ CREATE TABLE [UserInfo](
    AccountTurn INT NOT NULL,
    DefaultPayment NVARCHAR(20) NOT NULL
 )
-GO;
+GO
 
 CREATE TABLE [Role](
     Id INT IDENTITY(1, 1) NOT NULL,
     Name VARCHAR(10) NOT NULL
 )
-GO;
+GO
 
 CREATE TABLE [Toilet](
     Id INT IDENTITY(1, 1) NOT NULL,
@@ -40,7 +40,7 @@ CREATE TABLE [Toilet](
     Status NVARCHAR(20) NULL,
     CompanyId INT NOT NULL
 )
-GO;
+GO
 
 CREATE TABLE [Company](
     Id INT IDENTITY(1, 1) NOT NULL,
@@ -50,21 +50,21 @@ CREATE TABLE [Company](
     Province NVARCHAR(50) NOT NULL,
     Phone VARCHAR(20) NULL
 )
-GO;
+GO
 
 CREATE TABLE [Service](
     Id INT IDENTITY(1, 1) NOT NULL,
     Name NVARCHAR(50) NOT NULL,
     Price FLOAT NOT NULL
 )
-GO;
+GO
 
 CREATE TABLE [ToiletService](
     Id INT IDENTITY(1, 1) NOT NULL,
     ServiceId INT NOT NULL,
     ToiletId INT NOT NULL
 )
-GO;
+GO
 
 CREATE TABLE [CheckIn](
     Id INT IDENTITY(1, 1) NOT NULL,
@@ -75,7 +75,7 @@ CREATE TABLE [CheckIn](
     Balance FLOAT NULL,
     Turn INT NULL
 )
-GO;
+GO
 
 ------------------------------ CREATE CONSTRAINT ------------------------------
 --- PRIMARY KEY ---
@@ -112,52 +112,52 @@ ALTER TABLE [CheckIn] ADD CONSTRAINT FK_CheckIn_ToiletService
 
 ------------------------------ INSERT VALUE ------------------------------
 INSERT INTO Role (Name) VALUES (N'Admin')
-GO;
+GO
 
 INSERT INTO Role (Name) VALUES (N'Manager')
-GO;
+GO
 
 INSERT INTO Role (Name) VALUES (N'Staff')
-GO;
+GO
 
 INSERT INTO Role (Name) VALUES (N'User')
-GO;
+GO
 
 INSERT INTO Account (Username, Password, Status, RoleId) VALUES (N'0849666957', null, null, 4)
-GO;
+GO
 
 INSERT INTO Account (Username, Password, Status, RoleId) VALUES (N'dvciq1', N'123', null, 2)
-GO;
+GO
 
 INSERT INTO Account (Username, Password, Status, RoleId) VALUES (N'nvsld', N'123', null, 3)
-GO;
+GO
 
 INSERT INTO UserInfo (AccountId, Gmail, Avatar, AccountBalance, AccountTurn, DefaultPayment)
 VALUES (1, null, null, 20000, 20, N'BALANCE')
-GO;
+GO
 
 INSERT INTO Company (Name, Address, District, Province, Phone)
 VALUES (N'Công ty dịch vụ công ích quận 1', N'28-30 Nguyễn Thái Bình, P. Nguyễn Thái Bình', N'Quận 1', N'Thành phố Hồ Chí Minh', N'(028) 38.215.611')
-GO;
+GO
 
 INSERT INTO Toilet (Name, Address, District, Province, Status, CompanyId)
 VALUES (N'Nhà vệ sinh lưu động', N'44 Trần Đình Xu, phường Cô Giang', N'Quận 1', N'Thành phố Hồ Chí Minh', null, 1)
-GO;
+GO
 
 INSERT INTO Service (Name, Price) VALUES (N'Đi vệ sinh (tiểu tiện)', 2000)
-GO;
+GO
 
 INSERT INTO Service (Name, Price) VALUES (N'Đi vệ sinh (Đại tiện)', 4000)
-GO;
+GO
 
 INSERT INTO Service (Name, Price) VALUES (N'Đi tắm', 8000)
-GO;
+GO
 
 INSERT INTO ToiletService (ServiceId, ToiletId) VALUES (1, 1)
-GO;
+GO
 
 INSERT INTO ToiletService (ServiceId, ToiletId) VALUES (2, 1)
-GO;
+GO
 
 INSERT INTO ToiletService (ServiceId, ToiletId) VALUES (3, 1)
-GO;
+GO
