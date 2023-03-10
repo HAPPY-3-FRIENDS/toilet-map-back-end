@@ -55,9 +55,6 @@
     <profiles>
         <profile>
             <id>default</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <build>
                 <finalName>toilet-map-back-end</finalName>
                 <resources>
@@ -76,7 +73,7 @@
                 <finalName>toilet-map-back-end</finalName>
                 <resources>
                     <resource>
-                        <directory>src/main/resources/dev</directory>
+                        <directory>src/main/resources</directory>
                     </resource>
                 </resources>
             </build>
@@ -90,7 +87,7 @@
                 <finalName>toilet-map-back-end</finalName>
                 <resources>
                     <resource>
-                        <directory>src/main/resources/dev</directory>
+                        <directory>src/main/resources</directory>
                     </resource>
                 </resources>
             </build>
@@ -104,7 +101,7 @@
                 <finalName>toilet-map-back-end</finalName>
                 <resources>
                     <resource>
-                        <directory>src/main/resources/dev</directory>
+                        <directory>src/main/resources</directory>
                     </resource>
                 </resources>
             </build>
@@ -118,7 +115,7 @@
                 <finalName>toilet-map-back-end</finalName>
                 <resources>
                     <resource>
-                        <directory>src/main/resources/dev</directory>
+                        <directory>src/main/resources</directory>
                     </resource>
                 </resources>
             </build>
