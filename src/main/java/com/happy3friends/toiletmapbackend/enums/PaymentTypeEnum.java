@@ -1,5 +1,6 @@
 package com.happy3friends.toiletmapbackend.enums;
 
+import com.happy3friends.toiletmapbackend.constant.PaymentTypeConstant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -9,9 +10,9 @@ import java.util.Map;
 @Getter
 @AllArgsConstructor
 public enum PaymentTypeEnum {
-    BALANCE("Số dư"),
-    TURN("Số lượt"),
-    CASH("Tiền mặt");
+    BALANCE(PaymentTypeConstant.BALANCE),
+    TURN(PaymentTypeConstant.TURN),
+    CASH(PaymentTypeConstant.CASH);
 
     private final String paymentValue;
 

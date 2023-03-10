@@ -23,7 +23,9 @@ public class ToiletServiceImpl implements ToiletService {
 
     @Override
     public List<CheckInResponse> toiletCheckInHistoriesByToiletId(int toiletId) {
+
         List<CustomCheckInDTO> customCheckInDTOS = checkInRepository.toiletCheckInHistoriesByToiletId(toiletId);
+
         return customCheckInDTOS.stream()
                 .map(customCheckInDTO -> {
                     CheckInResponse checkInResponse = checkInMapper.convertCustomCheckInDTOToCheckInResponse(customCheckInDTO);
