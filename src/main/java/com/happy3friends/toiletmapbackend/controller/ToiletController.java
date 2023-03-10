@@ -1,6 +1,5 @@
 package com.happy3friends.toiletmapbackend.controller;
 
-import com.happy3friends.toiletmapbackend.dto.CustomCheckInDTO;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.response.BaseResponse;
 import com.happy3friends.toiletmapbackend.response.CheckInResponse;

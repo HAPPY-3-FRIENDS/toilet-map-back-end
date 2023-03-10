@@ -27,7 +27,7 @@ public class ToiletServiceImpl implements ToiletService {
         return customCheckInDTOS.stream()
                 .map(customCheckInDTO -> {
                     CheckInResponse checkInResponse = checkInMapper.convertCustomCheckInDTOToCheckInResponse(customCheckInDTO);
-                    checkInResponse.setPaymentType(String.valueOf(PaymentTypeEnum.valueOf(checkInResponse.getPaymentType()).getPaymentValue()));
+                    checkInResponse.setPaymentType(String.valueOf(PaymentTypeEnum.getByTypeString(checkInResponse.getPaymentType())));
 
                     return checkInResponse;
                 })

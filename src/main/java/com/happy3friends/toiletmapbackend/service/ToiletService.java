@@ -1,6 +1,5 @@
 package com.happy3friends.toiletmapbackend.service;
 
-import com.happy3friends.toiletmapbackend.dto.CustomCheckInDTO;
 import com.happy3friends.toiletmapbackend.response.CheckInResponse;
 
 import java.util.List;

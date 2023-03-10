@@ -14,15 +14,19 @@ public enum PaymentTypeEnum {
     CASH("Tiền mặt");
 
     private final String paymentValue;
-    private static final Map<String, PaymentTypeEnum> lookup = new HashMap<>();
 
+    private static final Map<String, PaymentTypeEnum> lookup = new HashMap<>();
     static {
         for (PaymentTypeEnum p : PaymentTypeEnum.values()) {
             lookup.put(p.getPaymentValue(), p);
         }
     }
 
-    public static PaymentTypeEnum get(String paymentTypeValue) {
+    public static PaymentTypeEnum getByValue(String paymentTypeValue) {
         return lookup.get(paymentTypeValue);
+    }
+
+    public static String getByTypeString(String typeString) {
+        return PaymentTypeEnum.valueOf(typeString).getPaymentValue();
     }
 }
