@@ -1,5 +1,7 @@
 package com.happy3friends.toiletmapbackend.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.happy3friends.toiletmapbackend.constant.DateTimeConstant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,10 +14,10 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CheckInResponse {
-    private int id;
-    private int accountId;
-    private int toiletServiceId;
+    private String fullName;
+    @JsonFormat(pattern = DateTimeConstant.dd_MM_yyyy__HH_mm_ss)
     private Date dateTime;
+    private String serviceName;
     private String paymentType;
     private Double balance;
     private Integer turn;

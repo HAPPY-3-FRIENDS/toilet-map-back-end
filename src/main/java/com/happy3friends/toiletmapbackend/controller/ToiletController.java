@@ -3,6 +3,7 @@ package com.happy3friends.toiletmapbackend.controller;
 import com.happy3friends.toiletmapbackend.dto.CustomCheckInDTO;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.response.BaseResponse;
+import com.happy3friends.toiletmapbackend.response.CheckInResponse;
 import com.happy3friends.toiletmapbackend.service.ToiletService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +25,9 @@ public class ToiletController {
     private ToiletService toiletService;
 
     @GetMapping(value = "/{toiletId}/check-in-histories")
-    public ResponseEntity<BaseResponse<List<CustomCheckInDTO>>> toiletCheckInHistoriesByToiletId(@PathVariable("toiletId") int toiletId) {
+    public ResponseEntity<BaseResponse<List<CheckInResponse>>> toiletCheckInHistoriesByToiletId(@PathVariable("toiletId") int toiletId) {
 
-        List<CustomCheckInDTO> response = toiletService.toiletCheckInHistoriesByToiletId(toiletId);
+        List<CheckInResponse> response = toiletService.toiletCheckInHistoriesByToiletId(toiletId);
 
         return ResponseBuilder.generateResponse(
                 "Get list of check-in histories by toilet successfully!",

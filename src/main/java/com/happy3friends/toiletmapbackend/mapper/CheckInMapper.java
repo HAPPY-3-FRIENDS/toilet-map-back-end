@@ -1,5 +1,6 @@
 package com.happy3friends.toiletmapbackend.mapper;
 
+import com.happy3friends.toiletmapbackend.dto.CustomCheckInDTO;
 import com.happy3friends.toiletmapbackend.entity.CheckInEntity;
 import com.happy3friends.toiletmapbackend.request.CheckInRequest;
 import com.happy3friends.toiletmapbackend.response.CheckInResponse;
@@ -25,5 +26,11 @@ public class CheckInMapper {
         return Objects.isNull(checkInEntity)
                 ? null
                 : modelMapper.map(checkInEntity, CheckInResponse.class);
+    }
+
+    public CheckInResponse convertCustomCheckInDTOToCheckInResponse(CustomCheckInDTO customCheckInDTO) {
+        return Objects.isNull(customCheckInDTO)
+                ? null
+                : modelMapper.map(customCheckInDTO, CheckInResponse.class);
     }
 }
