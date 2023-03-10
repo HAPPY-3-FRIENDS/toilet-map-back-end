@@ -1,6 +1,7 @@
 package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
 import com.happy3friends.toiletmapbackend.dto.CustomCheckInDTO;
+import com.happy3friends.toiletmapbackend.enums.PaymentTypeEnum;
 import com.happy3friends.toiletmapbackend.mapper.CheckInMapper;
 import com.happy3friends.toiletmapbackend.repository.CheckInRepository;
 import com.happy3friends.toiletmapbackend.response.CheckInResponse;
@@ -24,7 +25,12 @@ public class ToiletServiceImpl implements ToiletService {
     public List<CheckInResponse> toiletCheckInHistoriesByToiletId(int toiletId) {
         List<CustomCheckInDTO> customCheckInDTOS = checkInRepository.toiletCheckInHistoriesByToiletId(toiletId);
         return customCheckInDTOS.stream()
-                .map(customCheckInDTO -> checkInMapper.convertCustomCheckInDTOToCheckInResponse(customCheckInDTO))
+                .map(customCheckInDTO -> {
+                    CheckInResponse checkInResponse = checkInMapper.convertCustomCheckInDTOToCheckInResponse(customCheckInDTO);
+                    checkInResponse.setPaymentType(String.valueOf(PaymentTypeEnum.valueOf(checkInResponse.getPaymentType()).getPaymentValue()));
+
+                    return checkInResponse;
+                })
                 .collect(Collectors.toList());
     }
 }
