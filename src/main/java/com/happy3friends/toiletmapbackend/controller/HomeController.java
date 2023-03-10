@@ -18,6 +18,7 @@ public class HomeController {
     @Operation(summary = "Home API", description = "Home API")
     @GetMapping(value = "/")
     public ResponseEntity<BaseResponse<String>> home() {
+
         return ResponseBuilder.generateResponse(
                 "Successfully!",
                 HttpStatus.OK,

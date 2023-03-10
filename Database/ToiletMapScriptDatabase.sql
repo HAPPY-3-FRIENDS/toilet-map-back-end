@@ -1,6 +1,9 @@
 CREATE DATABASE ToiletMap
 GO
 
+-- DROP DATABASE ToiletMap
+-- GO
+
 USE ToiletMap
 GO
 
@@ -17,6 +20,8 @@ GO
 CREATE TABLE [UserInfo](
    Id INT IDENTITY(1, 1) NOT NULL,
    AccountId INT NOT NULL,
+   FullName NVARCHAR(100) NOT NULL,
+   Phone VARCHAR(10) NOT NULL,
    Gmail VARCHAR(22) NULL,
    Avatar VARCHAR(100) NULL,
    AccountBalance FLOAT NOT NULL,
@@ -132,8 +137,8 @@ GO
 INSERT INTO Account (Username, Password, Status, RoleId) VALUES (N'nvsld', N'123', null, 3)
 GO
 
-INSERT INTO UserInfo (AccountId, Gmail, Avatar, AccountBalance, AccountTurn, DefaultPayment)
-VALUES (1, null, null, 20000, 20, N'BALANCE')
+INSERT INTO UserInfo (AccountId, FullName, Phone, Gmail, Avatar, AccountBalance, AccountTurn, DefaultPayment)
+VALUES (1, N'Huỳnh Lê Thủy Tiên', '0849666957', null, null, 20000, 20, N'BALANCE')
 GO
 
 INSERT INTO Company (Name, Address, District, Province, Phone)
@@ -147,7 +152,7 @@ GO
 INSERT INTO Service (Name, Price) VALUES (N'Đi vệ sinh (tiểu tiện)', 2000)
 GO
 
-INSERT INTO Service (Name, Price) VALUES (N'Đi vệ sinh (Đại tiện)', 4000)
+INSERT INTO Service (Name, Price) VALUES (N'Đi vệ sinh (đại tiện)', 4000)
 GO
 
 INSERT INTO Service (Name, Price) VALUES (N'Đi tắm', 8000)
@@ -160,4 +165,12 @@ INSERT INTO ToiletService (ServiceId, ToiletId) VALUES (2, 1)
 GO
 
 INSERT INTO ToiletService (ServiceId, ToiletId) VALUES (3, 1)
+GO
+
+INSERT INTO CheckIn (AccountId, ToiletServiceId, DateTime, PaymentType, Balance, Turn)
+VALUES (1, 2, N'2023-03-09 15:22:52.000', N'BALANCE', 2000, null)
+GO
+
+INSERT INTO CheckIn (AccountId, ToiletServiceId, DateTime, PaymentType, Balance, Turn)
+VALUES (1, 2, N'2023-03-10 09:44:29.000', N'TURN', null, 4)
 GO

@@ -1,5 +1,6 @@
 package com.happy3friends.toiletmapbackend.controller;
 
+import com.happy3friends.toiletmapbackend.dto.CustomCheckInDto;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.response.BaseResponse;
 import com.happy3friends.toiletmapbackend.response.CheckInResponse;
@@ -24,9 +25,9 @@ public class ToiletController {
     private ToiletService toiletService;
 
     @GetMapping(value = "/{toiletId}/check-in-histories")
-    public ResponseEntity<BaseResponse<List<CheckInResponse>>> toiletCheckInHistoriesByToiletId(@PathVariable("toiletId") int toiletId) {
+    public ResponseEntity<BaseResponse<List<CustomCheckInDto>>> toiletCheckInHistoriesByToiletId(@PathVariable("toiletId") int toiletId) {
 
-        List<CheckInResponse> response = toiletService.toiletCheckInHistoriesByToiletId(toiletId);
+        List<CustomCheckInDto> response = toiletService.toiletCheckInHistoriesByToiletId(toiletId);
 
         return ResponseBuilder.generateResponse(
                 "Get list of check-in histories by toilet successfully!",

@@ -1,5 +1,6 @@
 package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
+import com.happy3friends.toiletmapbackend.dto.CustomCheckInDto;
 import com.happy3friends.toiletmapbackend.entity.CheckInEntity;
 import com.happy3friends.toiletmapbackend.mapper.CheckInMapper;
 import com.happy3friends.toiletmapbackend.repository.CheckInRepository;
@@ -21,10 +22,8 @@ public class ToiletServiceImpl implements ToiletService {
     private CheckInMapper checkInMapper;
 
     @Override
-    public List<CheckInResponse> toiletCheckInHistoriesByToiletId(int toiletId) {
-        List<CheckInEntity> checkInEntities = checkInRepository.toiletCheckInHistoriesByToiletId(toiletId);
-        return checkInEntities.stream()
-                .map(checkInEntity -> checkInMapper.convertCheckInEntityToCheckInResponse(checkInEntity))
-                .collect(Collectors.toList());
+    public List<CustomCheckInDto> toiletCheckInHistoriesByToiletId(int toiletId) {
+        List<CustomCheckInDto> checkInEntities = checkInRepository.toiletCheckInHistoriesByToiletId(toiletId);
+        return checkInEntities;
     }
 }

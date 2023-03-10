@@ -20,6 +20,12 @@ public class UserInfoEntity {
     @Column(name = "AccountId", nullable = false)
     private int accountId;
     @Basic
+    @Column(name = "FullName", nullable = false, length = 100)
+    private String fullName;
+    @Basic
+    @Column(name = "Phone", nullable = false, length = 10)
+    private String phone;
+    @Basic
     @Column(name = "Gmail", nullable = true, length = 22)
     private String gmail;
     @Basic
