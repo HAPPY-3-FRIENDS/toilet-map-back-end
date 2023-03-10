@@ -1,0 +1,10 @@
+logging:
+  level:
+    root: info
+    com.happy3friends.toiletmapbackend.service: error
+  file:
+    path: logs
+    name: ${logging.file.path}/mylog.log
+  pattern:
+    file: "[%d{yyyy-MM-dd HH:mm:ss.SSS}] %-5level [%t] [%c{1}] %logger{0}.%M:%line - %msg%n"
+    console:
