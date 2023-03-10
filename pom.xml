@@ -50,16 +50,40 @@
             <version>1.6.14</version>
         </dependency>
 
+        <!-- Logging -->
+        <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-core -->
+        <!--<dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>1.4.5</version>
+        </dependency>
+        &lt;!&ndash; https://mvnrepository.com/artifact/ch.qos.logback/logback-classic &ndash;&gt;
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.4.5</version>
+            <scope>test</scope>
+        </dependency>
+        &lt;!&ndash; https://mvnrepository.com/artifact/org.slf4j/slf4j-api &ndash;&gt;
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.6</version>
+        </dependency>-->
+
     </dependencies>
 
     <profiles>
         <profile>
             <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <build>
                 <finalName>toilet-map-back-end</finalName>
                 <resources>
                     <resource>
-                        <directory>src/main/resources</directory>
+                        <directory>src/main/resources/profiles/default</directory>
                     </resource>
                 </resources>
             </build>
@@ -69,11 +93,14 @@
         </profile>
         <profile>
             <id>tiendev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <build>
                 <finalName>toilet-map-back-end</finalName>
                 <resources>
                     <resource>
-                        <directory>src/main/resources</directory>
+                        <directory>src/main/resources/profiles/dev</directory>
                     </resource>
                 </resources>
             </build>
@@ -87,7 +114,7 @@
                 <finalName>toilet-map-back-end</finalName>
                 <resources>
                     <resource>
-                        <directory>src/main/resources</directory>
+                        <directory>src/main/resources/profiles/dev</directory>
                     </resource>
                 </resources>
             </build>
@@ -101,7 +128,7 @@
                 <finalName>toilet-map-back-end</finalName>
                 <resources>
                     <resource>
-                        <directory>src/main/resources</directory>
+                        <directory>src/main/resources/profiles/dev</directory>
                     </resource>
                 </resources>
             </build>
@@ -115,7 +142,7 @@
                 <finalName>toilet-map-back-end</finalName>
                 <resources>
                     <resource>
-                        <directory>src/main/resources</directory>
+                        <directory>src/main/resources/profiles/dev</directory>
                     </resource>
                 </resources>
             </build>

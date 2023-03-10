@@ -13,6 +13,8 @@ spring:
         dialect: org.hibernate.dialect.SQLServer2012Dialect
         format_sql: false
     show-sql: false
+  profiles:
+    active: tiendev
 
 springdoc:
   packages-to-scan: com.happy3friends.toiletmapbackend.controller

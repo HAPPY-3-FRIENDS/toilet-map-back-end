@@ -1,6 +1,6 @@
 package com.happy3friends.toiletmapbackend.repository;
 
-import com.happy3friends.toiletmapbackend.dto.CustomCheckInDto;
+import com.happy3friends.toiletmapbackend.dto.CustomCheckInDTO;
 import com.happy3friends.toiletmapbackend.entity.CheckInEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,5 +22,5 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
             "INNER JOIN Service s " +
             "ON ts.ServiceId = s.Id " +
             "WHERE ts.ToiletId = :toiletId", nativeQuery = true)
-    List<CustomCheckInDto> toiletCheckInHistoriesByToiletId(@Param("toiletId") int toiletId);
+    List<CustomCheckInDTO> toiletCheckInHistoriesByToiletId(@Param("toiletId") int toiletId);
 }

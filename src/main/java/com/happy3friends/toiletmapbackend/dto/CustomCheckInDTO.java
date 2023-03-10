@@ -2,7 +2,7 @@ package com.happy3friends.toiletmapbackend.dto;
 
 import java.util.Date;
 
-public interface CustomCheckInDto {
+public interface CustomCheckInDTO {
     String getFullName();
     Date getDateTime();
     String getServiceName();
