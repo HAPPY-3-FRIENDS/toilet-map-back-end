@@ -13,3 +13,5 @@
     `mvn spring-boot:run -D"spring-boot.run.profiles"=quandev`
 
     `mvn spring-boot:run -D"spring-boot.run.profiles"=huydev`
+
+    `http://localhost:8081/swagger-ui/index.html`
