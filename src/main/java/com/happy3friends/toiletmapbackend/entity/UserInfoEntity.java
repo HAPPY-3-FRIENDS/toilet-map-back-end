@@ -14,8 +14,6 @@ import javax.persistence.*;
 public class UserInfoEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "Id", nullable = false)
-    private int id;
     @Basic
     @Column(name = "AccountId", nullable = false)
     private int accountId;
@@ -40,8 +38,8 @@ public class UserInfoEntity {
     @Basic
     @Column(name = "DefaultPayment", nullable = false, length = 20)
     private String defaultPayment;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "AccountId", referencedColumnName = "Id", insertable = false, updatable = false)
+    @OneToOne
+    @JoinColumn(name = "AccountId", referencedColumnName = "Id")
     private AccountEntity accountByAccountId;
 
 }

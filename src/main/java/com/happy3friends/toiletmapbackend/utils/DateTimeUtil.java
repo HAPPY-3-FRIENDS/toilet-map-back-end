@@ -48,7 +48,7 @@ public class DateTimeUtil {
         try {
             return df.parse(strDate);
         } catch (ParseException ex) {
-            LOGGER.error("Parse DateTime Exception: ", ex.getMessage());
+            LOGGER.error("Parse DateTime Exception: " + ex.getMessage());
         }
         return null;
     }

@@ -18,7 +18,6 @@ CREATE TABLE [Account](
 GO
 
 CREATE TABLE [UserInfo](
-   Id INT IDENTITY(1, 1) NOT NULL,
    AccountId INT NOT NULL,
    FullName NVARCHAR(100) NOT NULL,
    Phone VARCHAR(10) NOT NULL,
@@ -60,7 +59,8 @@ GO
 CREATE TABLE [Service](
     Id INT IDENTITY(1, 1) NOT NULL,
     Name NVARCHAR(50) NOT NULL,
-    Price FLOAT NOT NULL
+    Price FLOAT NOT NULL,
+    Turn INT NOT NULL
 )
 GO
 
@@ -85,7 +85,7 @@ GO
 ------------------------------ CREATE CONSTRAINT ------------------------------
 --- PRIMARY KEY ---
 ALTER TABLE [Account] ADD CONSTRAINT PK_Account PRIMARY KEY (Id);
-ALTER TABLE [UserInfo] ADD CONSTRAINT PK_UserInfo PRIMARY KEY (Id);
+ALTER TABLE [UserInfo] ADD CONSTRAINT PK_UserInfo PRIMARY KEY (AccountId);
 ALTER TABLE [Role] ADD CONSTRAINT PK_Role PRIMARY KEY (Id);
 ALTER TABLE [Toilet] ADD CONSTRAINT PK_Toilet PRIMARY KEY (Id);
 ALTER TABLE [Company] ADD CONSTRAINT PK_Company PRIMARY KEY (Id);
@@ -149,13 +149,13 @@ INSERT INTO Toilet (Name, Address, District, Province, Status, CompanyId)
 VALUES (N'Nhà vệ sinh lưu động', N'44 Trần Đình Xu, phường Cô Giang', N'Quận 1', N'Thành phố Hồ Chí Minh', null, 1)
 GO
 
-INSERT INTO Service (Name, Price) VALUES (N'Đi vệ sinh (tiểu tiện)', 2000)
+INSERT INTO Service (Name, Price, Turn) VALUES (N'Đi vệ sinh (tiểu tiện)', 2000, 1)
 GO
 
-INSERT INTO Service (Name, Price) VALUES (N'Đi vệ sinh (đại tiện)', 4000)
+INSERT INTO Service (Name, Price, Turn) VALUES (N'Đi vệ sinh (đại tiện)', 4000, 2)
 GO
 
-INSERT INTO Service (Name, Price) VALUES (N'Đi tắm', 8000)
+INSERT INTO Service (Name, Price, Turn) VALUES (N'Đi tắm', 8000, 3)
 GO
 
 INSERT INTO ToiletService (ServiceId, ToiletId) VALUES (1, 1)
@@ -168,9 +168,13 @@ INSERT INTO ToiletService (ServiceId, ToiletId) VALUES (3, 1)
 GO
 
 INSERT INTO CheckIn (AccountId, ToiletServiceId, DateTime, PaymentType, Balance, Turn)
-VALUES (1, 2, N'2023-03-09 15:22:52.000', N'BALANCE', 2000, null)
+VALUES (1, 3, N'2023-03-09 15:22:52.000', N'BALANCE', 8000, null)
 GO
 
 INSERT INTO CheckIn (AccountId, ToiletServiceId, DateTime, PaymentType, Balance, Turn)
-VALUES (1, 2, N'2023-03-10 09:44:29.000', N'TURN', null, 4)
+VALUES (1, 1, N'2023-03-10 09:44:29.000', N'TURN', null, 1)
+GO
+
+INSERT INTO CheckIn (AccountId, ToiletServiceId, DateTime, PaymentType, Balance, Turn)
+VALUES (3, 2, N'2023-03-11 15:03:44.000', N'CASH', 4000, null)
 GO

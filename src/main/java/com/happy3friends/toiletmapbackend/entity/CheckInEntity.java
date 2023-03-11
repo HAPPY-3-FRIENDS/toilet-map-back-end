@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.sql.Timestamp;
 
 @EqualsAndHashCode
 @Setter
@@ -25,7 +25,7 @@ public class CheckInEntity {
     private int toiletServiceId;
     @Basic
     @Column(name = "DateTime", nullable = false)
-    private Date dateTime;
+    private Timestamp dateTime;
     @Basic
     @Column(name = "PaymentType", nullable = false, length = 20)
     private String paymentType;

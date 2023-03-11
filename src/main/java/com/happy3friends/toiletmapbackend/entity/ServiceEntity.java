@@ -23,6 +23,9 @@ public class ServiceEntity {
     @Basic
     @Column(name = "Price", nullable = false, precision = 0)
     private double price;
+    @Basic
+    @Column(name = "Turn", nullable = false)
+    private int turn;
     @OneToMany(mappedBy = "serviceByServiceId")
     private Collection<ToiletServiceEntity> toiletServicesById;
 

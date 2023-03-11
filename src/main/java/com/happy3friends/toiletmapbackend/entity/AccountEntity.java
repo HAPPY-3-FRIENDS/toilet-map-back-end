@@ -33,7 +33,7 @@ public class AccountEntity {
     @JoinColumn(name = "RoleId", referencedColumnName = "Id", insertable = false, updatable = false)
     private RoleEntity roleByRoleId;
     @OneToMany(mappedBy = "accountByAccountId")
-    private Collection<UserInfoEntity> userInfosById;
-    @OneToMany(mappedBy = "accountByAccountId")
     private Collection<CheckInEntity> checkInsById;
+    @OneToOne(mappedBy = "accountByAccountId")
+    private UserInfoEntity userInfoById;
 }

@@ -1,9 +1,9 @@
 package com.happy3friends.toiletmapbackend.controller;
 
-import com.happy3friends.toiletmapbackend.entity.CheckInEntity;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.request.CheckInRequest;
 import com.happy3friends.toiletmapbackend.response.BaseResponse;
+import com.happy3friends.toiletmapbackend.response.CheckInResponse;
 import com.happy3friends.toiletmapbackend.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,14 +20,14 @@ public class UserController {
     private UserService userService;
 
     @PostMapping(value = "/{userId}/check-in")
-    public ResponseEntity<BaseResponse<CheckInEntity>> checkIn(
+    public ResponseEntity<BaseResponse<CheckInResponse>> checkIn(
             @PathVariable("userId") int userId,
             @RequestBody CheckInRequest checkInRequest) {
 
-        CheckInEntity response = userService.checkIn(checkInRequest);
+        CheckInResponse response = userService.checkIn(userId, checkInRequest);
 
         return ResponseBuilder.generateResponse(
-                "Check in successfully!",
+                "User check-in toilet-service successfully!",
                 HttpStatus.CREATED,
                 response
         );

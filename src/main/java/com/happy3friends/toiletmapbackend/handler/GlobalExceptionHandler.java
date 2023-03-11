@@ -22,7 +22,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleInternalServerException(Exception ex) {
-        LOGGER.error("An exception occurred: ", ex.getMessage());
+        LOGGER.error("An exception occurred: ", ex);
         return ResponseBuilder.generateErrorResponse("Internal Server Error!", HttpStatus.INTERNAL_SERVER_ERROR, Collections.singletonList(ex.getMessage()));
     }
 
@@ -30,7 +30,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(NotFoundException ex) {
         List<String> details = new ArrayList<>();
         details.add(ex.getMessage());
-        LOGGER.warn("Resource not found: ", ex.getMessage());
+        LOGGER.warn("Resource not found: " + details);
         return ResponseBuilder.generateErrorResponse("Resource Not Found!", HttpStatus.NOT_FOUND, details);
     }
 
@@ -38,7 +38,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException ex) {
         List<String> details = new ArrayList<>();
         details.add(ex.getMessage());
-        LOGGER.warn("An invalid request was rejected: ", ex.getMessage());
+        LOGGER.warn("An invalid request was rejected: " + details);
         return ResponseBuilder.generateErrorResponse("Bad Requests!", HttpStatus.BAD_REQUEST, details);
     }
 }
