@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -73,6 +72,7 @@ public class UserServiceImpl implements UserService {
             // Convert checkInEntity to checkInResponse
             checkInEntity.setAccountByAccountId(accountEntity);
             checkInEntity.setToiletServiceByToiletServiceId(toiletServiceEntity.get());
+            checkInEntity.setPaymentType(String.valueOf(PaymentTypeEnum.getByTypeString(checkInEntity.getPaymentType())));
             CheckInResponse checkInResponse
                     = checkInMapper.convertCheckInEntityToCheckInResponse(checkInEntity);
             return checkInResponse;
