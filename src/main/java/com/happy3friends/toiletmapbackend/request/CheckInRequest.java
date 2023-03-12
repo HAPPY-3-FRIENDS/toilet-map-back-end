@@ -14,5 +14,5 @@ import java.util.Date;
 public class CheckInRequest {
     private int toiletId;
     private String serviceName;
-    private Date datetime;
+    private String datetime;
 }

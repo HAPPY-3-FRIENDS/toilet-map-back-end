@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
             CheckInEntity checkInEntity = new CheckInEntity();
             checkInEntity.setAccountId(userId);
             checkInEntity.setToiletServiceId(toiletServiceEntity.get().getId());
-            checkInEntity.setDateTime(DateTimeUtil.convertDateToTimestime(checkInRequest.getDatetime()));
+            checkInEntity.setDateTime(DateTimeUtil.convertStringToTimestamp(checkInRequest.getDatetime()));
             checkInEntity.setPaymentType(accountEntity.getUserInfoById().getDefaultPayment());
             switch (PaymentTypeEnum.getByTypeString(accountEntity.getUserInfoById().getDefaultPayment())) {
                 case PaymentTypeConstant.BALANCE:

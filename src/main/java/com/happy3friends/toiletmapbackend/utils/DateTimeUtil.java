@@ -35,7 +35,7 @@ public class DateTimeUtil {
         return Date.from(zonedDateTime.toInstant());
     }
 
-    public static Timestamp convertDateToTimestime(Date datetime) {
+    public static Timestamp convertDateToTimestamp(Date datetime) {
         return new Timestamp(datetime.getTime());
     }
 
@@ -51,6 +51,17 @@ public class DateTimeUtil {
         DateFormat df = new SimpleDateFormat(DateTimeConstant.dd_MM_yyyy__HH_mm_ss);
         try {
             return df.parse(strDate);
+        } catch (ParseException ex) {
+            LOGGER.error("Parse DateTime Exception: " + ex.getMessage());
+        }
+        return null;
+    }
+
+    public static Timestamp convertStringToTimestamp(String strDate) {
+        // TODO: GMT +7
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssssss");
+        try {
+            return convertDateToTimestamp(df.parse(strDate));
         } catch (ParseException ex) {
             LOGGER.error("Parse DateTime Exception: " + ex.getMessage());
         }
