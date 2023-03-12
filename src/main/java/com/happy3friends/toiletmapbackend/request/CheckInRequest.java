@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -12,4 +14,5 @@ import lombok.Setter;
 public class CheckInRequest {
     private int toiletId;
     private String serviceName;
+    private Date datetime;
 }

@@ -35,6 +35,10 @@ public class DateTimeUtil {
         return Date.from(zonedDateTime.toInstant());
     }
 
+    public static Timestamp convertDateToTimestime(Date datetime) {
+        return new Timestamp(datetime.getTime());
+    }
+
     public static Date convertDateSqlToDate(java.sql.Date dateSql) {
         return new java.util.Date(dateSql.getTime());
     }
