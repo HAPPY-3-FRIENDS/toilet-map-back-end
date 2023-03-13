@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy WAR app to Azure Web App - toiletmap
+name: Toilet Map | © 2023 by Happy 3 Friends - tienhuynh-tn
 
 on:
   push:
@@ -14,11 +14,14 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Check-out repository
+        uses: actions/checkout@v2
 
       - name: Set up Java version
         uses: actions/setup-java@v1
         with:
+          distribution: 'temurin'
+          cache: maven
           java-version: '11'
 
       - name: Build with Maven
@@ -27,8 +30,8 @@ jobs:
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
-          name: java-app
-          path: '${{ github.workspace }}/target/*.war'
+          name: toilet-map
+          path: '${{ github.workspace }}/target/*.jar'
 
   deploy:
     runs-on: windows-latest
@@ -41,13 +44,13 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v2
         with:
-          name: java-app
+          name: toilet-map
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'toiletmap'
+          app-name: 'toilet-map'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_0CCE0BF86EF449EEA83D3B24BF1610BE }}
-          package: '*.war'
+          package: '*.jar'
