@@ -1,6 +1,7 @@
 package com.happy3friends.toiletmapbackend.controller;
 
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
+import com.happy3friends.toiletmapbackend.request.CheckInRequest;
 import com.happy3friends.toiletmapbackend.response.BaseResponse;
 import com.happy3friends.toiletmapbackend.response.CheckInResponse;
 import com.happy3friends.toiletmapbackend.service.ToiletService;
@@ -8,10 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,6 +29,20 @@ public class ToiletController {
         return ResponseBuilder.generateResponse(
                 "Get list of check-in histories by toiletId successfully!",
                 HttpStatus.OK,
+                response
+        );
+    }
+
+    @PostMapping(value = "/{toiletId}/user-check-in")
+    public ResponseEntity<BaseResponse<CheckInResponse>> userCheckIn(
+            @PathVariable("toiletId") int toiletId,
+            @RequestBody CheckInRequest checkInRequest) {
+
+        CheckInResponse response = toiletService.userCheckIn(toiletId, checkInRequest);
+
+        return ResponseBuilder.generateResponse(
+                "User check-in toilet-service successfully!",
+                HttpStatus.CREATED,
                 response
         );
     }

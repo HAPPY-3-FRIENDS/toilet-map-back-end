@@ -45,8 +45,7 @@ public class OpenApiConfig {
     @Bean
     public GroupedOpenApi userOpenApi() {
         String paths[] = {
-                "/api/",
-                "/api/users/**"
+                "/api/"
         };
         return GroupedOpenApi.builder()
                 .group("User")
@@ -57,10 +56,21 @@ public class OpenApiConfig {
     @Bean
     public GroupedOpenApi managerOpenApi() {
         String paths[] = {
-                "/api/toilets/**"
+                "/api/toilets/{toiletId}/check-in-histories",
         };
         return GroupedOpenApi.builder()
                 .group("Manager")
+                .pathsToMatch(paths)
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi staffOpenApi() {
+        String paths[] = {
+                "/api/toilets/{toiletId}/user-check-in"
+        };
+        return GroupedOpenApi.builder()
+                .group("Staff")
                 .pathsToMatch(paths)
                 .build();
     }
