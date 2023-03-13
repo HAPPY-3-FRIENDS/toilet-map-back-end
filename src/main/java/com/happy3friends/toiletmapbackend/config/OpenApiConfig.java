@@ -17,13 +17,13 @@ import java.util.List;
 public class OpenApiConfig {
     @Bean
     public OpenAPI toiletMapOpenApi() {
+        Server productionServer = new Server();
+        productionServer.setUrl("https://toiletmap.azurewebsites.net/");
+        productionServer.setDescription("Server URL in Production environment");
+
         Server localServer = new Server();
         localServer.setUrl("http://localhost:8081");
         localServer.setDescription("Server URL in Local environment");
-
-        /*Server productionServer = new Server();
-        productionServer.setUrl("https://my-awesome-api.com");
-        productionServer.setDescription("Server URL in Production environment");*/
 
         return new OpenAPI()
                 .info(new Info().title("TOILET MAP API")
@@ -36,7 +36,7 @@ public class OpenApiConfig {
                                 .name("The GNU General Public License v3.0")
                                 .url("https://www.gnu.org/licenses/gpl-3.0.html"))
                         .version("1.0.0"))
-                .servers(List.of(localServer/*, productionServer*/))
+                .servers(List.of(productionServer, localServer))
                 .components(new Components()
                         .addSecuritySchemes("bearer-key",
                                 new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")));

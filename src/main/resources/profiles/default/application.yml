@@ -15,7 +15,7 @@ spring:
     show-sql: false
     open-in-view: false
   profiles:
-    active: tiendev
+    active: default,prod
 
 springdoc:
   packages-to-scan: com.happy3friends.toiletmapbackend.controller

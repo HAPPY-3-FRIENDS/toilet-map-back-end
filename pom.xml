@@ -72,9 +72,6 @@
         </profile>
         <profile>
             <id>tiendev</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <build>
                 <finalName>toilet-map-back-end-dev</finalName>
                 <resources>
@@ -131,6 +128,9 @@
         </profile>
         <profile>
             <id>prod</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <build>
                 <finalName>toilet-map-back-end-prod</finalName>
                 <resources>
