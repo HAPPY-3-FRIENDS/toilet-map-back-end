@@ -23,7 +23,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleInternalServerException(Exception ex) {
         LOGGER.error("An exception occurred: ", ex);
-        return ResponseBuilder.generateErrorResponse("Internal Server Error!", HttpStatus.INTERNAL_SERVER_ERROR, Collections.singletonList(ex.getMessage()));
+        return ResponseBuilder.generateErrorResponse("Internal Server Error!", HttpStatus.INTERNAL_SERVER_ERROR, Collections.singletonList(String.valueOf(ex)));
     }
 
     @ExceptionHandler(NotFoundException.class)
