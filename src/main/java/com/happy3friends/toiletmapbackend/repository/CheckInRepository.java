@@ -23,6 +23,7 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
             "INNER JOIN Service s " +
             "ON ts.ServiceId = s.Id " +
             "LEFT JOIN UserInfo ui on a.Id = ui.AccountId " +
-            "WHERE ts.ToiletId = :toiletId", nativeQuery = true)
+            "WHERE ts.ToiletId = :toiletId " +
+            "ORDER BY DateTime DESC ", nativeQuery = true)
     List<CustomCheckInDTO> toiletCheckInHistoriesByToiletId(@Param("toiletId") int toiletId);
 }
