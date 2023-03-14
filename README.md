@@ -2,6 +2,8 @@
 
 - Swagger UI
 
+  `https://toilet-map.azurewebsites.net/swagger-ui/index.html`
+
   `https://toiletmap.azurewebsites.net/swagger-ui/index.html`
 
   `http://localhost:8081/swagger-ui/index.html`
