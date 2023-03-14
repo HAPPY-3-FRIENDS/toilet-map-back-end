@@ -36,7 +36,7 @@ public class HomeController {
         return ResponseBuilder.generateResponse(
                 "Successfully!",
                 HttpStatus.OK,
-                "Toilet Map API - tienhuynh-tn - Test 1"
+                "Toilet Map API - tienhuynh-tn - Test 2"
         );
     }
 }
