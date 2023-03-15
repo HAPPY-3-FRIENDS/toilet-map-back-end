@@ -15,7 +15,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class CheckInResponse {
     private String fullName;
-    @JsonFormat(pattern = DateTimeConstant.dd_MM_yyyy__HH_mm_ss, timezone = DateTimeConstant.TIME_ZONE)
+    @JsonFormat(pattern = DateTimeConstant.dd_MM_yyyy__HH_mm_ss)
     private Date dateTime;
     private String serviceName;
     private String paymentType;
