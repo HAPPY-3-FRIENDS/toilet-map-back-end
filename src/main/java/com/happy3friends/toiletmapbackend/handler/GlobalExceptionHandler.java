@@ -39,6 +39,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         List<String> details = new ArrayList<>();
         details.add(ex.getMessage());
         LOGGER.warn("An invalid request was rejected: " + details);
-        return ResponseBuilder.generateErrorResponse("Bad Requests!", HttpStatus.BAD_REQUEST, details);
+        return ResponseBuilder.generateErrorResponse("Bad Request!", HttpStatus.BAD_REQUEST, details);
     }
 }

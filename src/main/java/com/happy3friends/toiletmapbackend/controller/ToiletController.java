@@ -5,6 +5,14 @@ import com.happy3friends.toiletmapbackend.request.CheckInRequest;
 import com.happy3friends.toiletmapbackend.response.BaseResponse;
 import com.happy3friends.toiletmapbackend.response.CheckInResponse;
 import com.happy3friends.toiletmapbackend.service.ToiletService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,27 +29,70 @@ public class ToiletController {
     @Autowired
     private ToiletService toiletService;
 
-    @GetMapping(value = "/{toiletId}/check-in-histories")
-    public ResponseEntity<BaseResponse<List<CheckInResponse>>> toiletCheckInHistoriesByToiletId(@PathVariable("toiletId") int toiletId) {
+    @Operation(summary = "Check-in histories", description = "Get the list of check-in histories of a specific toilet by toilet-id")
+    @Parameter(name = "toilet-id", description = "A specific toilet ID", in = ParameterIn.PATH, required = true, example = "1")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
+                    @ExampleObject(value = "{\n" +
+                                            "    \"fullName\": \"Huỳnh Lê Thủy Tiên\",\n" +
+                                            "    \"dateTime\": \"29/10/2001 - 10:30:00\",\n" +
+                                            "    \"serviceName\": \"Đi vệ sinh (Đại tiện)\",\n" +
+                                            "    \"paymentType\": \"Số dư\",\n" +
+                                            "    \"balance\": 4000,\n" +
+                                            "    \"turn\": null\n" +
+                                            "}")})),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @GetMapping(value = "/{toilet-id}/check-in-histories")
+    public ResponseEntity<BaseResponse<List<CheckInResponse>>> toiletCheckInHistoriesByToiletId(@PathVariable("toilet-id") int toiletId) {
 
         List<CheckInResponse> response = toiletService.toiletCheckInHistoriesByToiletId(toiletId);
 
         return ResponseBuilder.generateResponse(
-                "Get list of check-in histories by toiletId successfully!",
+                "Get list of check-in histories by toilet-id successfully!",
                 HttpStatus.OK,
                 response
         );
     }
 
-    @PostMapping(value = "/{toiletId}/user-check-in")
+    @Operation(summary = "User check-in", description = "User check in a specific toilet")
+    @Parameter(name = "toilet-id", description = "A specific toilet ID", in = ParameterIn.PATH, required = true, example = "1")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Check-in Request", required = true, content = @Content(
+            examples = {
+                    @ExampleObject(value = "{\n" +
+                            "  \"accountId\": 1,\n" +
+                            "  \"serviceName\": \"Đi vệ sinh (tiểu tiện)\",\n" +
+                            "  \"datetime\": \"2001-10-29 10:30:00.123456\"\n" +
+                            "}")}))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Successfully!", content = @Content(examples = {
+                    @ExampleObject(value = "{\n" +
+                                            "    \"fullName\": \"Huỳnh Lê Thủy Tiên\",\n" +
+                                            "    \"dateTime\": \"29/10/2001 - 10:30:00\",\n" +
+                                            "    \"serviceName\": \"Đi vệ sinh (Đại tiện)\",\n" +
+                                            "    \"paymentType\": \"Số dư\",\n" +
+                                            "    \"balance\": 4000,\n" +
+                                            "    \"turn\": null\n" +
+                                            "}")})),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @PostMapping(value = "/{toilet-id}/user/check-in")
     public ResponseEntity<BaseResponse<CheckInResponse>> userCheckIn(
-            @PathVariable("toiletId") int toiletId,
+            @PathVariable("toilet-id") int toiletId,
             @RequestBody CheckInRequest checkInRequest) {
 
         CheckInResponse response = toiletService.userCheckIn(toiletId, checkInRequest);
 
         return ResponseBuilder.generateResponse(
-                "User check-in toilet-service successfully!",
+                "User check-in toilet successfully!",
                 HttpStatus.CREATED,
                 response
         );

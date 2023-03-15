@@ -16,9 +16,6 @@ spring:
     open-in-view: false
   profiles:
     active: default,prod
-  mvc:
-    pathmatch:
-      matching-strategy: path-pattern-parser
 
 springdoc:
   packages-to-scan: com.happy3friends.toiletmapbackend.controller

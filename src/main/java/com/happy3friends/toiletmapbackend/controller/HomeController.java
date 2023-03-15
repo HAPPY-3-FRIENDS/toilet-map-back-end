@@ -4,7 +4,6 @@ import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -20,15 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/api")
 public class HomeController {
 
-    @Operation(summary = "Home API", description = "Test API", responses = {
-            @ApiResponse(description = "Successful Operation", responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class), examples = {@ExampleObject(name = "boo", value = "example",summary = "example of boo", externalValue = "example of external value")})),
-            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
-    })
+    @Operation(summary = "Home API", description = "Test API")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully!"),
-            @ApiResponse(responseCode = "404", description = "Resource Not Found!"),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error!")
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @GetMapping(value = "/")
     public ResponseEntity<BaseResponse<String>> home() {
@@ -36,7 +31,7 @@ public class HomeController {
         return ResponseBuilder.generateResponse(
                 "Successfully!",
                 HttpStatus.OK,
-                "Toilet Map API - tienhuynh-tn - Test 2"
+                "Toilet Map API - tienhuynh-tn"
         );
     }
 }

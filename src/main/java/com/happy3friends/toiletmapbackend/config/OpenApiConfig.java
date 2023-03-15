@@ -1,11 +1,9 @@
 package com.happy3friends.toiletmapbackend.config;
 
-import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
-import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import org.springdoc.core.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
@@ -40,10 +38,7 @@ public class OpenApiConfig {
                                 .name("The GNU General Public License v3.0")
                                 .url("https://www.gnu.org/licenses/gpl-3.0.html"))
                         .version("1.0.0"))
-                .servers(List.of(productionServer1, productionServer2, localServer))
-                .components(new Components()
-                        .addSecuritySchemes("bearer-key",
-                                new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")));
+                .servers(List.of(productionServer1, productionServer2, localServer));
     }
 
     @Bean
@@ -60,7 +55,7 @@ public class OpenApiConfig {
     @Bean
     public GroupedOpenApi managerOpenApi() {
         String paths[] = {
-                "/api/toilets/{toiletId}/check-in-histories",
+                "/api/toilets/{toilet-id}/check-in-histories",
         };
         return GroupedOpenApi.builder()
                 .group("Manager")
@@ -71,7 +66,7 @@ public class OpenApiConfig {
     @Bean
     public GroupedOpenApi staffOpenApi() {
         String paths[] = {
-                "/api/toilets/{toiletId}/user-check-in"
+                "/api/toilets/{toilet-id}/user/check-in"
         };
         return GroupedOpenApi.builder()
                 .group("Staff")

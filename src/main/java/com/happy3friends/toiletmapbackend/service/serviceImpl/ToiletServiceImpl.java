@@ -6,7 +6,7 @@ import com.happy3friends.toiletmapbackend.entity.AccountEntity;
 import com.happy3friends.toiletmapbackend.entity.CheckInEntity;
 import com.happy3friends.toiletmapbackend.entity.ToiletServiceEntity;
 import com.happy3friends.toiletmapbackend.enums.PaymentTypeEnum;
-import com.happy3friends.toiletmapbackend.exception.NotFoundException;
+import com.happy3friends.toiletmapbackend.exception.BadRequestException;
 import com.happy3friends.toiletmapbackend.mapper.CheckInMapper;
 import com.happy3friends.toiletmapbackend.repository.AccountRepository;
 import com.happy3friends.toiletmapbackend.repository.CheckInRepository;
@@ -44,6 +44,8 @@ public class ToiletServiceImpl implements ToiletService {
 
     @Override
     public List<CheckInResponse> toiletCheckInHistoriesByToiletId(int toiletId) {
+
+        // TODO: Check if toiletId is existed
 
         List<CustomCheckInDTO> customCheckInDTOS = checkInRepository.toiletCheckInHistoriesByToiletId(toiletId);
 
@@ -99,7 +101,7 @@ public class ToiletServiceImpl implements ToiletService {
 
         } else {
             LOGGER.error("Service '" + checkInRequest.getServiceName() + "' is not contained in Toilet with Id '" + toiletId + "'!");
-            throw new NotFoundException("Service '" + checkInRequest.getServiceName() + "' is not contained in Toilet with Id '" + toiletId + "'!");
+            throw new BadRequestException("Service '" + checkInRequest.getServiceName() + "' is not contained in Toilet with Id '" + toiletId + "'!");
         }
     }
 }

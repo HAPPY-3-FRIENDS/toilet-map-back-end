@@ -20,7 +20,8 @@ public class CorsConfig {
                         .allowedOrigins("http://localhost:8000",
                                 "http://localhost:8081",
                                 "http://localhost:3000",
-                                "https://toiletmap.azurewebsites.net");
+                                "https://toiletmap.azurewebsites.net",
+                                "https://toilet-map.azurewebsites.net");
             }
         };
     }
