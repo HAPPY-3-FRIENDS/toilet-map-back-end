@@ -97,7 +97,7 @@ public class ToiletServiceImpl implements ToiletService {
                     = checkInMapper.convertCheckInEntityToCheckInResponse(checkInEntity);
             return checkInResponse;
 
-            // TODO Modify user info in balance or turn field after check-in
+            // TODO: Modify user info in balance or turn field after check-in
 
         } else {
             LOGGER.error("Service '" + checkInRequest.getServiceName() + "' is not contained in Toilet with Id '" + toiletId + "'!");

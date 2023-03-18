@@ -58,7 +58,6 @@ public class DateTimeUtil {
     }
 
     public static Timestamp convertStringToTimestamp(String strDate) {
-        // TODO: GMT +7
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssssss");
         try {
             return convertDateToTimestamp(df.parse(strDate));

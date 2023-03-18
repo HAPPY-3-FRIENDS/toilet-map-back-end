@@ -1,8 +1,8 @@
 package com.happy3friends.toiletmapbackend.constant;
 
 public class RoleConstant {
-    public static final int ADMIN = 1;
-    public static final int MANAGER = 2;
-    public static final int STAFF = 3;
-    public static final int USER = 4;
+    public static final String ADMIN = "Admin";
+    public static final String MANAGER = "Manager";
+    public static final String STAFF = "Staff";
+    public static final String USER = "User";
 }
