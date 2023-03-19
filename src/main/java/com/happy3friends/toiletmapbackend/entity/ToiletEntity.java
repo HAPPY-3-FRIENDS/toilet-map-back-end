@@ -1,16 +1,16 @@
 package com.happy3friends.toiletmapbackend.entity;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Collection;
 
-@EqualsAndHashCode
-@Setter
-@Getter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode
 @Table(name = "Toilet", schema = "dbo", catalog = "ToiletMap")
 public class ToiletEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,21 +24,35 @@ public class ToiletEntity {
     @Column(name = "Address", nullable = false, length = 100)
     private String address;
     @Basic
+    @Column(name = "Ward", nullable = false, length = 50)
+    private String ward;
+    @Basic
     @Column(name = "District", nullable = false, length = 50)
     private String district;
     @Basic
     @Column(name = "Province", nullable = false, length = 50)
     private String province;
     @Basic
-    @Column(name = "Status", nullable = true, length = 20)
-    private String status;
+    @Column(name = "NearBy", nullable = true, length = 200)
+    private String nearBy;
+    @Basic
+    @Column(name = "isFree", nullable = false)
+    private boolean isFree;
     @Basic
     @Column(name = "CompanyId", nullable = false)
     private int companyId;
+    @Basic
+    @Column(name = "Status", nullable = false, length = 20)
+    private String status;
+    @OneToMany(mappedBy = "toiletByToiletId")
+    private Collection<RatingEntity> ratingsById;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CompanyId", referencedColumnName = "Id", insertable = false, updatable = false)
     private CompanyEntity companyByCompanyId;
     @OneToMany(mappedBy = "toiletByToiletId")
+    private Collection<ToiletFacilityEntity> toiletFacilitiesById;
+    @OneToMany(mappedBy = "toiletByToiletId")
+    private Collection<ToiletImageEntity> toiletImagesById;
+    @OneToMany(mappedBy = "toiletByToiletId")
     private Collection<ToiletServiceEntity> toiletServicesById;
-
 }

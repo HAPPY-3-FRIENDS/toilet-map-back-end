@@ -1,180 +1,343 @@
 CREATE DATABASE ToiletMap
 GO
 
--- DROP DATABASE ToiletMap
--- GO
-
 USE ToiletMap
 GO
 
 ------------------------------ CREATE TABLE ------------------------------
-CREATE TABLE [Account](
-    Id INT IDENTITY(1, 1) NOT NULL,
-    Username VARCHAR(20) NOT NULL,
-    Password VARCHAR(20) NULL,
-    Status NVARCHAR(20) NULL,
-    RoleId INT NOT NULL
+CREATE TABLE [Company]
+(
+    Id       INT IDENTITY (1, 1) NOT NULL,
+    Name     NVARCHAR(50)        NOT NULL,
+    Logo     TEXT                NULL,
+    Address  NVARCHAR(100)       NOT NULL,
+    Ward     NVARCHAR(50)        NOT NULL,
+    District NVARCHAR(50)        NOT NULL,
+    Province NVARCHAR(50)        NOT NULL,
+    Phone    VARCHAR(20)         NULL
 )
 GO
 
-CREATE TABLE [UserInfo](
-   AccountId INT NOT NULL,
-   FullName NVARCHAR(100) NOT NULL,
-   Phone VARCHAR(10) NOT NULL,
-   Gmail VARCHAR(22) NULL,
-   Avatar VARCHAR(100) NULL,
-   AccountBalance FLOAT NOT NULL,
-   AccountTurn INT NOT NULL,
-   DefaultPayment NVARCHAR(20) NOT NULL
+CREATE TABLE [Role]
+(
+    Id   INT IDENTITY (1, 1) NOT NULL,
+    Name VARCHAR(10)         NOT NULL
 )
 GO
 
-CREATE TABLE [Role](
-    Id INT IDENTITY(1, 1) NOT NULL,
-    Name VARCHAR(10) NOT NULL
+CREATE TABLE [Account]
+(
+    Id        INT IDENTITY (1, 1) NOT NULL,
+    Username  VARCHAR(20)         NOT NULL,
+    Password  CHAR(60)            NULL,
+    Status    NVARCHAR(20)        NOT NULL,
+    RoleId    INT                 NOT NULL,
+    CompanyId INT                 NULL
 )
 GO
 
-CREATE TABLE [Toilet](
-    Id INT IDENTITY(1, 1) NOT NULL,
-    Name NVARCHAR(50) NOT NULL,
-    Address NVARCHAR(100) NOT NULL,
-    District NVARCHAR(50) NOT NULL,
-    Province NVARCHAR(50) NOT NULL,
-    Status NVARCHAR(20) NULL,
-    CompanyId INT NOT NULL
+CREATE TABLE [UserInfo]
+(
+    AccountId      INT           NOT NULL,
+    FullName       NVARCHAR(100) NOT NULL,
+    Gmail          VARCHAR(22)   NULL,
+    Avatar         VARCHAR(100)  NULL,
+    AccountBalance INT           NOT NULL,
+    AccountTurn    INT           NOT NULL,
+    DefaultPayment NVARCHAR(20)  NOT NULL
 )
 GO
 
-CREATE TABLE [Company](
-    Id INT IDENTITY(1, 1) NOT NULL,
-    Name NVARCHAR(50) NOT NULL,
-    Address NVARCHAR(100) NOT NULL,
-    District NVARCHAR(50) NOT NULL,
-    Province NVARCHAR(50) NOT NULL,
-    Phone VARCHAR(20) NULL
+CREATE TABLE [Toilet]
+(
+    Id        INT IDENTITY (1, 1) NOT NULL,
+    Name      NVARCHAR(50)        NOT NULL,
+    Address   NVARCHAR(100)       NOT NULL,
+    Ward      NVARCHAR(50)        NOT NULL,
+    District  NVARCHAR(50)        NOT NULL,
+    Province  NVARCHAR(50)        NOT NULL,
+    NearBy    NVARCHAR(200)       NULL,
+    isFree    BIT                 NOT NULL,
+    CompanyId INT                 NOT NULL,
+    Status    NVARCHAR(20)        NOT NULL
 )
 GO
 
-CREATE TABLE [Service](
-    Id INT IDENTITY(1, 1) NOT NULL,
-    Name NVARCHAR(50) NOT NULL,
-    Price FLOAT NOT NULL,
-    Turn INT NOT NULL
+CREATE TABLE [Facility]
+(
+    Id   INT IDENTITY (1, 1) NOT NULL,
+    Name NVARCHAR(200)       NOT NULL,
+    Type NVARCHAR(20)        NOT NULL
 )
 GO
 
-CREATE TABLE [ToiletService](
-    Id INT IDENTITY(1, 1) NOT NULL,
-    ServiceId INT NOT NULL,
-    ToiletId INT NOT NULL
+CREATE TABLE [ToiletFacility]
+(
+    Id          INT IDENTITY (1, 1) NOT NULL,
+    ToiletId    INT                 NOT NULL,
+    FacilityId  INT                 NOT NULL,
+    Quantity    INT                 NULL,
+    Description NTEXT               NULL
 )
 GO
 
-CREATE TABLE [CheckIn](
-    Id INT IDENTITY(1, 1) NOT NULL,
-    AccountId INT NOT NULL,
-    ToiletServiceId INT NOT NULL,
-    DateTime DATETIME NOT NULL,
-    PaymentType NVARCHAR(20) NOT NULL,
-    Balance FLOAT NULL,
-    Turn INT NULL
+CREATE TABLE [Service]
+(
+    Id    INT IDENTITY (1, 1) NOT NULL,
+    Name  NVARCHAR(50)        NOT NULL,
+    Price INT                 NOT NULL,
+    Turn  INT                 NOT NULL
+)
+GO
+
+CREATE TABLE [ToiletService]
+(
+    Id        INT IDENTITY (1, 1) NOT NULL,
+    ToiletId  INT                 NOT NULL,
+    ServiceId INT                 NOT NULL
+)
+GO
+
+CREATE TABLE [ToiletImage]
+(
+    Id          INT IDENTITY (1, 1) NOT NULL,
+    ToiletId    INT                 NOT NULL,
+    ImageSource TEXT                NOT NULL
+)
+GO
+
+CREATE TABLE [CheckIn]
+(
+    Id              INT IDENTITY (1, 1) NOT NULL,
+    AccountId       INT                 NOT NULL,
+    ToiletServiceId INT                 NOT NULL,
+    DateTime        DATETIME            NOT NULL,
+    PaymentType     NVARCHAR(20)        NOT NULL,
+    Balance         INT                 NULL,
+    Turn            INT                 NULL
+)
+GO
+
+CREATE TABLE [Combo]
+(
+    Id        INT IDENTITY (1, 1) NOT NULL,
+    TotalTurn INT                 NOT NULL,
+    Price     INT                 NOT NULL
+)
+GO
+
+CREATE TABLE [Order]
+(
+    Id          INT IDENTITY (1, 1) NOT NULL,
+    AccountId   INT                 NOT NULL,
+    ComboId     INT                 NOT NULL,
+    Total       INT                 NOT NULL,
+    PaymentType NVARCHAR(20)        NOT NULL,
+    DateTime    DATETIME            NOT NULL
+)
+GO
+
+CREATE TABLE [Transaction]
+(
+    Id INT IDENTITY (1, 1) NOT NULL
+)
+GO
+
+CREATE TABLE [Rating]
+(
+    Id          INT IDENTITY (1, 1) NOT NULL,
+    Comment     NTEXT               NOT NULL,
+    AccountId   INT                 NOT NULL,
+    ToiletId    INT                 NOT NULL,
+    CreatedDate DATETIME            NOT NULL,
+    Status      NVARCHAR(20)        NULL
+)
+GO
+
+CREATE TABLE [RatingImage]
+(
+    Id          INT IDENTITY (1, 1) NOT NULL,
+    RatingId    INT                 NOT NULL,
+    ImageSource TEXT                NOT NULL
+)
+GO
+
+CREATE TABLE [SensitiveWord]
+(
+    Id   INT IDENTITY (1, 1) NOT NULL,
+    Word NVARCHAR(50)        NOT NULL
+)
+GO
+
+CREATE TABLE [Configuration]
+(
+    Id INT IDENTITY (1, 1) NOT NULL
 )
 GO
 
 ------------------------------ CREATE CONSTRAINT ------------------------------
 --- PRIMARY KEY ---
-ALTER TABLE [Account] ADD CONSTRAINT PK_Account PRIMARY KEY (Id);
-ALTER TABLE [UserInfo] ADD CONSTRAINT PK_UserInfo PRIMARY KEY (AccountId);
-ALTER TABLE [Role] ADD CONSTRAINT PK_Role PRIMARY KEY (Id);
-ALTER TABLE [Toilet] ADD CONSTRAINT PK_Toilet PRIMARY KEY (Id);
-ALTER TABLE [Company] ADD CONSTRAINT PK_Company PRIMARY KEY (Id);
-ALTER TABLE [Service] ADD CONSTRAINT PK_Service PRIMARY KEY (Id);
-ALTER TABLE [ToiletService] ADD CONSTRAINT PK_ToiletService PRIMARY KEY (Id);
-ALTER TABLE [CheckIn] ADD CONSTRAINT PK_CheckIn PRIMARY KEY (Id);
+ALTER TABLE [Company]
+    ADD CONSTRAINT PK_Company PRIMARY KEY (Id);
+ALTER TABLE [Role]
+    ADD CONSTRAINT PK_Role PRIMARY KEY (Id);
+ALTER TABLE [Account]
+    ADD CONSTRAINT PK_Account PRIMARY KEY (Id);
+ALTER TABLE [UserInfo]
+    ADD CONSTRAINT PK_UserInfo PRIMARY KEY (AccountId);
+ALTER TABLE [Toilet]
+    ADD CONSTRAINT PK_Toilet PRIMARY KEY (Id);
+ALTER TABLE [Facility]
+    ADD CONSTRAINT PK_Facility PRIMARY KEY (Id);
+ALTER TABLE [ToiletFacility]
+    ADD CONSTRAINT PK_ToiletFacility PRIMARY KEY (Id);
+ALTER TABLE [Service]
+    ADD CONSTRAINT PK_Service PRIMARY KEY (Id);
+ALTER TABLE [ToiletService]
+    ADD CONSTRAINT PK_ToiletService PRIMARY KEY (Id);
+ALTER TABLE [ToiletImage]
+    ADD CONSTRAINT PK_ToiletImage PRIMARY KEY (Id);
+ALTER TABLE [CheckIn]
+    ADD CONSTRAINT PK_CheckIn PRIMARY KEY (Id);
+ALTER TABLE [Combo]
+    ADD CONSTRAINT PK_Combo PRIMARY KEY (Id);
+ALTER TABLE [Order]
+    ADD CONSTRAINT PK_Order PRIMARY KEY (Id);
+ALTER TABLE [Transaction]
+    ADD CONSTRAINT PK_Transaction PRIMARY KEY (Id);
+ALTER TABLE [Rating]
+    ADD CONSTRAINT PK_Rating PRIMARY KEY (Id);
+ALTER TABLE [RatingImage]
+    ADD CONSTRAINT PK_RatingImage PRIMARY KEY (Id);
+ALTER TABLE [SensitiveWord]
+    ADD CONSTRAINT PK_SensitiveWord PRIMARY KEY (Id);
+ALTER TABLE [Configuration]
+    ADD CONSTRAINT PK_Configuration PRIMARY KEY (Id);
+
+--- UNIQUE ---
+ALTER TABLE [Account]
+    ADD CONSTRAINT UNIQUE_Username UNIQUE (Username);
 
 --- FOREIGN KEY ---
-ALTER TABLE [Account] ADD CONSTRAINT FK_Account_Role
-    FOREIGN KEY (RoleId) REFERENCES Role(Id);
+ALTER TABLE [Account]
+    ADD CONSTRAINT FK_Account_Role
+        FOREIGN KEY (RoleId) REFERENCES Role (Id);
 
-ALTER TABLE [UserInfo] ADD CONSTRAINT FK_UserInfo_Account
-    FOREIGN KEY (AccountId) REFERENCES Account(Id);
+ALTER TABLE [Account]
+    ADD CONSTRAINT FK_Account_Company
+        FOREIGN KEY (CompanyId) REFERENCES Company (Id);
 
-ALTER TABLE [Toilet] ADD CONSTRAINT FK_Toilet_Company
-    FOREIGN KEY (CompanyId) REFERENCES Company(Id);
+ALTER TABLE [UserInfo]
+    ADD CONSTRAINT FK_UserInfo_Account
+        FOREIGN KEY (AccountId) REFERENCES Account (Id);
 
-ALTER TABLE [ToiletService] ADD CONSTRAINT FK_ToiletService_Toilet
-    FOREIGN KEY (ToiletId) REFERENCES Toilet(Id);
+ALTER TABLE [Toilet]
+    ADD CONSTRAINT FK_Toilet_Company
+        FOREIGN KEY (CompanyId) REFERENCES Company (Id);
 
-ALTER TABLE [ToiletService] ADD CONSTRAINT FK_ToiletService_Service
-    FOREIGN KEY (ServiceId) REFERENCES Service(Id);
+ALTER TABLE [ToiletFacility]
+    ADD CONSTRAINT FK_ToiletFacility_Toilet
+        FOREIGN KEY (ToiletId) REFERENCES Toilet (Id);
 
-ALTER TABLE [CheckIn] ADD CONSTRAINT FK_CheckIn_Account
-    FOREIGN KEY (AccountId) REFERENCES Account(Id);
+ALTER TABLE [ToiletFacility]
+    ADD CONSTRAINT FK_ToiletFacility_Facility
+        FOREIGN KEY (FacilityId) REFERENCES Facility (Id);
 
-ALTER TABLE [CheckIn] ADD CONSTRAINT FK_CheckIn_ToiletService
-    FOREIGN KEY (ToiletServiceId) REFERENCES ToiletService(Id);
+ALTER TABLE [ToiletService]
+    ADD CONSTRAINT FK_ToiletService_Toilet
+        FOREIGN KEY (ToiletId) REFERENCES Toilet (Id);
+
+ALTER TABLE [ToiletService]
+    ADD CONSTRAINT FK_ToiletService_Service
+        FOREIGN KEY (ServiceId) REFERENCES Service (Id);
+
+ALTER TABLE [ToiletImage]
+    ADD CONSTRAINT FK_ToiletImage_Toilet
+        FOREIGN KEY (ToiletId) REFERENCES Toilet (Id);
+
+ALTER TABLE [CheckIn]
+    ADD CONSTRAINT FK_CheckIn_Account
+        FOREIGN KEY (AccountId) REFERENCES Account (Id);
+
+ALTER TABLE [CheckIn]
+    ADD CONSTRAINT FK_CheckIn_ToiletService
+        FOREIGN KEY (ToiletServiceId) REFERENCES ToiletService (Id);
+
+ALTER TABLE [Order]
+    ADD CONSTRAINT FK_Order_Account
+        FOREIGN KEY (AccountId) REFERENCES Account (Id);
+
+ALTER TABLE [Order]
+    ADD CONSTRAINT FK_Order_Combo
+        FOREIGN KEY (ComboId) REFERENCES Combo (Id);
+
+ALTER TABLE [Rating]
+    ADD CONSTRAINT FK_Rating_Account
+        FOREIGN KEY (AccountId) REFERENCES Account (Id);
+
+ALTER TABLE [Rating]
+    ADD CONSTRAINT FK_Rating_Toilet
+        FOREIGN KEY (ToiletId) REFERENCES Toilet (Id);
+
+ALTER TABLE [RatingImage]
+    ADD CONSTRAINT FK_RatingImage_Rating
+        FOREIGN KEY (RatingId) REFERENCES Rating (Id);
 
 ------------------------------ INSERT VALUE ------------------------------
-INSERT INTO Role (Name) VALUES (N'Admin')
+INSERT INTO Company (Name, Logo, Address, Ward, District, Province, Phone)
+VALUES (N'Công ty dịch vụ công ích quận 1', 'https://dichvucongichquan1.com/wp-content/uploads/2021/12/logo.svg',
+        N'28-30 Nguyễn Thái Bình', N'Phường Nguyễn Thái Bình', N'Quận 1', N'Thành phố Hồ Chí Minh', '(028) 38.215.611')
 GO
 
-INSERT INTO Role (Name) VALUES (N'Manager')
+INSERT INTO Role (Name)
+VALUES ('Admin'),
+       ('Manager'),
+       ('Staff'),
+       ('User')
 GO
 
-INSERT INTO Role (Name) VALUES (N'Staff')
+INSERT INTO Toilet (Name, Address, Ward, District, Province, NearBy, isFree, CompanyId, Status)
+VALUES (N'Nhà vệ sinh lưu động số 1', N'44 Trần Đình Xu', N'Phường Cô Giang', N'Quận 1', N'Thành phố Hồ Chí Minh',
+        N'Gần CircleK, gần Phúc Long',
+        1, 1, N'Đang hoạt động')
 GO
 
-INSERT INTO Role (Name) VALUES (N'User')
+INSERT INTO Facility (Name, Type)
+VALUES (N'Phòng vệ sinh', N'Phòng'),
+       (N'Phòng tắm', N'Phòng'),
+       (N'Phòng vệ sinh dành cho người khuyết tất', N'Phòng'),
+       (N'Vòi xịt', N'Trang thiết bị'),
+       (N'Máy sấy tay', N'Trang thiết bị'),
+       (N'Lịch trực', N'Lịch trực')
 GO
 
-INSERT INTO Account (Username, Password, Status, RoleId) VALUES (N'0849666957', null, null, 4)
+INSERT INTO ToiletFacility (ToiletId, FacilityId, Quantity, Description)
+VALUES (1, 1, 8, N'4 phòng vệ sinh cho nữ, 4 phòng vệ sinh cho nam'),
+       (1, 3, 1, null),
+       (1, 4, null, null),
+       (1, 6, null, N'Định kỳ 2 tiếng/1 lần')
 GO
 
-INSERT INTO Account (Username, Password, Status, RoleId) VALUES (N'dvciq1', N'123', null, 2)
+INSERT INTO Service (Name, Price, Turn)
+VALUES (N'Đi vệ sinh (tiểu tiện)', 2000, 1),
+       (N'Đi vệ sinh (đại tiện)', 4000, 2),
+       (N'Đi tắm', 8000, 3)
 GO
 
-INSERT INTO Account (Username, Password, Status, RoleId) VALUES (N'nvsld', N'123', null, 3)
+INSERT INTO ToiletService (ToiletId, ServiceId)
+VALUES (1, 1),
+       (1, 2),
+       (1, 3)
 GO
 
-INSERT INTO UserInfo (AccountId, FullName, Phone, Gmail, Avatar, AccountBalance, AccountTurn, DefaultPayment)
-VALUES (1, N'Huỳnh Lê Thủy Tiên', '0849666957', null, null, 20000, 20, N'BALANCE')
+INSERT INTO ToiletImage (ToiletId, ImageSource)
+VALUES (1,
+        'https://dichvucongichquan1.com/wp-content/uploads/2021/04/z2469130019572_1b2874d47ba76fa3b7089d0ffa4b72c7.jpg')
 GO
 
-INSERT INTO Company (Name, Address, District, Province, Phone)
-VALUES (N'Công ty dịch vụ công ích quận 1', N'28-30 Nguyễn Thái Bình, P. Nguyễn Thái Bình', N'Quận 1', N'Thành phố Hồ Chí Minh', N'(028) 38.215.611')
-GO
-
-INSERT INTO Toilet (Name, Address, District, Province, Status, CompanyId)
-VALUES (N'Nhà vệ sinh lưu động', N'44 Trần Đình Xu, phường Cô Giang', N'Quận 1', N'Thành phố Hồ Chí Minh', null, 1)
-GO
-
-INSERT INTO Service (Name, Price, Turn) VALUES (N'Đi vệ sinh (tiểu tiện)', 2000, 1)
-GO
-
-INSERT INTO Service (Name, Price, Turn) VALUES (N'Đi vệ sinh (đại tiện)', 4000, 2)
-GO
-
-INSERT INTO Service (Name, Price, Turn) VALUES (N'Đi tắm', 8000, 3)
-GO
-
-INSERT INTO ToiletService (ServiceId, ToiletId) VALUES (1, 1)
-GO
-
-INSERT INTO ToiletService (ServiceId, ToiletId) VALUES (2, 1)
-GO
-
-INSERT INTO ToiletService (ServiceId, ToiletId) VALUES (3, 1)
-GO
-
-INSERT INTO CheckIn (AccountId, ToiletServiceId, DateTime, PaymentType, Balance, Turn)
-VALUES (1, 3, N'2023-03-09 15:22:52.000', N'BALANCE', 8000, null)
-GO
-
-INSERT INTO CheckIn (AccountId, ToiletServiceId, DateTime, PaymentType, Balance, Turn)
-VALUES (1, 1, N'2023-03-10 09:44:29.000', N'TURN', null, 1)
-GO
-
-INSERT INTO CheckIn (AccountId, ToiletServiceId, DateTime, PaymentType, Balance, Turn)
-VALUES (3, 2, N'2023-03-11 15:03:44.000', N'CASH', 4000, null)
+INSERT INTO Combo (TotalTurn, Price)
+VALUES (8, 10000),
+       (19, 20000),
+       (50, 50000),
+       (105, 100000)
 GO

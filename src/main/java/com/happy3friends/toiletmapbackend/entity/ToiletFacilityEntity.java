@@ -3,7 +3,6 @@ package com.happy3friends.toiletmapbackend.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Collection;
 
 @Entity
 @AllArgsConstructor
@@ -11,8 +10,8 @@ import java.util.Collection;
 @Getter
 @Setter
 @EqualsAndHashCode
-@Table(name = "ToiletService", schema = "dbo", catalog = "ToiletMap")
-public class ToiletServiceEntity {
+@Table(name = "ToiletFacility", schema = "dbo", catalog = "ToiletMap")
+public class ToiletFacilityEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "Id", nullable = false)
@@ -21,14 +20,18 @@ public class ToiletServiceEntity {
     @Column(name = "ToiletId", nullable = false)
     private int toiletId;
     @Basic
-    @Column(name = "ServiceId", nullable = false)
-    private int serviceId;
-    @OneToMany(mappedBy = "toiletServiceByToiletServiceId")
-    private Collection<CheckInEntity> checkInsById;
+    @Column(name = "FacilityId", nullable = false)
+    private int facilityId;
+    @Basic
+    @Column(name = "Quantity", nullable = true)
+    private Integer quantity;
+    @Basic
+    @Column(name = "Description", nullable = true, length = -1)
+    private String description;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ToiletId", referencedColumnName = "Id", insertable = false, updatable = false)
     private ToiletEntity toiletByToiletId;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ServiceId", referencedColumnName = "Id", insertable = false, updatable = false)
-    private ServiceEntity serviceByServiceId;
+    @JoinColumn(name = "FacilityId", referencedColumnName = "Id", insertable = false, updatable = false)
+    private FacilityEntity facilityByFacilityId;
 }

@@ -11,8 +11,8 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 @EqualsAndHashCode
-@Table(name = "CheckIn", schema = "dbo", catalog = "ToiletMap")
-public class CheckInEntity {
+@Table(name = "Order", schema = "dbo", catalog = "ToiletMap")
+public class OrderEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "Id", nullable = false)
@@ -21,24 +21,21 @@ public class CheckInEntity {
     @Column(name = "AccountId", nullable = false)
     private int accountId;
     @Basic
-    @Column(name = "ToiletServiceId", nullable = false)
-    private int toiletServiceId;
+    @Column(name = "ComboId", nullable = false)
+    private int comboId;
     @Basic
-    @Column(name = "DateTime", nullable = false)
-    private Timestamp dateTime;
+    @Column(name = "Total", nullable = false)
+    private int total;
     @Basic
     @Column(name = "PaymentType", nullable = false, length = 20)
     private String paymentType;
     @Basic
-    @Column(name = "Balance", nullable = true)
-    private Integer balance;
-    @Basic
-    @Column(name = "Turn", nullable = true)
-    private Integer turn;
+    @Column(name = "DateTime", nullable = false)
+    private Timestamp dateTime;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "AccountId", referencedColumnName = "Id", insertable = false, updatable = false)
     private AccountEntity accountByAccountId;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ToiletServiceId", referencedColumnName = "Id", insertable = false, updatable = false)
-    private ToiletServiceEntity toiletServiceByToiletServiceId;
+    @JoinColumn(name = "ComboId", referencedColumnName = "Id", insertable = false, updatable = false)
+    private ComboEntity comboByComboId;
 }

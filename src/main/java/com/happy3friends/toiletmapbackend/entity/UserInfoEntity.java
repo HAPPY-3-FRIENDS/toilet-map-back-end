@@ -1,20 +1,19 @@
 package com.happy3friends.toiletmapbackend.entity;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
-@EqualsAndHashCode
-@Setter
-@Getter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode
 @Table(name = "UserInfo", schema = "dbo", catalog = "ToiletMap")
 public class UserInfoEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Basic
     @Column(name = "AccountId", nullable = false)
     private int accountId;
     @Basic
@@ -27,8 +26,8 @@ public class UserInfoEntity {
     @Column(name = "Avatar", nullable = true, length = 100)
     private String avatar;
     @Basic
-    @Column(name = "AccountBalance", nullable = false, precision = 0)
-    private double accountBalance;
+    @Column(name = "AccountBalance", nullable = false)
+    private int accountBalance;
     @Basic
     @Column(name = "AccountTurn", nullable = false)
     private int accountTurn;
@@ -36,7 +35,6 @@ public class UserInfoEntity {
     @Column(name = "DefaultPayment", nullable = false, length = 20)
     private String defaultPayment;
     @OneToOne
-    @JoinColumn(name = "AccountId", referencedColumnName = "Id")
+    @JoinColumn(name = "AccountId", referencedColumnName = "Id", nullable = false)
     private AccountEntity accountByAccountId;
-
 }

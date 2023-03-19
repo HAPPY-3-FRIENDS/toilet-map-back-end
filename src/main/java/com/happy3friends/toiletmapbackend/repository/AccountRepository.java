@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface AccountRepository extends JpaRepository<AccountEntity, Integer> {
-    AccountEntity findById(int accountId);
 
     AccountEntity findByUsername(String username);
 
@@ -33,12 +32,13 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Integer>
             "WHERE a.Username = :username", nativeQuery = true)
     CustomAccountInfoDTO getCustomAccountInfoByUsername(@Param("username") String username);
 
-    @Transactional
     @Modifying
-    @Query(value = "INSERT INTO Account(Username, Password, Status, RoleId) " +
-            "VALUES(:username, :password, :status, (SELECT Id FROM Role WHERE Name = :roleName))", nativeQuery = true)
+    @Transactional
+    @Query(value = "INSERT INTO Account(Username, Password, Status, RoleId, CompanyId) " +
+            "VALUES(:username, :password, :status, (SELECT Id FROM Role WHERE Name = :roleName), :companyId)", nativeQuery = true)
     void createAccount(@Param("username") String username,
                        @Param("password") String password,
                        @Param("status") String status,
-                       @Param("roleName") String roleName);
+                       @Param("roleName") String roleName,
+                       @Param("companyId") Integer companyId);
 }

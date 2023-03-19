@@ -19,6 +19,6 @@ public class CheckInResponse {
     private Date dateTime;
     private String serviceName;
     private String paymentType;
-    private Double balance;
+    private Integer balance;
     private Integer turn;
 }

@@ -3,7 +3,6 @@ package com.happy3friends.toiletmapbackend.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Collection;
 
 @Entity
 @AllArgsConstructor
@@ -11,15 +10,10 @@ import java.util.Collection;
 @Getter
 @Setter
 @EqualsAndHashCode
-@Table(name = "Role", schema = "dbo", catalog = "ToiletMap")
-public class RoleEntity {
+@Table(name = "Transaction", schema = "dbo", catalog = "ToiletMap")
+public class TransactionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "Id", nullable = false)
     private int id;
-    @Basic
-    @Column(name = "Name", nullable = false, length = 10)
-    private String name;
-    @OneToMany(mappedBy = "roleByRoleId")
-    private Collection<AccountEntity> accountsById;
 }

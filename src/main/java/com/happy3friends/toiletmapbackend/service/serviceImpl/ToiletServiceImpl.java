@@ -4,12 +4,15 @@ import com.happy3friends.toiletmapbackend.constant.PaymentTypeConstant;
 import com.happy3friends.toiletmapbackend.dto.CustomCheckInDTO;
 import com.happy3friends.toiletmapbackend.entity.AccountEntity;
 import com.happy3friends.toiletmapbackend.entity.CheckInEntity;
+import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
 import com.happy3friends.toiletmapbackend.entity.ToiletServiceEntity;
-import com.happy3friends.toiletmapbackend.enums.PaymentTypeEnum;
+import com.happy3friends.toiletmapbackend.enums.ServiceEnum;
 import com.happy3friends.toiletmapbackend.exception.BadRequestException;
+import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.CheckInMapper;
 import com.happy3friends.toiletmapbackend.repository.AccountRepository;
 import com.happy3friends.toiletmapbackend.repository.CheckInRepository;
+import com.happy3friends.toiletmapbackend.repository.ToiletRepository;
 import com.happy3friends.toiletmapbackend.repository.ToiletServiceRepository;
 import com.happy3friends.toiletmapbackend.request.CheckInRequest;
 import com.happy3friends.toiletmapbackend.response.CheckInResponse;
@@ -40,6 +43,9 @@ public class ToiletServiceImpl implements ToiletService {
     private AccountRepository accountRepository;
 
     @Autowired
+    private ToiletRepository toiletRepository;
+
+    @Autowired
     private CheckInMapper checkInMapper;
 
     @Override
@@ -50,17 +56,18 @@ public class ToiletServiceImpl implements ToiletService {
         List<CustomCheckInDTO> customCheckInDTOS = checkInRepository.toiletCheckInHistoriesByToiletId(toiletId);
 
         return customCheckInDTOS.stream()
-                .map(customCheckInDTO -> {
-                    CheckInResponse checkInResponse = checkInMapper.convertCustomCheckInDTOToCheckInResponse(customCheckInDTO);
-                    checkInResponse.setPaymentType(String.valueOf(PaymentTypeEnum.getByTypeString(checkInResponse.getPaymentType())));
-
-                    return checkInResponse;
-                })
+                .map(customCheckInDTO -> checkInMapper.convertCustomCheckInDTOToCheckInResponse(customCheckInDTO))
                 .collect(Collectors.toList());
     }
 
     @Override
     public CheckInResponse userCheckIn(int toiletId, CheckInRequest checkInRequest) {
+        if (ServiceEnum.getByValue(checkInRequest.getServiceName()) == null)
+            throw new BadRequestException("Invalid service name: '" + checkInRequest.getServiceName() + "'!");
+
+        Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
+        if (!toiletEntity.isPresent())
+            throw new NotFoundException("Toilet", "Id", toiletId);
 
         //Check if service chosen is contained in toilet (ToiletService)
         List<ToiletServiceEntity> toiletServiceEntities
@@ -71,15 +78,18 @@ public class ToiletServiceImpl implements ToiletService {
                 .findFirst();
 
         if (toiletServiceEntity.isPresent()) {
-            AccountEntity accountEntity = accountRepository.findById(checkInRequest.getAccountId());
+            Optional<AccountEntity> accountEntity = accountRepository.findById(checkInRequest.getAccountId());
+
+            if (!accountEntity.isPresent())
+                throw new NotFoundException("Account", "Id", checkInRequest.getAccountId());
 
             // Save CheckInEntity
             CheckInEntity checkInEntity = new CheckInEntity();
             checkInEntity.setAccountId(checkInRequest.getAccountId());
             checkInEntity.setToiletServiceId(toiletServiceEntity.get().getId());
             checkInEntity.setDateTime(DateTimeUtil.convertStringToTimestamp(checkInRequest.getDatetime()));
-            checkInEntity.setPaymentType(accountEntity.getUserInfoById().getDefaultPayment());
-            switch (PaymentTypeEnum.getByTypeString(accountEntity.getUserInfoById().getDefaultPayment())) {
+            checkInEntity.setPaymentType(accountEntity.get().getUserInfoById().getDefaultPayment());
+            switch (accountEntity.get().getUserInfoById().getDefaultPayment()) {
                 case PaymentTypeConstant.BALANCE:
                     checkInEntity.setBalance(toiletServiceEntity.get().getServiceByServiceId().getPrice());
                     break;
@@ -90,9 +100,8 @@ public class ToiletServiceImpl implements ToiletService {
             checkInRepository.save(checkInEntity);
 
             // Convert checkInEntity to checkInResponse
-            checkInEntity.setAccountByAccountId(accountEntity);
+            checkInEntity.setAccountByAccountId(accountEntity.get());
             checkInEntity.setToiletServiceByToiletServiceId(toiletServiceEntity.get());
-            checkInEntity.setPaymentType(String.valueOf(PaymentTypeEnum.getByTypeString(checkInEntity.getPaymentType())));
             CheckInResponse checkInResponse
                     = checkInMapper.convertCheckInEntityToCheckInResponse(checkInEntity);
             return checkInResponse;

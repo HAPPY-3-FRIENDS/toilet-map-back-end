@@ -11,15 +11,18 @@ import java.util.Collection;
 @Getter
 @Setter
 @EqualsAndHashCode
-@Table(name = "Role", schema = "dbo", catalog = "ToiletMap")
-public class RoleEntity {
+@Table(name = "Facility", schema = "dbo", catalog = "ToiletMap")
+public class FacilityEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "Id", nullable = false)
     private int id;
     @Basic
-    @Column(name = "Name", nullable = false, length = 10)
+    @Column(name = "Name", nullable = false, length = 200)
     private String name;
-    @OneToMany(mappedBy = "roleByRoleId")
-    private Collection<AccountEntity> accountsById;
+    @Basic
+    @Column(name = "Type", nullable = false, length = 20)
+    private String type;
+    @OneToMany(mappedBy = "facilityByFacilityId")
+    private Collection<ToiletFacilityEntity> toiletFacilitiesById;
 }
