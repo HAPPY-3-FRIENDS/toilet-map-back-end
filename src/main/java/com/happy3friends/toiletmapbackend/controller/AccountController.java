@@ -41,13 +41,13 @@ public class AccountController {
                     @ExampleObject(name = "Manager Account Request", value = "{\n" +
                             "  \"username\": \"tienhuynh-tn\",\n" +
                             "  \"password\": \"123\",\n" +
-                            "  \"roleName\": \"Manager\"" +
+                            "  \"roleName\": \"Manager\"," +
                             "  \"companyId\": 1" +
                             "}"),
                     @ExampleObject(name = "Staff Account Request", value = "{\n" +
                             "  \"username\": \"tienhuynh-tn\",\n" +
                             "  \"password\": \"123\",\n" +
-                            "  \"roleName\": \"Staff\"" +
+                            "  \"roleName\": \"Staff\"," +
                             "  \"companyId\": 1" +
                             "}")}))
     @ApiResponses(value = {
@@ -64,8 +64,6 @@ public class AccountController {
     @RolesAllowed({RoleConstant.ADMIN, RoleConstant.MANAGER})
     @PostMapping("/employee")
     public ResponseEntity<BaseResponse<AccountResponse>> registerEmployee(@RequestBody AccountRequest accountRequest) {
-
-        // TODO: Admin tạo tk cho Manager, Manager tạo tk cho Staff
 
         AccountResponse response = accountService.registerEmployee(accountRequest);
 

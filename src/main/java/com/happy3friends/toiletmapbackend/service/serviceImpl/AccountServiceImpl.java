@@ -12,9 +12,10 @@ import com.happy3friends.toiletmapbackend.repository.CompanyRepository;
 import com.happy3friends.toiletmapbackend.repository.UserInfoRepository;
 import com.happy3friends.toiletmapbackend.request.AccountRequest;
 import com.happy3friends.toiletmapbackend.response.AccountResponse;
-import com.happy3friends.toiletmapbackend.sercurity.TokenProvider;
 import com.happy3friends.toiletmapbackend.service.AccountService;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
+import com.happy3friends.toiletmapbackend.utils.JwtUtil;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,11 +49,20 @@ public class AccountServiceImpl implements AccountService {
         if (Integer.valueOf(accountRequest.getCompanyId()) == null)
             throw new BadRequestException("CompanyId cannot empty!");
 
-        if (RoleEnum.getByValue(accountRequest.getRoleName()) == null)
+        if (RoleEnum.getByValue(accountRequest.getRoleName()) == null || RoleEnum.USER.getRoleName().equals(accountRequest.getRoleName()))
             throw new BadRequestException("Invalid role name: '" + accountRequest.getRoleName() + "'!");
 
         if (RoleEnum.ADMIN.getRoleName().equals(accountRequest.getRoleName()))
             throw new BadRequestException("Cannot register an Admin Account!");
+
+        // Admin tạo tk cho Manager, Manager tạo tk cho Staff
+        String jwt = JwtUtil.getJwtFromRequest();
+        Claims claims = JwtUtil.getAllClaimsFromToken(jwt);
+        String authRole = claims.get("role", String.class);
+        if (RoleEnum.ADMIN.getRoleName().equals(authRole) && !RoleEnum.MANAGER.getRoleName().equals(accountRequest.getRoleName()))
+            throw new BadRequestException("Admin cannot create an account for any role except for Manager role!");
+        if (RoleEnum.MANAGER.getRoleName().equals(authRole) && !RoleEnum.STAFF.getRoleName().equals(accountRequest.getRoleName()))
+            throw new BadRequestException("Manager cannot create an account for any role except for Staff role!");
 
         if (accountRepository.findByUsername(accountRequest.getUsername()) != null)
             throw new BadRequestException("Username '" + accountRequest.getUsername() + "' is not unique! It's already used by another employee!");
@@ -97,12 +107,12 @@ public class AccountServiceImpl implements AccountService {
         );
 
         Date now = DateTimeUtil.getDateNow();
-        Date expiryDate = new Date(now.getTime() + TokenProvider.JWT_EXPIRATION);
+        Date expiryDate = new Date(now.getTime() + JwtUtil.JWT_EXPIRATION);
 
         return new TokenDTO(Jwts.builder()
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS512, TokenProvider.JWT_SECRET)
+                .signWith(SignatureAlgorithm.HS512, JwtUtil.JWT_SECRET)
                 .claim("phone", accountRequest.getUsername())
                 .claim("fullName", accountRequest.getFullName())
                 .claim("defaultPayment", PaymentTypeEnum.BALANCE.getPaymentValue())

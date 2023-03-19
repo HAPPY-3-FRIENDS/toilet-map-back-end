@@ -1,5 +1,6 @@
 package com.happy3friends.toiletmapbackend.sercurity;
 
+import com.happy3friends.toiletmapbackend.utils.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,11 +40,11 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             // Lấy jwt từ request
-            String jwt = tokenProvider.getJwtFromRequest(request);
+            String jwt = JwtUtil.getJwtFromRequest(request);
 
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
                 // Get account id from jwt
-                int accountId = tokenProvider.getAccountIdFromToken(jwt);
+                int accountId = JwtUtil.getAccountIdFromToken(jwt);
 
                 // Get account information from account id
                 UserDetails userDetails = customUserDetailsService.loadUserById(accountId);

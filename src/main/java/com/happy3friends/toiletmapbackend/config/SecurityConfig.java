@@ -119,7 +119,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/v3/api-docs/**",
                         "/webjars/**").permitAll() // Cho phép tất cả mọi người truy cập vào địa chỉ này
                 .antMatchers("/api/auth/**",
-                        "/api/accounts/**",
+                        "/api/accounts/user",
                         "/api/").permitAll()
                 .anyRequest()
                     .authenticated(); // Tất cả các request khác đều cần phải xác thực mới được truy cập
