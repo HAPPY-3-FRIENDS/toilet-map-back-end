@@ -37,7 +37,7 @@ public class TokenProvider {
                     .signWith(SignatureAlgorithm.HS512, JwtUtil.JWT_SECRET)
                     .claim("phone", customUserDetails.getUsername())
                     .claim("fullName", customUserDetails.getFullName())
-                    .claim("defaultPayment", PaymentTypeEnum.getByTypeString(customUserDetails.getDefaultPayment()))
+                    .claim("defaultPayment", customUserDetails.getDefaultPayment())
                     .claim("role", customUserDetails.getRole())
                     .claim("authorities", customUserDetails.getAuthorities())
                     .compact();
