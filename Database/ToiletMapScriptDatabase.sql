@@ -56,8 +56,12 @@ CREATE TABLE [Toilet]
     Ward      NVARCHAR(50)        NOT NULL,
     District  NVARCHAR(50)        NOT NULL,
     Province  NVARCHAR(50)        NOT NULL,
+    Longitude FLOAT               NULL,
+    Latitude  FLOAT               NULL,
     NearBy    NVARCHAR(200)       NULL,
     isFree    BIT                 NOT NULL,
+    OpenTime  TIME                NULL,
+    CloseTime TIME                NULL,
     CompanyId INT                 NOT NULL,
     Status    NVARCHAR(20)        NOT NULL
 )
@@ -143,14 +147,26 @@ CREATE TABLE [Transaction]
 )
 GO
 
-CREATE TABLE [Rating]
+CREATE TABLE [Payment]
 (
     Id          INT IDENTITY (1, 1) NOT NULL,
-    Comment     NTEXT               NOT NULL,
     AccountId   INT                 NOT NULL,
-    ToiletId    INT                 NOT NULL,
+    Total       INT                 NOT NULL,
+    Method      NVARCHAR(100)       NOT NULL,
     CreatedDate DATETIME            NOT NULL,
     Status      NVARCHAR(20)        NULL
+)
+GO
+
+CREATE TABLE [Rating]
+(
+    Id        INT IDENTITY (1, 1) NOT NULL,
+    Star      INT                 NOT NULL,
+    Comment   NTEXT               NOT NULL,
+    AccountId INT                 NOT NULL,
+    ToiletId  INT                 NOT NULL,
+    DateTime  DATETIME            NOT NULL,
+    Status    NVARCHAR(20)        NULL
 )
 GO
 
@@ -203,6 +219,8 @@ ALTER TABLE [Combo]
     ADD CONSTRAINT PK_Combo PRIMARY KEY (Id);
 ALTER TABLE [Order]
     ADD CONSTRAINT PK_Order PRIMARY KEY (Id);
+ALTER TABLE [Payment]
+    ADD CONSTRAINT PK_Payment PRIMARY KEY (Id);
 ALTER TABLE [Transaction]
     ADD CONSTRAINT PK_Transaction PRIMARY KEY (Id);
 ALTER TABLE [Rating]
@@ -271,8 +289,8 @@ ALTER TABLE [Order]
     ADD CONSTRAINT FK_Order_Combo
         FOREIGN KEY (ComboId) REFERENCES Combo (Id);
 
-ALTER TABLE [Rating]
-    ADD CONSTRAINT FK_Rating_Account
+ALTER TABLE [Payment]
+    ADD CONSTRAINT FK_Payment_Account
         FOREIGN KEY (AccountId) REFERENCES Account (Id);
 
 ALTER TABLE [Rating]
@@ -296,16 +314,17 @@ VALUES ('Admin'),
        ('User')
 GO
 
-INSERT INTO Toilet (Name, Address, Ward, District, Province, NearBy, isFree, CompanyId, Status)
+INSERT INTO Toilet (Name, Address, Ward, District, Province, NearBy, isFree, OpenTime, CloseTime,
+                    CompanyId, Status)
 VALUES (N'Nhà vệ sinh lưu động số 1', N'44 Trần Đình Xu', N'Phường Cô Giang', N'Quận 1', N'Thành phố Hồ Chí Minh',
         N'Gần CircleK, gần Phúc Long',
-        1, 1, N'Đang hoạt động')
+        1, '09:00:00', '23:00:00', 1, N'Đang hoạt động')
 GO
 
 INSERT INTO Facility (Name, Type)
 VALUES (N'Phòng vệ sinh', N'Phòng'),
        (N'Phòng tắm', N'Phòng'),
-       (N'Phòng vệ sinh dành cho người khuyết tất', N'Phòng'),
+       (N'Phòng vệ sinh dành cho người khuyết tật', N'Phòng'),
        (N'Vòi xịt', N'Trang thiết bị'),
        (N'Máy sấy tay', N'Trang thiết bị'),
        (N'Lịch trực', N'Lịch trực')

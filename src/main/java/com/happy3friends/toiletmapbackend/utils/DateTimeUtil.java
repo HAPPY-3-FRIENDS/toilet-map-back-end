@@ -58,7 +58,7 @@ public class DateTimeUtil {
     }
 
     public static Timestamp convertStringToTimestamp(String strDate) {
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssssss");
+        DateFormat df = new SimpleDateFormat(DateTimeConstant.yyyy_MM_dd__HH_mm_ssssss);
         try {
             return convertDateToTimestamp(df.parse(strDate));
         } catch (ParseException ex) {

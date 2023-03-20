@@ -7,4 +7,5 @@ public interface CustomAccountInfoDTO {
     String getFullName();
     String getRole();
     String getDefaultPayment();
+    int getAccountBalance();
 }

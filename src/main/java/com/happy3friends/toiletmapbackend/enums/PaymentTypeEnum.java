@@ -12,7 +12,8 @@ import java.util.Map;
 public enum PaymentTypeEnum {
     BALANCE(PaymentTypeConstant.BALANCE),
     TURN(PaymentTypeConstant.TURN),
-    CASH(PaymentTypeConstant.CASH);
+    CASH(PaymentTypeConstant.CASH),
+    VN_PAY(PaymentTypeConstant.VN_PAY);
 
     private final String paymentValue;
 

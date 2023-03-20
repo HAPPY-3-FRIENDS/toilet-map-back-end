@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.security.RolesAllowed;
+import javax.validation.Valid;
 
 @Tag(name = "Account", description = "Account API")
 @RestController
@@ -62,8 +63,8 @@ public class AccountController {
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.ADMIN, RoleConstant.MANAGER})
-    @PostMapping("/employee")
-    public ResponseEntity<BaseResponse<AccountResponse>> registerEmployee(@RequestBody AccountRequest accountRequest) {
+    @PostMapping(value = "/employee")
+    public ResponseEntity<BaseResponse<AccountResponse>> registerEmployee(@RequestBody @Valid AccountRequest accountRequest) {
 
         AccountResponse response = accountService.registerEmployee(accountRequest);
 
@@ -84,18 +85,15 @@ public class AccountController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully!", content = @Content(examples = {
                     @ExampleObject(value = "{\n" +
-                            "    \"username\": \"0849666957\",\n" +
-                            "    \"fullName\": \"Huỳnh Lê Thủy Tiên\",\n" +
-                            "    \"status\": \"Đang hoạt động\",\n" +
-                            "    \"defaultPayment\": \"Số dư\",\n" +
-                            "    \"roleName\": \"User\"" +
+                            "    \"accessToken\": \"token\",\n" +
+                            "    \"tokenType\": \"Bearer\"" +
                             "}")})),
             @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirements
-    @PostMapping("/user")
-    public ResponseEntity<BaseResponse<TokenDTO>> registerUser(@RequestBody AccountRequest accountRequest) {
+    @PostMapping(value = "/user")
+    public ResponseEntity<BaseResponse<TokenDTO>> registerUser(@RequestBody @Valid AccountRequest accountRequest) {
 
         TokenDTO response = accountService.registerUser(accountRequest);
 

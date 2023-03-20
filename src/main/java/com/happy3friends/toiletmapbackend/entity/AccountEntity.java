@@ -42,8 +42,8 @@ public class AccountEntity {
     private Collection<CheckInEntity> checkInsById;
     @OneToMany(mappedBy = "accountByAccountId")
     private Collection<OrderEntity> ordersById;
-    @OneToMany(mappedBy = "accountByAccountId")
-    private Collection<RatingEntity> ratingsById;
     @OneToOne(mappedBy = "accountByAccountId")
     private UserInfoEntity userInfoById;
+    @OneToMany(mappedBy = "accountByAccountId")
+    private Collection<PaymentEntity> paymentsById;
 }

@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Objects;
 
 @Entity
 @AllArgsConstructor
@@ -19,6 +20,9 @@ public class RatingEntity {
     @Column(name = "Id", nullable = false)
     private int id;
     @Basic
+    @Column(name = "Star", nullable = false)
+    private int star;
+    @Basic
     @Column(name = "Comment", nullable = false, length = -1)
     private String comment;
     @Basic
@@ -28,14 +32,11 @@ public class RatingEntity {
     @Column(name = "ToiletId", nullable = false)
     private int toiletId;
     @Basic
-    @Column(name = "CreatedDate", nullable = false)
-    private Timestamp createdDate;
+    @Column(name = "DateTime", nullable = false)
+    private Timestamp DateTime;
     @Basic
     @Column(name = "Status", nullable = true, length = 20)
     private String status;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "AccountId", referencedColumnName = "Id", insertable = false, updatable = false)
-    private AccountEntity accountByAccountId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ToiletId", referencedColumnName = "Id", insertable = false, updatable = false)
     private ToiletEntity toiletByToiletId;

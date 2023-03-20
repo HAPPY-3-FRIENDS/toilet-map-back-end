@@ -3,7 +3,9 @@ package com.happy3friends.toiletmapbackend.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.sql.Time;
 import java.util.Collection;
+import java.util.Objects;
 
 @Entity
 @AllArgsConstructor
@@ -33,11 +35,23 @@ public class ToiletEntity {
     @Column(name = "Province", nullable = false, length = 50)
     private String province;
     @Basic
+    @Column(name = "Longitude", nullable = true, precision = 0)
+    private Double longitude;
+    @Basic
+    @Column(name = "Latitude", nullable = true, precision = 0)
+    private Double latitude;
+    @Basic
     @Column(name = "NearBy", nullable = true, length = 200)
     private String nearBy;
     @Basic
     @Column(name = "isFree", nullable = false)
     private boolean isFree;
+    @Basic
+    @Column(name = "OpenTime", nullable = true)
+    private Time openTime;
+    @Basic
+    @Column(name = "CloseTime", nullable = true)
+    private Time closeTime;
     @Basic
     @Column(name = "CompanyId", nullable = false)
     private int companyId;
