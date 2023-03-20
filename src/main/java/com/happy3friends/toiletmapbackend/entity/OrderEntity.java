@@ -24,11 +24,14 @@ public class OrderEntity {
     @Column(name = "ComboId", nullable = false)
     private int comboId;
     @Basic
-    @Column(name = "Total", nullable = false)
-    private int total;
+    @Column(name = "TotalTurn", nullable = false)
+    private int totalTurn;
     @Basic
-    @Column(name = "PaymentType", nullable = false, length = 20)
-    private String paymentType;
+    @Column(name = "TotalPrice", nullable = false)
+    private int totalPrice;
+    @Basic
+    @Column(name = "PaymentMethod", nullable = false, length = 20)
+    private String paymentMethod;
     @Basic
     @Column(name = "DateTime", nullable = false)
     private Timestamp dateTime;

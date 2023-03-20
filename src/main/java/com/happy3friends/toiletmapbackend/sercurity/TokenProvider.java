@@ -1,6 +1,5 @@
 package com.happy3friends.toiletmapbackend.sercurity;
 
-import com.happy3friends.toiletmapbackend.enums.PaymentTypeEnum;
 import com.happy3friends.toiletmapbackend.enums.RoleEnum;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
 import com.happy3friends.toiletmapbackend.utils.JwtUtil;

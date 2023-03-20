@@ -17,6 +17,6 @@ public class PaymentResponse {
     private int accountId;
     private int total;
     private String method;
-    @JsonFormat(pattern = DateTimeConstant.dd_MM_yyyy__HH_mm_ss, locale = DateTimeConstant.TIME_ZONE)
+    @JsonFormat(pattern = DateTimeConstant.dd_MM_yyyy__HH_mm_ss)
     private Date createdDate;
 }

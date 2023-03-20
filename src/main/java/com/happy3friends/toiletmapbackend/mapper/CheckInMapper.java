@@ -35,7 +35,7 @@ public class CheckInMapper {
             checkInResponse.setFullName(checkInEntity.getAccountByAccountId().getUserInfoById().getFullName());
             checkInResponse.setDateTime(checkInEntity.getDateTime());
             checkInResponse.setServiceName(checkInEntity.getToiletServiceByToiletServiceId().getServiceByServiceId().getName());
-            checkInResponse.setPaymentType(checkInEntity.getPaymentType());
+            checkInResponse.setPaymentMethod(checkInEntity.getPaymentMethod());
             checkInResponse.setBalance(checkInEntity.getBalance());
             checkInResponse.setTurn(checkInEntity.getTurn());
         } catch (Exception ex) {

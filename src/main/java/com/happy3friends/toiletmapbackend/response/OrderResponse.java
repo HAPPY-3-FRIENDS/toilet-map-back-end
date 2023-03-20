@@ -9,16 +9,16 @@ import lombok.Setter;
 
 import java.util.Date;
 
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CheckInResponse {
-    private String fullName;
+@Getter
+@Setter
+public class OrderResponse {
+    private int accountId;
+    private int comboId;
+    private int totalTurn;
+    private int totalPrice;
+    private String paymentMethod;
     @JsonFormat(pattern = DateTimeConstant.dd_MM_yyyy__HH_mm_ss)
     private Date dateTime;
-    private String serviceName;
-    private String paymentMethod;
-    private Integer balance;
-    private Integer turn;
 }

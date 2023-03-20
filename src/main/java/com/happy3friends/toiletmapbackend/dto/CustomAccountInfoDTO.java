@@ -8,4 +8,5 @@ public interface CustomAccountInfoDTO {
     String getRole();
     String getDefaultPayment();
     int getAccountBalance();
+    int getAccountTurn();
 }

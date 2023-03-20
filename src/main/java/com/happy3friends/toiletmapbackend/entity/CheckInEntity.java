@@ -27,8 +27,8 @@ public class CheckInEntity {
     @Column(name = "DateTime", nullable = false)
     private Timestamp dateTime;
     @Basic
-    @Column(name = "PaymentType", nullable = false, length = 20)
-    private String paymentType;
+    @Column(name = "PaymentMethod", nullable = false, length = 20)
+    private String paymentMethod;
     @Basic
     @Column(name = "Balance", nullable = true)
     private Integer balance;

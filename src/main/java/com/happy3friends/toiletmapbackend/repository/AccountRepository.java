@@ -14,7 +14,7 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Integer>
 
     AccountEntity findByUsername(String username);
 
-    @Query(value = "SELECT a.Id, a.Username, a.Password, ui.FullName, r.Name as Role, ui.DefaultPayment, ui.AccountBalance " +
+    @Query(value = "SELECT a.Id, a.Username, a.Password, ui.FullName, r.Name as Role, ui.DefaultPayment, ui.AccountBalance, ui.AccountTurn " +
             "FROM Account a " +
             "         LEFT JOIN UserInfo ui " +
             "                   ON a.Id = ui.AccountId " +
@@ -41,11 +41,4 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Integer>
                        @Param("status") String status,
                        @Param("roleName") String roleName,
                        @Param("companyId") Integer companyId);
-
-    @Modifying
-    @Transactional
-    @Query(value = "UPDATE UserInfo " +
-            "SET AccountBalance = :accountBalance " +
-            "WHERE AccountId = :accountId", nativeQuery = true)
-    void updateAccountBalance(@Param("accountId") int accountId, @Param("accountBalance") int accountBalance);
 }

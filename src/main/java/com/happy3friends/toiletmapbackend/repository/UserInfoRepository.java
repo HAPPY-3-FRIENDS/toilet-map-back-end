@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface UserInfoRepository extends JpaRepository<UserInfoEntity, Integer> {
-    UserInfoEntity findByAccountId(int accountId);
 
     @Modifying
     @Transactional
@@ -29,4 +28,27 @@ public interface UserInfoRepository extends JpaRepository<UserInfoEntity, Intege
                         @Param("accountBalance") Integer accountBalance,
                         @Param("accountTurn") Integer accountTurn,
                         @Param("defaultPayment") String defaultPayment);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE UserInfo " +
+            "SET AccountBalance = :accountBalance " +
+            "WHERE AccountId = :accountId", nativeQuery = true)
+    void updateAccountBalance(@Param("accountId") int accountId, @Param("accountBalance") int accountBalance);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE UserInfo " +
+            "SET AccountTurn = :accountTurn " +
+            "WHERE AccountId = :accountId", nativeQuery = true)
+    void updateAccountTurn(@Param("accountId") int accountId, @Param("accountTurn") int accountTurn);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE UserInfo " +
+            "SET AccountBalance = :accountBalance, AccountTurn = :accountTurn " +
+            "WHERE AccountId = :accountId", nativeQuery = true)
+    void updateAccountBalanceAndAccountTurn(@Param("accountId") int accountId,
+                                            @Param("accountBalance") int accountBalance,
+                                            @Param("accountTurn") int accountTurn);
 }

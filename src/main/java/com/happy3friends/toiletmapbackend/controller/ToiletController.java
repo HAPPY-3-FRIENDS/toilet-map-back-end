@@ -41,7 +41,7 @@ public class ToiletController {
                                             "    \"fullName\": \"Huỳnh Lê Thủy Tiên\",\n" +
                                             "    \"dateTime\": \"29/10/2001 - 10:30:00\",\n" +
                                             "    \"serviceName\": \"Đi vệ sinh (Đại tiện)\",\n" +
-                                            "    \"paymentType\": \"Số dư\",\n" +
+                                            "    \"paymentMethod\": \"Số dư\",\n" +
                                             "    \"balance\": 4000,\n" +
                                             "    \"turn\": null\n" +
                                             "}")})),
@@ -80,7 +80,7 @@ public class ToiletController {
                                             "    \"fullName\": \"Huỳnh Lê Thủy Tiên\",\n" +
                                             "    \"dateTime\": \"29/10/2001 - 10:30:00\",\n" +
                                             "    \"serviceName\": \"Đi vệ sinh (Đại tiện)\",\n" +
-                                            "    \"paymentType\": \"Số dư\",\n" +
+                                            "    \"paymentMethod\": \"Số dư\",\n" +
                                             "    \"balance\": 4000,\n" +
                                             "    \"turn\": null\n" +
                                             "}")})),
@@ -95,7 +95,7 @@ public class ToiletController {
     @PostMapping(value = "/{toilet-id}/user/check-in")
     public ResponseEntity<BaseResponse<CheckInResponse>> userCheckIn(
             @PathVariable("toilet-id") int toiletId,
-            @RequestBody CheckInRequest checkInRequest) {
+            @RequestBody @Valid CheckInRequest checkInRequest) {
 
         CheckInResponse response = toiletService.userCheckIn(toiletId, checkInRequest);
 

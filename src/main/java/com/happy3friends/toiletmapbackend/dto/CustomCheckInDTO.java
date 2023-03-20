@@ -6,7 +6,7 @@ public interface CustomCheckInDTO {
     String getFullName();
     Date getDateTime();
     String getServiceName();
-    String getPaymentType();
+    String getPaymentMethod();
     Double getBalance();
     Integer getTurn();
 }

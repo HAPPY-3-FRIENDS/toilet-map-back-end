@@ -116,7 +116,7 @@ CREATE TABLE [CheckIn]
     AccountId       INT                 NOT NULL,
     ToiletServiceId INT                 NOT NULL,
     DateTime        DATETIME            NOT NULL,
-    PaymentType     NVARCHAR(20)        NOT NULL,
+    PaymentMethod   NVARCHAR(20)        NOT NULL,
     Balance         INT                 NULL,
     Turn            INT                 NULL
 )
@@ -132,12 +132,13 @@ GO
 
 CREATE TABLE [Order]
 (
-    Id          INT IDENTITY (1, 1) NOT NULL,
-    AccountId   INT                 NOT NULL,
-    ComboId     INT                 NOT NULL,
-    Total       INT                 NOT NULL,
-    PaymentType NVARCHAR(20)        NOT NULL,
-    DateTime    DATETIME            NOT NULL
+    Id            INT IDENTITY (1, 1) NOT NULL,
+    AccountId     INT                 NOT NULL,
+    ComboId       INT                 NOT NULL,
+    TotalTurn     INT                 NOT NULL,
+    TotalPrice    INT                 NOT NULL,
+    PaymentMethod NVARCHAR(20)        NOT NULL,
+    DateTime      DATETIME            NOT NULL
 )
 GO
 

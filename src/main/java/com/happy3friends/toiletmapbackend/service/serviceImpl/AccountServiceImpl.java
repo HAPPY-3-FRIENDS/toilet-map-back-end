@@ -1,6 +1,7 @@
 package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
 import com.happy3friends.toiletmapbackend.dto.TokenDTO;
+import com.happy3friends.toiletmapbackend.entity.AccountEntity;
 import com.happy3friends.toiletmapbackend.entity.CompanyEntity;
 import com.happy3friends.toiletmapbackend.enums.PaymentTypeEnum;
 import com.happy3friends.toiletmapbackend.enums.RoleEnum;
@@ -106,12 +107,15 @@ public class AccountServiceImpl implements AccountService {
                 PaymentTypeEnum.BALANCE.getPaymentValue()
         );
 
+        AccountEntity accountEntity = accountRepository.findByUsername(accountRequest.getUsername());
+
         Date now = DateTimeUtil.getDateNow();
         Date expiryDate = new Date(now.getTime() + JwtUtil.JWT_EXPIRATION);
 
         return new TokenDTO(Jwts.builder()
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
+                .setSubject(String.valueOf(accountEntity.getId()))
                 .signWith(SignatureAlgorithm.HS512, JwtUtil.JWT_SECRET)
                 .claim("phone", accountRequest.getUsername())
                 .claim("fullName", accountRequest.getFullName())

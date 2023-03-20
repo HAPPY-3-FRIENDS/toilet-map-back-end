@@ -16,7 +16,7 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
     @Query(value = "SELECT (IIF(r.Name = '" + RoleConstant.STAFF + "', 'Khách vãng lai', ui.FullName)) as FullName, " +
             "       c.DateTime, " +
             "       s.Name                                                 as 'ServiceName', " +
-            "       c.PaymentType, " +
+            "       c.PaymentMethod, " +
             "       c.Balance, " +
             "       c.Turn " +
             "FROM CheckIn c " +

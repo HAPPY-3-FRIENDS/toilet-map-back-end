@@ -51,7 +51,8 @@ public class ToiletServiceImpl implements ToiletService {
     @Override
     public List<CheckInResponse> toiletCheckInHistoriesByToiletId(int toiletId) {
 
-        // TODO: Check if toiletId is existed
+        if (!toiletRepository.findById(toiletId).isPresent())
+            throw new NotFoundException("Toilet", "Id", toiletId);
 
         List<CustomCheckInDTO> customCheckInDTOS = checkInRepository.toiletCheckInHistoriesByToiletId(toiletId);
 
@@ -65,8 +66,7 @@ public class ToiletServiceImpl implements ToiletService {
         if (ServiceEnum.getByValue(checkInRequest.getServiceName()) == null)
             throw new BadRequestException("Invalid service name: '" + checkInRequest.getServiceName() + "'!");
 
-        Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
-        if (!toiletEntity.isPresent())
+        if (!toiletRepository.findById(toiletId).isPresent())
             throw new NotFoundException("Toilet", "Id", toiletId);
 
         //Check if service chosen is contained in toilet (ToiletService)
@@ -88,7 +88,7 @@ public class ToiletServiceImpl implements ToiletService {
             checkInEntity.setAccountId(checkInRequest.getAccountId());
             checkInEntity.setToiletServiceId(toiletServiceEntity.get().getId());
             checkInEntity.setDateTime(DateTimeUtil.convertStringToTimestamp(checkInRequest.getDatetime()));
-            checkInEntity.setPaymentType(accountEntity.get().getUserInfoById().getDefaultPayment());
+            checkInEntity.setPaymentMethod(accountEntity.get().getUserInfoById().getDefaultPayment());
             switch (accountEntity.get().getUserInfoById().getDefaultPayment()) {
                 case PaymentTypeConstant.BALANCE:
                     checkInEntity.setBalance(toiletServiceEntity.get().getServiceByServiceId().getPrice());

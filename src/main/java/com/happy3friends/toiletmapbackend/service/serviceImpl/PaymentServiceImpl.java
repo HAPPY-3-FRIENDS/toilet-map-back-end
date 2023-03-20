@@ -1,23 +1,20 @@
 package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
 import com.happy3friends.toiletmapbackend.dto.CustomAccountInfoDTO;
-import com.happy3friends.toiletmapbackend.entity.AccountEntity;
 import com.happy3friends.toiletmapbackend.entity.PaymentEntity;
 import com.happy3friends.toiletmapbackend.enums.PaymentTypeEnum;
-import com.happy3friends.toiletmapbackend.enums.RoleEnum;
 import com.happy3friends.toiletmapbackend.exception.BadRequestException;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.PaymentMapper;
 import com.happy3friends.toiletmapbackend.repository.AccountRepository;
 import com.happy3friends.toiletmapbackend.repository.PaymentRepository;
+import com.happy3friends.toiletmapbackend.repository.UserInfoRepository;
 import com.happy3friends.toiletmapbackend.request.PaymentRequest;
 import com.happy3friends.toiletmapbackend.response.PaymentResponse;
 import com.happy3friends.toiletmapbackend.service.PaymentService;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -29,6 +26,9 @@ public class PaymentServiceImpl implements PaymentService {
     private AccountRepository accountRepository;
 
     @Autowired
+    private UserInfoRepository userInfoRepository;
+
+    @Autowired
     private PaymentMapper paymentMapper;
 
     @Override
@@ -37,11 +37,11 @@ public class PaymentServiceImpl implements PaymentService {
 
         if (customAccountInfoDTO == null)
             throw new NotFoundException("Account", "Id", accountId);
-        if (!customAccountInfoDTO.getRole().equals(RoleEnum.USER.getRoleName()))
-            throw new BadRequestException("Can not top up for any account except account with role 'User'!");
         if (!paymentRequest.getMethod().equals(PaymentTypeEnum.VN_PAY.getPaymentValue())
                 && !paymentRequest.getMethod().equals(PaymentTypeEnum.CASH.getPaymentValue()))
             throw new BadRequestException("Invalid payment method!");
+
+        // TODO: check userToken with account from accountId
 
         PaymentEntity paymentEntity = new PaymentEntity();
         paymentEntity.setAccountId(accountId);
@@ -52,7 +52,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         // Add money to account balance by accountId
         int newAccountBalance = customAccountInfoDTO.getAccountBalance() + paymentRequest.getTotal();
-        accountRepository.updateAccountBalance(accountId, newAccountBalance);
+        userInfoRepository.updateAccountBalance(accountId, newAccountBalance);
 
         return paymentMapper.convertPaymentEntityToPaymentResponse(paymentEntity);
     }
