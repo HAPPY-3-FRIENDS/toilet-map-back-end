@@ -10,10 +10,7 @@ import com.happy3friends.toiletmapbackend.enums.ServiceEnum;
 import com.happy3friends.toiletmapbackend.exception.BadRequestException;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.CheckInMapper;
-import com.happy3friends.toiletmapbackend.repository.AccountRepository;
-import com.happy3friends.toiletmapbackend.repository.CheckInRepository;
-import com.happy3friends.toiletmapbackend.repository.ToiletRepository;
-import com.happy3friends.toiletmapbackend.repository.ToiletServiceRepository;
+import com.happy3friends.toiletmapbackend.repository.*;
 import com.happy3friends.toiletmapbackend.request.CheckInRequest;
 import com.happy3friends.toiletmapbackend.response.CheckInResponse;
 import com.happy3friends.toiletmapbackend.service.ToiletService;
@@ -44,6 +41,9 @@ public class ToiletServiceImpl implements ToiletService {
 
     @Autowired
     private ToiletRepository toiletRepository;
+
+    @Autowired
+    private UserInfoRepository userInfoRepository;
 
     @Autowired
     private CheckInMapper checkInMapper;
@@ -78,23 +78,39 @@ public class ToiletServiceImpl implements ToiletService {
                 .findFirst();
 
         if (toiletServiceEntity.isPresent()) {
-            Optional<AccountEntity> accountEntity = accountRepository.findById(checkInRequest.getAccountId());
+            int accountId = checkInRequest.getAccountId();
+            Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
 
             if (!accountEntity.isPresent())
-                throw new NotFoundException("Account", "Id", checkInRequest.getAccountId());
+                throw new NotFoundException("Account", "Id", accountId);
 
             // Save CheckInEntity
+            String defaultAccountPayment = accountEntity.get().getUserInfoById().getDefaultPayment();
+            int accountBalance = accountEntity.get().getUserInfoById().getAccountBalance();
+            int accountTurn = accountEntity.get().getUserInfoById().getAccountTurn();
+            String serviceName = toiletServiceEntity.get().getServiceByServiceId().getName();
+            int servicePrice = toiletServiceEntity.get().getServiceByServiceId().getPrice();
+            int serviceTurn = toiletServiceEntity.get().getServiceByServiceId().getTurn();
+
             CheckInEntity checkInEntity = new CheckInEntity();
-            checkInEntity.setAccountId(checkInRequest.getAccountId());
+            checkInEntity.setAccountId(accountId);
             checkInEntity.setToiletServiceId(toiletServiceEntity.get().getId());
             checkInEntity.setDateTime(DateTimeUtil.convertStringToTimestamp(checkInRequest.getDatetime()));
-            checkInEntity.setPaymentMethod(accountEntity.get().getUserInfoById().getDefaultPayment());
-            switch (accountEntity.get().getUserInfoById().getDefaultPayment()) {
+            checkInEntity.setPaymentMethod(defaultAccountPayment);
+            switch (defaultAccountPayment) {
                 case PaymentTypeConstant.BALANCE:
-                    checkInEntity.setBalance(toiletServiceEntity.get().getServiceByServiceId().getPrice());
+                    if (accountBalance < servicePrice)
+                        throw new BadRequestException("Your account balance is not enough money for paying service '" + serviceName + "' with price '" + servicePrice + "'! " +
+                                "Please change your default payment method or top up your account to use this service!");
+                    userInfoRepository.updateAccountBalance(accountId, accountBalance - servicePrice);
+                    checkInEntity.setBalance(servicePrice);
                     break;
                 default:
-                    checkInEntity.setTurn(toiletServiceEntity.get().getServiceByServiceId().getTurn());
+                    if (accountTurn < serviceTurn)
+                        throw new BadRequestException("Your account turn is not enough turn for paying service '" + serviceName + "' with price '" + serviceTurn + "'! " +
+                                "Please change your default payment method or top up your account to use this service!");
+                    userInfoRepository.updateAccountTurn(accountId, accountTurn - serviceTurn);
+                    checkInEntity.setTurn(serviceTurn);
                     break;
             }
             checkInRepository.save(checkInEntity);
@@ -105,9 +121,6 @@ public class ToiletServiceImpl implements ToiletService {
             CheckInResponse checkInResponse
                     = checkInMapper.convertCheckInEntityToCheckInResponse(checkInEntity);
             return checkInResponse;
-
-            // TODO: Modify user info in balance or turn field after check-in
-
         } else {
             LOGGER.error("Service '" + checkInRequest.getServiceName() + "' is not contained in Toilet with Id '" + toiletId + "'!");
             throw new BadRequestException("Service '" + checkInRequest.getServiceName() + "' is not contained in Toilet with Id '" + toiletId + "'!");
