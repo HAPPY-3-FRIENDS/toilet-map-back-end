@@ -2,9 +2,10 @@ package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
 import com.happy3friends.toiletmapbackend.constant.PaymentTypeConstant;
 import com.happy3friends.toiletmapbackend.dto.CustomCheckInDTO;
+import com.happy3friends.toiletmapbackend.dto.CustomToiletDetailsInfoDTO;
+import com.happy3friends.toiletmapbackend.dto.ToiletFacilityDTO;
 import com.happy3friends.toiletmapbackend.entity.AccountEntity;
 import com.happy3friends.toiletmapbackend.entity.CheckInEntity;
-import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
 import com.happy3friends.toiletmapbackend.entity.ToiletServiceEntity;
 import com.happy3friends.toiletmapbackend.enums.ServiceEnum;
 import com.happy3friends.toiletmapbackend.exception.BadRequestException;
@@ -13,13 +14,16 @@ import com.happy3friends.toiletmapbackend.mapper.CheckInMapper;
 import com.happy3friends.toiletmapbackend.repository.*;
 import com.happy3friends.toiletmapbackend.request.CheckInRequest;
 import com.happy3friends.toiletmapbackend.response.CheckInResponse;
+import com.happy3friends.toiletmapbackend.response.ToiletDetailsInfoResponse;
 import com.happy3friends.toiletmapbackend.service.ToiletService;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
+import com.happy3friends.toiletmapbackend.utils.FilterKeysUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -126,4 +130,84 @@ public class ToiletServiceImpl implements ToiletService {
             throw new BadRequestException("Service '" + checkInRequest.getServiceName() + "' is not contained in Toilet with Id '" + toiletId + "'!");
         }
     }
+
+    @Override
+    public List<ToiletDetailsInfoResponse> getAllToilets() {
+        List<CustomToiletDetailsInfoDTO> customToiletDetailsInfoDTOS = toiletRepository.getListCustomToiletInfoDTO();
+
+        List<ToiletFacilityDTO> toiletFacilityDTOS = new ArrayList<>();
+
+        List<ToiletDetailsInfoResponse> responses = customToiletDetailsInfoDTOS.stream()
+                .filter(FilterKeysUtil.distinctByKeys(
+                        CustomToiletDetailsInfoDTO::getId,
+                        CustomToiletDetailsInfoDTO::getToiletImage,
+                        CustomToiletDetailsInfoDTO::getFacilityName
+                ))
+                .map(dto -> {
+                    ToiletDetailsInfoResponse toiletDetailsInfoResponse = new ToiletDetailsInfoResponse();
+                    toiletDetailsInfoResponse.setId(dto.getId());
+                    toiletDetailsInfoResponse.setToiletName(dto.getToiletName());
+                    toiletDetailsInfoResponse.setAddress(dto.getAddress());
+                    toiletDetailsInfoResponse.setWard(dto.getWard());
+                    toiletDetailsInfoResponse.setDistrict(dto.getDistrict());
+                    toiletDetailsInfoResponse.setProvince(dto.getProvince());
+                    toiletDetailsInfoResponse.setLongitude(dto.getLongitude());
+                    toiletDetailsInfoResponse.setLatitude(dto.getLatitude());
+                    toiletDetailsInfoResponse.setNearBy(dto.getNearBy());
+                    toiletDetailsInfoResponse.setOpenTime(dto.getOpenTime());
+                    toiletDetailsInfoResponse.setCloseTime(dto.getCloseTime());
+                    toiletDetailsInfoResponse.setFree(dto.getIsFree());
+                    toiletDetailsInfoResponse.setMinPrice(dto.getMinPrice());
+                    toiletDetailsInfoResponse.setMaxPrice(dto.getMaxPrice());
+                    toiletDetailsInfoResponse.setRatingStar(dto.getRatingStar());
+
+                    /*ToiletImageDTO toiletImageDTO = new ToiletImageDTO();
+                    toiletImageDTO.setImageSource(dto.getToiletImage());
+                    toiletDetailsInfoResponse.setToiletImageDTOS(List.of(toiletImageDTO));*/
+
+                    ToiletFacilityDTO toiletFacilityDTO = new ToiletFacilityDTO();
+                    toiletFacilityDTO.setFacilityName(dto.getFacilityName());
+                    toiletFacilityDTO.setQuantity(dto.getFacilityQuantity());
+                    toiletFacilityDTO.setHave(dto.getIsFacilityHave());
+                    toiletFacilityDTOS.add(toiletFacilityDTO);
+
+                    toiletDetailsInfoResponse.setToiletFacilityDTOS(toiletFacilityDTOS);
+
+                    return toiletDetailsInfoResponse;
+                })
+                .collect(Collectors.toList());
+        return responses;
+    }
 }
+
+/*
+*
+* .map(dto -> {
+                    ToiletDetailsInfoResponse toiletDetailsInfoResponse = new ToiletDetailsInfoResponse();
+                    toiletDetailsInfoResponse.setId(dto.getId());
+                    toiletDetailsInfoResponse.setToiletName(dto.getToiletName());
+                    toiletDetailsInfoResponse.setAddress(dto.getAddress());
+                    toiletDetailsInfoResponse.setWard(dto.getWard());
+                    toiletDetailsInfoResponse.setDistrict(dto.getDistrict());
+                    toiletDetailsInfoResponse.setProvince(dto.getProvince());
+                    toiletDetailsInfoResponse.setLongitude(dto.getLongitude());
+                    toiletDetailsInfoResponse.setLatitude(dto.getLatitude());
+                    toiletDetailsInfoResponse.setNearBy(dto.getNearBy());
+                    toiletDetailsInfoResponse.setOpenTime(dto.getOpenTime());
+                    toiletDetailsInfoResponse.setCloseTime(dto.getCloseTime());
+                    toiletDetailsInfoResponse.setFree(dto.getIsFree());
+                    toiletDetailsInfoResponse.setMinPrice(dto.getMinPrice());
+                    toiletDetailsInfoResponse.setMaxPrice(dto.getMaxPrice());
+
+                    List<ToiletImageDTO> toiletImageDTOS = new ArrayList<>();
+                    ToiletImageDTO toiletImageDTO = new ToiletImageDTO();
+                    toiletImageDTO.setImageSource(dto.getToiletImage());
+                    toiletImageDTOS.add(toiletImageDTO);
+
+
+
+                    toiletDetailsInfoResponse.setToiletImageDTOS(toiletImageDTOS);
+                    toiletDetailsInfoResponse.setRatingStar(dto.getRatingStar());
+                    return toiletDetailsInfoResponse;
+                })
+* */

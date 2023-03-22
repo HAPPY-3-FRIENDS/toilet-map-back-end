@@ -6,7 +6,9 @@ import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.request.CheckInRequest;
 import com.happy3friends.toiletmapbackend.response.BaseResponse;
 import com.happy3friends.toiletmapbackend.response.CheckInResponse;
+import com.happy3friends.toiletmapbackend.response.ToiletDetailsInfoResponse;
 import com.happy3friends.toiletmapbackend.service.ToiletService;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -23,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
+import javax.validation.Valid;
 import java.util.List;
 
 @Tag(name = "Toilet", description = "Toilet API")
@@ -102,6 +105,21 @@ public class ToiletController {
         return ResponseBuilder.generateResponse(
                 "User check-in toilet successfully!",
                 HttpStatus.CREATED,
+                response
+        );
+    }
+
+    @Hidden
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.USER})
+    @GetMapping
+    public ResponseEntity<BaseResponse<List<ToiletDetailsInfoResponse>>> getAllToilets() {
+
+        List<ToiletDetailsInfoResponse> response = toiletService.getAllToilets();
+
+        return ResponseBuilder.generateResponse(
+                "Get list of toilets successfully!",
+                HttpStatus.OK,
                 response
         );
     }
