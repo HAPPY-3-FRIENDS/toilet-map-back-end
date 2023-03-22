@@ -82,7 +82,6 @@ public class OrderServiceImpl implements OrderService {
 
         OrderEntity orderEntity = new OrderEntity();
         orderEntity.setAccountId(accountId);
-        orderEntity.setComboId(comboEntity.get().getId());
         orderEntity.setTotalTurn(comboEntity.get().getTotalTurn());
         orderEntity.setTotalPrice(comboPrice);
         orderEntity.setPaymentMethod(orderRequest.getPaymentMethod());

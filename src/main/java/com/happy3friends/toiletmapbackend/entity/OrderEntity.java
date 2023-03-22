@@ -21,9 +21,6 @@ public class OrderEntity {
     @Column(name = "AccountId", nullable = false)
     private int accountId;
     @Basic
-    @Column(name = "ComboId", nullable = false)
-    private int comboId;
-    @Basic
     @Column(name = "TotalTurn", nullable = false)
     private int totalTurn;
     @Basic
@@ -38,7 +35,4 @@ public class OrderEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "AccountId", referencedColumnName = "Id", insertable = false, updatable = false)
     private AccountEntity accountByAccountId;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ComboId", referencedColumnName = "Id", insertable = false, updatable = false)
-    private ComboEntity comboByComboId;
 }

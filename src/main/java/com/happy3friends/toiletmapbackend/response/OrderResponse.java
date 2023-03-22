@@ -15,7 +15,6 @@ import java.util.Date;
 @Setter
 public class OrderResponse {
     private int accountId;
-    private int comboId;
     private int totalTurn;
     private int totalPrice;
     private String paymentMethod;

@@ -40,8 +40,8 @@ CREATE TABLE [UserInfo]
 (
     AccountId      INT           NOT NULL,
     FullName       NVARCHAR(100) NOT NULL,
-    Gmail          VARCHAR(22)   NULL,
-    Avatar         VARCHAR(100)  NULL,
+    Gmail          VARCHAR(255)  NULL,
+    Avatar         VARCHAR(MAX)  NULL,
     AccountBalance INT           NOT NULL,
     AccountTurn    INT           NOT NULL,
     DefaultPayment NVARCHAR(20)  NOT NULL
@@ -134,7 +134,6 @@ CREATE TABLE [Order]
 (
     Id            INT IDENTITY (1, 1) NOT NULL,
     AccountId     INT                 NOT NULL,
-    ComboId       INT                 NOT NULL,
     TotalTurn     INT                 NOT NULL,
     TotalPrice    INT                 NOT NULL,
     PaymentMethod NVARCHAR(20)        NOT NULL,
@@ -285,10 +284,6 @@ ALTER TABLE [CheckIn]
 ALTER TABLE [Order]
     ADD CONSTRAINT FK_Order_Account
         FOREIGN KEY (AccountId) REFERENCES Account (Id);
-
-ALTER TABLE [Order]
-    ADD CONSTRAINT FK_Order_Combo
-        FOREIGN KEY (ComboId) REFERENCES Combo (Id);
 
 ALTER TABLE [Payment]
     ADD CONSTRAINT FK_Payment_Account
