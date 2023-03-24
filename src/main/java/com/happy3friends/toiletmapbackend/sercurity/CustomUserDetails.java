@@ -39,7 +39,7 @@ public class CustomUserDetails implements UserDetails {
                 singletonList(new SimpleGrantedAuthority("ROLE_" + customAccountInfoDTO.getRole()));
 
         return new CustomUserDetails(
-                customAccountInfoDTO.getId(),
+                customAccountInfoDTO.getAccountId(),
                 customAccountInfoDTO.getUsername(),
                 customAccountInfoDTO.getPassword(),
                 customAccountInfoDTO.getFullName(),

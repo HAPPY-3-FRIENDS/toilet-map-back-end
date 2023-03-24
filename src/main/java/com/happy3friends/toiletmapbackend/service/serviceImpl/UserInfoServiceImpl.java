@@ -1,10 +1,12 @@
 package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.happy3friends.toiletmapbackend.dto.CustomAccountInfoDTO;
+import com.happy3friends.toiletmapbackend.entity.AccountEntity;
 import com.happy3friends.toiletmapbackend.entity.UserInfoEntity;
 import com.happy3friends.toiletmapbackend.enums.PaymentTypeEnum;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.UserInfoMapper;
+import com.happy3friends.toiletmapbackend.repository.AccountRepository;
 import com.happy3friends.toiletmapbackend.repository.UserInfoRepository;
 import com.happy3friends.toiletmapbackend.response.UserInfoResponse;
 import com.happy3friends.toiletmapbackend.service.UserInfoService;
@@ -23,7 +25,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     private UserInfoRepository userInfoRepository;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private AccountRepository accountRepository;
 
     @Autowired
     private UserInfoMapper userInfoMapper;
@@ -49,5 +51,15 @@ public class UserInfoServiceImpl implements UserInfoService {
         UserInfoEntity entity = userInfoRepository.save(userInfoEntity.get());
 
         return userInfoMapper.convertUserInfoEntityToUserInfoResponse(entity);
+    }
+
+    @Override
+    public UserInfoResponse getUserInfoAccountId(int accountId) {
+        Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
+        if (!accountEntity.isPresent()) throw new NotFoundException("Account", "Id", accountId);
+
+        CustomAccountInfoDTO customAccountInfoDTO = accountRepository.getCustomAccountInfoByAccountId(accountId);
+
+        return userInfoMapper.convertCustomAccountInfoDTOToUserInfoResponse(customAccountInfoDTO);
     }
 }

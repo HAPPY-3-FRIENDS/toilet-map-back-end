@@ -15,4 +15,6 @@ public class UserInfoResponse {
     private String gmail;
     private String avatar;
     private String defaultPayment;
+    private int accountBalance;
+    private int accountTurn;
 }
