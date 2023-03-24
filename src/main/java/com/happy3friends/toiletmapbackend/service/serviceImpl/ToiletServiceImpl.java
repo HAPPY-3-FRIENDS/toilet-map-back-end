@@ -6,8 +6,8 @@ import com.happy3friends.toiletmapbackend.dto.CustomToiletDetailsInfoDTO;
 import com.happy3friends.toiletmapbackend.dto.ToiletFacilityDTO;
 import com.happy3friends.toiletmapbackend.entity.AccountEntity;
 import com.happy3friends.toiletmapbackend.entity.CheckInEntity;
+import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
 import com.happy3friends.toiletmapbackend.entity.ToiletServiceEntity;
-import com.happy3friends.toiletmapbackend.enums.ServiceEnum;
 import com.happy3friends.toiletmapbackend.exception.BadRequestException;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.CheckInMapper;
@@ -67,10 +67,8 @@ public class ToiletServiceImpl implements ToiletService {
 
     @Override
     public CheckInResponse userCheckIn(int toiletId, CheckInRequest checkInRequest) {
-        if (ServiceEnum.getByValue(checkInRequest.getServiceName()) == null)
-            throw new BadRequestException("Invalid service name: '" + checkInRequest.getServiceName() + "'!");
-
-        if (!toiletRepository.findById(toiletId).isPresent())
+        Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
+        if (!toiletEntity.isPresent())
             throw new NotFoundException("Toilet", "Id", toiletId);
 
         //Check if service chosen is contained in toilet (ToiletService)
@@ -106,15 +104,23 @@ public class ToiletServiceImpl implements ToiletService {
                     if (accountBalance < servicePrice)
                         throw new BadRequestException("Your account balance is not enough money for paying service '" + serviceName + "' with price '" + servicePrice + "'! " +
                                 "Please change your default payment method or top up your account to use this service!");
-                    userInfoRepository.updateAccountBalance(accountId, accountBalance - servicePrice);
-                    checkInEntity.setBalance(servicePrice);
+                    if (!toiletEntity.get().isFree()) {
+                        userInfoRepository.updateAccountBalance(accountId, accountBalance - servicePrice);
+                        checkInEntity.setBalance(servicePrice);
+                    } else {
+                        checkInEntity.setBalance(0);
+                    }
                     break;
                 default:
                     if (accountTurn < serviceTurn)
                         throw new BadRequestException("Your account turn is not enough turn for paying service '" + serviceName + "' with price '" + serviceTurn + "'! " +
                                 "Please change your default payment method or top up your account to use this service!");
-                    userInfoRepository.updateAccountTurn(accountId, accountTurn - serviceTurn);
-                    checkInEntity.setTurn(serviceTurn);
+                    if (!toiletEntity.get().isFree()) {
+                        userInfoRepository.updateAccountTurn(accountId, accountTurn - serviceTurn);
+                        checkInEntity.setTurn(serviceTurn);
+                    } else {
+                        checkInEntity.setTurn(0);
+                    }
                     break;
             }
             checkInRepository.save(checkInEntity);

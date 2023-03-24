@@ -1,12 +1,14 @@
 package com.happy3friends.toiletmapbackend.request;
 
+import com.happy3friends.toiletmapbackend.annotation.PaymentTypeAnnotation;
 import lombok.Getter;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.PositiveOrZero;
 
 @Getter
 public class PaymentRequest {
+    @PositiveOrZero
     private int total;
-    @NotBlank
+    @PaymentTypeAnnotation
     private String method;
 }
