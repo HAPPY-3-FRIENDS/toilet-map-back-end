@@ -37,6 +37,8 @@ public class TokenProvider {
                     .claim("phone", customUserDetails.getUsername())
                     .claim("fullName", customUserDetails.getFullName())
                     .claim("defaultPayment", customUserDetails.getDefaultPayment())
+                    .claim("accountBalance", customUserDetails.getAccountBalance())
+                    .claim("accountTurn", customUserDetails.getAccountTurn())
                     .claim("role", customUserDetails.getRole())
                     .claim("authorities", customUserDetails.getAuthorities())
                     .compact();

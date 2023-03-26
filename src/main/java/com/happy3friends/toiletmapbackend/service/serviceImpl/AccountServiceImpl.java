@@ -120,6 +120,8 @@ public class AccountServiceImpl implements AccountService {
                 .claim("phone", accountRequest.getUsername())
                 .claim("fullName", accountRequest.getFullName())
                 .claim("defaultPayment", PaymentTypeEnum.BALANCE.getPaymentValue())
+                .claim("accountBalance", 10000)
+                .claim("accountTurn", 5)
                 .claim("role", accountRequest.getRoleName())
                 .compact());
     }

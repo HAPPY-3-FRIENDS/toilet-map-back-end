@@ -23,7 +23,7 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Integer>
             "WHERE a.Id = :Id", nativeQuery = true)
     CustomAccountInfoDTO getCustomAccountInfoByAccountId(@Param("Id") int id);
 
-    @Query(value = "SELECT a.Id AS AccountId, a.Username, a.Password, ui.FullName, r.Name as Role, ui.DefaultPayment " +
+    @Query(value = "SELECT a.Id AS AccountId, a.Username, a.Password, ui.FullName, r.Name as Role, ui.DefaultPayment, ui.AccountBalance, ui.AccountTurn " +
             "FROM Account a " +
             "         LEFT JOIN UserInfo ui " +
             "                   ON a.Id = ui.AccountId " +
