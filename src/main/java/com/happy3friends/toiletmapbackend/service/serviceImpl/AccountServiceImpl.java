@@ -117,11 +117,7 @@ public class AccountServiceImpl implements AccountService {
                 .setExpiration(expiryDate)
                 .setSubject(String.valueOf(accountEntity.getId()))
                 .signWith(SignatureAlgorithm.HS512, JwtUtil.JWT_SECRET)
-                .claim("phone", accountRequest.getUsername())
-                .claim("fullName", accountRequest.getFullName())
-                .claim("defaultPayment", PaymentTypeEnum.BALANCE.getPaymentValue())
-                .claim("accountBalance", 10000)
-                .claim("accountTurn", 5)
+                .claim("username", accountRequest.getUsername())
                 .claim("role", accountRequest.getRoleName())
                 .compact());
     }

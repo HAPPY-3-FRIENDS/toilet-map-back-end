@@ -28,22 +28,6 @@ public class TokenProvider {
         Date now = DateTimeUtil.getDateNow();
         Date expiryDate = new Date(now.getTime() + JwtUtil.JWT_EXPIRATION);
 
-        if (customUserDetails.getRole().equals(RoleEnum.USER.getRoleName())) {
-            return Jwts.builder()
-                    .setSubject(String.valueOf(customUserDetails.getId()))
-                    .setIssuedAt(now)
-                    .setExpiration(expiryDate)
-                    .signWith(SignatureAlgorithm.HS512, JwtUtil.JWT_SECRET)
-                    .claim("phone", customUserDetails.getUsername())
-                    .claim("fullName", customUserDetails.getFullName())
-                    .claim("defaultPayment", customUserDetails.getDefaultPayment())
-                    .claim("accountBalance", customUserDetails.getAccountBalance())
-                    .claim("accountTurn", customUserDetails.getAccountTurn())
-                    .claim("role", customUserDetails.getRole())
-                    .claim("authorities", customUserDetails.getAuthorities())
-                    .compact();
-        }
-
         return Jwts.builder()
                 .setSubject(String.valueOf(customUserDetails.getId()))
                 .setIssuedAt(now)
