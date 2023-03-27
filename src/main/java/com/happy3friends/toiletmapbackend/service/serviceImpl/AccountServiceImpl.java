@@ -104,7 +104,7 @@ public class AccountServiceImpl implements AccountService {
                 null,
                 10000, // Init 10000đ for account balance and 5 turns for account turn
                 5,
-                PaymentTypeEnum.BALANCE.getPaymentValue()
+                PaymentTypeEnum.TURN.getPaymentValue()
         );
 
         AccountEntity accountEntity = accountRepository.findByUsername(accountRequest.getUsername());

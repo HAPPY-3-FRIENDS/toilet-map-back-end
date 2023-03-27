@@ -33,7 +33,7 @@ public class CheckInController {
     @Autowired
     private CheckInService checkInService;
 
-    @Operation(summary = "User check-in", description = "User check in a specific toilet")
+    @Operation(summary = "Check-in histories by Account ID", description = "List of check-in histories by Account ID")
     @Parameters(value = {
             @Parameter(name = "account-id", description = "A specific account ID", in = ParameterIn.PATH, required = true, example = "4"),
             @Parameter(name = "payment-method", description = "A specific payment method", in = ParameterIn.QUERY, examples = {
