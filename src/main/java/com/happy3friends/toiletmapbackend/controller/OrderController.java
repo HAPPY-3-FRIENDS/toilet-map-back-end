@@ -94,6 +94,7 @@ public class OrderController {
                             "      \"createdDate\": \"20/03/2023 - 09:15:36\"\n" +
                             "    }\n" +
                             "]")})),
+            @ApiResponse(responseCode = "204", description = "No Content!", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
@@ -106,6 +107,13 @@ public class OrderController {
     public ResponseEntity<BaseResponse<List<OrderResponse>>> getOrderHistoriesByAccountId(@PathVariable("account-id") int accountId) {
 
         List<OrderResponse> responses = orderService.getOrderHistoriesByAccountId(accountId);
+
+        if (responses.isEmpty())
+            return ResponseBuilder.generateResponse(
+                    "List of order histories by Account ID is empty!",
+                    HttpStatus.NO_CONTENT,
+                    responses
+            );
 
         return ResponseBuilder.generateResponse(
                 "Get list of order histories by Account ID successfully!",

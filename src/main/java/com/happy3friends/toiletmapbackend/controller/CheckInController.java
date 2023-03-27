@@ -62,6 +62,7 @@ public class CheckInController {
                             "      \"toiletId\": 1\n" +
                             "    }\n" +
                             "]")})),
+            @ApiResponse(responseCode = "204", description = "No Content!", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
@@ -76,6 +77,13 @@ public class CheckInController {
             @RequestParam(name = "payment-method", required = false) String paymentMethod) {
 
         List<CheckInResponse> responses = checkInService.getCheckInHistoriesByAccountId(accountId, paymentMethod);
+
+        if (responses.isEmpty())
+            return ResponseBuilder.generateResponse(
+                    "List of check-in histories by Account ID is empty!",
+                    HttpStatus.NO_CONTENT,
+                    responses
+            );
 
         return ResponseBuilder.generateResponse(
                 "Get list check-in histories by account ID successfully!",
