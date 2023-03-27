@@ -14,7 +14,7 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Integer>
 
     AccountEntity findByUsername(String username);
 
-    @Query(value = "SELECT a.Id AS AccountId, a.Username, a.Password, ui.FullName, r.Name as Role, ui.DefaultPayment, ui.AccountBalance, ui.AccountTurn " +
+    @Query(value = "SELECT a.Id AS AccountId, a.Username, a.Password, ui.FullName, ui.Gmail, ui.Avatar, r.Name as Role, ui.DefaultPayment, ui.AccountBalance, ui.AccountTurn " +
             "FROM Account a " +
             "         LEFT JOIN UserInfo ui " +
             "                   ON a.Id = ui.AccountId " +

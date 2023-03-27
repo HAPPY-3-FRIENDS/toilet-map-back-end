@@ -18,23 +18,15 @@ public class CustomUserDetails implements UserDetails {
     private int id;
     private String username;
     private String password;
-    private String fullName;
     private String role;
-    private String defaultPayment;
-    private int accountBalance;
-    private int accountTurn;
     private Collection<? extends GrantedAuthority> authorities;
     private Map<String, Object> attributes;
 
-    public CustomUserDetails(int id, String username, String password, String fullName, String role, String defaultPayment, int accountBalance, int accountTurn, Collection<? extends GrantedAuthority> authorities) {
+    public CustomUserDetails(int id, String username, String password, String role, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
         this.password = password;
-        this.fullName = fullName;
         this.role = role;
-        this.defaultPayment = defaultPayment;
-        this.accountBalance = accountBalance;
-        this.accountTurn = accountTurn;
         this.authorities = authorities;
     }
 
@@ -46,11 +38,7 @@ public class CustomUserDetails implements UserDetails {
                 customAccountInfoDTO.getAccountId(),
                 customAccountInfoDTO.getUsername(),
                 customAccountInfoDTO.getPassword(),
-                customAccountInfoDTO.getFullName(),
                 customAccountInfoDTO.getRole(),
-                customAccountInfoDTO.getDefaultPayment(),
-                customAccountInfoDTO.getAccountBalance(),
-                customAccountInfoDTO.getAccountTurn(),
                 authorities
         );
     }
@@ -108,23 +96,7 @@ public class CustomUserDetails implements UserDetails {
         this.attributes = attributes;
     }
 
-    public String getFullName() {
-        return fullName;
-    }
-
     public String getRole() {
         return role;
-    }
-
-    public String getDefaultPayment() {
-        return defaultPayment;
-    }
-
-    public int getAccountBalance() {
-        return accountBalance;
-    }
-
-    public int getAccountTurn() {
-        return accountTurn;
     }
 }
