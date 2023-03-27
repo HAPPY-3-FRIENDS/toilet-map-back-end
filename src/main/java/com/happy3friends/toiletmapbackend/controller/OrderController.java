@@ -108,12 +108,7 @@ public class OrderController {
 
         List<OrderResponse> responses = orderService.getOrderHistoriesByAccountId(accountId);
 
-        if (responses.isEmpty())
-            return ResponseBuilder.generateResponse(
-                    "List of order histories by Account ID is empty!",
-                    HttpStatus.NO_CONTENT,
-                    responses
-            );
+        if (responses.isEmpty()) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
         return ResponseBuilder.generateResponse(
                 "Get list of order histories by Account ID successfully!",

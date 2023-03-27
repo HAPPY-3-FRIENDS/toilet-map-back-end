@@ -78,12 +78,7 @@ public class CheckInController {
 
         List<CheckInResponse> responses = checkInService.getCheckInHistoriesByAccountId(accountId, paymentMethod);
 
-        if (responses.isEmpty())
-            return ResponseBuilder.generateResponse(
-                    "List of check-in histories by Account ID is empty!",
-                    HttpStatus.NO_CONTENT,
-                    responses
-            );
+        if (responses.isEmpty()) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
         return ResponseBuilder.generateResponse(
                 "Get list check-in histories by account ID successfully!",

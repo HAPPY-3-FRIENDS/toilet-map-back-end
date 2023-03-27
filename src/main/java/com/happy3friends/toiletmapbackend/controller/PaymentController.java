@@ -105,12 +105,7 @@ public class PaymentController {
 
         List<PaymentResponse> responses = paymentService.getPaymentHistoriesByAccountId(accountId);
 
-        if (responses.isEmpty())
-            return ResponseBuilder.generateResponse(
-                    "List of payment histories by Account ID is empty!",
-                    HttpStatus.NO_CONTENT,
-                    responses
-            );
+        if (responses.isEmpty()) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
         return ResponseBuilder.generateResponse(
                 "Get list of payment histories by Account ID successfully!",
