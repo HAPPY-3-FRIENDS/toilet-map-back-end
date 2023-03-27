@@ -1,6 +1,7 @@
 package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
 import com.happy3friends.toiletmapbackend.dto.CustomAccountInfoDTO;
+import com.happy3friends.toiletmapbackend.entity.AccountEntity;
 import com.happy3friends.toiletmapbackend.entity.ComboEntity;
 import com.happy3friends.toiletmapbackend.entity.OrderEntity;
 import com.happy3friends.toiletmapbackend.enums.PaymentTypeEnum;
@@ -19,7 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -88,5 +92,19 @@ public class OrderServiceImpl implements OrderService {
         orderEntity.setDateTime(now);
 
         return orderMapper.convertOrderEntityToOrderResponse(orderEntity);
+    }
+
+    @Override
+    public List<OrderResponse> getOrderHistoriesByAccountId(int accountId) {
+        Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
+        if (!accountEntity.isPresent()) throw new NotFoundException("Account", "Id", accountId);
+
+        List<OrderEntity> orderEntities = orderRepository.findAllByAccountId(accountId);
+        if (orderEntities.isEmpty()) throw new NotFoundException("List of order histories by account ID is Not Found!");
+
+        return orderEntities.stream()
+                .map(dto -> orderMapper.convertOrderEntityToOrderResponse(dto))
+                .sorted(Comparator.comparing(OrderResponse::getDateTime).reversed())
+                .collect(Collectors.toList());
     }
 }

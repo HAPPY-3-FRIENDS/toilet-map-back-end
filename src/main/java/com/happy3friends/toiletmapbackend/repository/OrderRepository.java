@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Repository
 public interface OrderRepository extends JpaRepository<OrderEntity, Integer> {
@@ -23,4 +24,8 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Integer> {
                                 @Param("totalPrice") int totalPrice,
                                 @Param("paymentMethod") String paymentMethod,
                                 @Param("dateTime") Timestamp dateTime);
+
+    @Query(value = "SELECT * " +
+            "FROM [Order]", nativeQuery = true)
+    List<OrderEntity> findAllByAccountId(int accountId);
 }
