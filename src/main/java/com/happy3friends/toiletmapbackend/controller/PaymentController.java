@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
+import java.util.List;
 
 @Tag(name = "Payment", description = "Payment API")
 @RestController
@@ -71,6 +72,42 @@ public class PaymentController {
                 "Create payment with account-id successfully!",
                 HttpStatus.CREATED,
                 response
+        );
+    }
+
+    @Operation(summary = "Payment histories by Account ID", description = "List of payment histories of a specific Account by Account ID")
+    @Parameter(name = "account-id", description = "A specific Account ID", in = ParameterIn.PATH, required = true, example = "4")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
+                    @ExampleObject(value = "[\n" +
+                            "    {\n" +
+                            "      \"total\": 70000,\n" +
+                            "      \"method\": \"VNPAY\",\n" +
+                            "      \"createdDate\": \"20/03/2023 - 09:17:19\"\n" +
+                            "    },\n" +
+                            "    {\n" +
+                            "      \"total\": 70000,\n" +
+                            "      \"method\": \"VNPAY\",\n" +
+                            "      \"createdDate\": \"20/03/2023 - 09:15:36\"\n" +
+                            "    }\n" +
+                            "]")})),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.USER})
+    @GetMapping(value = "/{account-id}")
+    public ResponseEntity<BaseResponse<List<PaymentResponse>>> getPaymentHistoriesByAccountId(@PathVariable("account-id") int accountId) {
+
+        List<PaymentResponse> responses = paymentService.getPaymentHistoriesByAccountId(accountId);
+
+        return ResponseBuilder.generateResponse(
+                "Get list of payment histories by Account ID successfully!",
+                HttpStatus.OK,
+                responses
         );
     }
 }

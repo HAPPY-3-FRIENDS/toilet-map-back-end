@@ -1,6 +1,7 @@
 package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
 import com.happy3friends.toiletmapbackend.dto.CustomAccountInfoDTO;
+import com.happy3friends.toiletmapbackend.entity.AccountEntity;
 import com.happy3friends.toiletmapbackend.entity.PaymentEntity;
 import com.happy3friends.toiletmapbackend.enums.PaymentTypeEnum;
 import com.happy3friends.toiletmapbackend.exception.BadRequestException;
@@ -15,6 +16,11 @@ import com.happy3friends.toiletmapbackend.service.PaymentService;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -55,5 +61,19 @@ public class PaymentServiceImpl implements PaymentService {
         userInfoRepository.updateAccountBalance(accountId, newAccountBalance);
 
         return paymentMapper.convertPaymentEntityToPaymentResponse(paymentEntity);
+    }
+
+    @Override
+    public List<PaymentResponse> getPaymentHistoriesByAccountId(int accountId) {
+        Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
+        if (!accountEntity.isPresent()) throw new NotFoundException("Account", "Id", accountId);
+
+        List<PaymentEntity> paymentEntities = paymentRepository.findAllByAccountId(accountId);
+        if (paymentEntities.isEmpty()) throw new NotFoundException("List of payment histories by Account ID is Not Found!");
+
+        return paymentEntities.stream()
+                .map(dto -> paymentMapper.convertPaymentEntityToPaymentResponse(dto))
+                .sorted(Comparator.comparing(PaymentResponse::getCreatedDate).reversed())
+                .collect(Collectors.toList());
     }
 }
