@@ -35,6 +35,7 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
 
     @Query(value = "SELECT c.DateTime, " +
             "       t.Name AS ToiletName, " +
+            "       t.Id AS ToiletId, " +
             "       s.Name AS ServiceName, " +
             "       c.Balance, " +
             "       c.Turn " +

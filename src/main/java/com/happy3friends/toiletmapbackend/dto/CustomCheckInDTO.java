@@ -10,4 +10,5 @@ public interface CustomCheckInDTO {
     Double getBalance();
     Integer getTurn();
     String getToiletName();
+    int getToiletId();
 }

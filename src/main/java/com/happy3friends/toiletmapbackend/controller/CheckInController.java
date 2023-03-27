@@ -50,14 +50,16 @@ public class CheckInController {
                             "      \"serviceName\": \"Đi vệ sinh (tiểu tiện)\",\n" +
                             "      \"balance\": 2000,\n" +
                             "      \"turn\": null,\n" +
-                            "      \"toiletName\": \"Nhà vệ sinh lưu động số 1\"\n" +
+                            "      \"toiletName\": \"Nhà vệ sinh lưu động số 1\",\n" +
+                            "      \"toiletId\": 1\n" +
                             "    },\n" +
                             "    {\n" +
                             "      \"dateTime\": \"24/03/2023 - 09:30:05\",\n" +
                             "      \"serviceName\": \"Đi vệ sinh (tiểu tiện)\",\n" +
                             "      \"balance\": 2000,\n" +
                             "      \"turn\": null,\n" +
-                            "      \"toiletName\": \"Nhà vệ sinh lưu động số 1\"\n" +
+                            "      \"toiletName\": \"Nhà vệ sinh lưu động số 1\",\n" +
+                            "      \"toiletId\": 1\n" +
                             "    }\n" +
                             "]")})),
             @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
