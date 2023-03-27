@@ -21,4 +21,5 @@ public class CheckInResponse {
     private String paymentMethod;
     private Integer balance;
     private Integer turn;
+    private String toiletName;
 }

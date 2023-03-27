@@ -32,4 +32,22 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
             "WHERE ts.ToiletId = :toiletId " +
             "ORDER BY DateTime DESC ", nativeQuery = true)
     List<CustomCheckInDTO> toiletCheckInHistoriesByToiletId(@Param("toiletId") int toiletId);
+
+    @Query(value = "SELECT c.DateTime, " +
+            "       t.Name AS ToiletName, " +
+            "       s.Name AS ServiceName, " +
+            "       c.Balance, " +
+            "       c.Turn " +
+            "FROM CheckIn c " +
+            "         INNER JOIN ToiletService ts " +
+            "                    ON c.ToiletServiceId = ts.Id " +
+            "         INNER JOIN Toilet t " +
+            "                    ON ts.ToiletId = t.Id " +
+            "         INNER JOIN Service s " +
+            "                    ON ts.ServiceId = s.Id " +
+            "WHERE c.AccountId = :accountId " +
+            "  AND (:paymentMethod IS NULL OR c.PaymentMethod = :paymentMethod) " +
+            "ORDER BY DateTime DESC", nativeQuery = true)
+    List<CustomCheckInDTO> getCheckInHistoriesByAccountId(@Param("accountId") int accountId,
+                                                          @Param("paymentMethod") String paymentMethod);
 }

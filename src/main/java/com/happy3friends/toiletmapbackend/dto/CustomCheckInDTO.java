@@ -9,4 +9,5 @@ public interface CustomCheckInDTO {
     String getPaymentMethod();
     Double getBalance();
     Integer getTurn();
+    String getToiletName();
 }
