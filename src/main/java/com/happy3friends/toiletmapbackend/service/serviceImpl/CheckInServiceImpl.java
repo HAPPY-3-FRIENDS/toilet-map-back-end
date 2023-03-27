@@ -33,7 +33,6 @@ public class CheckInServiceImpl implements CheckInService {
         if (!accountEntity.isPresent()) throw new NotFoundException("Account", "Id", accountId);
 
         List<CustomCheckInDTO> customCheckInDTOS = checkInRepository.getCheckInHistoriesByAccountId(accountId, paymentMethod);
-        if (customCheckInDTOS.isEmpty()) throw new NotFoundException("List of check-in histories by Account ID is Not Found!");
 
         return customCheckInDTOS.stream()
                 .map(dto -> checkInMapper.convertCustomCheckInDTOToCheckInResponse(dto))

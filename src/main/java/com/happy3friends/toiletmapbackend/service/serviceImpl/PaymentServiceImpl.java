@@ -69,7 +69,6 @@ public class PaymentServiceImpl implements PaymentService {
         if (!accountEntity.isPresent()) throw new NotFoundException("Account", "Id", accountId);
 
         List<PaymentEntity> paymentEntities = paymentRepository.findAllByAccountId(accountId);
-        if (paymentEntities.isEmpty()) throw new NotFoundException("List of payment histories by Account ID is Not Found!");
 
         return paymentEntities.stream()
                 .map(dto -> paymentMapper.convertPaymentEntityToPaymentResponse(dto))

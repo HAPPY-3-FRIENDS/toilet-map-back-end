@@ -100,7 +100,6 @@ public class OrderServiceImpl implements OrderService {
         if (!accountEntity.isPresent()) throw new NotFoundException("Account", "Id", accountId);
 
         List<OrderEntity> orderEntities = orderRepository.findAllByAccountId(accountId);
-        if (orderEntities.isEmpty()) throw new NotFoundException("List of order histories by account ID is Not Found!");
 
         return orderEntities.stream()
                 .map(dto -> orderMapper.convertOrderEntityToOrderResponse(dto))
