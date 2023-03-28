@@ -26,6 +26,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Integer> {
                                 @Param("dateTime") Timestamp dateTime);
 
     @Query(value = "SELECT * " +
-            "FROM [Order]", nativeQuery = true)
-    List<OrderEntity> findAllByAccountId(int accountId);
+            "FROM [Order] " +
+            "WHERE AccountId = :accountId", nativeQuery = true)
+    List<OrderEntity> findAllByAccountId(@Param("accountId") int accountId);
 }
