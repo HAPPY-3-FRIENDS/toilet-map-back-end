@@ -10,4 +10,6 @@ public interface ToiletService {
     List<CheckInResponse> toiletCheckInHistoriesByToiletId(int toiletId);
     CheckInResponse userCheckIn(int toiletId, CheckInRequest checkInRequest);
     List<ToiletDetailsInfoResponse> getAllToilets();
+    ToiletDetailsInfoResponse getToiletByAccountId(int accountId);
+    ToiletDetailsInfoResponse getToiletByToiletId(int toiletId);
 }

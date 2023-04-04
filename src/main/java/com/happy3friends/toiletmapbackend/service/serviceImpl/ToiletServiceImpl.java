@@ -174,7 +174,6 @@ public class ToiletServiceImpl implements ToiletService {
                     ToiletFacilityDTO toiletFacilityDTO = new ToiletFacilityDTO();
                     toiletFacilityDTO.setFacilityName(dto.getFacilityName());
                     toiletFacilityDTO.setQuantity(dto.getFacilityQuantity());
-                    toiletFacilityDTO.setHave(dto.getIsFacilityHave());
                     toiletFacilityDTOS.add(toiletFacilityDTO);
 
                     toiletDetailsInfoResponse.setToiletFacilityDTOS(toiletFacilityDTOS);
@@ -183,6 +182,67 @@ public class ToiletServiceImpl implements ToiletService {
                 })
                 .collect(Collectors.toList());
         return responses;
+    }
+
+    private ToiletDetailsInfoResponse getToiletFromListCustomToiletDetailsInfoDTOS(List<CustomToiletDetailsInfoDTO> customToiletDetailsInfoDTOS) {
+        List<ToiletFacilityDTO> toiletFacilityDTOS = customToiletDetailsInfoDTOS.stream()
+                .filter(FilterKeysUtil.distinctByKeys(CustomToiletDetailsInfoDTO::getFacilityName))
+                .map(dto -> {
+                    ToiletFacilityDTO toiletFacilityDTO = new ToiletFacilityDTO();
+                    toiletFacilityDTO.setFacilityName(dto.getFacilityName());
+                    toiletFacilityDTO.setQuantity(dto.getFacilityQuantity());
+                    toiletFacilityDTO.setDescription(dto.getFacilityDescription());
+                    return toiletFacilityDTO;
+                })
+                .collect(Collectors.toList());
+
+        List<String> toiletImageSources = customToiletDetailsInfoDTOS.stream()
+                .filter(FilterKeysUtil.distinctByKeys(CustomToiletDetailsInfoDTO::getToiletImage))
+                .map(dto -> dto.getToiletImage())
+                .collect(Collectors.toList());
+
+        ToiletDetailsInfoResponse response = customToiletDetailsInfoDTOS.stream()
+                .map(dto -> {
+                    ToiletDetailsInfoResponse toiletDetailsInfoResponse = new ToiletDetailsInfoResponse();
+                    toiletDetailsInfoResponse.setId(dto.getId());
+                    toiletDetailsInfoResponse.setToiletName(dto.getToiletName());
+                    toiletDetailsInfoResponse.setAddress(dto.getAddress());
+                    toiletDetailsInfoResponse.setWard(dto.getWard());
+                    toiletDetailsInfoResponse.setDistrict(dto.getDistrict());
+                    toiletDetailsInfoResponse.setProvince(dto.getProvince());
+                    toiletDetailsInfoResponse.setLongitude(dto.getLongitude());
+                    toiletDetailsInfoResponse.setLatitude(dto.getLatitude());
+                    toiletDetailsInfoResponse.setNearBy(dto.getNearBy());
+                    toiletDetailsInfoResponse.setOpenTime(dto.getOpenTime());
+                    toiletDetailsInfoResponse.setCloseTime(dto.getCloseTime());
+                    toiletDetailsInfoResponse.setFree(dto.getIsFree());
+                    toiletDetailsInfoResponse.setMinPrice(dto.getMinPrice());
+                    toiletDetailsInfoResponse.setMaxPrice(dto.getMaxPrice());
+                    toiletDetailsInfoResponse.setRatingStar(dto.getRatingStar());
+                    toiletDetailsInfoResponse.setToiletFacilityDTOS(toiletFacilityDTOS);
+                    toiletDetailsInfoResponse.setToiletImageSources(toiletImageSources);
+                    return toiletDetailsInfoResponse;
+                })
+                .findAny().orElse(null);
+
+        return response;
+    }
+
+    @Override
+    public ToiletDetailsInfoResponse getToiletByAccountId(int accountId) {
+        Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
+        if (!accountEntity.isPresent()) throw new NotFoundException("Account", "Id", accountId);
+
+        List<CustomToiletDetailsInfoDTO> customToiletDetailsInfoDTOS = toiletRepository.getCustomToiletInfoDTOByAccountId(accountId);
+
+        return getToiletFromListCustomToiletDetailsInfoDTOS(customToiletDetailsInfoDTOS);
+    }
+
+    @Override
+    public ToiletDetailsInfoResponse getToiletByToiletId(int toiletId) {
+        List<CustomToiletDetailsInfoDTO> customToiletDetailsInfoDTOS = toiletRepository.getCustomToiletInfoDTOByToiletId(toiletId);
+
+        return getToiletFromListCustomToiletDetailsInfoDTOS(customToiletDetailsInfoDTOS);
     }
 }
 

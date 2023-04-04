@@ -1,7 +1,6 @@
 package com.happy3friends.toiletmapbackend.response;
 
 import com.happy3friends.toiletmapbackend.dto.ToiletFacilityDTO;
-import com.happy3friends.toiletmapbackend.dto.ToiletImageDTO;
 import lombok.*;
 
 import java.sql.Time;
@@ -28,6 +27,6 @@ public class ToiletDetailsInfoResponse {
     private int minPrice;
     private int maxPrice;
     private List<ToiletFacilityDTO> toiletFacilityDTOS;
-    private List<ToiletImageDTO> toiletImageDTOS;
+    private List<String> toiletImageSources;
     private double ratingStar;
 }

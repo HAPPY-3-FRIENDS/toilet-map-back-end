@@ -11,6 +11,6 @@ import lombok.Setter;
 @Setter
 public class ToiletFacilityDTO {
     private String facilityName;
-    private Integer quantity;
-    private boolean isHave;
+    private int quantity;
+    private String description;
 }
