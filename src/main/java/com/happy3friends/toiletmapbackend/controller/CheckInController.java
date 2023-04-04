@@ -35,7 +35,7 @@ public class CheckInController {
     @Autowired
     private CheckInService checkInService;
 
-    @Operation(summary = "Check-in histories", description = "Get the list of check-in histories of a specific toilet by toilet-id")
+    @Operation(summary = "Check-in histories by Toilet ID", description = "Get the list of check-in histories of a specific toilet by toilet-id")
     @Parameter(name = "toilet-id", description = "A specific toilet ID", in = ParameterIn.PATH, required = true, example = "1")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
@@ -105,7 +105,7 @@ public class CheckInController {
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.USER})
-    @GetMapping(value = "/{account-id}")
+    @GetMapping(value = "/accounts/{account-id}")
     public ResponseEntity<BaseResponse<List<CheckInResponse>>> getCheckInHistoriesByAccountId(
             @PathVariable(value = "account-id") int accountId,
             @RequestParam(name = "payment-method", required = false) String paymentMethod) {
