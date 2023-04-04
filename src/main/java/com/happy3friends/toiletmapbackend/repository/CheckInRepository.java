@@ -31,7 +31,7 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
             "         LEFT JOIN UserInfo ui on a.Id = ui.AccountId " +
             "WHERE ts.ToiletId = :toiletId " +
             "ORDER BY DateTime DESC ", nativeQuery = true)
-    List<CustomCheckInDTO> toiletCheckInHistoriesByToiletId(@Param("toiletId") int toiletId);
+    List<CustomCheckInDTO> getCheckInHistoriesByToiletId(@Param("toiletId") int toiletId);
 
     @Query(value = "SELECT c.DateTime, " +
             "       t.Name AS ToiletName, " +

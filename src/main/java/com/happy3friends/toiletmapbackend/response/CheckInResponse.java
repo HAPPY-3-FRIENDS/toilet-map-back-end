@@ -22,5 +22,5 @@ public class CheckInResponse {
     private Integer balance;
     private Integer turn;
     private String toiletName;
-    private int toiletId;
+    private Integer toiletId;
 }
