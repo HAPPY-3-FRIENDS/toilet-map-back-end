@@ -264,7 +264,7 @@ public class ToiletController {
                             "        }\n" +
                             "      ],\n" +
                             "      \"toiletImageSources\": [\n" +
-                            "        null\n" +
+                            "        \"https://anh.eva.vn/upload/2-2015/images/2015-05-13/1431482470-ava.jpg\"\n" +
                             "      ],\n" +
                             "      \"ratingStar\": 0,\n" +
                             "      \"free\": false\n" +

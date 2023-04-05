@@ -1,10 +1,7 @@
 package com.happy3friends.toiletmapbackend.mapper;
 
 import com.happy3friends.toiletmapbackend.dto.CustomToiletDTO;
-import com.happy3friends.toiletmapbackend.dto.CustomToiletDetailsInfoDTO;
-import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
 import com.happy3friends.toiletmapbackend.response.ToiletDetailsInfoResponse;
-import com.happy3friends.toiletmapbackend.response.ToiletResponse;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,33 +18,9 @@ public class ToiletMapper {
     @Autowired
     private ModelMapper modelMapper;
 
-    public ToiletResponse convertToiletEntityToToiletResponse(ToiletEntity toiletEntity) {
-        return Objects.isNull(toiletEntity)
-                ? null
-                : modelMapper.map(toiletEntity, ToiletResponse.class);
-    }
-
-    public ToiletResponse convertCustomToiletDTOToToiletResponse(CustomToiletDTO customToiletDTO) {
-        return Objects.isNull(customToiletDTO)
-                ? null
-                : modelMapper.map(customToiletDTO, ToiletResponse.class);
-    }
-
-    public ToiletResponse convertCustomToiletDetailsInfoDTOToToiletResponse(CustomToiletDetailsInfoDTO customToiletDetailsInfoDTO) {
-        return Objects.isNull(customToiletDetailsInfoDTO)
-                ? null
-                : modelMapper.map(customToiletDetailsInfoDTO, ToiletResponse.class);
-    }
-
     public ToiletDetailsInfoResponse convertCustomToiletDTOToToiletDetailsInfoResponse(CustomToiletDTO customToiletDTO) {
         return Objects.isNull(customToiletDTO)
                 ? null
                 : modelMapper.map(customToiletDTO, ToiletDetailsInfoResponse.class);
-    }
-
-    public ToiletDetailsInfoResponse convertCustomToiletDetailsInfoDTOToToiletDetailsInfoResponse(CustomToiletDetailsInfoDTO customToiletDetailsInfoDTO) {
-        return Objects.isNull(customToiletDetailsInfoDTO)
-                ? null
-                : modelMapper.map(customToiletDetailsInfoDTO, ToiletDetailsInfoResponse.class);
     }
 }
