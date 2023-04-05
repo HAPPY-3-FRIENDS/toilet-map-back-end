@@ -73,7 +73,7 @@ public class CheckInController {
             @Parameter(name = "payment-method", description = "A specific payment method", in = ParameterIn.QUERY, examples = {
                     @ExampleObject(name = "Payment method is BALANCE", value = "Số dư"),
                     @ExampleObject(name = "Payment method is TURN", value = "Số lượt"),
-                    @ExampleObject(name = "Payment method is BALANCE & TURN", description = "Not need to add to query param")
+                    @ExampleObject(name = "Payment method is BALANCE & TURN", description = "No need to add to query param")
             })
     })
     @ApiResponses(value = {

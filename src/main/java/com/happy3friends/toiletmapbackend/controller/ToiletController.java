@@ -5,10 +5,10 @@ import com.happy3friends.toiletmapbackend.constant.RoleConstant;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.response.BaseResponse;
 import com.happy3friends.toiletmapbackend.response.ToiletDetailsInfoResponse;
-import com.happy3friends.toiletmapbackend.response.ToiletResponse;
 import com.happy3friends.toiletmapbackend.service.ToiletService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -20,10 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
 import java.util.List;
@@ -198,10 +195,16 @@ public class ToiletController {
         );
     }
 
-    @Operation(summary = "Get list of all toilets", description = "[Manager, User] Get list of all toilets (only find id, latitude and longitude value)")
+    @Operation(summary = "Get list of all toilets",
+            description = "- [User] Get list of all toilets (only find id, latitude and longitude value)\n" +
+                    "- [User] Get list of top 10 toilets near by current location")
+    @Parameters(value = {
+            @Parameter(name = "current-latitude", description = "Current latitude", in = ParameterIn.QUERY, required = false),
+            @Parameter(name = "current-longitude", description = "Current longitude", in = ParameterIn.QUERY, required = false)
+    })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
-                    @ExampleObject(value = "[\n" +
+                    @ExampleObject(name = "Get list of all toilets (only find id, latitude and longitude value)", value = "[\n" +
                             "    {\n" +
                             "      \"id\": 1,\n" +
                             "      \"latitude\": 10.759935271800982,\n" +
@@ -212,6 +215,112 @@ public class ToiletController {
                             "      \"latitude\": 10.773159027085631,\n" +
                             "      \"longitude\": 106.70411367332397\n" +
                             "    }\n" +
+                            "  ]"),
+                    @ExampleObject(name = "Get list of top 10 toilets near by current location", value = "[\n" +
+                            "    {\n" +
+                            "      \"id\": 2,\n" +
+                            "      \"toiletName\": \"Nhà vệ sinh lưu động số 2\",\n" +
+                            "      \"address\": \"79 Đ. Nguyễn Huệ\",\n" +
+                            "      \"ward\": \"Bến Nghé\",\n" +
+                            "      \"district\": \"Quận 1\",\n" +
+                            "      \"province\": \"Thành phố Hồ Chí Minh\",\n" +
+                            "      \"latitude\": 10.845946930378068,\n" +
+                            "      \"longitude\": 106.797017719663,\n" +
+                            "      \"nearBy\": null,\n" +
+                            "      \"openTime\": \"09:00:00\",\n" +
+                            "      \"closeTime\": \"23:00:00\",\n" +
+                            "      \"minPrice\": 2000,\n" +
+                            "      \"maxPrice\": 8000,\n" +
+                            "      \"toiletFacilityDTOS\": [\n" +
+                            "        {\n" +
+                            "          \"facilityName\": \"Giấy vệ sinh\",\n" +
+                            "          \"quantity\": 0,\n" +
+                            "          \"description\": null\n" +
+                            "        },\n" +
+                            "        {\n" +
+                            "          \"facilityName\": \"Máy sấy tay\",\n" +
+                            "          \"quantity\": 0,\n" +
+                            "          \"description\": null\n" +
+                            "        },\n" +
+                            "        {\n" +
+                            "          \"facilityName\": \"Phòng tắm\",\n" +
+                            "          \"quantity\": 0,\n" +
+                            "          \"description\": null\n" +
+                            "        },\n" +
+                            "        {\n" +
+                            "          \"facilityName\": \"Phòng vệ sinh\",\n" +
+                            "          \"quantity\": 0,\n" +
+                            "          \"description\": null\n" +
+                            "        },\n" +
+                            "        {\n" +
+                            "          \"facilityName\": \"Phòng vệ sinh dành cho người khuyết tật\",\n" +
+                            "          \"quantity\": 0,\n" +
+                            "          \"description\": null\n" +
+                            "        },\n" +
+                            "        {\n" +
+                            "          \"facilityName\": \"Vòi xịt\",\n" +
+                            "          \"quantity\": 0,\n" +
+                            "          \"description\": null\n" +
+                            "        }\n" +
+                            "      ],\n" +
+                            "      \"toiletImageSources\": [\n" +
+                            "        null\n" +
+                            "      ],\n" +
+                            "      \"ratingStar\": 0,\n" +
+                            "      \"free\": false\n" +
+                            "    },\n" +
+                            "    {\n" +
+                            "      \"id\": 1,\n" +
+                            "      \"toiletName\": \"Nhà vệ sinh lưu động số 1\",\n" +
+                            "      \"address\": \"44 Trần Đình Xu\",\n" +
+                            "      \"ward\": \"Phường Cô Giang\",\n" +
+                            "      \"district\": \"Quận 1\",\n" +
+                            "      \"province\": \"Thành phố Hồ Chí Minh\",\n" +
+                            "      \"latitude\": 10.845254597727745,\n" +
+                            "      \"longitude\": 106.79238946200942,\n" +
+                            "      \"nearBy\": \"Gần CircleK, gần Phúc Long\",\n" +
+                            "      \"openTime\": \"09:00:00\",\n" +
+                            "      \"closeTime\": \"23:00:00\",\n" +
+                            "      \"minPrice\": 2000,\n" +
+                            "      \"maxPrice\": 8000,\n" +
+                            "      \"toiletFacilityDTOS\": [\n" +
+                            "        {\n" +
+                            "          \"facilityName\": \"Giấy vệ sinh\",\n" +
+                            "          \"quantity\": 1,\n" +
+                            "          \"description\": null\n" +
+                            "        },\n" +
+                            "        {\n" +
+                            "          \"facilityName\": \"Máy sấy tay\",\n" +
+                            "          \"quantity\": 0,\n" +
+                            "          \"description\": null\n" +
+                            "        },\n" +
+                            "        {\n" +
+                            "          \"facilityName\": \"Phòng tắm\",\n" +
+                            "          \"quantity\": 0,\n" +
+                            "          \"description\": null\n" +
+                            "        },\n" +
+                            "        {\n" +
+                            "          \"facilityName\": \"Phòng vệ sinh\",\n" +
+                            "          \"quantity\": 8,\n" +
+                            "          \"description\": \"4 phòng vệ sinh cho nữ, 4 phòng vệ sinh cho nam\"\n" +
+                            "        },\n" +
+                            "        {\n" +
+                            "          \"facilityName\": \"Phòng vệ sinh dành cho người khuyết tật\",\n" +
+                            "          \"quantity\": 1,\n" +
+                            "          \"description\": null\n" +
+                            "        },\n" +
+                            "        {\n" +
+                            "          \"facilityName\": \"Vòi xịt\",\n" +
+                            "          \"quantity\": 1,\n" +
+                            "          \"description\": null\n" +
+                            "        }\n" +
+                            "      ],\n" +
+                            "      \"toiletImageSources\": [\n" +
+                            "        \"https://dichvucongichquan1.com/wp-content/uploads/2021/04/z2469130019572_1b2874d47ba76fa3b7089d0ffa4b72c7.jpg\"\n" +
+                            "      ],\n" +
+                            "      \"ratingStar\": 3.8,\n" +
+                            "      \"free\": false\n" +
+                            "    }\n" +
                             "  ]")
             })),
             @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
@@ -221,9 +330,11 @@ public class ToiletController {
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.MANAGER, RoleConstant.USER})
     @GetMapping
-    public ResponseEntity<BaseResponse<List<ToiletResponse>>> getAllToiletIncludeIdLatitudeLongitude() {
+    public ResponseEntity<BaseResponse<List<ToiletDetailsInfoResponse>>> getAllToilets(
+            @RequestParam(name = "current-latitude", required = false) Double currentLatitude,
+            @RequestParam(name = "current-longitude", required = false) Double currentLongitude) {
 
-        List<ToiletResponse> response = toiletService.getAllToiletIncludeIdLatitudeLongitude();
+        List<ToiletDetailsInfoResponse> response = toiletService.getAllToilets(currentLatitude, currentLongitude);
 
         return ResponseBuilder.generateResponse(
                 "Get list of all toilets successfully!",
