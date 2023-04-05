@@ -35,10 +35,10 @@ public class ToiletEntity {
     private String province;
     @Basic
     @Column(name = "Latitude", precision = 0)
-    private Double latitude;
+    private double latitude;
     @Basic
     @Column(name = "Longitude", precision = 0)
-    private Double longitude;
+    private double longitude;
     @Basic
     @Column(name = "NearBy", nullable = true, length = 200)
     private String nearBy;

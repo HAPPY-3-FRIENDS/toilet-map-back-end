@@ -5,8 +5,8 @@ import com.happy3friends.toiletmapbackend.constant.RoleConstant;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.response.BaseResponse;
 import com.happy3friends.toiletmapbackend.response.ToiletDetailsInfoResponse;
+import com.happy3friends.toiletmapbackend.response.ToiletResponse;
 import com.happy3friends.toiletmapbackend.service.ToiletService;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -198,16 +198,55 @@ public class ToiletController {
         );
     }
 
-    @Hidden
+    @Operation(summary = "Get list of all toilets", description = "[Manager, User] Get list of all toilets")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
+                    @ExampleObject(value = "[\n" +
+                            "    {\n" +
+                            "      \"id\": 1,\n" +
+                            "      \"name\": \"Nhà vệ sinh lưu động số 1\",\n" +
+                            "      \"address\": \"44 Trần Đình Xu\",\n" +
+                            "      \"ward\": \"Phường Cô Giang\",\n" +
+                            "      \"district\": \"Quận 1\",\n" +
+                            "      \"province\": \"Thành phố Hồ Chí Minh\",\n" +
+                            "      \"latitude\": 10.759935271800982,\n" +
+                            "      \"longitude\": 106.69202149316303,\n" +
+                            "      \"nearBy\": \"Gần CircleK, gần Phúc Long\",\n" +
+                            "      \"openTime\": \"09:00:00\",\n" +
+                            "      \"closeTime\": \"23:00:00\",\n" +
+                            "      \"status\": \"Đang hoạt động\",\n" +
+                            "      \"free\": false\n" +
+                            "    },\n" +
+                            "    {\n" +
+                            "      \"id\": 2,\n" +
+                            "      \"name\": \"Nhà vệ sinh lưu động số 2\",\n" +
+                            "      \"address\": \"79 Đ. Nguyễn Huệ\",\n" +
+                            "      \"ward\": \"Bến Nghé\",\n" +
+                            "      \"district\": \"Quận 1\",\n" +
+                            "      \"province\": \"Thành phố Hồ Chí Minh\",\n" +
+                            "      \"latitude\": 10.773159027085631,\n" +
+                            "      \"longitude\": 106.70411367332397,\n" +
+                            "      \"nearBy\": null,\n" +
+                            "      \"openTime\": \"09:00:00\",\n" +
+                            "      \"closeTime\": \"23:00:00\",\n" +
+                            "      \"status\": \"Đang hoạt động\",\n" +
+                            "      \"free\": false\n" +
+                            "    }\n" +
+                            "  ]")
+            })),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.USER})
+    @RolesAllowed({RoleConstant.MANAGER, RoleConstant.USER})
     @GetMapping
-    public ResponseEntity<BaseResponse<List<ToiletDetailsInfoResponse>>> getAllToilets() {
+    public ResponseEntity<BaseResponse<List<ToiletResponse>>> getAllToilets() {
 
-        List<ToiletDetailsInfoResponse> response = toiletService.getAllToilets();
+        List<ToiletResponse> response = toiletService.getAllToilets();
 
         return ResponseBuilder.generateResponse(
-                "Get list of toilets successfully!",
+                "Get list of all toilets successfully!",
                 HttpStatus.OK,
                 response
         );

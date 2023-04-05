@@ -3,10 +3,13 @@ package com.happy3friends.toiletmapbackend.service.serviceImpl;
 import com.happy3friends.toiletmapbackend.dto.CustomToiletDetailsInfoDTO;
 import com.happy3friends.toiletmapbackend.dto.ToiletFacilityDTO;
 import com.happy3friends.toiletmapbackend.entity.AccountEntity;
+import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
+import com.happy3friends.toiletmapbackend.mapper.ToiletMapper;
 import com.happy3friends.toiletmapbackend.repository.AccountRepository;
 import com.happy3friends.toiletmapbackend.repository.ToiletRepository;
 import com.happy3friends.toiletmapbackend.response.ToiletDetailsInfoResponse;
+import com.happy3friends.toiletmapbackend.response.ToiletResponse;
 import com.happy3friends.toiletmapbackend.service.ToiletService;
 import com.happy3friends.toiletmapbackend.utils.FilterKeysUtil;
 import org.slf4j.Logger;
@@ -14,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,52 +32,60 @@ public class ToiletServiceImpl implements ToiletService {
     @Autowired
     private ToiletRepository toiletRepository;
 
+    @Autowired
+    private ToiletMapper toiletMapper;
+
     @Override
-    public List<ToiletDetailsInfoResponse> getAllToilets() {
-        List<CustomToiletDetailsInfoDTO> customToiletDetailsInfoDTOS = toiletRepository.getListCustomToiletInfoDTO();
+    public List<ToiletResponse> getAllToilets() {
+        List<ToiletEntity> toiletEntities = toiletRepository.findAll();
 
-        List<ToiletFacilityDTO> toiletFacilityDTOS = new ArrayList<>();
-
-        List<ToiletDetailsInfoResponse> responses = customToiletDetailsInfoDTOS.stream()
-                .filter(FilterKeysUtil.distinctByKeys(
-                        CustomToiletDetailsInfoDTO::getId,
-                        CustomToiletDetailsInfoDTO::getToiletImage,
-                        CustomToiletDetailsInfoDTO::getFacilityName
-                ))
-                .map(dto -> {
-                    ToiletDetailsInfoResponse toiletDetailsInfoResponse = new ToiletDetailsInfoResponse();
-                    toiletDetailsInfoResponse.setId(dto.getId());
-                    toiletDetailsInfoResponse.setToiletName(dto.getToiletName());
-                    toiletDetailsInfoResponse.setAddress(dto.getAddress());
-                    toiletDetailsInfoResponse.setWard(dto.getWard());
-                    toiletDetailsInfoResponse.setDistrict(dto.getDistrict());
-                    toiletDetailsInfoResponse.setProvince(dto.getProvince());
-                    toiletDetailsInfoResponse.setLongitude(dto.getLongitude());
-                    toiletDetailsInfoResponse.setLatitude(dto.getLatitude());
-                    toiletDetailsInfoResponse.setNearBy(dto.getNearBy());
-                    toiletDetailsInfoResponse.setOpenTime(dto.getOpenTime());
-                    toiletDetailsInfoResponse.setCloseTime(dto.getCloseTime());
-                    toiletDetailsInfoResponse.setFree(dto.getIsFree());
-                    toiletDetailsInfoResponse.setMinPrice(dto.getMinPrice());
-                    toiletDetailsInfoResponse.setMaxPrice(dto.getMaxPrice());
-                    toiletDetailsInfoResponse.setRatingStar(dto.getRatingStar());
-
-                    /*ToiletImageDTO toiletImageDTO = new ToiletImageDTO();
-                    toiletImageDTO.setImageSource(dto.getToiletImage());
-                    toiletDetailsInfoResponse.setToiletImageDTOS(List.of(toiletImageDTO));*/
-
-                    ToiletFacilityDTO toiletFacilityDTO = new ToiletFacilityDTO();
-                    toiletFacilityDTO.setFacilityName(dto.getFacilityName());
-                    toiletFacilityDTO.setQuantity(dto.getFacilityQuantity());
-                    toiletFacilityDTO.setDescription(dto.getFacilityDescription());
-                    toiletFacilityDTOS.add(toiletFacilityDTO);
-
-                    toiletDetailsInfoResponse.setToiletFacilityDTOS(toiletFacilityDTOS);
-
-                    return toiletDetailsInfoResponse;
-                })
+        return toiletEntities.stream()
+                .map(entity -> toiletMapper.convertToiletEntityToToiletResponse(entity))
                 .collect(Collectors.toList());
-        return responses;
+//        List<CustomToiletDetailsInfoDTO> customToiletDetailsInfoDTOS = toiletRepository.getListCustomToiletInfoDTO();
+//
+//        List<ToiletFacilityDTO> toiletFacilityDTOS = new ArrayList<>();
+//
+//        List<ToiletDetailsInfoResponse> responses = customToiletDetailsInfoDTOS.stream()
+//                .filter(FilterKeysUtil.distinctByKeys(
+//                        CustomToiletDetailsInfoDTO::getId,
+//                        CustomToiletDetailsInfoDTO::getToiletImage,
+//                        CustomToiletDetailsInfoDTO::getFacilityName
+//                ))
+//                .map(dto -> {
+//                    ToiletDetailsInfoResponse toiletDetailsInfoResponse = new ToiletDetailsInfoResponse();
+//                    toiletDetailsInfoResponse.setId(dto.getId());
+//                    toiletDetailsInfoResponse.setToiletName(dto.getToiletName());
+//                    toiletDetailsInfoResponse.setAddress(dto.getAddress());
+//                    toiletDetailsInfoResponse.setWard(dto.getWard());
+//                    toiletDetailsInfoResponse.setDistrict(dto.getDistrict());
+//                    toiletDetailsInfoResponse.setProvince(dto.getProvince());
+//                    toiletDetailsInfoResponse.setLongitude(dto.getLongitude());
+//                    toiletDetailsInfoResponse.setLatitude(dto.getLatitude());
+//                    toiletDetailsInfoResponse.setNearBy(dto.getNearBy());
+//                    toiletDetailsInfoResponse.setOpenTime(dto.getOpenTime());
+//                    toiletDetailsInfoResponse.setCloseTime(dto.getCloseTime());
+//                    toiletDetailsInfoResponse.setFree(dto.getIsFree());
+//                    toiletDetailsInfoResponse.setMinPrice(dto.getMinPrice());
+//                    toiletDetailsInfoResponse.setMaxPrice(dto.getMaxPrice());
+//                    toiletDetailsInfoResponse.setRatingStar(dto.getRatingStar());
+//
+//                    /*ToiletImageDTO toiletImageDTO = new ToiletImageDTO();
+//                    toiletImageDTO.setImageSource(dto.getToiletImage());
+//                    toiletDetailsInfoResponse.setToiletImageDTOS(List.of(toiletImageDTO));*/
+//
+//                    ToiletFacilityDTO toiletFacilityDTO = new ToiletFacilityDTO();
+//                    toiletFacilityDTO.setFacilityName(dto.getFacilityName());
+//                    toiletFacilityDTO.setQuantity(dto.getFacilityQuantity());
+//                    toiletFacilityDTO.setDescription(dto.getFacilityDescription());
+//                    toiletFacilityDTOS.add(toiletFacilityDTO);
+//
+//                    toiletDetailsInfoResponse.setToiletFacilityDTOS(toiletFacilityDTOS);
+//
+//                    return toiletDetailsInfoResponse;
+//                })
+//                .collect(Collectors.toList());
+//        return responses;
     }
 
     private ToiletDetailsInfoResponse getToiletFromListCustomToiletDetailsInfoDTOS(List<CustomToiletDetailsInfoDTO> customToiletDetailsInfoDTOS) {

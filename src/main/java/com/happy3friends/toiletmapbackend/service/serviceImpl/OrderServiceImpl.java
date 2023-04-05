@@ -102,7 +102,7 @@ public class OrderServiceImpl implements OrderService {
         List<OrderEntity> orderEntities = orderRepository.findAllByAccountId(accountId);
 
         return orderEntities.stream()
-                .map(dto -> orderMapper.convertOrderEntityToOrderResponse(dto))
+                .map(entity -> orderMapper.convertOrderEntityToOrderResponse(entity))
                 .sorted(Comparator.comparing(OrderResponse::getDateTime).reversed())
                 .collect(Collectors.toList());
     }

@@ -18,8 +18,8 @@ public class ToiletDetailsInfoResponse {
     private String ward;
     private String district;
     private String province;
-    private Double latitude;
-    private Double longitude;
+    private double latitude;
+    private double longitude;
     private String nearBy;
     private Time openTime;
     private Time closeTime;
