@@ -1,5 +1,6 @@
 package com.happy3friends.toiletmapbackend.mapper;
 
+import com.happy3friends.toiletmapbackend.dto.CustomToiletDTO;
 import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
 import com.happy3friends.toiletmapbackend.response.ToiletResponse;
 import org.modelmapper.ModelMapper;
@@ -22,5 +23,11 @@ public class ToiletMapper {
         return Objects.isNull(toiletEntity)
                 ? null
                 : modelMapper.map(toiletEntity, ToiletResponse.class);
+    }
+
+    public ToiletResponse convertCustomToiletDTOToToiletResponse(CustomToiletDTO customToiletDTO) {
+        return Objects.isNull(customToiletDTO)
+                ? null
+                : modelMapper.map(customToiletDTO, ToiletResponse.class);
     }
 }

@@ -198,39 +198,19 @@ public class ToiletController {
         );
     }
 
-    @Operation(summary = "Get list of all toilets", description = "[Manager, User] Get list of all toilets")
+    @Operation(summary = "Get list of all toilets", description = "[Manager, User] Get list of all toilets (only find id, latitude and longitude value)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
                     @ExampleObject(value = "[\n" +
                             "    {\n" +
                             "      \"id\": 1,\n" +
-                            "      \"name\": \"Nhà vệ sinh lưu động số 1\",\n" +
-                            "      \"address\": \"44 Trần Đình Xu\",\n" +
-                            "      \"ward\": \"Phường Cô Giang\",\n" +
-                            "      \"district\": \"Quận 1\",\n" +
-                            "      \"province\": \"Thành phố Hồ Chí Minh\",\n" +
                             "      \"latitude\": 10.759935271800982,\n" +
-                            "      \"longitude\": 106.69202149316303,\n" +
-                            "      \"nearBy\": \"Gần CircleK, gần Phúc Long\",\n" +
-                            "      \"openTime\": \"09:00:00\",\n" +
-                            "      \"closeTime\": \"23:00:00\",\n" +
-                            "      \"status\": \"Đang hoạt động\",\n" +
-                            "      \"free\": false\n" +
+                            "      \"longitude\": 106.69202149316303\n" +
                             "    },\n" +
                             "    {\n" +
                             "      \"id\": 2,\n" +
-                            "      \"name\": \"Nhà vệ sinh lưu động số 2\",\n" +
-                            "      \"address\": \"79 Đ. Nguyễn Huệ\",\n" +
-                            "      \"ward\": \"Bến Nghé\",\n" +
-                            "      \"district\": \"Quận 1\",\n" +
-                            "      \"province\": \"Thành phố Hồ Chí Minh\",\n" +
                             "      \"latitude\": 10.773159027085631,\n" +
-                            "      \"longitude\": 106.70411367332397,\n" +
-                            "      \"nearBy\": null,\n" +
-                            "      \"openTime\": \"09:00:00\",\n" +
-                            "      \"closeTime\": \"23:00:00\",\n" +
-                            "      \"status\": \"Đang hoạt động\",\n" +
-                            "      \"free\": false\n" +
+                            "      \"longitude\": 106.70411367332397\n" +
                             "    }\n" +
                             "  ]")
             })),
@@ -241,9 +221,9 @@ public class ToiletController {
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.MANAGER, RoleConstant.USER})
     @GetMapping
-    public ResponseEntity<BaseResponse<List<ToiletResponse>>> getAllToilets() {
+    public ResponseEntity<BaseResponse<List<ToiletResponse>>> getAllToiletIncludeIdLatitudeLongitude() {
 
-        List<ToiletResponse> response = toiletService.getAllToilets();
+        List<ToiletResponse> response = toiletService.getAllToiletIncludeIdLatitudeLongitude();
 
         return ResponseBuilder.generateResponse(
                 "Get list of all toilets successfully!",

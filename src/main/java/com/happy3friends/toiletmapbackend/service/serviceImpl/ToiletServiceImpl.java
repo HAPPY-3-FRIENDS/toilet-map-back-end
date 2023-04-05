@@ -1,5 +1,6 @@
 package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
+import com.happy3friends.toiletmapbackend.dto.CustomToiletDTO;
 import com.happy3friends.toiletmapbackend.dto.CustomToiletDetailsInfoDTO;
 import com.happy3friends.toiletmapbackend.dto.ToiletFacilityDTO;
 import com.happy3friends.toiletmapbackend.entity.AccountEntity;
@@ -36,11 +37,11 @@ public class ToiletServiceImpl implements ToiletService {
     private ToiletMapper toiletMapper;
 
     @Override
-    public List<ToiletResponse> getAllToilets() {
-        List<ToiletEntity> toiletEntities = toiletRepository.findAll();
+    public List<ToiletResponse> getAllToiletIncludeIdLatitudeLongitude() {
+        List<CustomToiletDTO> toiletEntities = toiletRepository.getAllToiletIncludeIdLatitudeLongitude();
 
         return toiletEntities.stream()
-                .map(entity -> toiletMapper.convertToiletEntityToToiletResponse(entity))
+                .map(dto -> toiletMapper.convertCustomToiletDTOToToiletResponse(dto))
                 .collect(Collectors.toList());
 //        List<CustomToiletDetailsInfoDTO> customToiletDetailsInfoDTOS = toiletRepository.getListCustomToiletInfoDTO();
 //

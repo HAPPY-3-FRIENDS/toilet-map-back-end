@@ -1,5 +1,6 @@
 package com.happy3friends.toiletmapbackend.repository;
 
+import com.happy3friends.toiletmapbackend.dto.CustomToiletDTO;
 import com.happy3friends.toiletmapbackend.dto.CustomToiletDetailsInfoDTO;
 import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -127,4 +128,8 @@ public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer> {
             "         t.OpenTime, t.CloseTime, t.isFree, " +
             "         f.Name, tf.Quantity, CAST(tf.Description AS NVARCHAR(MAX)), CAST(ti.ImageSource AS NVARCHAR(MAX))", nativeQuery = true)
     List<CustomToiletDetailsInfoDTO> getCustomToiletInfoDTOByToiletId(@Param("toiletId") int toiletId);
+
+    @Query(value = "SELECT Id, Latitude, Longitude " +
+            "FROM Toilet", nativeQuery = true)
+    List<CustomToiletDTO> getAllToiletIncludeIdLatitudeLongitude();
 }
