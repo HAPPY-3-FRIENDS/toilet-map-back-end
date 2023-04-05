@@ -34,11 +34,11 @@ public class ToiletEntity {
     @Column(name = "Province", nullable = false, length = 50)
     private String province;
     @Basic
-    @Column(name = "Longitude", nullable = true, precision = 0)
-    private Double longitude;
-    @Basic
-    @Column(name = "Latitude", nullable = true, precision = 0)
+    @Column(name = "Latitude", precision = 0)
     private Double latitude;
+    @Basic
+    @Column(name = "Longitude", precision = 0)
+    private Double longitude;
     @Basic
     @Column(name = "NearBy", nullable = true, length = 200)
     private String nearBy;
@@ -46,10 +46,10 @@ public class ToiletEntity {
     @Column(name = "isFree", nullable = false)
     private boolean isFree;
     @Basic
-    @Column(name = "OpenTime", nullable = true)
+    @Column(name = "OpenTime")
     private Time openTime;
     @Basic
-    @Column(name = "CloseTime", nullable = true)
+    @Column(name = "CloseTime")
     private Time closeTime;
     @Basic
     @Column(name = "CompanyId", nullable = false)

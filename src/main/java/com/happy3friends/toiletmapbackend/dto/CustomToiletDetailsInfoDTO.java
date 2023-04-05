@@ -9,8 +9,8 @@ public interface CustomToiletDetailsInfoDTO {
     public String getWard();
     public String getDistrict();
     public String getProvince();
-    public Double getLongitude();
     public Double getLatitude();
+    public Double getLongitude();
     public String getNearBy();
     public Time getOpenTime();
     public Time getCloseTime();

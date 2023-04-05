@@ -19,8 +19,8 @@ public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer> {
             "             t.Ward, " +
             "             t.District, " +
             "             t.Province, " +
-            "             t.Longitude, " +
             "             t.Latitude, " +
+            "             t.Longitude, " +
             "             t.NearBy, " +
             "             t.OpenTime, " +
             "             t.CloseTime, " +
@@ -60,8 +60,8 @@ public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer> {
             "       t.Ward, " +
             "       t.District, " +
             "       t.Province, " +
-            "       t.Longitude, " +
             "       t.Latitude, " +
+            "       t.Longitude, " +
             "       t.NearBy, " +
             "       t.OpenTime, " +
             "       t.CloseTime, " +
@@ -97,8 +97,8 @@ public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer> {
             "       t.Ward, " +
             "       t.District, " +
             "       t.Province, " +
-            "       t.Longitude, " +
             "       t.Latitude, " +
+            "       t.Longitude, " +
             "       t.NearBy, " +
             "       t.OpenTime, " +
             "       t.CloseTime, " +

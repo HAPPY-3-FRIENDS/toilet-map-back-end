@@ -56,13 +56,14 @@ CREATE TABLE [Toilet]
     Ward      NVARCHAR(50)        NOT NULL,
     District  NVARCHAR(50)        NOT NULL,
     Province  NVARCHAR(50)        NOT NULL,
-    Longitude FLOAT               NULL,
-    Latitude  FLOAT               NULL,
+    Latitude  FLOAT               NOT NULL,
+    Longitude FLOAT               NOT NULL,
     NearBy    NVARCHAR(200)       NULL,
     isFree    BIT                 NOT NULL,
-    OpenTime  TIME                NULL,
-    CloseTime TIME                NULL,
+    OpenTime  TIME                NOT NULL,
+    CloseTime TIME                NOT NULL,
     CompanyId INT                 NOT NULL,
+    AccountId INT                 NOT NULL,
     Status    NVARCHAR(20)        NOT NULL
 )
 GO
@@ -80,7 +81,7 @@ CREATE TABLE [ToiletFacility]
     Id          INT IDENTITY (1, 1) NOT NULL,
     ToiletId    INT                 NOT NULL,
     FacilityId  INT                 NOT NULL,
-    Quantity    INT                 NULL,
+    Quantity    INT                 NOT NULL,
     Description NTEXT               NULL
 )
 GO
@@ -235,6 +236,8 @@ ALTER TABLE [Configuration]
 --- UNIQUE ---
 ALTER TABLE [Account]
     ADD CONSTRAINT UNIQUE_Username UNIQUE (Username);
+ALTER TABLE [Toilet]
+    ADD CONSTRAINT UNIQUE_AccountId UNIQUE (AccountId);
 
 --- FOREIGN KEY ---
 ALTER TABLE [Account]
@@ -310,11 +313,11 @@ VALUES ('Admin'),
        ('User')
 GO
 
-INSERT INTO Toilet (Name, Address, Ward, District, Province, NearBy, isFree, OpenTime, CloseTime,
-                    CompanyId, Status)
+INSERT INTO Toilet(Name, Address, Ward, District, Province, Latitude, Longitude, NearBy, isFree, OpenTime, CloseTime,
+                   CompanyId, AccountId, Status)
 VALUES (N'Nhà vệ sinh lưu động số 1', N'44 Trần Đình Xu', N'Phường Cô Giang', N'Quận 1', N'Thành phố Hồ Chí Minh',
-        N'Gần CircleK, gần Phúc Long',
-        1, '09:00:00', '23:00:00', 1, N'Đang hoạt động')
+        10.759935271800982, 106.69202149316303, N'Gần CircleK, gần Phúc Long',
+        1, '09:00:00', '23:00:00', 1, 3, N'Đang hoạt động')
 GO
 
 INSERT INTO Facility (Name, Type)
@@ -329,8 +332,7 @@ GO
 INSERT INTO ToiletFacility (ToiletId, FacilityId, Quantity, Description)
 VALUES (1, 1, 8, N'4 phòng vệ sinh cho nữ, 4 phòng vệ sinh cho nam'),
        (1, 3, 1, null),
-       (1, 4, null, null),
-       (1, 6, null, N'Định kỳ 2 tiếng/1 lần')
+       (1, 4, 1, null)
 GO
 
 INSERT INTO Service (Name, Price, Turn)

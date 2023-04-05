@@ -67,6 +67,7 @@ public class ToiletServiceImpl implements ToiletService {
                     ToiletFacilityDTO toiletFacilityDTO = new ToiletFacilityDTO();
                     toiletFacilityDTO.setFacilityName(dto.getFacilityName());
                     toiletFacilityDTO.setQuantity(dto.getFacilityQuantity());
+                    toiletFacilityDTO.setDescription(dto.getFacilityDescription());
                     toiletFacilityDTOS.add(toiletFacilityDTO);
 
                     toiletDetailsInfoResponse.setToiletFacilityDTOS(toiletFacilityDTOS);
@@ -103,8 +104,8 @@ public class ToiletServiceImpl implements ToiletService {
                     toiletDetailsInfoResponse.setWard(dto.getWard());
                     toiletDetailsInfoResponse.setDistrict(dto.getDistrict());
                     toiletDetailsInfoResponse.setProvince(dto.getProvince());
-                    toiletDetailsInfoResponse.setLongitude(dto.getLongitude());
                     toiletDetailsInfoResponse.setLatitude(dto.getLatitude());
+                    toiletDetailsInfoResponse.setLongitude(dto.getLongitude());
                     toiletDetailsInfoResponse.setNearBy(dto.getNearBy());
                     toiletDetailsInfoResponse.setOpenTime(dto.getOpenTime());
                     toiletDetailsInfoResponse.setCloseTime(dto.getCloseTime());

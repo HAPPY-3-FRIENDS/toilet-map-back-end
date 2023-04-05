@@ -47,8 +47,8 @@ public class ToiletController {
                             "    \"ward\": \"Phường Cô Giang\",\n" +
                             "    \"district\": \"Quận 1\",\n" +
                             "    \"province\": \"Thành phố Hồ Chí Minh\",\n" +
-                            "    \"longitude\": 10.759935271800982,\n" +
-                            "    \"latitude\": 106.69202149316303,\n" +
+                            "    \"latitude\": 10.759935271800982,\n" +
+                            "    \"longitude\": 106.69202149316303,\n" +
                             "    \"nearBy\": \"Gần CircleK, gần Phúc Long\",\n" +
                             "    \"openTime\": \"09:00:00\",\n" +
                             "    \"closeTime\": \"23:00:00\",\n" +
@@ -128,8 +128,8 @@ public class ToiletController {
                             "    \"ward\": \"Phường Cô Giang\",\n" +
                             "    \"district\": \"Quận 1\",\n" +
                             "    \"province\": \"Thành phố Hồ Chí Minh\",\n" +
-                            "    \"longitude\": 10.759935271800982,\n" +
-                            "    \"latitude\": 106.69202149316303,\n" +
+                            "    \"latitude\": 10.759935271800982,\n" +
+                            "    \"longitude\": 106.69202149316303,\n" +
                             "    \"nearBy\": \"Gần CircleK, gần Phúc Long\",\n" +
                             "    \"openTime\": \"09:00:00\",\n" +
                             "    \"closeTime\": \"23:00:00\",\n" +

@@ -23,7 +23,7 @@ public class ToiletFacilityEntity {
     @Column(name = "FacilityId", nullable = false)
     private int facilityId;
     @Basic
-    @Column(name = "Quantity", nullable = true)
+    @Column(name = "Quantity")
     private Integer quantity;
     @Basic
     @Column(name = "Description", nullable = true, length = -1)
