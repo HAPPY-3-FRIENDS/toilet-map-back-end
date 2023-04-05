@@ -36,7 +36,7 @@ public class ToiletController {
     @Autowired
     private ToiletService toiletService;
 
-    @Operation(summary = "Get toilet by account ID", description = "Get a specific toilet by account ID")
+    @Operation(summary = "Get toilet by account ID", description = "[Manager, Staff] Get a specific toilet by account ID")
     @Parameter(name = "account-id", description = "A specific account ID", in = ParameterIn.PATH, required = true, example = "3")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
@@ -117,7 +117,7 @@ public class ToiletController {
         );
     }
 
-    @Operation(summary = "Get toilet by toilet ID", description = "Get a specific toilet by toilet ID")
+    @Operation(summary = "Get toilet by toilet ID", description = "[Manager, Staff, User] Get a specific toilet by toilet ID")
     @Parameter(name = "toilet-id", description = "A specific toilet ID", in = ParameterIn.PATH, required = true, example = "1")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {

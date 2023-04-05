@@ -34,7 +34,7 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    @Operation(summary = "Create order", description = "Create order with account ID")
+    @Operation(summary = "Create order", description = "[User] Create order with account ID")
     @Parameter(name = "account-id", description = "A specific account ID", in = ParameterIn.PATH, required = true, example = "4")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Order Request", required = true, content = @Content(
             examples = {
@@ -78,7 +78,7 @@ public class OrderController {
         );
     }
 
-    @Operation(summary = "Order histories by Account ID", description = "List of order histories of a specific Account by Account ID")
+    @Operation(summary = "Order histories by Account ID", description = "[User] List of order histories of a specific Account by Account ID")
     @Parameter(name = "account-id", description = "A specific Account ID", in = ParameterIn.PATH, required = true, example = "4")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {

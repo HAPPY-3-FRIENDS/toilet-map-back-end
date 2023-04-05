@@ -32,7 +32,7 @@ public class ComboController {
     @Autowired
     private ComboService comboService;
 
-    @Operation(summary = "Get all combos", description = "Get the list of all combos")
+    @Operation(summary = "Get all combos", description = "[Admin, User] Get the list of all combos")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
                     @ExampleObject(value = "[\n" +

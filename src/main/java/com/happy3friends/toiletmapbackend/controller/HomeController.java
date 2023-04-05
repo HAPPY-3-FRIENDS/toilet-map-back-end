@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/api")
 public class HomeController {
 
-    @Operation(summary = "Home API", description = "Test API")
+    @Operation(summary = "Home API", description = "[All] Test API")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),

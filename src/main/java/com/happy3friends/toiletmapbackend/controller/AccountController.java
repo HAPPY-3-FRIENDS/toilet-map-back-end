@@ -41,7 +41,7 @@ public class AccountController {
     @Autowired
     private UserInfoService userInfoService;
 
-    @Operation(summary = "Register an account for an employee", description = "Register an account by username (phone), password, roleName and companyId")
+    @Operation(summary = "Register an account for an employee", description = "[Admin, Manager] Register an account by username (phone), password, roleName and companyId")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Account Request", required = true, content = @Content(
             examples = {
                     @ExampleObject(name = "Manager Account Request", value = "{\n" +
@@ -80,7 +80,7 @@ public class AccountController {
         );
     }
 
-    @Operation(summary = "Register an account for a user", description = "Register an account by username (phone) and fullName")
+    @Operation(summary = "Register an account for a user", description = "[All] Register an account by username (phone) and fullName")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Account Request", required = true, content = @Content(
             examples = {
                     @ExampleObject(value = "{\n" +
@@ -109,7 +109,7 @@ public class AccountController {
         );
     }
 
-    @Operation(summary = "Update user info of a user", description = "Update one or many fields in user info of a user by Account ID")
+    @Operation(summary = "Update user info of a user", description = "[User] Update one or many fields in user info of a user by Account ID")
     @Parameter(name = "account-id", description = "A specific account ID", in = ParameterIn.PATH, required = true, example = "4")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Fields Request", required = true, content = @Content(
             examples = {
@@ -153,7 +153,7 @@ public class AccountController {
         );
     }
 
-    @Operation(summary = "Get user infos of a user", description = "Get user infos of a user by Account ID")
+    @Operation(summary = "Get user infos of a user", description = "[User] Get user infos of a user by Account ID")
     @Parameter(name = "account-id", description = "A specific account ID", in = ParameterIn.PATH, required = true, example = "4")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {

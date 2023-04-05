@@ -35,7 +35,7 @@ public class CheckInController {
     @Autowired
     private CheckInService checkInService;
 
-    @Operation(summary = "Check-in histories by Toilet ID", description = "Get the list of check-in histories of a specific toilet by toilet-id")
+    @Operation(summary = "Check-in histories by Toilet ID", description = "[Admin, Manager] Get the list of check-in histories of a specific toilet by toilet-id")
     @Parameter(name = "toilet-id", description = "A specific toilet ID", in = ParameterIn.PATH, required = true, example = "1")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
@@ -67,7 +67,7 @@ public class CheckInController {
         );
     }
 
-    @Operation(summary = "Check-in histories by Account ID", description = "List of check-in histories by Account ID")
+    @Operation(summary = "Check-in histories by Account ID", description = "[User] List of check-in histories by Account ID")
     @Parameters(value = {
             @Parameter(name = "account-id", description = "A specific account ID", in = ParameterIn.PATH, required = true, example = "4"),
             @Parameter(name = "payment-method", description = "A specific payment method", in = ParameterIn.QUERY, examples = {
@@ -121,7 +121,7 @@ public class CheckInController {
         );
     }
 
-    @Operation(summary = "User check-in", description = "User check in a specific toilet")
+    @Operation(summary = "User check-in", description = "[Staff] User check in a specific toilet")
     @Parameter(name = "toilet-id", description = "A specific toilet ID", in = ParameterIn.PATH, required = true, example = "1")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Check-in Request", required = true, content = @Content(
             examples = {
@@ -147,7 +147,7 @@ public class CheckInController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed(RoleConstant.STAFF)
+    @RolesAllowed({RoleConstant.STAFF})
     @PostMapping(value = "/toilets/{toilet-id}/user")
     public ResponseEntity<BaseResponse<CheckInResponse>> userCheckIn(
             @PathVariable("toilet-id") int toiletId,

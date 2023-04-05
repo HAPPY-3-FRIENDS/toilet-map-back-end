@@ -32,7 +32,7 @@ public class AuthenticateController {
     @Autowired
     private AuthenticateService authenticateService;
 
-    @Operation(summary = "Authenticate an account", description = "Authenticate an account by username (phone) and password (optional)")
+    @Operation(summary = "Authenticate an account", description = "[All] Authenticate an account by username (phone) and password (optional)")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Authenticated Request", required = true, content = @Content(
             examples = {
                     @ExampleObject(name = "Employee Authenticate Request", value = "{\n" +

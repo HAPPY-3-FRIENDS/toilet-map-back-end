@@ -34,7 +34,7 @@ public class PaymentController {
     @Autowired
     private PaymentService paymentService;
 
-    @Operation(summary = "Create payment", description = "Create payment with account ID")
+    @Operation(summary = "Create payment", description = "[Staff, User] Create payment with account ID")
     @Parameter(name = "account-id", description = "A specific account ID", in = ParameterIn.PATH, required = true, example = "4")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Payment Request", required = true, content = @Content(
             examples = {
@@ -75,7 +75,7 @@ public class PaymentController {
         );
     }
 
-    @Operation(summary = "Payment histories by Account ID", description = "List of payment histories of a specific Account by Account ID")
+    @Operation(summary = "Payment histories by Account ID", description = "[User] List of payment histories of a specific Account by Account ID")
     @Parameter(name = "account-id", description = "A specific Account ID", in = ParameterIn.PATH, required = true, example = "4")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
