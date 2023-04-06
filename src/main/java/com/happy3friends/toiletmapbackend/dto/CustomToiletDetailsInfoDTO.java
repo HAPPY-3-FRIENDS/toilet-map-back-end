@@ -18,6 +18,7 @@ public interface CustomToiletDetailsInfoDTO {
     public int getMinPrice();
     public int getMaxPrice();
     public String getFacilityName();
+    public String getFacilityType();
     public int getFacilityQuantity();
     public String getFacilityDescription();
     public double getRatingStar();

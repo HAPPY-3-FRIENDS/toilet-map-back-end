@@ -31,13 +31,14 @@ public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer> {
             "                   IIF(t.isFree = 0, MIN(s.Price), 0)                                                    AS MinPrice, " +
             "                   IIF(t.isFree = 0, MAX(s.Price), 0)                                                    AS MaxPrice, " +
             "                   f.Name                                                                                AS FacilityName, " +
+            "                   f.Type                                                                                AS FacilityType, " +
             "                   COALESCE(tf.Quantity, 0)                                                              AS FacilityQuantity, " +
             "                   CAST(tf.Description AS NVARCHAR(MAX))                                                 AS FacilityDescription, " +
             "                   COALESCE(ROUND(AVG(CAST(Star AS FLOAT)), 1), 0)                                       AS RatingStar, " +
             "                   CAST(ti.ImageSource AS NVARCHAR(MAX))                                                 AS ToiletImage, " +
             "                   SQRT(SQUARE(:currentLatitude - t.Latitude) + SQUARE(:currentLongitude - t.Longitude)) AS Distance, " +
             "                   ROW_NUMBER() OVER (PARTITION BY t.Id, t.Name, t.Address, t.Ward, t.District, t.Province, t.Latitude, " +
-            "                       t.Longitude, t.NearBy, t.OpenTime, t.CloseTime, t.isFree, f.Name, tf.Quantity " +
+            "                       t.Longitude, t.NearBy, t.OpenTime, t.CloseTime, t.isFree, f.Name, f.Type, tf.Quantity " +
             "                       ORDER BY t.Id)                                                                    AS RowNumber " +
             "            FROM Toilet t " +
             "                     CROSS JOIN Facility f " +
@@ -51,11 +52,11 @@ public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer> {
             "                               ON r.ToiletId = t.Id " +
             "                     LEFT JOIN ToiletImage ti " +
             "                               ON t.Id = ti.ToiletId " +
-            "            WHERE SQRT(SQUARE(:currentLatitude - t.Latitude) + " +
-            "                       SQUARE(:currentLongitude - t.Longitude)) BETWEEN (0) AND (:distanceCurrentAndDeviationMax) " +
+            "            WHERE SQRT(SQUARE(:currentLatitude - t.Latitude) + SQUARE(:currentLongitude - t.Longitude)) " +
+            "                      BETWEEN (0) AND (:distanceCurrentAndDeviationMax) " +
             "            GROUP BY t.Id, t.Name, t.Address, t.Ward, t.District, t.Province, t.Latitude, t.Longitude, t.NearBy, " +
-            "                     t.OpenTime, t.CloseTime, t.isFree, f.Name, " +
-            "                     tf.Quantity, CAST(tf.Description AS NVARCHAR(MAX)), CAST(ti.ImageSource AS NVARCHAR(MAX))) AS A " +
+            "                     t.OpenTime, t.CloseTime, t.isFree, f.Name, f.Type, tf.Quantity, " +
+            "                     CAST(tf.Description AS NVARCHAR(MAX)), CAST(ti.ImageSource AS NVARCHAR(MAX))) AS A " +
             "      WHERE A.RowNumber = 1) AS RS " +
             "WHERE RS.Rank <= 10", nativeQuery = true)
     List<CustomToiletDetailsInfoDTO> getTop10ToiletsNearByCurrentLocation(@Param("currentLatitude") Double currentLatitude,
@@ -77,6 +78,7 @@ public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer> {
             "       IIF(t.isFree = 0, MIN(s.Price), 0)              AS MinPrice, " +
             "       IIF(t.isFree = 0, MAX(s.Price), 0)              AS MaxPrice, " +
             "       f.Name                                          AS FacilityName, " +
+            "       f.Type                                          AS FacilityType, " +
             "       COALESCE(tf.Quantity, 0)                        AS FacilityQuantity, " +
             "       CAST(tf.Description AS NVARCHAR(MAX))           AS FacilityDescription, " +
             "       COALESCE(ROUND(AVG(CAST(Star AS FLOAT)), 1), 0) AS RatingStar, " +
@@ -96,7 +98,7 @@ public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer> {
             "WHERE t.AccountId = :accountId " +
             "GROUP BY t.Id, t.Name, t.Address, t.Ward, t.District, t.Province, t.Longitude, t.Latitude, t.NearBy, " +
             "         t.OpenTime, t.CloseTime, t.isFree, " +
-            "         f.Name, tf.Quantity, CAST(tf.Description AS NVARCHAR(MAX)), CAST(ti.ImageSource AS NVARCHAR(MAX))", nativeQuery = true)
+            "         f.Name, f.Type, tf.Quantity, CAST(tf.Description AS NVARCHAR(MAX)), CAST(ti.ImageSource AS NVARCHAR(MAX))", nativeQuery = true)
     List<CustomToiletDetailsInfoDTO> getCustomToiletInfoDTOByAccountId(@Param("accountId") int accountId);
 
     @Query(value = "SELECT t.Id, " +
@@ -114,6 +116,7 @@ public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer> {
             "       IIF(t.isFree = 0, MIN(s.Price), 0)              AS MinPrice, " +
             "       IIF(t.isFree = 0, MAX(s.Price), 0)              AS MaxPrice, " +
             "       f.Name                                          AS FacilityName, " +
+            "       f.Type                                          AS FacilityType, " +
             "       COALESCE(tf.Quantity, 0)                        AS FacilityQuantity, " +
             "       CAST(tf.Description AS NVARCHAR(MAX))           AS FacilityDescription, " +
             "       COALESCE(ROUND(AVG(CAST(Star AS FLOAT)), 1), 0) AS RatingStar, " +
@@ -133,7 +136,7 @@ public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer> {
             "WHERE t.Id = :toiletId " +
             "GROUP BY t.Id, t.Name, t.Address, t.Ward, t.District, t.Province, t.Longitude, t.Latitude, t.NearBy, " +
             "         t.OpenTime, t.CloseTime, t.isFree, " +
-            "         f.Name, tf.Quantity, CAST(tf.Description AS NVARCHAR(MAX)), CAST(ti.ImageSource AS NVARCHAR(MAX))", nativeQuery = true)
+            "         f.Name, f.Type, tf.Quantity, CAST(tf.Description AS NVARCHAR(MAX)), CAST(ti.ImageSource AS NVARCHAR(MAX))", nativeQuery = true)
     List<CustomToiletDetailsInfoDTO> getCustomToiletInfoDTOByToiletId(@Param("toiletId") int toiletId);
 
     @Query(value = "SELECT Id, Latitude, Longitude " +

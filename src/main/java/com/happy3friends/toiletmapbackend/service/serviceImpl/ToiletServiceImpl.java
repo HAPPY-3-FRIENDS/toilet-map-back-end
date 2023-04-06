@@ -54,6 +54,7 @@ public class ToiletServiceImpl implements ToiletService {
                 .map(dto -> {
                     ToiletFacilityDTO toiletFacilityDTO = new ToiletFacilityDTO();
                     toiletFacilityDTO.setFacilityName(dto.getFacilityName());
+                    toiletFacilityDTO.setFacilityType(dto.getFacilityType());
                     toiletFacilityDTO.setQuantity(dto.getFacilityQuantity());
                     toiletFacilityDTO.setDescription(dto.getFacilityDescription());
                     return toiletFacilityDTO;
