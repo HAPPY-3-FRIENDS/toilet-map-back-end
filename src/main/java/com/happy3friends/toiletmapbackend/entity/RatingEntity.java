@@ -39,6 +39,6 @@ public class RatingEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ToiletId", referencedColumnName = "Id", insertable = false, updatable = false)
     private ToiletEntity toiletByToiletId;
-    @OneToMany(mappedBy = "ratingByRatingId")
+    @OneToMany(mappedBy = "ratingByRatingId", cascade = CascadeType.ALL)
     private Collection<RatingImageEntity> ratingImagesById;
 }
