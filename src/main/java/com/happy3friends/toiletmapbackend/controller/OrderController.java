@@ -64,7 +64,7 @@ public class OrderController {
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.USER})
-    @PostMapping(value = "/{account-id}")
+    @PostMapping(value = "/accounts/{account-id}")
     public ResponseEntity<BaseResponse<OrderResponse>> createOrderByAccountId(
             @PathVariable("account-id") int accountId,
             @RequestBody @Valid OrderRequest orderRequest) {
@@ -103,7 +103,7 @@ public class OrderController {
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.USER})
-    @GetMapping(value = "/{account-id}")
+    @GetMapping(value = "/accounts/{account-id}")
     public ResponseEntity<BaseResponse<List<OrderResponse>>> getOrderHistoriesByAccountId(@PathVariable("account-id") int accountId) {
 
         List<OrderResponse> responses = orderService.getOrderHistoriesByAccountId(accountId);

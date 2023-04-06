@@ -62,7 +62,7 @@ public class PaymentController {
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.STAFF, RoleConstant.USER})
-    @PostMapping(value = "/{account-id}")
+    @PostMapping(value = "/accounts/{account-id}")
     public ResponseEntity<BaseResponse<PaymentResponse>> createPaymentByAccountId(@PathVariable("account-id") int accountId,
                                                                                 @RequestBody @Valid PaymentRequest paymentRequest) {
 
@@ -100,7 +100,7 @@ public class PaymentController {
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.USER})
-    @GetMapping(value = "/{account-id}")
+    @GetMapping(value = "/accounts/{account-id}")
     public ResponseEntity<BaseResponse<List<PaymentResponse>>> getPaymentHistoriesByAccountId(@PathVariable("account-id") int accountId) {
 
         List<PaymentResponse> responses = paymentService.getPaymentHistoriesByAccountId(accountId);
