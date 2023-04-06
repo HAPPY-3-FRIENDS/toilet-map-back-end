@@ -9,4 +9,5 @@ public interface CheckInService {
     List<CheckInResponse> getCheckInHistoriesByToiletId(int toiletId);
     List<CheckInResponse> getCheckInHistoriesByAccountId(int accountId, String paymentMethod);
     CheckInResponse userCheckIn(int toiletId, int accountId, CheckInRequest checkInRequest);
+    List<CheckInResponse> walkInGuestCheckIn(int toiletId, int accountId, List<CheckInRequest> checkInRequests);
 }

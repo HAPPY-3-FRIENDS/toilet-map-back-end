@@ -7,6 +7,8 @@ import com.happy3friends.toiletmapbackend.entity.AccountEntity;
 import com.happy3friends.toiletmapbackend.entity.CheckInEntity;
 import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
 import com.happy3friends.toiletmapbackend.entity.ToiletServiceEntity;
+import com.happy3friends.toiletmapbackend.enums.PaymentTypeEnum;
+import com.happy3friends.toiletmapbackend.enums.RoleEnum;
 import com.happy3friends.toiletmapbackend.exception.BadRequestException;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.CheckInMapper;
@@ -20,9 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -143,5 +143,70 @@ public class CheckInServiceImpl implements CheckInService {
             LOGGER.error("Service '" + checkInRequest.getServiceName() + "' is not contained in Toilet with Id '" + toiletId + "'!");
             throw new BadRequestException("Service '" + checkInRequest.getServiceName() + "' is not contained in Toilet with Id '" + toiletId + "'!");
         }
+    }
+
+    public HashMap<String, ToiletServiceEntity> getMapServiceNameAndToiletServiceEntity(
+            List<ToiletServiceEntity> toiletServiceEntities) {
+
+        return toiletServiceEntities.stream()
+                .collect(HashMap::new,
+                        (m, c) -> m.put(c.getServiceByServiceId().getName(), c),
+                        (m, u) -> {});
+    }
+
+    @Override
+    public List<CheckInResponse> walkInGuestCheckIn(int toiletId, int accountId, List<CheckInRequest> checkInRequests) {
+        Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
+        if (!toiletEntity.isPresent())
+            throw new NotFoundException("Toilet", "Id", toiletId);
+
+        Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
+        if (!accountEntity.isPresent())
+            throw new NotFoundException("Account", "Id", accountId);
+        if (!accountEntity.get().getRoleByRoleId().getName().equals(RoleEnum.STAFF.getRoleName()))
+            throw new BadRequestException("This account-id is not an account-id of a staff");
+
+        List<CheckInRequest> list = new ArrayList<>();
+        checkInRequests.stream()
+                .forEach(obj -> {
+                    list.addAll(Collections.nCopies(obj.getQuantity(), obj));
+                });
+
+        List<ToiletServiceEntity> toiletServiceEntities
+                = toiletServiceRepository.findToiletServiceEntitiesByToiletIdAndFetchServiceEagerly(toiletId);
+        HashMap<String, ToiletServiceEntity> mapServiceNameAndToiletServiceEntity
+                = getMapServiceNameAndToiletServiceEntity(toiletServiceEntities);
+
+        List<CheckInEntity> checkInEntities = list.stream()
+                .map(obj -> {
+                    CheckInEntity checkInEntity = new CheckInEntity();
+                    checkInEntity.setAccountId(accountId);
+                    checkInEntity.setToiletServiceId(
+                            mapServiceNameAndToiletServiceEntity.get(
+                                    obj.getServiceName()
+                            ).getId()
+                    );
+                    checkInEntity.setDateTime(DateTimeUtil.getTimestampNow());
+                    checkInEntity.setPaymentMethod(PaymentTypeEnum.CASH.getPaymentValue());
+                    checkInEntity.setBalance(
+                            mapServiceNameAndToiletServiceEntity.get(
+                                    obj.getServiceName()
+                            ).getServiceByServiceId()
+                                    .getPrice()
+                    );
+                    checkInEntity.setToiletServiceByToiletServiceId(
+                            mapServiceNameAndToiletServiceEntity.get(
+                                    obj.getServiceName()
+                            )
+                    );
+                    return checkInEntity;
+                })
+                .collect(Collectors.toList());
+
+        checkInRepository.saveAll(checkInEntities);
+
+        return checkInEntities.stream()
+                .map(checkInEntity -> checkInMapper.convertCheckInEntityToCheckInResponse(checkInEntity))
+                .collect(Collectors.toList());
     }
 }

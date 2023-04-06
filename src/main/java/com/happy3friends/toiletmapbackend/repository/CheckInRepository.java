@@ -1,5 +1,6 @@
 package com.happy3friends.toiletmapbackend.repository;
 
+import com.happy3friends.toiletmapbackend.constant.DefaultAccountNameConstant;
 import com.happy3friends.toiletmapbackend.constant.RoleConstant;
 import com.happy3friends.toiletmapbackend.dto.CustomCheckInDTO;
 import com.happy3friends.toiletmapbackend.entity.CheckInEntity;
@@ -13,7 +14,7 @@ import java.util.List;
 @Repository
 public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer> {
 
-    @Query(value = "SELECT (IIF(r.Name = '" + RoleConstant.STAFF + "', 'Khách vãng lai', ui.FullName)) as FullName, " +
+    @Query(value = "SELECT (IIF(r.Name = '" + RoleConstant.STAFF + "', '" + DefaultAccountNameConstant.WALK_IN_GUEST + "', ui.FullName)) as FullName, " +
             "       c.DateTime, " +
             "       s.Name                                                 as 'ServiceName', " +
             "       c.PaymentMethod, " +

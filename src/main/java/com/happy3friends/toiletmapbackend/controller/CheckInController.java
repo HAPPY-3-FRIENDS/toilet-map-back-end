@@ -162,4 +162,70 @@ public class CheckInController {
                 response
         );
     }
+
+    @Operation(summary = "Walk-in-guest check-in", description = "[Staff] Walk-in-guest check in a specific toilet")
+    @Parameter(name = "toilet-id", description = "A specific toilet ID", in = ParameterIn.PATH, required = true, example = "1")
+    @Parameter(name = "account-id", description = "A specific account ID (Staff)", in = ParameterIn.PATH, required = true, example = "3")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Check-in Request", required = true, content = @Content(
+            examples = {
+                    @ExampleObject(value = "[\n" +
+                            "  {\n" +
+                            "    \"serviceName\": \"Đi vệ sinh (tiểu tiện)\",\n" +
+                            "    \"quantity\": 1\n" +
+                            "  },\n" +
+                            "  {\n" +
+                            "    \"serviceName\": \"Đi vệ sinh (đại tiện)\",\n" +
+                            "    \"quantity\": 2\n" +
+                            "  }\n" +
+                            "]")}))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Successfully!", content = @Content(examples = {
+                    @ExampleObject(value = "[\n" +
+                            "    {\n" +
+                            "      \"fullName\": \"Khách vãng lai\",\n" +
+                            "      \"dateTime\": \"06/04/2023 - 16:25:32\",\n" +
+                            "      \"serviceName\": \"Đi vệ sinh (tiểu tiện)\",\n" +
+                            "      \"paymentMethod\": \"Tiền mặt\",\n" +
+                            "      \"balance\": 2000,\n" +
+                            "      \"turn\": null\n" +
+                            "    },\n" +
+                            "    {\n" +
+                            "      \"fullName\": \"Khách vãng lai\",\n" +
+                            "      \"dateTime\": \"06/04/2023 - 16:25:32\",\n" +
+                            "      \"serviceName\": \"Đi vệ sinh (đại tiện)\",\n" +
+                            "      \"paymentMethod\": \"Tiền mặt\",\n" +
+                            "      \"balance\": 4000,\n" +
+                            "      \"turn\": null\n" +
+                            "    },\n" +
+                            "    {\n" +
+                            "      \"fullName\": \"Khách vãng lai\",\n" +
+                            "      \"dateTime\": \"06/04/2023 - 16:25:32\",\n" +
+                            "      \"serviceName\": \"Đi vệ sinh (đại tiện)\",\n" +
+                            "      \"paymentMethod\": \"Tiền mặt\",\n" +
+                            "      \"balance\": 4000,\n" +
+                            "      \"turn\": null\n" +
+                            "    }\n" +
+                            "  ]")})),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.STAFF})
+    @PostMapping(value = "/toilets/{toilet-id}/accounts/{account-id}/walk-in-guest")
+    public ResponseEntity<BaseResponse<List<CheckInResponse>>> walkInGuestCheckIn(
+            @PathVariable("toilet-id") int toiletId,
+            @PathVariable("account-id") int accountId,
+            @RequestBody @Valid List<CheckInRequest> checkInRequests) {
+
+        List<CheckInResponse> response = checkInService.walkInGuestCheckIn(toiletId, accountId, checkInRequests);
+
+        return ResponseBuilder.generateResponse(
+                "Walk-in-guest check-in toilet successfully!",
+                HttpStatus.CREATED,
+                response
+        );
+    }
 }

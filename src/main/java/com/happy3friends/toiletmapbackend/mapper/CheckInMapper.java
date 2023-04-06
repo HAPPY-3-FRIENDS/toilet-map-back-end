@@ -1,5 +1,6 @@
 package com.happy3friends.toiletmapbackend.mapper;
 
+import com.happy3friends.toiletmapbackend.constant.DefaultAccountNameConstant;
 import com.happy3friends.toiletmapbackend.dto.CustomCheckInDTO;
 import com.happy3friends.toiletmapbackend.entity.CheckInEntity;
 import com.happy3friends.toiletmapbackend.request.CheckInRequest;
@@ -32,7 +33,11 @@ public class CheckInMapper {
 
         CheckInResponse checkInResponse = new CheckInResponse();
         try {
-            checkInResponse.setFullName(checkInEntity.getAccountByAccountId().getUserInfoById().getFullName());
+            if (checkInEntity.getAccountByAccountId() != null) {
+                checkInResponse.setFullName(checkInEntity.getAccountByAccountId().getUserInfoById().getFullName());
+            } else {
+                checkInResponse.setFullName(DefaultAccountNameConstant.WALK_IN_GUEST);
+            }
             checkInResponse.setDateTime(checkInEntity.getDateTime());
             checkInResponse.setServiceName(checkInEntity.getToiletServiceByToiletServiceId().getServiceByServiceId().getName());
             checkInResponse.setPaymentMethod(checkInEntity.getPaymentMethod());
