@@ -7,4 +7,5 @@ import java.util.Map;
 public interface UserInfoService {
     UserInfoResponse updateUserInfoByFieldsAndAccountId(int accountId, Map<String, Object> fields);
     UserInfoResponse getUserInfoAccountId(int accountId);
+    UserInfoResponse getUserInfoByAccountUsername(String accountUsername);
 }

@@ -185,4 +185,37 @@ public class AccountController {
                 response
         );
     }
+
+    @Operation(summary = "Get user infos of a user", description = "[User] Get user infos of a user by Account username")
+    @Parameter(name = "account-username", description = "A specific account username", in = ParameterIn.QUERY, required = true, example = "0849666957")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
+                    @ExampleObject(value = "{\n" +
+                            "    \"accountId\": 4,\n" +
+                            "    \"fullName\": \"Huỳnh Lê Thủy Tiên\",\n" +
+                            "    \"gmail\": \"tien.huynhlt.tn@gmail.com\",\n" +
+                            "    \"avatar\": \"https://scontent.fsgn19-1.fna.fbcdn.net/v/t39.30808-6/272908202_3227262997503338_854943145488623253_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=174925&_nc_ohc=DsyBnrzVM54AX_UwxS-&_nc_ht=scontent.fsgn19-1.fna&oh=00_AfBWPT-ZIevQvgZ9zUBRhFcVeKZxBWFbyvYSh7QBDP36uQ&oe=641EEE84\",\n" +
+                            "    \"defaultPayment\": \"Số lượt\",\n" +
+                            "    \"accountBalance\": 25000,\n" +
+                            "    \"accountTurn\": 24\n" +
+                            "  }")})),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.USER})
+    @GetMapping(value = "/user-infos")
+    public ResponseEntity<BaseResponse<UserInfoResponse>> getUserInfoByAccountUsername(@RequestParam(value = "account-username") String accountUsername) {
+
+        UserInfoResponse response = userInfoService.getUserInfoByAccountUsername(accountUsername);
+
+        return ResponseBuilder.generateResponse(
+                "Get user info by Account username successfully!",
+                HttpStatus.OK,
+                response
+        );
+    }
 }

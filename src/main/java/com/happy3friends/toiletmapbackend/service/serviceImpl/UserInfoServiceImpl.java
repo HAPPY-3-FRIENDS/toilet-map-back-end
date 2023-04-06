@@ -48,6 +48,7 @@ public class UserInfoServiceImpl implements UserInfoService {
             } else ReflectionUtils.setField(field, userInfoEntity.get(), value);
         });
 
+        // TODO: add turn or balance (not override)
         UserInfoEntity entity = userInfoRepository.save(userInfoEntity.get());
 
         return userInfoMapper.convertUserInfoEntityToUserInfoResponse(entity);
@@ -59,6 +60,16 @@ public class UserInfoServiceImpl implements UserInfoService {
         if (!accountEntity.isPresent()) throw new NotFoundException("Account", "Id", accountId);
 
         CustomAccountInfoDTO customAccountInfoDTO = accountRepository.getCustomAccountInfoByAccountId(accountId);
+
+        return userInfoMapper.convertCustomAccountInfoDTOToUserInfoResponse(customAccountInfoDTO);
+    }
+
+    @Override
+    public UserInfoResponse getUserInfoByAccountUsername(String accountUsername) {
+        AccountEntity accountEntity = accountRepository.findByUsername(accountUsername);
+        if (accountEntity == null) throw new NotFoundException("Account", "Username", accountUsername);
+
+        CustomAccountInfoDTO customAccountInfoDTO = accountRepository.getCustomAccountInfoByUsername(accountUsername);
 
         return userInfoMapper.convertCustomAccountInfoDTOToUserInfoResponse(customAccountInfoDTO);
     }
