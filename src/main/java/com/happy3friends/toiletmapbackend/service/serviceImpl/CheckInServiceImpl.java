@@ -74,7 +74,7 @@ public class CheckInServiceImpl implements CheckInService {
     }
 
     @Override
-    public CheckInResponse userCheckIn(int toiletId, CheckInRequest checkInRequest) {
+    public CheckInResponse userCheckIn(int toiletId, int accountId, CheckInRequest checkInRequest) {
         Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
         if (!toiletEntity.isPresent())
             throw new NotFoundException("Toilet", "Id", toiletId);
@@ -88,7 +88,6 @@ public class CheckInServiceImpl implements CheckInService {
                 .findFirst();
 
         if (toiletServiceEntity.isPresent()) {
-            int accountId = checkInRequest.getAccountId();
             Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
 
             if (!accountEntity.isPresent())

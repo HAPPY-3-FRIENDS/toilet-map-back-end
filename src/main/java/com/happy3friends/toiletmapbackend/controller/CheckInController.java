@@ -123,10 +123,10 @@ public class CheckInController {
 
     @Operation(summary = "User check-in", description = "[Staff] User check in a specific toilet")
     @Parameter(name = "toilet-id", description = "A specific toilet ID", in = ParameterIn.PATH, required = true, example = "1")
+    @Parameter(name = "account-id", description = "A specific account ID (User)", in = ParameterIn.PATH, required = true, example = "4")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Check-in Request", required = true, content = @Content(
             examples = {
                     @ExampleObject(value = "{\n" +
-                            "  \"accountId\": 4,\n" +
                             "  \"serviceName\": \"Đi vệ sinh (tiểu tiện)\",\n" +
                             "  \"datetime\": \"2023-10-29 10:30:00.123456\"\n" +
                             "}")}))
@@ -148,12 +148,13 @@ public class CheckInController {
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.STAFF})
-    @PostMapping(value = "/toilets/{toilet-id}/user")
+    @PostMapping(value = "/toilets/{toilet-id}/accounts/{account-id}/user")
     public ResponseEntity<BaseResponse<CheckInResponse>> userCheckIn(
             @PathVariable("toilet-id") int toiletId,
+            @PathVariable("account-id") int accountId,
             @RequestBody @Valid CheckInRequest checkInRequest) {
 
-        CheckInResponse response = checkInService.userCheckIn(toiletId, checkInRequest);
+        CheckInResponse response = checkInService.userCheckIn(toiletId, accountId, checkInRequest);
 
         return ResponseBuilder.generateResponse(
                 "User check-in toilet successfully!",

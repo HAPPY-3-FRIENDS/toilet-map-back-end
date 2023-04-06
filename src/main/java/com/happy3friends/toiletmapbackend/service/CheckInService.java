@@ -8,5 +8,5 @@ import java.util.List;
 public interface CheckInService {
     List<CheckInResponse> getCheckInHistoriesByToiletId(int toiletId);
     List<CheckInResponse> getCheckInHistoriesByAccountId(int accountId, String paymentMethod);
-    CheckInResponse userCheckIn(int toiletId, CheckInRequest checkInRequest);
+    CheckInResponse userCheckIn(int toiletId, int accountId, CheckInRequest checkInRequest);
 }

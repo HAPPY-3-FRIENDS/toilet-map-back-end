@@ -13,9 +13,8 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CheckInRequest {
-    private int accountId;
     @ServiceAnnotation
     private String serviceName;
-    @NotBlank
+    private int quantity;
     private String datetime;
 }
