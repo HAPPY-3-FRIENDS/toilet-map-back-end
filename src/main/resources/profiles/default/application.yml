@@ -21,8 +21,6 @@ spring:
         jdbc:
           batch_size: 4
         order_inserts: true
-    show-sql: true
-    open-in-view: true
   mvc:
     path match:
       matching-strategy: ANT_PATH_MATCHER
