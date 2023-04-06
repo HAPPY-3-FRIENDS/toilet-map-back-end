@@ -16,8 +16,8 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.SQLServer2012Dialect
         format_sql: false
-    show-sql: false
-    open-in-view: false
+        show-sql: false
+        open-in-view: false
         jdbc:
           batch_size: 4
         order_inserts: true
