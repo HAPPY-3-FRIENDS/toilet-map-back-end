@@ -16,11 +16,12 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.SQLServer2012Dialect
         format_sql: false
-        show-sql: false
-        open-in-view: false
         jdbc:
-          batch_size: 4
+          batch_size: 100
         order_inserts: true
+    show-sql: false
+    open-in-view: false
+
   mvc:
     path match:
       matching-strategy: ANT_PATH_MATCHER
