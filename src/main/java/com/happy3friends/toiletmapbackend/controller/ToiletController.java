@@ -232,7 +232,7 @@ public class ToiletController {
                             "    {\n" +
                             "      \"id\": 2,\n" +
                             "      \"toiletName\": \"Nhà vệ sinh lưu động số 2\",\n" +
-                            "      \"address\": \"79 Đ. Nguyễn Huệ\",\n" +
+                            "      \"address\": \"79 Nguyễn Huệ\",\n" +
                             "      \"ward\": \"Bến Nghé\",\n" +
                             "      \"district\": \"Quận 1\",\n" +
                             "      \"province\": \"Thành phố Hồ Chí Minh\",\n" +
@@ -243,19 +243,7 @@ public class ToiletController {
                             "      \"closeTime\": \"23:00:00\",\n" +
                             "      \"minPrice\": 2000,\n" +
                             "      \"maxPrice\": 8000,\n" +
-                            "      \"toiletFacilityDTOS\": [\n" +
-                            "        {\n" +
-                            "          \"facilityName\": \"Giấy vệ sinh\",\n" +
-                            "          \"facilityType\": \"Trang thiết bị\",\n" +
-                            "          \"quantity\": 0,\n" +
-                            "          \"description\": null\n" +
-                            "        },\n" +
-                            "        {\n" +
-                            "          \"facilityName\": \"Máy sấy tay\",\n" +
-                            "          \"facilityType\": \"Trang thiết bị\",\n" +
-                            "          \"quantity\": 0,\n" +
-                            "          \"description\": null\n" +
-                            "        },\n" +
+                            "      \"toiletFacilities\": [\n" +
                             "        {\n" +
                             "          \"facilityName\": \"Phòng tắm\",\n" +
                             "          \"facilityType\": \"Phòng\",\n" +
@@ -271,6 +259,18 @@ public class ToiletController {
                             "        {\n" +
                             "          \"facilityName\": \"Phòng vệ sinh dành cho người khuyết tật\",\n" +
                             "          \"facilityType\": \"Phòng\",\n" +
+                            "          \"quantity\": 0,\n" +
+                            "          \"description\": null\n" +
+                            "        },\n" +
+                            "        {\n" +
+                            "          \"facilityName\": \"Giấy vệ sinh\",\n" +
+                            "          \"facilityType\": \"Trang thiết bị\",\n" +
+                            "          \"quantity\": 0,\n" +
+                            "          \"description\": null\n" +
+                            "        },\n" +
+                            "        {\n" +
+                            "          \"facilityName\": \"Máy sấy tay\",\n" +
+                            "          \"facilityType\": \"Trang thiết bị\",\n" +
                             "          \"quantity\": 0,\n" +
                             "          \"description\": null\n" +
                             "        },\n" +
@@ -291,7 +291,7 @@ public class ToiletController {
                             "      \"id\": 1,\n" +
                             "      \"toiletName\": \"Nhà vệ sinh lưu động số 1\",\n" +
                             "      \"address\": \"44 Trần Đình Xu\",\n" +
-                            "      \"ward\": \"Phường Cô Giang\",\n" +
+                            "      \"ward\": \"Cô Giang\",\n" +
                             "      \"district\": \"Quận 1\",\n" +
                             "      \"province\": \"Thành phố Hồ Chí Minh\",\n" +
                             "      \"latitude\": 10.845254597727745,\n" +
@@ -301,19 +301,7 @@ public class ToiletController {
                             "      \"closeTime\": \"23:00:00\",\n" +
                             "      \"minPrice\": 2000,\n" +
                             "      \"maxPrice\": 8000,\n" +
-                            "      \"toiletFacilityDTOS\": [\n" +
-                            "        {\n" +
-                            "          \"facilityName\": \"Giấy vệ sinh\",\n" +
-                            "          \"facilityType\": \"Trang thiết bị\",\n" +
-                            "          \"quantity\": 1,\n" +
-                            "          \"description\": null\n" +
-                            "        },\n" +
-                            "        {\n" +
-                            "          \"facilityName\": \"Máy sấy tay\",\n" +
-                            "          \"facilityType\": \"Trang thiết bị\",\n" +
-                            "          \"quantity\": 0,\n" +
-                            "          \"description\": null\n" +
-                            "        },\n" +
+                            "      \"toiletFacilities\": [\n" +
                             "        {\n" +
                             "          \"facilityName\": \"Phòng tắm\",\n" +
                             "          \"facilityType\": \"Phòng\",\n" +
@@ -330,6 +318,18 @@ public class ToiletController {
                             "          \"facilityName\": \"Phòng vệ sinh dành cho người khuyết tật\",\n" +
                             "          \"facilityType\": \"Phòng\",\n" +
                             "          \"quantity\": 1,\n" +
+                            "          \"description\": null\n" +
+                            "        },\n" +
+                            "        {\n" +
+                            "          \"facilityName\": \"Giấy vệ sinh\",\n" +
+                            "          \"facilityType\": \"Trang thiết bị\",\n" +
+                            "          \"quantity\": 1,\n" +
+                            "          \"description\": null\n" +
+                            "        },\n" +
+                            "        {\n" +
+                            "          \"facilityName\": \"Máy sấy tay\",\n" +
+                            "          \"facilityType\": \"Trang thiết bị\",\n" +
+                            "          \"quantity\": 0,\n" +
                             "          \"description\": null\n" +
                             "        },\n" +
                             "        {\n" +

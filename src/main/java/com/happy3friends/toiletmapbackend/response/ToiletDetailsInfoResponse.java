@@ -26,7 +26,7 @@ public class ToiletDetailsInfoResponse {
     private boolean isFree;
     private int minPrice;
     private int maxPrice;
-    private List<ToiletFacilityDTO> toiletFacilityDTOS;
+    private List<ToiletFacilityDTO> toiletFacilities;
     private List<String> toiletImageSources;
     private double ratingStar;
 }

@@ -17,10 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,6 +56,13 @@ public class ToiletServiceImpl implements ToiletService {
                     toiletFacilityDTO.setDescription(dto.getFacilityDescription());
                     return toiletFacilityDTO;
                 })
+                .sorted((o1, o2) -> {
+                    if(Objects.equals(o1.getFacilityType(), o2.getFacilityType()))
+                        return o1.getFacilityName().compareTo(o2.getFacilityName());
+                    else if(o1.getFacilityType().compareTo(o2.getFacilityType()) > 0)
+                        return 1;
+                    else return -1;
+                })
                 .collect(Collectors.toList());
 
         List<String> toiletImageSources = customToiletDetailsInfoDTOS.stream()
@@ -84,7 +88,7 @@ public class ToiletServiceImpl implements ToiletService {
                     toiletDetailsInfoResponse.setMinPrice(dto.getMinPrice());
                     toiletDetailsInfoResponse.setMaxPrice(dto.getMaxPrice());
                     toiletDetailsInfoResponse.setRatingStar(dto.getRatingStar());
-                    toiletDetailsInfoResponse.setToiletFacilityDTOS(toiletFacilityDTOS);
+                    toiletDetailsInfoResponse.setToiletFacilities(toiletFacilityDTOS);
                     toiletDetailsInfoResponse.setToiletImageSources(toiletImageSources);
                     return toiletDetailsInfoResponse;
                 })
