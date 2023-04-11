@@ -34,7 +34,7 @@ public class ToiletController {
     private ToiletService toiletService;
 
     @Operation(summary = "Get toilet by toilet ID", description = "[Manager, Toilet, User] Get a specific toilet by toilet ID")
-    @Parameter(name = "toilet-id", description = "A specific toilet ID", in = ParameterIn.PATH, required = true, example = "1")
+    @Parameter(name = "toilet-id", description = "A specific toilet ID", in = ParameterIn.PATH, required = true, example = "4")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
                     @ExampleObject(value = "{\n" +
