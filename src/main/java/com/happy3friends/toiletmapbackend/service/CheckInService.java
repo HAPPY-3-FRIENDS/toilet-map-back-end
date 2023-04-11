@@ -12,4 +12,5 @@ public interface CheckInService {
     List<CheckInResponse> getCheckInHistoriesByAccountId(int accountId, String paymentMethod, BasePaginationRequest paginationRequest);
     CheckInResponse userCheckIn(CheckInRequest checkInRequest);
     List<CheckInResponse> walkInGuestCheckIn(WalkInGuestCheckInRequest walkInGuestCheckInRequest);
+    int count(Integer accountId, String paymentMethod);
 }

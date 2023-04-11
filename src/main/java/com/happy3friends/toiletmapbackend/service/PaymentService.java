@@ -9,4 +9,5 @@ import java.util.List;
 public interface PaymentService {
     PaymentResponse createPaymentByAccountId(PaymentRequest paymentRequest);
     List<PaymentResponse> getPaymentHistoriesByAccountId(int accountId, BasePaginationRequest paginationRequest);
+    int count(Integer accountId);
 }

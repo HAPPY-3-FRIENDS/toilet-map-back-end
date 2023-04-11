@@ -126,4 +126,39 @@ public class PaymentController {
                 responses
         );
     }
+
+    @Operation(summary = "Count list of all payments", description = "[User] Count list of payment histories of a specific Account by Account ID")
+    @Parameters(value = {
+            @Parameter(name = "account-id", description = "A specific Account ID", in = ParameterIn.QUERY, example = "6")
+    })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {@ExampleObject(value = "10")})),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.USER})
+    @GetMapping(value = "/count")
+    public ResponseEntity<BaseResponse<Integer>> count(
+            @RequestParam(name = "account-id", required = false) Integer accountId) {
+
+        int response = paymentService.count(accountId);
+
+        if (accountId != null) {
+            return ResponseBuilder.generateResponse(
+                    "Count list of payment histories by Account ID successfully!",
+                    HttpStatus.OK,
+                    response
+            );
+        }
+
+        return ResponseBuilder.generateResponse(
+                "Count list of payment histories successfully!",
+                HttpStatus.OK,
+                response
+        );
+    }
 }

@@ -9,4 +9,5 @@ import java.util.List;
 public interface OrderService {
     OrderResponse createOrderByAccountId(OrderRequest orderRequest);
     List<OrderResponse> getOrderHistoriesByAccountId(int accountId, BasePaginationRequest paginationRequest);
+    int count(Integer accountId);
 }

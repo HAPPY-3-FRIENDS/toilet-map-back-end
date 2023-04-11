@@ -133,6 +133,47 @@ public class CheckInController {
         );
     }
 
+    @Operation(summary = "Count list of all check-in histories", description = "[User] Count list of check-in histories by Account ID")
+    @Parameters(value = {
+            @Parameter(name = "account-id", description = "A specific account ID", in = ParameterIn.QUERY, example = "6"),
+            @Parameter(name = "payment-method", description = "A specific payment method", in = ParameterIn.QUERY, examples = {
+                    @ExampleObject(name = "Payment method is BALANCE", value = "Số dư"),
+                    @ExampleObject(name = "Payment method is TURN", value = "Số lượt"),
+                    @ExampleObject(name = "Payment method is BALANCE & TURN", description = "No need to add to query param")
+            })
+    })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {@ExampleObject(value = "10")})),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.USER})
+    @GetMapping(value = "/count")
+    public ResponseEntity<BaseResponse<Integer>> count(
+            @RequestParam(name = "account-id", required = false) Integer accountId,
+            @RequestParam(name = "payment-method", required = false) String paymentMethod) {
+
+        int response = checkInService.count(accountId, paymentMethod);
+
+        if (accountId != null ) {
+            return ResponseBuilder.generateResponse(
+                    "Count list check-in histories by account ID successfully!",
+                    HttpStatus.OK,
+                    response
+            );
+        }
+
+        return ResponseBuilder.generateResponse(
+                "Count list check-in histories successfully!",
+                HttpStatus.OK,
+                response
+        );
+    }
+
     @Operation(summary = "User check-in", description = "[Toilet] User check in a specific toilet")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Check-in Request", required = true, content = @Content(
             examples = {

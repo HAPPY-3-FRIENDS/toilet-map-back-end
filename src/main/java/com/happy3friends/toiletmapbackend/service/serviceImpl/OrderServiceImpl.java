@@ -112,4 +112,17 @@ public class OrderServiceImpl implements OrderService {
                 .map(entity -> orderMapper.convertOrderEntityToOrderResponse(entity))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public int count(Integer accountId) {
+
+        if (accountId != null) {
+            Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
+            if (!accountEntity.isPresent()) throw new NotFoundException("Account", "Id", accountId);
+
+            return orderRepository.countOrderHistoriesByAccountId(accountId);
+        }
+
+        return (int) orderRepository.count();
+    }
 }

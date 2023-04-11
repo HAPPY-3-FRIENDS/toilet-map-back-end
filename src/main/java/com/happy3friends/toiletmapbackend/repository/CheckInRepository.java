@@ -54,4 +54,17 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
     List<CustomCheckInDTO> getCheckInHistoriesByAccountId(@Param("accountId") int accountId,
                                                           @Param("paymentMethod") String paymentMethod,
                                                           Pageable pageable);
+
+    @Query(value = "SELECT COUNT(*) " +
+            "FROM CheckIn c " +
+            "         INNER JOIN ToiletService ts " +
+            "                    ON c.ToiletServiceId = ts.Id " +
+            "         INNER JOIN Toilet t " +
+            "                    ON ts.ToiletId = t.Id " +
+            "         INNER JOIN Service s " +
+            "                    ON ts.ServiceId = s.Id " +
+            "WHERE c.AccountId = :accountId " +
+            "  AND (:paymentMethod IS NULL OR c.PaymentMethod = :paymentMethod) ", nativeQuery = true)
+    int countCheckInHistoriesByAccountId(@Param("accountId") int accountId,
+                                         @Param("paymentMethod") String paymentMethod);
 }

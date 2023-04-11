@@ -30,4 +30,13 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Integer> {
             "WHERE AccountId = :accountId", nativeQuery = true)
     List<OrderEntity> findAllByAccountId(@Param("accountId") int accountId,
                                          Pageable pageable);
+
+    @Query(value = "SELECT COUNT(*) " +
+            "FROM [Order] " +
+            "WHERE AccountId = :accountId", nativeQuery = true)
+    int countOrderHistoriesByAccountId(@Param("accountId") int accountId);
+
+    @Query(value = "SELECT COUNT(*) " +
+            "FROM [Order] ", nativeQuery = true)
+    long count();
 }

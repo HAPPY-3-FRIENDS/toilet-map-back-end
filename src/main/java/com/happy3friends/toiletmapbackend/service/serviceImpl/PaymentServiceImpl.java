@@ -84,4 +84,17 @@ public class PaymentServiceImpl implements PaymentService {
                 .map(dto -> paymentMapper.convertPaymentEntityToPaymentResponse(dto))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public int count(Integer accountId) {
+
+        if (accountId != null) {
+            Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
+            if (!accountEntity.isPresent()) throw new NotFoundException("Account", "Id", accountId);
+
+            return (int) paymentRepository.countByAccountId(accountId);
+        }
+
+        return (int) paymentRepository.count();
+    }
 }

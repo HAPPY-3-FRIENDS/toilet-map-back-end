@@ -75,6 +75,8 @@ public class CheckInServiceImpl implements CheckInService {
         Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
         if (!accountEntity.isPresent()) throw new NotFoundException("Account", "Id", accountId);
 
+        // TODO: check paymentMethod valid
+
         List<CustomCheckInDTO> customCheckInDTOS
                 = checkInRepository.getCheckInHistoriesByAccountId(accountId, paymentMethod, pageable);
 
@@ -224,5 +226,20 @@ public class CheckInServiceImpl implements CheckInService {
         return checkInEntities.stream()
                 .map(checkInEntity -> checkInMapper.convertCheckInEntityToCheckInResponse(checkInEntity))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public int count(Integer accountId, String paymentMethod) {
+
+        if (accountId != null) {
+            Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
+            if (!accountEntity.isPresent()) throw new NotFoundException("Account", "Id", accountId);
+
+            // TODO: check paymentMethod valid
+
+            return checkInRepository.countCheckInHistoriesByAccountId(accountId, paymentMethod);
+        }
+
+        return (int) checkInRepository.count();
     }
 }
