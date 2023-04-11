@@ -19,9 +19,9 @@ spring:
         jdbc:
           batch_size: 100
         order_inserts: true
+        enable_lazy_load_no_trans: true
     show-sql: false
     open-in-view: false
-
   mvc:
     path match:
       matching-strategy: ANT_PATH_MATCHER

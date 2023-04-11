@@ -1,7 +1,7 @@
 package com.happy3friends.toiletmapbackend.controller;
 
+import com.happy3friends.toiletmapbackend.base.models.BaseResponse;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
-import com.happy3friends.toiletmapbackend.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

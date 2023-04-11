@@ -1,12 +1,12 @@
 package com.happy3friends.toiletmapbackend.controller;
 
+import com.happy3friends.toiletmapbackend.base.models.BaseResponse;
 import com.happy3friends.toiletmapbackend.config.OpenApiConfig;
 import com.happy3friends.toiletmapbackend.constant.RoleConstant;
 import com.happy3friends.toiletmapbackend.dto.TokenDTO;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.request.AccountRequest;
 import com.happy3friends.toiletmapbackend.response.AccountResponse;
-import com.happy3friends.toiletmapbackend.response.BaseResponse;
 import com.happy3friends.toiletmapbackend.response.UserInfoResponse;
 import com.happy3friends.toiletmapbackend.service.AccountService;
 import com.happy3friends.toiletmapbackend.service.UserInfoService;

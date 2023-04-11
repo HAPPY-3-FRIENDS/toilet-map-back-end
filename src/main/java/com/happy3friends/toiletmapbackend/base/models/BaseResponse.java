@@ -1,4 +1,4 @@
-package com.happy3friends.toiletmapbackend.response;
+package com.happy3friends.toiletmapbackend.base.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

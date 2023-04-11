@@ -46,4 +46,6 @@ public class AccountEntity {
     private UserInfoEntity userInfoById;
     @OneToMany(mappedBy = "accountByAccountId")
     private Collection<PaymentEntity> paymentsById;
+    @OneToOne(mappedBy = "accountById")
+    private ToiletEntity toiletById;
 }

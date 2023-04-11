@@ -1,9 +1,9 @@
 package com.happy3friends.toiletmapbackend.controller;
 
+import com.happy3friends.toiletmapbackend.base.models.BaseResponse;
 import com.happy3friends.toiletmapbackend.config.OpenApiConfig;
 import com.happy3friends.toiletmapbackend.constant.RoleConstant;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
-import com.happy3friends.toiletmapbackend.response.BaseResponse;
 import com.happy3friends.toiletmapbackend.response.ToiletDetailsInfoResponse;
 import com.happy3friends.toiletmapbackend.service.ToiletService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,94 +33,7 @@ public class ToiletController {
     @Autowired
     private ToiletService toiletService;
 
-    @Operation(summary = "Get toilet by account ID", description = "[Manager, Staff] Get a specific toilet by account ID")
-    @Parameter(name = "account-id", description = "A specific account ID", in = ParameterIn.PATH, required = true, example = "3")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
-                    @ExampleObject(value = "{\n" +
-                            "    \"id\": 1,\n" +
-                            "    \"toiletName\": \"Nhà vệ sinh lưu động số 1\",\n" +
-                            "    \"address\": \"44 Trần Đình Xu\",\n" +
-                            "    \"ward\": \"Phường Cô Giang\",\n" +
-                            "    \"district\": \"Quận 1\",\n" +
-                            "    \"province\": \"Thành phố Hồ Chí Minh\",\n" +
-                            "    \"latitude\": 10.759935271800982,\n" +
-                            "    \"longitude\": 106.69202149316303,\n" +
-                            "    \"nearBy\": \"Gần CircleK, gần Phúc Long\",\n" +
-                            "    \"openTime\": \"09:00:00\",\n" +
-                            "    \"closeTime\": \"23:00:00\",\n" +
-                            "    \"minPrice\": 2000,\n" +
-                            "    \"maxPrice\": 8000,\n" +
-                            "    \"toiletFacilityDTOS\": [\n" +
-                            "      {\n" +
-                            "        \"facilityName\": \"Giấy vệ sinh\",\n" +
-                            "        \"facilityType\": \"Trang thiết bị\",\n" +
-                            "        \"quantity\": 1,\n" +
-                            "        \"description\": null\n" +
-                            "      },\n" +
-                            "      {\n" +
-                            "        \"facilityName\": \"Máy sấy tay\",\n" +
-                            "        \"facilityType\": \"Trang thiết bị\",\n" +
-                            "        \"quantity\": 0,\n" +
-                            "        \"description\": null\n" +
-                            "      },\n" +
-                            "      {\n" +
-                            "        \"facilityName\": \"Phòng tắm\",\n" +
-                            "        \"facilityType\": \"Phòng\",\n" +
-                            "        \"quantity\": 0,\n" +
-                            "        \"description\": null\n" +
-                            "      },\n" +
-                            "      {\n" +
-                            "        \"facilityName\": \"Phòng vệ sinh\",\n" +
-                            "        \"facilityType\": \"Phòng\",\n" +
-                            "        \"quantity\": 8,\n" +
-                            "        \"description\": \"4 phòng vệ sinh cho nữ, 4 phòng vệ sinh cho nam\"\n" +
-                            "      },\n" +
-                            "      {\n" +
-                            "        \"facilityName\": \"Phòng vệ sinh dành cho người khuyết tật\",\n" +
-                            "        \"facilityType\": \"Phòng\",\n" +
-                            "        \"quantity\": 1,\n" +
-                            "        \"description\": null\n" +
-                            "      },\n" +
-                            "      {\n" +
-                            "        \"facilityName\": \"Vòi xịt\",\n" +
-                            "        \"facilityType\": \"Trang thiết bị\",\n" +
-                            "        \"quantity\": 1,\n" +
-                            "        \"description\": null\n" +
-                            "      }\n" +
-                            "    ],\n" +
-                            "    \"toiletImageSources\": [\n" +
-                            "      \"https://dichvucongichquan1.com/wp-content/uploads/2021/04/z2469130019572_1b2874d47ba76fa3b7089d0ffa4b72c7.jpg\",\n" +
-                            "      \"https://dichvucongichquan1.com/wp-content/uploads/2021/04/z2469130681021_b9303b13544929365e1810b07c7e3dff.jpg\"\n" +
-                            "    ],\n" +
-                            "    \"ratingStar\": 3.8,\n" +
-                            "    \"free\": false\n" +
-                            "  }")
-            })),
-            @ApiResponse(responseCode = "204", description = "No-content!", content = @Content(schema = @Schema(hidden = true))),
-            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
-            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
-            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
-            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
-    })
-    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.MANAGER, RoleConstant.STAFF})
-    @GetMapping(value = "/accounts/{account-id}")
-    public ResponseEntity<BaseResponse<ToiletDetailsInfoResponse>> getToiletByAccountId(@PathVariable("account-id") int accountId) {
-
-        ToiletDetailsInfoResponse response = toiletService.getToiletByAccountId(accountId);
-        if (response == null)
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
-        return ResponseBuilder.generateResponse(
-                "Get toilet by account ID successfully!",
-                HttpStatus.OK,
-                response
-        );
-    }
-
-    @Operation(summary = "Get toilet by toilet ID", description = "[Manager, Staff, User] Get a specific toilet by toilet ID")
+    @Operation(summary = "Get toilet by toilet ID", description = "[Manager, Toilet, User] Get a specific toilet by toilet ID")
     @Parameter(name = "toilet-id", description = "A specific toilet ID", in = ParameterIn.PATH, required = true, example = "1")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
@@ -192,7 +105,7 @@ public class ToiletController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.MANAGER, RoleConstant.STAFF, RoleConstant.USER})
+    @RolesAllowed({RoleConstant.MANAGER, RoleConstant.TOILET, RoleConstant.USER})
     @GetMapping(value = "/{toilet-id}")
     public ResponseEntity<BaseResponse<ToiletDetailsInfoResponse>> getToiletByToiletId(@PathVariable("toilet-id") int toiletId) {
 
@@ -352,7 +265,7 @@ public class ToiletController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.MANAGER, RoleConstant.USER})
+    @RolesAllowed({RoleConstant.USER})
     @GetMapping
     public ResponseEntity<BaseResponse<List<ToiletDetailsInfoResponse>>> getAllToilets(
             @RequestParam(name = "current-latitude", required = false) Double currentLatitude,

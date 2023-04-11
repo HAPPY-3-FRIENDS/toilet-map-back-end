@@ -4,8 +4,6 @@ import com.happy3friends.toiletmapbackend.constant.ToiletConstant;
 import com.happy3friends.toiletmapbackend.dto.CustomToiletDTO;
 import com.happy3friends.toiletmapbackend.dto.CustomToiletDetailsInfoDTO;
 import com.happy3friends.toiletmapbackend.dto.ToiletFacilityDTO;
-import com.happy3friends.toiletmapbackend.entity.AccountEntity;
-import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.ToiletMapper;
 import com.happy3friends.toiletmapbackend.repository.AccountRepository;
 import com.happy3friends.toiletmapbackend.repository.ToiletRepository;
@@ -17,7 +15,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -128,17 +129,6 @@ public class ToiletServiceImpl implements ToiletService {
         }
 
         return responses;
-    }
-
-    @Override
-    public ToiletDetailsInfoResponse getToiletByAccountId(int accountId) {
-        Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
-        if (!accountEntity.isPresent()) throw new NotFoundException("Account", "Id", accountId);
-
-        List<CustomToiletDetailsInfoDTO> customToiletDetailsInfoDTOS
-                = toiletRepository.getCustomToiletInfoDTOByAccountId(accountId);
-
-        return getToiletFromListCustomToiletDetailsInfoDTOS(customToiletDetailsInfoDTOS);
     }
 
     @Override

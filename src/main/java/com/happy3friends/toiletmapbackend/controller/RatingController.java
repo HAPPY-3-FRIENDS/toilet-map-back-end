@@ -1,10 +1,10 @@
 package com.happy3friends.toiletmapbackend.controller;
 
+import com.happy3friends.toiletmapbackend.base.models.BaseResponse;
 import com.happy3friends.toiletmapbackend.config.OpenApiConfig;
 import com.happy3friends.toiletmapbackend.constant.RoleConstant;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.request.RatingRequest;
-import com.happy3friends.toiletmapbackend.response.BaseResponse;
 import com.happy3friends.toiletmapbackend.response.RatingResponse;
 import com.happy3friends.toiletmapbackend.service.RatingService;
 import io.swagger.v3.oas.annotations.Hidden;

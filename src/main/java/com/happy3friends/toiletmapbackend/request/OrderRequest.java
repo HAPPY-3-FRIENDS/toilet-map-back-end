@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class OrderRequest {
+    private int accountId;
     private int comboId;
     @PaymentTypeAnnotation
     private String paymentMethod;

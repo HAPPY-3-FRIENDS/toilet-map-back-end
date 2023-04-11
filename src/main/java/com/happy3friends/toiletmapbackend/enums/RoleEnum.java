@@ -13,6 +13,7 @@ public enum RoleEnum {
     ADMIN(RoleConstant.ADMIN),
     MANAGER(RoleConstant.MANAGER),
     STAFF(RoleConstant.STAFF),
+    TOILET(RoleConstant.TOILET),
     USER(RoleConstant.USER);
 
     private String roleName;

@@ -56,14 +56,14 @@ public class AccountServiceImpl implements AccountService {
         if (RoleEnum.ADMIN.getRoleName().equals(accountRequest.getRoleName()))
             throw new BadRequestException("Cannot register an Admin Account!");
 
-        // Admin tạo tk cho Manager, Manager tạo tk cho Staff
+        // Admin tạo tk cho Manager, Manager tạo tk cho Toilet
         String jwt = JwtUtil.getJwtFromRequest();
         Claims claims = JwtUtil.getAllClaimsFromToken(jwt);
         String authRole = claims.get("role", String.class);
         if (RoleEnum.ADMIN.getRoleName().equals(authRole) && !RoleEnum.MANAGER.getRoleName().equals(accountRequest.getRoleName()))
             throw new BadRequestException("Admin cannot create an account for any role except for Manager role!");
-        if (RoleEnum.MANAGER.getRoleName().equals(authRole) && !RoleEnum.STAFF.getRoleName().equals(accountRequest.getRoleName()))
-            throw new BadRequestException("Manager cannot create an account for any role except for Staff role!");
+        if (RoleEnum.MANAGER.getRoleName().equals(authRole) && !RoleEnum.TOILET.getRoleName().equals(accountRequest.getRoleName()))
+            throw new BadRequestException("Manager cannot create an account for any role except for Staff-At-Toilet role!");
 
         if (accountRepository.findByUsername(accountRequest.getUsername()) != null)
             throw new BadRequestException("Username '" + accountRequest.getUsername() + "' is not unique! It's already used by another employee!");

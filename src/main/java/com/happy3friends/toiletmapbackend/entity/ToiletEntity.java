@@ -55,9 +55,6 @@ public class ToiletEntity {
     @Column(name = "CompanyId", nullable = false)
     private int companyId;
     @Basic
-    @Column(name = "AccountId", nullable = false)
-    private int accountId;
-    @Basic
     @Column(name = "Status", nullable = false, length = 20)
     private String status;
     @OneToMany(mappedBy = "toiletByToiletId")
@@ -71,4 +68,7 @@ public class ToiletEntity {
     private Collection<ToiletImageEntity> toiletImagesById;
     @OneToMany(mappedBy = "toiletByToiletId")
     private Collection<ToiletServiceEntity> toiletServicesById;
+    @OneToOne
+    @JoinColumn(name = "Id", referencedColumnName = "Id", nullable = false)
+    private AccountEntity accountById;
 }

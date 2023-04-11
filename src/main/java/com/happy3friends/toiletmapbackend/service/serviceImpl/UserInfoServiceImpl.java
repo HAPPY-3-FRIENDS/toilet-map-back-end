@@ -59,6 +59,8 @@ public class UserInfoServiceImpl implements UserInfoService {
         Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
         if (!accountEntity.isPresent()) throw new NotFoundException("Account", "Id", accountId);
 
+        // TODO: check role of accountId
+
         CustomAccountInfoDTO customAccountInfoDTO = accountRepository.getCustomAccountInfoByAccountId(accountId);
 
         return userInfoMapper.convertCustomAccountInfoDTOToUserInfoResponse(customAccountInfoDTO);

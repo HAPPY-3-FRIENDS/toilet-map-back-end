@@ -50,7 +50,7 @@ GO
 
 CREATE TABLE [Toilet]
 (
-    Id        INT IDENTITY (1, 1) NOT NULL,
+    Id        INT                 NOT NULL,
     Name      NVARCHAR(50)        NOT NULL,
     Address   NVARCHAR(100)       NOT NULL,
     Ward      NVARCHAR(50)        NOT NULL,
@@ -63,7 +63,6 @@ CREATE TABLE [Toilet]
     OpenTime  TIME                NOT NULL,
     CloseTime TIME                NOT NULL,
     CompanyId INT                 NOT NULL,
-    AccountId INT                 NOT NULL,
     Status    NVARCHAR(20)        NOT NULL
 )
 GO
@@ -236,8 +235,6 @@ ALTER TABLE [Configuration]
 --- UNIQUE ---
 ALTER TABLE [Account]
     ADD CONSTRAINT UNIQUE_Username UNIQUE (Username);
-ALTER TABLE [Toilet]
-    ADD CONSTRAINT UNIQUE_AccountId UNIQUE (AccountId);
 
 --- FOREIGN KEY ---
 ALTER TABLE [Account]
@@ -255,6 +252,10 @@ ALTER TABLE [UserInfo]
 ALTER TABLE [Toilet]
     ADD CONSTRAINT FK_Toilet_Company
         FOREIGN KEY (CompanyId) REFERENCES Company (Id);
+
+ALTER TABLE [Toilet]
+    ADD CONSTRAINT FK_Toilet_Account
+        FOREIGN KEY (Id) REFERENCES Account (Id);
 
 ALTER TABLE [ToiletFacility]
     ADD CONSTRAINT FK_ToiletFacility_Toilet
@@ -302,6 +303,9 @@ ALTER TABLE [RatingImage]
 
 ------------------------------ INSERT VALUE ------------------------------
 INSERT INTO Company (Name, Logo, Address, Ward, District, Province, Phone)
+VALUES (N'Toilet Map', N'https://drive.google.com/file/d/1qmWrHPZ6e-XA8NZtaT9UVWXRXwpMXXA2/view?usp=sharing',
+        N'Lô E2a-7, Đường D1', N'Phường Long Thạnh Mỹ', N'Quận Thủ Đức', N'Thành phố Hồ Chí Minh', N'(028) 7300 5588');
+INSERT INTO Company (Name, Logo, Address, Ward, District, Province, Phone)
 VALUES (N'Công ty dịch vụ công ích quận 1', 'https://dichvucongichquan1.com/wp-content/uploads/2021/12/logo.svg',
         N'28-30 Nguyễn Thái Bình', N'Phường Nguyễn Thái Bình', N'Quận 1', N'Thành phố Hồ Chí Minh', '(028) 38.215.611')
 GO
@@ -310,15 +314,20 @@ INSERT INTO Role (Name)
 VALUES ('Admin'),
        ('Manager'),
        ('Staff'),
+       ('Toilet'),
        ('User')
 GO
 
-INSERT INTO Toilet(Name, Address, Ward, District, Province, Latitude, Longitude, NearBy, isFree, OpenTime, CloseTime,
-                   CompanyId, AccountId, Status)
-VALUES (N'Nhà vệ sinh lưu động số 1', N'44 Trần Đình Xu', N'Phường Cô Giang', N'Quận 1', N'Thành phố Hồ Chí Minh',
-        10.759935271800982, 106.69202149316303, N'Gần CircleK, gần Phúc Long',
-        1, '09:00:00', '23:00:00', 1, 3, N'Đang hoạt động')
-GO
+-- INSERT INTO Toilet (Id, Name, Address, Ward, District, Province, Latitude, Longitude, NearBy, isFree, OpenTime,
+--                     CloseTime,
+--                     CompanyId, Status)
+-- VALUES (4, N'Nhà vệ sinh lưu động số 1 nè hihi mắc toilet quá', N'44/5/7/2/234A xa quá trời xa Trần Đình Xu',
+--         N'Cô Giang',
+--         N'Quận 1', N'Thành phố Hồ Chí Minh', 10.845254597727745, 106.79238946200942, N'Gần CircleK, gần Phúc Long', 0,
+--         N'09:00:00', N'23:00:00', 2, N'Đang hoạt động'),
+--        (5, N'Nhà vệ sinh lưu động số 2 pickaboo dui dẻ dui dẻ', N'79 Nguyễn Huệ', N'Bến Nghé', N'Quận 1',
+--         N'Thành phố Hồ Chí Minh', 10.8360458, 106.8084369, null, 0, N'09:00:00', N'23:00:00', 2, N'Đang hoạt động');
+-- GO
 
 INSERT INTO Facility (Name, Type)
 VALUES (N'Phòng vệ sinh', N'Phòng'),
@@ -326,14 +335,14 @@ VALUES (N'Phòng vệ sinh', N'Phòng'),
        (N'Phòng vệ sinh dành cho người khuyết tật', N'Phòng'),
        (N'Vòi xịt', N'Trang thiết bị'),
        (N'Máy sấy tay', N'Trang thiết bị'),
-       (N'Lịch trực', N'Lịch trực')
+       (N'Giấy vệ sinh', N'Trang thiết bị')
 GO
 
-INSERT INTO ToiletFacility (ToiletId, FacilityId, Quantity, Description)
-VALUES (1, 1, 8, N'4 phòng vệ sinh cho nữ, 4 phòng vệ sinh cho nam'),
-       (1, 3, 1, null),
-       (1, 4, 1, null)
-GO
+-- INSERT INTO ToiletFacility (ToiletId, FacilityId, Quantity, Description)
+-- VALUES (4, 1, 8, N'4 phòng vệ sinh cho nữ, 4 phòng vệ sinh cho nam'),
+--        (4, 3, 1, null),
+--        (4, 4, 1, null)
+-- GO
 
 INSERT INTO Service (Name, Price, Turn)
 VALUES (N'Đi vệ sinh (tiểu tiện)', 2000, 1),
@@ -341,16 +350,27 @@ VALUES (N'Đi vệ sinh (tiểu tiện)', 2000, 1),
        (N'Đi tắm', 8000, 3)
 GO
 
-INSERT INTO ToiletService (ToiletId, ServiceId)
-VALUES (1, 1),
-       (1, 2),
-       (1, 3)
-GO
+-- INSERT INTO ToiletService (ToiletId, ServiceId)
+-- VALUES (4, 1),
+--        (4, 2),
+--        (4, 3)
+-- GO
 
-INSERT INTO ToiletImage (ToiletId, ImageSource)
-VALUES (1,
-        'https://dichvucongichquan1.com/wp-content/uploads/2021/04/z2469130019572_1b2874d47ba76fa3b7089d0ffa4b72c7.jpg')
-GO
+-- INSERT INTO ToiletImage (ToiletId, ImageSource)
+-- VALUES (4,
+--         N'https://dichvucongichquan1.com/wp-content/uploads/2021/04/z2469130019572_1b2874d47ba76fa3b7089d0ffa4b72c7.jpg');
+-- INSERT INTO ToiletImage (ToiletId, ImageSource)
+-- VALUES (4,
+--         N'https://dichvucongichquan1.com/wp-content/uploads/2021/04/z2469130681021_b9303b13544929365e1810b07c7e3dff.jpg');
+-- INSERT INTO ToiletImage (ToiletId, ImageSource)
+-- VALUES (5, N'https://anh.eva.vn/upload/2-2015/images/2015-05-13/1431482470-ava.jpg');
+-- INSERT INTO ToiletImage (ToiletId, ImageSource)
+-- VALUES (4,
+--         N'https://static.asianpaints.com/content/dam/asianpaintsbeautifulhomes/spaces/bathrooms/modern-toilet-design-ideas-for-contemporary-homes/Title-modern-toile-design-idea.jpg');
+-- INSERT INTO ToiletImage (ToiletId, ImageSource)
+-- VALUES (4, N'https://nhavesinhdidongwctoilet.com/upload/images/bao-gia-ban-nha-ve-sinh-cong-cong.jpg');
+-- INSERT INTO ToiletImage (ToiletId, ImageSource)
+-- VALUES (4, N'https://showroominax.vn/hl_uploads/tin-tuc/2022_06/nha-ve-sinh-cong-cong.jpg');
 
 INSERT INTO Combo (TotalTurn, Price)
 VALUES (8, 10000),

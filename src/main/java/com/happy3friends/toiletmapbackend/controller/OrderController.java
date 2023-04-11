@@ -1,15 +1,18 @@
 package com.happy3friends.toiletmapbackend.controller;
 
+import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
+import com.happy3friends.toiletmapbackend.base.models.BaseResponse;
 import com.happy3friends.toiletmapbackend.config.OpenApiConfig;
 import com.happy3friends.toiletmapbackend.constant.RoleConstant;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.request.OrderRequest;
-import com.happy3friends.toiletmapbackend.response.BaseResponse;
 import com.happy3friends.toiletmapbackend.response.OrderResponse;
 import com.happy3friends.toiletmapbackend.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -34,15 +37,16 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    @Operation(summary = "Create order", description = "[User] Create order with account ID")
-    @Parameter(name = "account-id", description = "A specific account ID", in = ParameterIn.PATH, required = true, example = "4")
+    @Operation(summary = "Create order", description = "[User] Create order with a specific Account by Account ID")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Order Request", required = true, content = @Content(
             examples = {
                     @ExampleObject(name = "Order Request with AccountBalance Payment Method", value = "{\n" +
+                            "  \"accountId\": 6,\n" +
                             "  \"comboId\": 2,\n" +
                             "  \"paymentMethod\": \"Số dư\"\n" +
                             "}"),
                     @ExampleObject(name = "Order Request with VNPAY Payment Method", value = "{\n" +
+                            "  \"accountId\": 6,\n" +
                             "  \"comboId\": 2,\n" +
                             "  \"paymentMethod\": \"VNPAY\"\n" +
                             "}")}))
@@ -50,7 +54,6 @@ public class OrderController {
             @ApiResponse(responseCode = "201", description = "Successfully!", content = @Content(examples = {
                     @ExampleObject(value = "{\n" +
                             "    \"accountId\": 4,\n" +
-                            "    \"comboId\": 2,\n" +
                             "    \"totalTurn\": 19,\n" +
                             "    \"totalPrice\": 20000,\n" +
                             "    \"paymentMethod\": \"VNPAY\",\n" +
@@ -64,12 +67,11 @@ public class OrderController {
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.USER})
-    @PostMapping(value = "/accounts/{account-id}")
+    @PostMapping
     public ResponseEntity<BaseResponse<OrderResponse>> createOrderByAccountId(
-            @PathVariable("account-id") int accountId,
             @RequestBody @Valid OrderRequest orderRequest) {
 
-        OrderResponse response = orderService.createOrderByAccountId(accountId, orderRequest);
+        OrderResponse response = orderService.createOrderByAccountId(orderRequest);
 
         return ResponseBuilder.generateResponse(
                 "Create order by account ID successfully!",
@@ -78,20 +80,30 @@ public class OrderController {
         );
     }
 
-    @Operation(summary = "Order histories by Account ID", description = "[User] List of order histories of a specific Account by Account ID")
-    @Parameter(name = "account-id", description = "A specific Account ID", in = ParameterIn.PATH, required = true, example = "4")
+    @Operation(summary = "Get list of all orders", description = "[User] List of order histories of a specific Account by Account ID")
+    @Parameters(value = {
+            @Parameter(name = "account-id", description = "A specific Account ID", in = ParameterIn.QUERY, required = true, example = "6"),
+            @Parameter(name = "sort",
+                    in = ParameterIn.QUERY,
+                    description = "Sorting criteria in the format: property(,asc|desc). Default sort order is descending by datetime. Multiple sort criteria are supported.",
+                    example ="[\"totalTurn,asc\", \"totalPrice,desc\"]",
+                    array = @ArraySchema(schema = @Schema(implementation = String.class), maxItems = 5),
+                    allowReserved = true)
+    })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
                     @ExampleObject(value = "[\n" +
                             "    {\n" +
-                            "      \"total\": 70000,\n" +
-                            "      \"method\": \"VNPAY\",\n" +
-                            "      \"createdDate\": \"20/03/2023 - 09:17:19\"\n" +
+                            "      \"totalTurn\": 8,\n" +
+                            "      \"totalPrice\": 10000,\n" +
+                            "      \"paymentMethod\": \"Số dư\",\n" +
+                            "      \"dateTime\": \"20/03/2023 - 12:50:59\"\n" +
                             "    },\n" +
                             "    {\n" +
-                            "      \"total\": 70000,\n" +
-                            "      \"method\": \"VNPAY\",\n" +
-                            "      \"createdDate\": \"20/03/2023 - 09:15:36\"\n" +
+                            "      \"totalTurn\": 8,\n" +
+                            "      \"totalPrice\": 10000,\n" +
+                            "      \"paymentMethod\": \"VNPAY\",\n" +
+                            "      \"dateTime\": \"10/03/2023 - 02:44:29\"\n" +
                             "    }\n" +
                             "]")})),
             @ApiResponse(responseCode = "204", description = "No Content!", content = @Content(schema = @Schema(hidden = true))),
@@ -103,10 +115,12 @@ public class OrderController {
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.USER})
-    @GetMapping(value = "/accounts/{account-id}")
-    public ResponseEntity<BaseResponse<List<OrderResponse>>> getOrderHistoriesByAccountId(@PathVariable("account-id") int accountId) {
+    @GetMapping()
+    public ResponseEntity<BaseResponse<List<OrderResponse>>> getOrderHistoriesByAccountId(
+            @RequestParam(value = "account-id") int accountId,
+            @ModelAttribute BasePaginationRequest paginationRequest) {
 
-        List<OrderResponse> responses = orderService.getOrderHistoriesByAccountId(accountId);
+        List<OrderResponse> responses = orderService.getOrderHistoriesByAccountId(accountId, paginationRequest);
 
         if (responses.isEmpty()) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 

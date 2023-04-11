@@ -1,16 +1,20 @@
 package com.happy3friends.toiletmapbackend.controller;
 
+import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
+import com.happy3friends.toiletmapbackend.base.models.BaseResponse;
 import com.happy3friends.toiletmapbackend.config.OpenApiConfig;
 import com.happy3friends.toiletmapbackend.constant.RoleConstant;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.request.CheckInRequest;
-import com.happy3friends.toiletmapbackend.response.BaseResponse;
+import com.happy3friends.toiletmapbackend.request.WalkInGuestCheckInRequest;
 import com.happy3friends.toiletmapbackend.response.CheckInResponse;
 import com.happy3friends.toiletmapbackend.service.CheckInService;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -35,7 +39,8 @@ public class CheckInController {
     @Autowired
     private CheckInService checkInService;
 
-    @Operation(summary = "Check-in histories by Toilet ID", description = "[Admin, Manager] Get the list of check-in histories of a specific toilet by toilet-id")
+    @Hidden
+    @Operation(summary = "Check-in histories by Toilet ID", description = "[Manager] Get the list of check-in histories of a specific toilet by toilet-id")
     @Parameter(name = "toilet-id", description = "A specific toilet ID", in = ParameterIn.PATH, required = true, example = "1")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
@@ -54,7 +59,7 @@ public class CheckInController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.MANAGER})
+    @RolesAllowed({RoleConstant.MANAGER})
     @GetMapping(value = "/toilets/{toilet-id}")
     public ResponseEntity<BaseResponse<List<CheckInResponse>>> toiletCheckInHistoriesByToiletId(@PathVariable("toilet-id") int toiletId) {
 
@@ -67,14 +72,20 @@ public class CheckInController {
         );
     }
 
-    @Operation(summary = "Check-in histories by Account ID", description = "[User] List of check-in histories by Account ID")
+    @Operation(summary = "Get list of all check-in histories", description = "[User] List of check-in histories by Account ID")
     @Parameters(value = {
-            @Parameter(name = "account-id", description = "A specific account ID", in = ParameterIn.PATH, required = true, example = "4"),
+            @Parameter(name = "account-id", description = "A specific account ID", in = ParameterIn.QUERY, required = true, example = "6"),
             @Parameter(name = "payment-method", description = "A specific payment method", in = ParameterIn.QUERY, examples = {
                     @ExampleObject(name = "Payment method is BALANCE", value = "Số dư"),
                     @ExampleObject(name = "Payment method is TURN", value = "Số lượt"),
                     @ExampleObject(name = "Payment method is BALANCE & TURN", description = "No need to add to query param")
-            })
+            }),
+            @Parameter(name = "sort",
+                    in = ParameterIn.QUERY,
+                    description = "Sorting criteria in the format: property(,asc|desc). Default sort order is descending by datetime. Multiple sort criteria are supported.",
+                    example ="[\"balance,asc\", \"turn,desc\"]",
+                    array = @ArraySchema(schema = @Schema(implementation = String.class), maxItems = 5),
+                    allowReserved = true)
     })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
@@ -105,12 +116,13 @@ public class CheckInController {
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.USER})
-    @GetMapping(value = "/accounts/{account-id}")
+    @GetMapping
     public ResponseEntity<BaseResponse<List<CheckInResponse>>> getCheckInHistoriesByAccountId(
-            @PathVariable(value = "account-id") int accountId,
-            @RequestParam(name = "payment-method", required = false) String paymentMethod) {
+            @RequestParam(name = "account-id") int accountId,
+            @RequestParam(name = "payment-method", required = false) String paymentMethod,
+            @ModelAttribute BasePaginationRequest paginationRequest) {
 
-        List<CheckInResponse> responses = checkInService.getCheckInHistoriesByAccountId(accountId, paymentMethod);
+        List<CheckInResponse> responses = checkInService.getCheckInHistoriesByAccountId(accountId, paymentMethod, paginationRequest);
 
         if (responses.isEmpty()) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
@@ -121,12 +133,12 @@ public class CheckInController {
         );
     }
 
-    @Operation(summary = "User check-in", description = "[Staff] User check in a specific toilet")
-    @Parameter(name = "toilet-id", description = "A specific toilet ID", in = ParameterIn.PATH, required = true, example = "1")
-    @Parameter(name = "account-id", description = "A specific account ID (User)", in = ParameterIn.PATH, required = true, example = "4")
+    @Operation(summary = "User check-in", description = "[Toilet] User check in a specific toilet")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Check-in Request", required = true, content = @Content(
             examples = {
                     @ExampleObject(value = "{\n" +
+                            "  \"toiletId\": 4,\n" +
+                            "  \"accountId\": 6,\n" +
                             "  \"serviceName\": \"Đi vệ sinh (tiểu tiện)\",\n" +
                             "  \"datetime\": \"2023-10-29 10:30:00.123456\"\n" +
                             "}")}))
@@ -147,14 +159,11 @@ public class CheckInController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.STAFF})
-    @PostMapping(value = "/toilets/{toilet-id}/accounts/{account-id}/user")
-    public ResponseEntity<BaseResponse<CheckInResponse>> userCheckIn(
-            @PathVariable("toilet-id") int toiletId,
-            @PathVariable("account-id") int accountId,
-            @RequestBody @Valid CheckInRequest checkInRequest) {
+    @RolesAllowed({RoleConstant.TOILET})
+    @PostMapping(value = "/toilets/user")
+    public ResponseEntity<BaseResponse<CheckInResponse>> userCheckIn(@RequestBody @Valid CheckInRequest checkInRequest) {
 
-        CheckInResponse response = checkInService.userCheckIn(toiletId, accountId, checkInRequest);
+        CheckInResponse response = checkInService.userCheckIn(checkInRequest);
 
         return ResponseBuilder.generateResponse(
                 "User check-in toilet successfully!",
@@ -163,21 +172,22 @@ public class CheckInController {
         );
     }
 
-    @Operation(summary = "Walk-in-guest check-in", description = "[Staff] Walk-in-guest check in a specific toilet")
-    @Parameter(name = "toilet-id", description = "A specific toilet ID", in = ParameterIn.PATH, required = true, example = "1")
-    @Parameter(name = "account-id", description = "A specific account ID (Staff)", in = ParameterIn.PATH, required = true, example = "3")
+    @Operation(summary = "Walk-in-guest check-in", description = "[Toilet] Walk-in-guest check in a specific toilet")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Check-in Request", required = true, content = @Content(
             examples = {
-                    @ExampleObject(value = "[\n" +
-                            "  {\n" +
-                            "    \"serviceName\": \"Đi vệ sinh (tiểu tiện)\",\n" +
-                            "    \"quantity\": 1\n" +
-                            "  },\n" +
-                            "  {\n" +
-                            "    \"serviceName\": \"Đi vệ sinh (đại tiện)\",\n" +
-                            "    \"quantity\": 2\n" +
-                            "  }\n" +
-                            "]")}))
+                    @ExampleObject(value = "{\n" +
+                            "  \"toiletId\": 4,\n" +
+                            "  \"checkInRequests\": [\n" +
+                            "    {\n" +
+                            "      \"serviceName\": \"Đi vệ sinh (tiểu tiện)\",\n" +
+                            "      \"quantity\": 1\n" +
+                            "    },\n" +
+                            "    {\n" +
+                            "      \"serviceName\": \"Đi vệ sinh (đại tiện)\",\n" +
+                            "      \"quantity\": 2\n" +
+                            "    }\n" +
+                            "  ]\n" +
+                            "}")}))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully!", content = @Content(examples = {
                     @ExampleObject(value = "[\n" +
@@ -213,14 +223,12 @@ public class CheckInController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.STAFF})
-    @PostMapping(value = "/toilets/{toilet-id}/accounts/{account-id}/walk-in-guest")
+    @RolesAllowed({RoleConstant.TOILET})
+    @PostMapping(value = "/toilets/walk-in-guest")
     public ResponseEntity<BaseResponse<List<CheckInResponse>>> walkInGuestCheckIn(
-            @PathVariable("toilet-id") int toiletId,
-            @PathVariable("account-id") int accountId,
-            @RequestBody @Valid List<CheckInRequest> checkInRequests) {
+            @RequestBody @Valid WalkInGuestCheckInRequest walkInGuestCheckInRequest) {
 
-        List<CheckInResponse> response = checkInService.walkInGuestCheckIn(toiletId, accountId, checkInRequests);
+        List<CheckInResponse> response = checkInService.walkInGuestCheckIn(walkInGuestCheckInRequest);
 
         return ResponseBuilder.generateResponse(
                 "Walk-in-guest check-in toilet successfully!",

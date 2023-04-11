@@ -6,6 +6,5 @@ import java.util.List;
 
 public interface ToiletService {
     List<ToiletDetailsInfoResponse> getAllToilets(Double currentLatitude, Double currentLongitude);
-    ToiletDetailsInfoResponse getToiletByAccountId(int accountId);
     ToiletDetailsInfoResponse getToiletByToiletId(int toiletId);
 }

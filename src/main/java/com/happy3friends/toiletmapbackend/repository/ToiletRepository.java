@@ -95,44 +95,6 @@ public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer> {
             "                   ON f.Id = tf.FacilityId AND t.Id = tf.ToiletId " +
             "         LEFT JOIN Rating r " +
             "                   ON r.ToiletId = t.Id " +
-            "WHERE t.AccountId = :accountId " +
-            "GROUP BY t.Id, t.Name, t.Address, t.Ward, t.District, t.Province, t.Longitude, t.Latitude, t.NearBy, " +
-            "         t.OpenTime, t.CloseTime, t.isFree, " +
-            "         f.Name, f.Type, tf.Quantity, CAST(tf.Description AS NVARCHAR(MAX)), CAST(ti.ImageSource AS NVARCHAR(MAX))", nativeQuery = true)
-    List<CustomToiletDetailsInfoDTO> getCustomToiletInfoDTOByAccountId(@Param("accountId") int accountId);
-
-    @Query(value = "SELECT t.Id, " +
-            "       t.Name                                          AS ToiletName, " +
-            "       t.Address, " +
-            "       t.Ward, " +
-            "       t.District, " +
-            "       t.Province, " +
-            "       t.Latitude, " +
-            "       t.Longitude, " +
-            "       t.NearBy, " +
-            "       t.OpenTime, " +
-            "       t.CloseTime, " +
-            "       t.isFree, " +
-            "       IIF(t.isFree = 0, MIN(s.Price), 0)              AS MinPrice, " +
-            "       IIF(t.isFree = 0, MAX(s.Price), 0)              AS MaxPrice, " +
-            "       f.Name                                          AS FacilityName, " +
-            "       f.Type                                          AS FacilityType, " +
-            "       COALESCE(tf.Quantity, 0)                        AS FacilityQuantity, " +
-            "       CAST(tf.Description AS NVARCHAR(MAX))           AS FacilityDescription, " +
-            "       COALESCE(ROUND(AVG(CAST(Star AS FLOAT)), 1), 0) AS RatingStar, " +
-            "       CAST(ti.ImageSource AS NVARCHAR(MAX))           AS ToiletImage " +
-            "FROM Toilet t " +
-            "         CROSS JOIN Facility f " +
-            "         JOIN ToiletService ts " +
-            "              ON t.Id = ts.ToiletId " +
-            "         JOIN Service s " +
-            "              ON ts.ServiceId = s.Id " +
-            "         LEFT JOIN ToiletImage ti " +
-            "                   ON t.Id = ti.ToiletId " +
-            "         LEFT JOIN ToiletFacility tf " +
-            "                   ON f.Id = tf.FacilityId AND t.Id = tf.ToiletId " +
-            "         LEFT JOIN Rating r " +
-            "                   ON r.ToiletId = t.Id " +
             "WHERE t.Id = :toiletId " +
             "GROUP BY t.Id, t.Name, t.Address, t.Ward, t.District, t.Province, t.Longitude, t.Latitude, t.NearBy, " +
             "         t.OpenTime, t.CloseTime, t.isFree, " +

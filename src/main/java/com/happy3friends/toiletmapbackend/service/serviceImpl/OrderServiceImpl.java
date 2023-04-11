@@ -1,10 +1,13 @@
 package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
+import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
+import com.happy3friends.toiletmapbackend.constant.DefaultSortPropertyConstant;
 import com.happy3friends.toiletmapbackend.dto.CustomAccountInfoDTO;
 import com.happy3friends.toiletmapbackend.entity.AccountEntity;
 import com.happy3friends.toiletmapbackend.entity.ComboEntity;
 import com.happy3friends.toiletmapbackend.entity.OrderEntity;
 import com.happy3friends.toiletmapbackend.enums.PaymentTypeEnum;
+import com.happy3friends.toiletmapbackend.enums.RoleEnum;
 import com.happy3friends.toiletmapbackend.exception.BadRequestException;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.OrderMapper;
@@ -16,11 +19,13 @@ import com.happy3friends.toiletmapbackend.request.OrderRequest;
 import com.happy3friends.toiletmapbackend.response.OrderResponse;
 import com.happy3friends.toiletmapbackend.service.OrderService;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
+import com.happy3friends.toiletmapbackend.utils.PaginationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -44,15 +49,15 @@ public class OrderServiceImpl implements OrderService {
     private OrderMapper orderMapper;
 
     @Override
-    public OrderResponse createOrderByAccountId(int accountId, OrderRequest orderRequest) {
+    public OrderResponse createOrderByAccountId(OrderRequest orderRequest) {
         if (!orderRequest.getPaymentMethod().equals(PaymentTypeEnum.BALANCE.getPaymentValue())
             && !orderRequest.getPaymentMethod().equals(PaymentTypeEnum.VN_PAY.getPaymentValue()))
             throw new BadRequestException("Invalid payment method!");
 
         // Check account role User
-        CustomAccountInfoDTO customAccountInfoDTO = accountRepository.getCustomAccountInfoByAccountId(accountId);
-        if (customAccountInfoDTO == null)
-            throw new NotFoundException("Account", "Id", accountId);
+        CustomAccountInfoDTO customAccountInfoDTO = accountRepository.getCustomAccountInfoByAccountId(orderRequest.getAccountId());
+        if (!customAccountInfoDTO.getRole().equals(RoleEnum.USER.getRoleName()))
+            throw new BadRequestException("Invalid account Id!");
 
         // TODO: check userToken with account from accountId
 
@@ -68,8 +73,7 @@ public class OrderServiceImpl implements OrderService {
         Timestamp now = DateTimeUtil.getTimestampNow();
 
         // Create order - combo
-        orderRepository.createOrderByAccountId(accountId,
-                comboEntity.get().getId(),
+        orderRepository.createOrderByAccountId(orderRequest.getAccountId(),
                 comboEntity.get().getTotalTurn(),
                 comboEntity.get().getPrice(),
                 orderRequest.getPaymentMethod(),
@@ -79,13 +83,13 @@ public class OrderServiceImpl implements OrderService {
         int newAccountTurn = customAccountInfoDTO.getAccountTurn() + comboEntity.get().getTotalTurn();
         if (orderRequest.getPaymentMethod().equals(PaymentTypeEnum.BALANCE.getPaymentValue())) {
             int newAccountBalance = customAccountInfoDTO.getAccountBalance() - comboPrice;
-            userInfoRepository.updateAccountBalanceAndAccountTurn(accountId, newAccountBalance, newAccountTurn);
+            userInfoRepository.updateAccountBalanceAndAccountTurn(orderRequest.getAccountId(), newAccountBalance, newAccountTurn);
         } else {
-            userInfoRepository.updateAccountTurn(accountId, newAccountTurn);
+            userInfoRepository.updateAccountTurn(orderRequest.getAccountId(), newAccountTurn);
         }
 
         OrderEntity orderEntity = new OrderEntity();
-        orderEntity.setAccountId(accountId);
+        orderEntity.setAccountId(orderRequest.getAccountId());
         orderEntity.setTotalTurn(comboEntity.get().getTotalTurn());
         orderEntity.setTotalPrice(comboPrice);
         orderEntity.setPaymentMethod(orderRequest.getPaymentMethod());
@@ -95,15 +99,17 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderResponse> getOrderHistoriesByAccountId(int accountId) {
+    public List<OrderResponse> getOrderHistoriesByAccountId(int accountId, BasePaginationRequest paginationRequest) {
+        Sort.Order defaultSortOrder = new Sort.Order(Sort.Direction.DESC, DefaultSortPropertyConstant.DATETIME);
+        Pageable pageable = PaginationUtil.getPageable(paginationRequest, defaultSortOrder);
+
         Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
         if (!accountEntity.isPresent()) throw new NotFoundException("Account", "Id", accountId);
 
-        List<OrderEntity> orderEntities = orderRepository.findAllByAccountId(accountId);
+        List<OrderEntity> orderEntities = orderRepository.findAllByAccountId(accountId, pageable);
 
         return orderEntities.stream()
                 .map(entity -> orderMapper.convertOrderEntityToOrderResponse(entity))
-                .sorted(Comparator.comparing(OrderResponse::getDateTime).reversed())
                 .collect(Collectors.toList());
     }
 }

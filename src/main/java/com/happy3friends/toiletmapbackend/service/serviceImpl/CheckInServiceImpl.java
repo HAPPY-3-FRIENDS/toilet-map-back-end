@@ -1,5 +1,7 @@
 package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
+import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
+import com.happy3friends.toiletmapbackend.constant.DefaultSortPropertyConstant;
 import com.happy3friends.toiletmapbackend.constant.PaymentTypeConstant;
 import com.happy3friends.toiletmapbackend.dto.CustomAccountInfoDTO;
 import com.happy3friends.toiletmapbackend.dto.CustomCheckInDTO;
@@ -14,12 +16,16 @@ import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.CheckInMapper;
 import com.happy3friends.toiletmapbackend.repository.*;
 import com.happy3friends.toiletmapbackend.request.CheckInRequest;
+import com.happy3friends.toiletmapbackend.request.WalkInGuestCheckInRequest;
 import com.happy3friends.toiletmapbackend.response.CheckInResponse;
 import com.happy3friends.toiletmapbackend.service.CheckInService;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
+import com.happy3friends.toiletmapbackend.utils.PaginationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -62,11 +68,15 @@ public class CheckInServiceImpl implements CheckInService {
     }
 
     @Override
-    public List<CheckInResponse> getCheckInHistoriesByAccountId(int accountId, String paymentMethod) {
+    public List<CheckInResponse> getCheckInHistoriesByAccountId(int accountId, String paymentMethod, BasePaginationRequest paginationRequest) {
+        Sort.Order defaultSortOrder = new Sort.Order(Sort.Direction.DESC, DefaultSortPropertyConstant.DATETIME);
+        Pageable pageable = PaginationUtil.getPageable(paginationRequest, defaultSortOrder);
+
         Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
         if (!accountEntity.isPresent()) throw new NotFoundException("Account", "Id", accountId);
 
-        List<CustomCheckInDTO> customCheckInDTOS = checkInRepository.getCheckInHistoriesByAccountId(accountId, paymentMethod);
+        List<CustomCheckInDTO> customCheckInDTOS
+                = checkInRepository.getCheckInHistoriesByAccountId(accountId, paymentMethod, pageable);
 
         return customCheckInDTOS.stream()
                 .map(dto -> checkInMapper.convertCustomCheckInDTOToCheckInResponse(dto))
@@ -74,7 +84,10 @@ public class CheckInServiceImpl implements CheckInService {
     }
 
     @Override
-    public CheckInResponse userCheckIn(int toiletId, int accountId, CheckInRequest checkInRequest) {
+    public CheckInResponse userCheckIn(CheckInRequest checkInRequest) {
+        int toiletId = checkInRequest.getToiletId();
+        int accountId = checkInRequest.getAccountId();
+
         Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
         if (!toiletEntity.isPresent())
             throw new NotFoundException("Toilet", "Id", toiletId);
@@ -155,7 +168,10 @@ public class CheckInServiceImpl implements CheckInService {
     }
 
     @Override
-    public List<CheckInResponse> walkInGuestCheckIn(int toiletId, int accountId, List<CheckInRequest> checkInRequests) {
+    public List<CheckInResponse> walkInGuestCheckIn(WalkInGuestCheckInRequest walkInGuestCheckInRequest) {
+        int toiletId = walkInGuestCheckInRequest.getToiletId();
+        int accountId = walkInGuestCheckInRequest.getToiletId();
+
         Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
         if (!toiletEntity.isPresent())
             throw new NotFoundException("Toilet", "Id", toiletId);
@@ -163,11 +179,11 @@ public class CheckInServiceImpl implements CheckInService {
         Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
         if (!accountEntity.isPresent())
             throw new NotFoundException("Account", "Id", accountId);
-        if (!accountEntity.get().getRoleByRoleId().getName().equals(RoleEnum.STAFF.getRoleName()))
+        if (!accountEntity.get().getRoleByRoleId().getName().equals(RoleEnum.TOILET.getRoleName()))
             throw new BadRequestException("This account-id is not an account-id of a staff");
 
         List<CheckInRequest> list = new ArrayList<>();
-        checkInRequests.stream()
+        walkInGuestCheckInRequest.getCheckInRequests().stream()
                 .forEach(obj -> {
                     list.addAll(Collections.nCopies(obj.getQuantity(), obj));
                 });

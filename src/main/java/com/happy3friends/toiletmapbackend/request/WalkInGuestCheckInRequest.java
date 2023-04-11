@@ -1,20 +1,18 @@
 package com.happy3friends.toiletmapbackend.request;
 
-import com.happy3friends.toiletmapbackend.annotation.ServiceAnnotation;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
-@Setter
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
-public class CheckInRequest {
+@Getter
+@Setter
+public class WalkInGuestCheckInRequest {
     private int toiletId;
     private int accountId;
-    @ServiceAnnotation
-    private String serviceName;
-    private int quantity;
-    private String datetime;
+    List<CheckInRequest> checkInRequests;
 }

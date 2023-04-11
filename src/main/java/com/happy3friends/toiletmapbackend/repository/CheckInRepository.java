@@ -4,6 +4,7 @@ import com.happy3friends.toiletmapbackend.constant.DefaultAccountNameConstant;
 import com.happy3friends.toiletmapbackend.constant.RoleConstant;
 import com.happy3friends.toiletmapbackend.dto.CustomCheckInDTO;
 import com.happy3friends.toiletmapbackend.entity.CheckInEntity;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,7 +15,7 @@ import java.util.List;
 @Repository
 public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer> {
 
-    @Query(value = "SELECT (IIF(r.Name = '" + RoleConstant.STAFF + "', '" + DefaultAccountNameConstant.WALK_IN_GUEST + "', ui.FullName)) as FullName, " +
+    @Query(value = "SELECT (IIF(r.Name = '" + RoleConstant.TOILET + "', '" + DefaultAccountNameConstant.WALK_IN_GUEST + "', ui.FullName)) as FullName, " +
             "       c.DateTime, " +
             "       s.Name                                                 as 'ServiceName', " +
             "       c.PaymentMethod, " +
@@ -48,8 +49,9 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
             "         INNER JOIN Service s " +
             "                    ON ts.ServiceId = s.Id " +
             "WHERE c.AccountId = :accountId " +
-            "  AND (:paymentMethod IS NULL OR c.PaymentMethod = :paymentMethod) " +
-            "ORDER BY DateTime DESC", nativeQuery = true)
+            "  AND (:paymentMethod IS NULL OR c.PaymentMethod = :paymentMethod) ",
+            nativeQuery = true)
     List<CustomCheckInDTO> getCheckInHistoriesByAccountId(@Param("accountId") int accountId,
-                                                          @Param("paymentMethod") String paymentMethod);
+                                                          @Param("paymentMethod") String paymentMethod,
+                                                          Pageable pageable);
 }

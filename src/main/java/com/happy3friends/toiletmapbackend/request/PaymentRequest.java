@@ -7,6 +7,7 @@ import javax.validation.constraints.PositiveOrZero;
 
 @Getter
 public class PaymentRequest {
+    private int accountId;
     @PositiveOrZero
     private int total;
     @PaymentTypeAnnotation

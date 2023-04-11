@@ -1,6 +1,7 @@
 package com.happy3friends.toiletmapbackend.repository;
 
 import com.happy3friends.toiletmapbackend.entity.OrderEntity;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,10 +17,9 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "INSERT INTO [Order] (AccountId, ComboId, TotalTurn, TotalPrice, PaymentMethod, DateTime) " +
-            "VALUES (:accountId, :comboId, :totalTurn, :totalPrice, :paymentMethod, :dateTime)", nativeQuery = true)
+    @Query(value = "INSERT INTO [Order] (AccountId, TotalTurn, TotalPrice, PaymentMethod, DateTime) " +
+            "VALUES (:accountId, :totalTurn, :totalPrice, :paymentMethod, :dateTime)", nativeQuery = true)
     void createOrderByAccountId(@Param("accountId") int accountId,
-                                @Param("comboId") int comboId,
                                 @Param("totalTurn") int totalTurn,
                                 @Param("totalPrice") int totalPrice,
                                 @Param("paymentMethod") String paymentMethod,
@@ -28,5 +28,6 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Integer> {
     @Query(value = "SELECT * " +
             "FROM [Order] " +
             "WHERE AccountId = :accountId", nativeQuery = true)
-    List<OrderEntity> findAllByAccountId(@Param("accountId") int accountId);
+    List<OrderEntity> findAllByAccountId(@Param("accountId") int accountId,
+                                         Pageable pageable);
 }

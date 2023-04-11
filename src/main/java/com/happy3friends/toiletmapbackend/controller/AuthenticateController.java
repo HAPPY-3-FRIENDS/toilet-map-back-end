@@ -1,9 +1,9 @@
 package com.happy3friends.toiletmapbackend.controller;
 
+import com.happy3friends.toiletmapbackend.base.models.BaseResponse;
 import com.happy3friends.toiletmapbackend.dto.TokenDTO;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.request.AuthenticateRequest;
-import com.happy3friends.toiletmapbackend.response.BaseResponse;
 import com.happy3friends.toiletmapbackend.service.AuthenticateService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -46,6 +46,10 @@ public class AuthenticateController {
                     @ExampleObject(name = "Staff Authenticate Request", value = "{\n" +
                             "  \"username\": \"Staff\",\n" +
                             "  \"password\": \"Staff\"" +
+                            "}"),
+                    @ExampleObject(name = "Staff-Toilet Authenticate Request", value = "{\n" +
+                            "  \"username\": \"Toilet\",\n" +
+                            "  \"password\": \"Toilet\"" +
                             "}"),
                     @ExampleObject(name = "User Authenticate Request", value = "{\n" +
                             "  \"username\": \"0849666957\",\n" +

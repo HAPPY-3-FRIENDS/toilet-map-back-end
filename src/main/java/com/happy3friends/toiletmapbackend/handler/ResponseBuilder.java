@@ -1,6 +1,6 @@
 package com.happy3friends.toiletmapbackend.handler;
 
-import com.happy3friends.toiletmapbackend.response.BaseResponse;
+import com.happy3friends.toiletmapbackend.base.models.BaseResponse;
 import com.happy3friends.toiletmapbackend.response.ErrorResponse;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
 import org.springframework.http.HttpStatus;
