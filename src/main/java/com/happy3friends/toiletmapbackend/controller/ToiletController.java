@@ -1,5 +1,6 @@
 package com.happy3friends.toiletmapbackend.controller;
 
+import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
 import com.happy3friends.toiletmapbackend.base.models.BaseResponse;
 import com.happy3friends.toiletmapbackend.config.OpenApiConfig;
 import com.happy3friends.toiletmapbackend.constant.RoleConstant;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -121,14 +123,44 @@ public class ToiletController {
     }
 
     @Operation(summary = "Get list of all toilets",
-            description = "- [User] Get list of all toilets (only find id, latitude and longitude value)\n" +
+            description = "- [Manager] Get list of all toilets of company by company ID (pagination)\n" +
+                    "- [User] Get list of all toilets (only find id, latitude and longitude value)\n" +
                     "- [User] Get list of top 10 toilets near by current location")
     @Parameters(value = {
-            @Parameter(name = "current-latitude", description = "Current latitude", in = ParameterIn.QUERY, required = false),
-            @Parameter(name = "current-longitude", description = "Current longitude", in = ParameterIn.QUERY, required = false)
+            @Parameter(name = "company-id", description = "Company ID", in = ParameterIn.QUERY),
+            @Parameter(name = "current-latitude", description = "Current latitude", in = ParameterIn.QUERY),
+            @Parameter(name = "current-longitude", description = "Current longitude", in = ParameterIn.QUERY),
+            @Parameter(name = "sort",
+                    in = ParameterIn.QUERY,
+                    description = "Sorting criteria in the format: property(,asc|desc). Default sort order is ascending by id. Multiple sort criteria are supported.",
+                    example ="[\"toiletName,asc\", \"username,desc\"]",
+                    array = @ArraySchema(schema = @Schema(implementation = String.class), maxItems = 5),
+                    allowReserved = true)
     })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
+                    @ExampleObject(name = "Get list of all toilets of company by company ID", value = "[\n" +
+                            "    {\n" +
+                            "      \"id\": 4,\n" +
+                            "      \"toiletName\": \"Nhà vệ sinh lưu động số 1\",\n" +
+                            "      \"address\": \"44 Trần Đình Xu\",\n" +
+                            "      \"ward\": \"Cô Giang\",\n" +
+                            "      \"district\": \"Quận 1\",\n" +
+                            "      \"province\": \"Thành phố Hồ Chí Minh\",\n" +
+                            "      \"username\": \"toilet-1\",\n" +
+                            "      \"status\": \"Đang hoạt động\"\n" +
+                            "    },\n" +
+                            "    {\n" +
+                            "      \"id\": 5,\n" +
+                            "      \"toiletName\": \"Nhà vệ sinh lưu động số 2\",\n" +
+                            "      \"address\": \"79 Nguyễn Huệ\",\n" +
+                            "      \"ward\": \"Bến Nghé\",\n" +
+                            "      \"district\": \"Quận 1\",\n" +
+                            "      \"province\": \"Thành phố Hồ Chí Minh\",\n" +
+                            "      \"username\": \"toilet-2\",\n" +
+                            "      \"status\": \"Đang hoạt động\"\n" +
+                            "    }\n" +
+                            "  ]"),
                     @ExampleObject(name = "Get list of all toilets (only find id, latitude and longitude value)", value = "[\n" +
                             "    {\n" +
                             "      \"id\": 1,\n" +
@@ -265,16 +297,57 @@ public class ToiletController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.USER})
+    @RolesAllowed({RoleConstant.MANAGER, RoleConstant.USER})
     @GetMapping
     public ResponseEntity<BaseResponse<List<ToiletDetailsInfoResponse>>> getAllToilets(
+            @RequestParam(name = "company-id", required = false) Integer companyId,
             @RequestParam(name = "current-latitude", required = false) Double currentLatitude,
-            @RequestParam(name = "current-longitude", required = false) Double currentLongitude) {
+            @RequestParam(name = "current-longitude", required = false) Double currentLongitude,
+            @ModelAttribute BasePaginationRequest paginationRequest) {
 
-        List<ToiletDetailsInfoResponse> response = toiletService.getAllToilets(currentLatitude, currentLongitude);
+        List<ToiletDetailsInfoResponse> responses = toiletService.getAllToilets(
+                companyId,
+                currentLatitude,
+                currentLongitude,
+                paginationRequest);
 
         return ResponseBuilder.generateResponse(
                 "Get list of all toilets successfully!",
+                HttpStatus.OK,
+                responses
+        );
+    }
+
+    @Operation(summary = "Count list of all toilets", description = "[Manager] Count list of all toilet of a specific Company by Company ID")
+    @Parameters(value = {
+            @Parameter(name = "company-id", description = "Company ID", in = ParameterIn.QUERY, example = "2"),
+    })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {@ExampleObject(value = "10")})),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.MANAGER})
+    @GetMapping(value = "/count")
+    public ResponseEntity<BaseResponse<Integer>> count(
+            @RequestParam(name = "company-id", required = false) Integer companyId) {
+
+        int response = toiletService.count(companyId);
+
+        if (companyId != null) {
+            return ResponseBuilder.generateResponse(
+                    "Count list of toilets of company by Company ID successfully!",
+                    HttpStatus.OK,
+                    response
+            );
+        }
+
+        return ResponseBuilder.generateResponse(
+                "Count list of all toilets successfully!",
                 HttpStatus.OK,
                 response
         );

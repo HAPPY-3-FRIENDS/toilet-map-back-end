@@ -3,24 +3,26 @@ package com.happy3friends.toiletmapbackend.dto;
 import java.sql.Time;
 
 public interface CustomToiletDetailsInfoDTO {
-    public int getId();
+    public Integer getId();
     public String getToiletName();
     public String getAddress();
     public String getWard();
     public String getDistrict();
     public String getProvince();
-    public double getLatitude();
-    public double getLongitude();
+    public Double getLatitude();
+    public Double getLongitude();
     public String getNearBy();
     public Time getOpenTime();
     public Time getCloseTime();
-    public boolean getIsFree();
-    public int getMinPrice();
-    public int getMaxPrice();
+    public Boolean getIsFree();
+    public Integer getMinPrice();
+    public Integer getMaxPrice();
     public String getFacilityName();
     public String getFacilityType();
-    public int getFacilityQuantity();
+    public Integer getFacilityQuantity();
     public String getFacilityDescription();
-    public double getRatingStar();
+    public Double getRatingStar();
     public String getToiletImage();
+    public String getUsername();
+    public String getStatus();
 }

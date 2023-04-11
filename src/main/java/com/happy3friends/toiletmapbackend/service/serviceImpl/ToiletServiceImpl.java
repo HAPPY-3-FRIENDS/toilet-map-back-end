@@ -1,24 +1,29 @@
 package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
+import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
+import com.happy3friends.toiletmapbackend.constant.DefaultSortPropertyConstant;
 import com.happy3friends.toiletmapbackend.constant.ToiletConstant;
 import com.happy3friends.toiletmapbackend.dto.CustomToiletDTO;
 import com.happy3friends.toiletmapbackend.dto.CustomToiletDetailsInfoDTO;
 import com.happy3friends.toiletmapbackend.dto.ToiletFacilityDTO;
+import com.happy3friends.toiletmapbackend.entity.CompanyEntity;
+import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.ToiletMapper;
 import com.happy3friends.toiletmapbackend.repository.AccountRepository;
+import com.happy3friends.toiletmapbackend.repository.CompanyRepository;
 import com.happy3friends.toiletmapbackend.repository.ToiletRepository;
 import com.happy3friends.toiletmapbackend.response.ToiletDetailsInfoResponse;
 import com.happy3friends.toiletmapbackend.service.ToiletService;
 import com.happy3friends.toiletmapbackend.utils.FilterKeysUtil;
+import com.happy3friends.toiletmapbackend.utils.PaginationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,6 +36,9 @@ public class ToiletServiceImpl implements ToiletService {
 
     @Autowired
     private ToiletRepository toiletRepository;
+
+    @Autowired
+    private CompanyRepository companyRepository;
 
     @Autowired
     private ToiletMapper toiletMapper;
@@ -98,34 +106,66 @@ public class ToiletServiceImpl implements ToiletService {
         return response;
     }
 
+    public List<ToiletDetailsInfoResponse> getAllToilets() {
+        List<CustomToiletDTO> toiletEntities = toiletRepository.getAllToiletsIncludeIdLatitudeLongitude();
+
+        return toiletEntities.stream()
+                .map(dto -> toiletMapper.convertCustomToiletDTOToToiletDetailsInfoResponse(dto))
+                .collect(Collectors.toList());
+    }
+
+    public List<ToiletDetailsInfoResponse> getTop10ToiletsNearByCurrentLocation(Double currentLatitude, Double currentLongitude) {
+        Double deviationLatitudeMax = currentLatitude + ToiletConstant.LOCATED_DEVIATION;
+        Double deviationLongitudeMax = currentLongitude + ToiletConstant.LOCATED_DEVIATION;
+        Double distanceCurrentAndDeviationMax = Math.sqrt(
+                Math.pow(currentLatitude - deviationLatitudeMax, 2)
+                        + Math.pow(currentLongitude - deviationLongitudeMax, 2)
+        );
+
+        List<CustomToiletDetailsInfoDTO> customToiletDetailsInfoDTOS
+                = toiletRepository.getTop10ToiletsNearByCurrentLocation(currentLatitude,
+                currentLongitude,
+                distanceCurrentAndDeviationMax);
+
+        LinkedHashMap<Integer, List<CustomToiletDetailsInfoDTO>> mapIdListCustomToiletDetailsInfoDTO
+                = getMapIdListCustomToiletDetailsInfoDTO(customToiletDetailsInfoDTOS);
+
+        return mapIdListCustomToiletDetailsInfoDTO.entrySet()
+                .stream().map(dto -> getToiletFromListCustomToiletDetailsInfoDTOS(dto.getValue()))
+                .collect(Collectors.toList());
+    }
+
+    public List<ToiletDetailsInfoResponse> getAllToiletsByCompanyId(Integer companyId, BasePaginationRequest paginationRequest) {
+        Sort.Order defaultSortOrder = new Sort.Order(Sort.Direction.ASC, DefaultSortPropertyConstant.ID);
+        Pageable pageable = PaginationUtil.getPageable(paginationRequest, defaultSortOrder);
+
+        Optional<CompanyEntity> companyEntity = companyRepository.findById(companyId);
+        if (!companyEntity.isPresent())
+            throw new NotFoundException("Company", "Id", companyId);
+
+        List<CustomToiletDetailsInfoDTO> customToiletDetailsInfoDTOS
+                = toiletRepository.getAllToiletsByCompanyId(companyId, pageable);
+
+        return customToiletDetailsInfoDTOS.stream()
+                .map(dto -> toiletMapper.convertCustomToiletDetailsInfoDTOToToiletDetailsInfoResponse(dto))
+                .collect(Collectors.toList());
+    }
+
     @Override
-    public List<ToiletDetailsInfoResponse> getAllToilets(Double currentLatitude, Double currentLongitude) {
-        List<ToiletDetailsInfoResponse> responses = new ArrayList<>();
+    public List<ToiletDetailsInfoResponse> getAllToilets(
+            Integer companyId,
+            Double currentLatitude,
+            Double currentLongitude,
+            BasePaginationRequest paginationRequest) {
 
-        if (currentLatitude == null && currentLongitude == null) {
-            List<CustomToiletDTO> toiletEntities = toiletRepository.getAllToiletsIncludeIdLatitudeLongitude();
-            responses = toiletEntities.stream()
-                    .map(dto -> toiletMapper.convertCustomToiletDTOToToiletDetailsInfoResponse(dto))
-                    .collect(Collectors.toList());
+        List<ToiletDetailsInfoResponse> responses;
+
+        if (companyId != null) {
+            responses = getAllToiletsByCompanyId(companyId, paginationRequest);
+        } else if (currentLatitude != null && currentLongitude != null) {
+            responses = getTop10ToiletsNearByCurrentLocation(currentLatitude, currentLongitude);
         } else {
-            Double deviationLatitudeMax = currentLatitude + ToiletConstant.LOCATED_DEVIATION;
-            Double deviationLongitudeMax = currentLongitude + ToiletConstant.LOCATED_DEVIATION;
-            Double distanceCurrentAndDeviationMax = Math.sqrt(
-                    Math.pow(currentLatitude - deviationLatitudeMax, 2)
-                    + Math.pow(currentLongitude - deviationLongitudeMax, 2)
-            );
-
-            List<CustomToiletDetailsInfoDTO> customToiletDetailsInfoDTOS
-                    = toiletRepository.getTop10ToiletsNearByCurrentLocation(currentLatitude,
-                                                                            currentLongitude,
-                                                                            distanceCurrentAndDeviationMax);
-
-            LinkedHashMap<Integer, List<CustomToiletDetailsInfoDTO>> mapIdListCustomToiletDetailsInfoDTO
-                    = getMapIdListCustomToiletDetailsInfoDTO(customToiletDetailsInfoDTOS);
-
-            responses = mapIdListCustomToiletDetailsInfoDTO.entrySet()
-                    .stream().map(dto -> getToiletFromListCustomToiletDetailsInfoDTOS(dto.getValue()))
-                    .collect(Collectors.toList());
+            responses = getAllToilets();
         }
 
         return responses;
@@ -137,5 +177,19 @@ public class ToiletServiceImpl implements ToiletService {
                 = toiletRepository.getCustomToiletInfoDTOByToiletId(toiletId);
 
         return getToiletFromListCustomToiletDetailsInfoDTOS(customToiletDetailsInfoDTOS);
+    }
+
+    @Override
+    public int count(Integer companyId) {
+
+        if (companyId != null) {
+            Optional<CompanyEntity> companyEntity = companyRepository.findById(companyId);
+            if (!companyEntity.isPresent())
+                throw new NotFoundException("Company", "Id", companyId);
+
+            return (int) toiletRepository.countByCompanyId(companyId);
+        }
+
+        return (int) toiletRepository.count();
     }
 }

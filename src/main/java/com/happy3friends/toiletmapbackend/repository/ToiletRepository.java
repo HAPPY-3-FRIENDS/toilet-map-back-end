@@ -3,15 +3,17 @@ package com.happy3friends.toiletmapbackend.repository;
 import com.happy3friends.toiletmapbackend.dto.CustomToiletDTO;
 import com.happy3friends.toiletmapbackend.dto.CustomToiletDetailsInfoDTO;
 import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer> {
+public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer>, CrudRepository<ToiletEntity, Integer> {
 
     @Query(value = "SELECT * " +
             "FROM (SELECT *, " +
@@ -104,4 +106,22 @@ public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer> {
     @Query(value = "SELECT Id, Latitude, Longitude " +
             "FROM Toilet", nativeQuery = true)
     List<CustomToiletDTO> getAllToiletsIncludeIdLatitudeLongitude();
+
+    @Query(value = "SELECT t.Id, " +
+            "       t.Name AS ToiletName, " +
+            "       a.Username AS Username, " +
+            "       t.Address, " +
+            "       t.Ward, " +
+            "       t.District, " +
+            "       t.Province, " +
+            "       t.Status " +
+            "FROM Toilet t " +
+            "         JOIN Company c " +
+            "              ON t.CompanyId = c.Id " +
+            "         JOIN Account a " +
+            "              ON t.Id = a.Id " +
+            "WHERE c.Id = :companyId", nativeQuery = true)
+    List<CustomToiletDetailsInfoDTO> getAllToiletsByCompanyId(@Param("companyId") int companyId, Pageable pageable);
+
+    long countByCompanyId(int companyId);
 }

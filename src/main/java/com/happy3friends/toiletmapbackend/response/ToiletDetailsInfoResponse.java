@@ -29,4 +29,6 @@ public class ToiletDetailsInfoResponse {
     private List<ToiletFacilityDTO> toiletFacilities;
     private List<String> toiletImageSources;
     private double ratingStar;
+    private String username;
+    private String status;
 }
