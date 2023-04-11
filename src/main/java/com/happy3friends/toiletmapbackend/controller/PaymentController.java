@@ -37,7 +37,7 @@ public class PaymentController {
     @Autowired
     private PaymentService paymentService;
 
-    @Operation(summary = "Create payment", description = "[Toilet, User] Create payment with account ID")
+    @Operation(summary = "Create payment", description = "[Staff, Toilet, User] Create payment with account ID")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Payment Request", required = true, content = @Content(
             examples = {
                     @ExampleObject(name = "Payment Request with Cash Payment Method", value = "{\n" +
@@ -65,7 +65,7 @@ public class PaymentController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.TOILET, RoleConstant.USER})
+    @RolesAllowed({RoleConstant.STAFF, RoleConstant.TOILET, RoleConstant.USER})
     @PostMapping
     public ResponseEntity<BaseResponse<PaymentResponse>> createPaymentByAccountId(@RequestBody @Valid PaymentRequest paymentRequest) {
 

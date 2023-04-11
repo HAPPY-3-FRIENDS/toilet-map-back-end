@@ -37,7 +37,7 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    @Operation(summary = "Create order", description = "[User] Create order with a specific Account by Account ID")
+    @Operation(summary = "Create order", description = "[Staff, User] Create order with a specific Account by Account ID")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Order Request", required = true, content = @Content(
             examples = {
                     @ExampleObject(name = "Order Request with AccountBalance Payment Method", value = "{\n" +
@@ -66,7 +66,7 @@ public class OrderController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.USER})
+    @RolesAllowed({RoleConstant.STAFF, RoleConstant.USER})
     @PostMapping
     public ResponseEntity<BaseResponse<OrderResponse>> createOrderByAccountId(
             @RequestBody @Valid OrderRequest orderRequest) {
@@ -115,7 +115,7 @@ public class OrderController {
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.USER})
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<BaseResponse<List<OrderResponse>>> getOrderHistoriesByAccountId(
             @RequestParam(value = "account-id") int accountId,
             @ModelAttribute BasePaginationRequest paginationRequest) {
