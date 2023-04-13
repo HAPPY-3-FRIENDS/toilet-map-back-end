@@ -21,6 +21,7 @@ import com.happy3friends.toiletmapbackend.response.CheckInResponse;
 import com.happy3friends.toiletmapbackend.service.CheckInService;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
 import com.happy3friends.toiletmapbackend.utils.PaginationUtil;
+import org.apache.commons.lang3.concurrent.TimedSemaphore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -96,6 +98,12 @@ public class CheckInServiceImpl implements CheckInService {
         int toiletId = checkInRequest.getToiletId();
         int accountId = checkInRequest.getAccountId();
 
+        // Validate Datetime - 3 * 60s | 1 second = 1000 milliseconds
+        Timestamp datetime = DateTimeUtil.convertStringToTimestamp(checkInRequest.getDatetime());
+        Timestamp currentDatetime = DateTimeUtil.getTimestampNow();
+        if ((currentDatetime.getTime() - datetime.getTime()) > 1000 * 3 * 60)
+            throw new BadRequestException("Invalid datetime in QR Code!");
+
         // Validate Toilet
         Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
         if (!toiletEntity.isPresent())
@@ -129,7 +137,7 @@ public class CheckInServiceImpl implements CheckInService {
             CheckInEntity checkInEntity = new CheckInEntity();
             checkInEntity.setAccountId(accountId);
             checkInEntity.setToiletServiceId(toiletServiceEntity.get().getId());
-            checkInEntity.setDateTime(DateTimeUtil.convertStringToTimestamp(checkInRequest.getDatetime()));
+            checkInEntity.setDateTime(datetime);
             checkInEntity.setPaymentMethod(defaultAccountPayment);
             switch (defaultAccountPayment) {
                 case PaymentTypeConstant.BALANCE:
