@@ -10,6 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ToiletFacilityDTO {
+    private int facilityId;
     private String facilityName;
     private String facilityType;
     private int quantity;

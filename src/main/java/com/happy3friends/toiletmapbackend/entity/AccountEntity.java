@@ -46,6 +46,6 @@ public class AccountEntity {
     private UserInfoEntity userInfoById;
     @OneToMany(mappedBy = "accountByAccountId")
     private Collection<PaymentEntity> paymentsById;
-    @OneToOne(mappedBy = "accountById")
+    @OneToOne(mappedBy = "accountById", cascade = CascadeType.ALL)
     private ToiletEntity toiletById;
 }

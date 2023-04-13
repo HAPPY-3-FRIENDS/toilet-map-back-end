@@ -62,13 +62,14 @@ public class ToiletEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CompanyId", referencedColumnName = "Id", insertable = false, updatable = false)
     private CompanyEntity companyByCompanyId;
-    @OneToMany(mappedBy = "toiletByToiletId")
+    @OneToMany(mappedBy = "toiletByToiletId", cascade = CascadeType.ALL)
     private Collection<ToiletFacilityEntity> toiletFacilitiesById;
-    @OneToMany(mappedBy = "toiletByToiletId")
+    @OneToMany(mappedBy = "toiletByToiletId", cascade = CascadeType.ALL)
     private Collection<ToiletImageEntity> toiletImagesById;
-    @OneToMany(mappedBy = "toiletByToiletId")
+    @OneToMany(mappedBy = "toiletByToiletId", cascade = CascadeType.ALL)
     private Collection<ToiletServiceEntity> toiletServicesById;
     @OneToOne
+    @MapsId
     @JoinColumn(name = "Id", referencedColumnName = "Id", nullable = false)
     private AccountEntity accountById;
 }

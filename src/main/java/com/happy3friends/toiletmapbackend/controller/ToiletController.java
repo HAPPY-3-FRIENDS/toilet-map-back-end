@@ -5,6 +5,7 @@ import com.happy3friends.toiletmapbackend.base.models.BaseResponse;
 import com.happy3friends.toiletmapbackend.config.OpenApiConfig;
 import com.happy3friends.toiletmapbackend.constant.RoleConstant;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
+import com.happy3friends.toiletmapbackend.request.ToiletCreateRequest;
 import com.happy3friends.toiletmapbackend.response.ToiletDetailsInfoResponse;
 import com.happy3friends.toiletmapbackend.service.ToiletService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -350,6 +351,65 @@ public class ToiletController {
                 "Count list of all toilets successfully!",
                 HttpStatus.OK,
                 response
+        );
+    }
+
+    @Operation(summary = "Create a toilet", description = "[Manager] Create a toilet and its information")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Toilet Create Request", required = true, content = @Content(
+            examples = {
+                    @ExampleObject(value = "{\n" +
+                            "  \"companyId\": 2,\n" +
+                            "  \"username\": \"toilet-3\",\n" +
+                            "  \"password\": \"123\",\n" +
+                            "  \"name\": \"Toilet 3\",\n" +
+                            "  \"address\": \"Trịnh Phong Đáng\",\n" +
+                            "  \"ward\": \"Long Thành Bắc\",\n" +
+                            "  \"district\": \"Hòa Thành\",\n" +
+                            "  \"province\": \"Tây Ninh\",\n" +
+                            "  \"latitude\": 123,\n" +
+                            "  \"longitude\": 456,\n" +
+                            "  \"openTime\": \"08:00\",\n" +
+                            "  \"closeTime\": \"20:00\",\n" +
+                            "  \"status\": \"Đang hoạt động\",\n" +
+                            "  \"toiletImages\": [\n" +
+                            "    {\n" +
+                            "      \"imageSource\": \"imageSource1\"\n" +
+                            "    },\n" +
+                            "    {\n" +
+                            "      \"imageSource\": \"imageSource2\"\n" +
+                            "    }\n" +
+                            "  ],\n" +
+                            "  \"toiletFacilities\": [\n" +
+                            "    {\n" +
+                            "      \"facilityId\": 1,\n" +
+                            "      \"quantity\": 4\n" +
+                            "    },\n" +
+                            "    {\n" +
+                            "      \"facilityId\": 2,\n" +
+                            "      \"quantity\": 1\n" +
+                            "    }\n" +
+                            "  ],\n" +
+                            "  \"free\": true\n" +
+                            "}")}))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Successfully!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.MANAGER})
+    @PostMapping
+    public ResponseEntity<BaseResponse<ToiletCreateRequest>> createToilet(@RequestBody ToiletCreateRequest toiletCreateRequest) throws Exception {
+
+        toiletService.createToilet(toiletCreateRequest);
+
+        return ResponseBuilder.generateResponse(
+                "Create toilet successfully!",
+                HttpStatus.CREATED,
+                toiletCreateRequest
         );
     }
 }

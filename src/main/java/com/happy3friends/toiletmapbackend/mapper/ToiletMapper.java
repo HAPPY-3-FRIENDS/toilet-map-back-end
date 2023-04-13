@@ -2,6 +2,8 @@ package com.happy3friends.toiletmapbackend.mapper;
 
 import com.happy3friends.toiletmapbackend.dto.CustomToiletDTO;
 import com.happy3friends.toiletmapbackend.dto.CustomToiletDetailsInfoDTO;
+import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
+import com.happy3friends.toiletmapbackend.request.ToiletCreateRequest;
 import com.happy3friends.toiletmapbackend.response.ToiletDetailsInfoResponse;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -29,5 +31,11 @@ public class ToiletMapper {
         return Objects.isNull(customToiletDetailsInfoDTO)
                 ? null
                 : modelMapper.map(customToiletDetailsInfoDTO, ToiletDetailsInfoResponse.class);
+    }
+
+    public ToiletEntity convertToiletCreateRequestToiletEntity(ToiletCreateRequest toiletCreateRequest) {
+        return Objects.isNull(toiletCreateRequest)
+                ? null
+                : modelMapper.map(toiletCreateRequest, ToiletEntity.class);
     }
 }
