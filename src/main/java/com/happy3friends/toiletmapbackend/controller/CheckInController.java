@@ -179,11 +179,15 @@ public class CheckInController {
     @Operation(summary = "User check-in", description = "[Toilet] User check in a specific toilet")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Check-in Request", required = true, content = @Content(
             examples = {
-                    @ExampleObject(value = "{\n" +
+                    @ExampleObject(name = "Dynamic QR Code", value = "{\n" +
                             "  \"toiletId\": 4,\n" +
                             "  \"accountId\": 6,\n" +
                             "  \"serviceName\": \"Đi vệ sinh (tiểu tiện)\",\n" +
                             "  \"datetime\": \"2023-10-29 10:30:00.123456\"\n" +
+                            "}"),
+                    @ExampleObject(name = "Static QR Code", value = "{\n" +
+                            "  \"toiletId\": 4,\n" +
+                            "  \"accountId\": 6\n" +
                             "}")}))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully!", content = @Content(examples = {

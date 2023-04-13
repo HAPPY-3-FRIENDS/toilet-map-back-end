@@ -1,6 +1,5 @@
 package com.happy3friends.toiletmapbackend.request;
 
-import com.happy3friends.toiletmapbackend.annotation.ServiceAnnotation;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +12,6 @@ import lombok.Setter;
 public class CheckInRequest {
     private int toiletId;
     private int accountId;
-    @ServiceAnnotation
     private String serviceName;
     private int quantity;
     private String datetime;

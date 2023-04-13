@@ -11,6 +11,7 @@ import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
 import com.happy3friends.toiletmapbackend.entity.ToiletServiceEntity;
 import com.happy3friends.toiletmapbackend.enums.PaymentTypeEnum;
 import com.happy3friends.toiletmapbackend.enums.RoleEnum;
+import com.happy3friends.toiletmapbackend.enums.ServiceEnum;
 import com.happy3friends.toiletmapbackend.exception.BadRequestException;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.CheckInMapper;
@@ -21,7 +22,6 @@ import com.happy3friends.toiletmapbackend.response.CheckInResponse;
 import com.happy3friends.toiletmapbackend.service.CheckInService;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
 import com.happy3friends.toiletmapbackend.utils.PaginationUtil;
-import org.apache.commons.lang3.concurrent.TimedSemaphore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,10 +93,69 @@ public class CheckInServiceImpl implements CheckInService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public CheckInResponse userCheckIn(CheckInRequest checkInRequest) {
-        int toiletId = checkInRequest.getToiletId();
-        int accountId = checkInRequest.getAccountId();
+    public CheckInResponse userCheckInWithStaticQRCode(CheckInRequest checkInRequest) {
+        // Validate Toilet
+        Optional<ToiletEntity> toiletEntity = toiletRepository.findById(checkInRequest.getToiletId());
+        if (!toiletEntity.isPresent())
+            throw new NotFoundException("Toilet", "Id", checkInRequest.getToiletId());
+
+        // Validate Account
+        Optional<AccountEntity> accountEntity = accountRepository.findById(checkInRequest.getAccountId());
+        if (!accountEntity.isPresent())
+            throw new NotFoundException("Account", "Id", checkInRequest.getAccountId());
+
+        List<ToiletServiceEntity> toiletServiceEntities
+                = toiletServiceRepository.findToiletServiceEntitiesByToiletIdAndFetchServiceEagerly(checkInRequest.getToiletId());
+        // Get min service price in Toilet
+        Optional<ToiletServiceEntity> toiletServiceEntity = toiletServiceEntities.stream()
+                .min(Comparator.comparing(entity -> entity.getServiceByServiceId().getTurn()));
+        if (toiletServiceEntity.isPresent()) {
+            // Prepare for saving Check-in Entity
+            CustomAccountInfoDTO customAccountInfoDTO = accountRepository.getCustomAccountInfoByAccountId(checkInRequest.getAccountId());
+            String defaultAccountPayment = customAccountInfoDTO.getDefaultPayment();
+            if (!defaultAccountPayment.equals(PaymentTypeEnum.TURN.getPaymentValue()))
+                throw new BadRequestException("Default account's payment type of this account is invalid! It's not by turn");
+            int accountTurn = customAccountInfoDTO.getAccountTurn();
+            String serviceName = toiletServiceEntity.get().getServiceByServiceId().getName();
+            int serviceTurn = toiletServiceEntity.get().getServiceByServiceId().getTurn();
+            // Save Check-in Entity
+            CheckInEntity checkInEntity = new CheckInEntity();
+            checkInEntity.setAccountId(checkInRequest.getAccountId());
+            checkInEntity.setToiletServiceId(toiletServiceEntity.get().getId());
+            checkInEntity.setDateTime(DateTimeUtil.getTimestampNow());
+            checkInEntity.setPaymentMethod(defaultAccountPayment);
+            if (accountTurn < serviceTurn)
+                throw new BadRequestException("Your account turn is not enough turn for paying service '" + serviceName + "' with price '" + serviceTurn + "'! " +
+                        "Please top up your account to use this service!");
+            if (!toiletEntity.get().isFree()) {
+                userInfoRepository.updateAccountTurn(checkInRequest.getAccountId(), accountTurn - serviceTurn);
+                checkInEntity.setTurn(serviceTurn);
+            } else {
+                checkInEntity.setTurn(0);
+            }
+            checkInRepository.save(checkInEntity);
+
+            // Convert checkInEntity to checkInResponse
+            checkInEntity.setAccountByAccountId(accountEntity.get());
+            checkInEntity.setToiletServiceByToiletServiceId(toiletServiceEntity.get());
+            CheckInResponse checkInResponse
+                    = checkInMapper.convertCheckInEntityToCheckInResponse(checkInEntity);
+            return checkInResponse;
+        } else {
+            throw new NotFoundException("List of toilet's services is not found!");
+        }
+    }
+
+    public CheckInResponse userCheckInWithDynamicQRCode(CheckInRequest checkInRequest) {
+        // Validate Toilet
+        Optional<ToiletEntity> toiletEntity = toiletRepository.findById(checkInRequest.getToiletId());
+        if (!toiletEntity.isPresent())
+            throw new NotFoundException("Toilet", "Id", checkInRequest.getToiletId());
+
+        // Validate Account
+        Optional<AccountEntity> accountEntity = accountRepository.findById(checkInRequest.getAccountId());
+        if (!accountEntity.isPresent())
+            throw new NotFoundException("Account", "Id", checkInRequest.getAccountId());
 
         // Validate Datetime - 3 * 60s | 1 second = 1000 milliseconds
         Timestamp datetime = DateTimeUtil.convertStringToTimestamp(checkInRequest.getDatetime());
@@ -104,28 +163,21 @@ public class CheckInServiceImpl implements CheckInService {
         if ((currentDatetime.getTime() - datetime.getTime()) > 1000 * 3 * 60)
             throw new BadRequestException("Invalid datetime in QR Code!");
 
-        // Validate Toilet
-        Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
-        if (!toiletEntity.isPresent())
-            throw new NotFoundException("Toilet", "Id", toiletId);
+        // Validate Service Name
+        if (!checkInRequest.getServiceName().equals(ServiceEnum.getByValue(checkInRequest.getServiceName()).getServiceName()))
+            throw new BadRequestException("Invalid service name!");
 
         //Check if service chosen is contained in toilet (ToiletService)
         List<ToiletServiceEntity> toiletServiceEntities
-                = toiletServiceRepository.findToiletServiceEntitiesByToiletIdAndFetchServiceEagerly(toiletId);
+                = toiletServiceRepository.findToiletServiceEntitiesByToiletIdAndFetchServiceEagerly(checkInRequest.getToiletId());
         Optional<ToiletServiceEntity> toiletServiceEntity
                 = toiletServiceEntities.stream()
                 .filter(o -> Objects.equals(checkInRequest.getServiceName(), o.getServiceByServiceId().getName()))
                 .findFirst();
 
         if (toiletServiceEntity.isPresent()) {
-
-            // Validate Account
-            Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
-            if (!accountEntity.isPresent())
-                throw new NotFoundException("Account", "Id", accountId);
-
             // Prepare for saving Check-in Entity
-            CustomAccountInfoDTO customAccountInfoDTO = accountRepository.getCustomAccountInfoByAccountId(accountId);
+            CustomAccountInfoDTO customAccountInfoDTO = accountRepository.getCustomAccountInfoByAccountId(checkInRequest.getAccountId());
             String defaultAccountPayment = customAccountInfoDTO.getDefaultPayment();
             int accountBalance = customAccountInfoDTO.getAccountBalance();
             int accountTurn = customAccountInfoDTO.getAccountTurn();
@@ -135,7 +187,7 @@ public class CheckInServiceImpl implements CheckInService {
 
             // Save Check-in Entity
             CheckInEntity checkInEntity = new CheckInEntity();
-            checkInEntity.setAccountId(accountId);
+            checkInEntity.setAccountId(checkInRequest.getAccountId());
             checkInEntity.setToiletServiceId(toiletServiceEntity.get().getId());
             checkInEntity.setDateTime(datetime);
             checkInEntity.setPaymentMethod(defaultAccountPayment);
@@ -145,7 +197,7 @@ public class CheckInServiceImpl implements CheckInService {
                         throw new BadRequestException("Your account balance is not enough money for paying service '" + serviceName + "' with price '" + servicePrice + "'! " +
                                 "Please change your default payment method or top up your account to use this service!");
                     if (!toiletEntity.get().isFree()) {
-                        userInfoRepository.updateAccountBalance(accountId, accountBalance - servicePrice);
+                        userInfoRepository.updateAccountBalance(checkInRequest.getAccountId(), accountBalance - servicePrice);
                         checkInEntity.setBalance(servicePrice);
                     } else {
                         checkInEntity.setBalance(0);
@@ -156,7 +208,7 @@ public class CheckInServiceImpl implements CheckInService {
                         throw new BadRequestException("Your account turn is not enough turn for paying service '" + serviceName + "' with price '" + serviceTurn + "'! " +
                                 "Please change your default payment method or top up your account to use this service!");
                     if (!toiletEntity.get().isFree()) {
-                        userInfoRepository.updateAccountTurn(accountId, accountTurn - serviceTurn);
+                        userInfoRepository.updateAccountTurn(checkInRequest.getAccountId(), accountTurn - serviceTurn);
                         checkInEntity.setTurn(serviceTurn);
                     } else {
                         checkInEntity.setTurn(0);
@@ -172,8 +224,18 @@ public class CheckInServiceImpl implements CheckInService {
                     = checkInMapper.convertCheckInEntityToCheckInResponse(checkInEntity);
             return checkInResponse;
         } else {
-            LOGGER.error("Service '" + checkInRequest.getServiceName() + "' is not contained in Toilet with Id '" + toiletId + "'!");
-            throw new BadRequestException("Service '" + checkInRequest.getServiceName() + "' is not contained in Toilet with Id '" + toiletId + "'!");
+            LOGGER.error("Service '" + checkInRequest.getServiceName() + "' is not contained in Toilet with Id '" + checkInRequest.getToiletId() + "'!");
+            throw new BadRequestException("Service '" + checkInRequest.getServiceName() + "' is not contained in Toilet with Id '" + checkInRequest.getToiletId() + "'!");
+        }
+    }
+
+    @Override
+    public CheckInResponse userCheckIn(CheckInRequest checkInRequest) {
+        // Static QR Code - Physical QR Code
+        if (checkInRequest.getServiceName() == null || checkInRequest.getDatetime() == null) {
+            return userCheckInWithStaticQRCode(checkInRequest);
+        } else { // Dynamic QR Code
+            return userCheckInWithDynamicQRCode(checkInRequest);
         }
     }
 
