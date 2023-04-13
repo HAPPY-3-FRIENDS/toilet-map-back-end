@@ -32,10 +32,13 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public UserInfoResponse updateUserInfoByFieldsAndAccountId(int accountId, Map<String, Object> fields) {
+
+        // Validate Account
         Optional<UserInfoEntity> userInfoEntity = userInfoRepository.findById(accountId);
         if (!userInfoEntity.isPresent())
             throw new NotFoundException("UserInfo", "accountId", accountId);
 
+        // Patch user info by field
         fields.forEach((key, value) -> {
             Field field = ReflectionUtils.findField(UserInfoEntity.class, key);
             field.setAccessible(true);
@@ -48,7 +51,6 @@ public class UserInfoServiceImpl implements UserInfoService {
             } else ReflectionUtils.setField(field, userInfoEntity.get(), value);
         });
 
-        // TODO: add turn or balance (not override)
         UserInfoEntity entity = userInfoRepository.save(userInfoEntity.get());
 
         return userInfoMapper.convertUserInfoEntityToUserInfoResponse(entity);
@@ -56,6 +58,8 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public UserInfoResponse getUserInfoAccountId(int accountId) {
+
+        // Validate Account
         Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
         if (!accountEntity.isPresent()) throw new NotFoundException("Account", "Id", accountId);
 
@@ -68,6 +72,8 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public UserInfoResponse getUserInfoByAccountUsername(String accountUsername) {
+
+        // Validate Account
         AccountEntity accountEntity = accountRepository.findByUsername(accountUsername);
         if (accountEntity == null) throw new NotFoundException("Account", "Username", accountUsername);
 

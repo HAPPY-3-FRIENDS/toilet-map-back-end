@@ -73,6 +73,8 @@ public class ToiletServiceImpl implements ToiletService {
 
     private ToiletDetailsInfoResponse getToiletFromListCustomToiletDetailsInfoDTOS(
             List<CustomToiletDetailsInfoDTO> customToiletDetailsInfoDTOS) {
+
+        // Prepare list toilet-facilities DTO
         List<ToiletFacilityDTO> toiletFacilityDTOS = customToiletDetailsInfoDTOS.stream()
                 .filter(FilterKeysUtil.distinctByKeys(CustomToiletDetailsInfoDTO::getFacilityName))
                 .map(dto -> {
@@ -92,11 +94,13 @@ public class ToiletServiceImpl implements ToiletService {
                 })
                 .collect(Collectors.toList());
 
+        // Prepare list toilet-image sources
         List<String> toiletImageSources = customToiletDetailsInfoDTOS.stream()
                 .filter(FilterKeysUtil.distinctByKeys(CustomToiletDetailsInfoDTO::getToiletImage))
                 .map(dto -> dto.getToiletImage())
                 .collect(Collectors.toList());
 
+        // Create Toilet Details Information Response
         ToiletDetailsInfoResponse response = customToiletDetailsInfoDTOS.stream()
                 .map(dto -> {
                     ToiletDetailsInfoResponse toiletDetailsInfoResponse = new ToiletDetailsInfoResponse();
@@ -133,13 +137,18 @@ public class ToiletServiceImpl implements ToiletService {
     }
 
     public List<ToiletDetailsInfoResponse> getTop10ToiletsNearByCurrentLocation(Double currentLatitude, Double currentLongitude) {
+
+        // Create deviation location depend on current location
         Double deviationLatitudeMax = currentLatitude + ToiletConstant.LOCATED_DEVIATION;
         Double deviationLongitudeMax = currentLongitude + ToiletConstant.LOCATED_DEVIATION;
+
+        // Distance of radius between current location and deviation location
         Double distanceCurrentAndDeviationMax = Math.sqrt(
                 Math.pow(currentLatitude - deviationLatitudeMax, 2)
                         + Math.pow(currentLongitude - deviationLongitudeMax, 2)
         );
 
+        // Get top 10 toilets near by current location
         List<CustomToiletDetailsInfoDTO> customToiletDetailsInfoDTOS
                 = toiletRepository.getTop10ToiletsNearByCurrentLocation(currentLatitude,
                 currentLongitude,
@@ -154,13 +163,17 @@ public class ToiletServiceImpl implements ToiletService {
     }
 
     public List<ToiletDetailsInfoResponse> getAllToiletsByCompanyId(Integer companyId, BasePaginationRequest paginationRequest) {
+
+        // Prepare pagination & sort
         Sort.Order defaultSortOrder = new Sort.Order(Sort.Direction.ASC, DefaultSortPropertyConstant.ID);
         Pageable pageable = PaginationUtil.getPageable(paginationRequest, defaultSortOrder);
 
+        // Validate Company
         Optional<CompanyEntity> companyEntity = companyRepository.findById(companyId);
         if (!companyEntity.isPresent())
             throw new NotFoundException("Company", "Id", companyId);
 
+        // Get all toilets of Company by Company ID
         List<CustomToiletDetailsInfoDTO> customToiletDetailsInfoDTOS
                 = toiletRepository.getAllToiletsByCompanyId(companyId, pageable);
 

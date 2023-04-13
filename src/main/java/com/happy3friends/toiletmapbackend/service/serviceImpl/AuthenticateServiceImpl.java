@@ -33,7 +33,7 @@ public class AuthenticateServiceImpl implements AuthenticateService {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // Trả về jwt cho người dùng
+        // Return jwt token to User
         String jwt = tokenProvider.generateToken(authentication);
         return new TokenDTO(jwt);
     }

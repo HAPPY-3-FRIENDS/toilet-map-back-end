@@ -43,20 +43,28 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountResponse registerEmployee(AccountRequest accountRequest) {
+
+        // Validate password
         if (!accountRequest.getPassword().isEmpty()) {
             accountRequest.setPassword(passwordEncoder.encode(accountRequest.getPassword()));
         } else throw new BadRequestException("Password cannot empty!");
 
+        // Validate Company
         if (Integer.valueOf(accountRequest.getCompanyId()) == null)
             throw new BadRequestException("CompanyId cannot empty!");
+        Optional<CompanyEntity> companyEntity = companyRepository.findById(accountRequest.getCompanyId());
+        if (!companyEntity.isPresent())
+            throw new NotFoundException("Company", "Id", accountRequest.getCompanyId());
 
+        // Validate Role
         if (RoleEnum.getByValue(accountRequest.getRoleName()) == null || RoleEnum.USER.getRoleName().equals(accountRequest.getRoleName()))
             throw new BadRequestException("Invalid role name: '" + accountRequest.getRoleName() + "'!");
 
+        // Validate action - Cannot register an Admin Account
         if (RoleEnum.ADMIN.getRoleName().equals(accountRequest.getRoleName()))
             throw new BadRequestException("Cannot register an Admin Account!");
 
-        // Admin tạo tk cho Manager, Manager tạo tk cho Toilet
+        // Validate action - Admin can only create an Account for Manager, Manager can only create an Account for Toilet
         String jwt = JwtUtil.getJwtFromRequest();
         Claims claims = JwtUtil.getAllClaimsFromToken(jwt);
         String authRole = claims.get("role", String.class);
@@ -65,14 +73,13 @@ public class AccountServiceImpl implements AccountService {
         if (RoleEnum.MANAGER.getRoleName().equals(authRole) && !RoleEnum.TOILET.getRoleName().equals(accountRequest.getRoleName()))
             throw new BadRequestException("Manager cannot create an account for any role except for Staff-At-Toilet role!");
 
+        // Validate username
         if (accountRepository.findByUsername(accountRequest.getUsername()) != null)
             throw new BadRequestException("Username '" + accountRequest.getUsername() + "' is not unique! It's already used by another employee!");
 
-        // TODO: username, password regex
+        // TODO: username regex
 
-        Optional<CompanyEntity> companyEntity = companyRepository.findById(accountRequest.getCompanyId());
-        if (!companyEntity.isPresent()) throw new NotFoundException("Company", "Id", accountRequest.getCompanyId());
-
+        // Save Account Entity
         accountRepository.createAccount(accountRequest.getUsername(),
                 accountRequest.getPassword(),
                 StatusEnum.ACTIVE.getStatus(),
@@ -84,19 +91,22 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public TokenDTO registerUser(AccountRequest accountRequest) {
+
+        // Validate phone
         if (accountRepository.findByUsername(accountRequest.getUsername()) != null)
             throw new BadRequestException("Phone '" + accountRequest.getUsername() + "' is not unique! It's already used by another user!");
 
         // TODO: phone regex
 
+        // Save Account Entity
         accountRequest.setRoleName(RoleEnum.USER.getRoleName());
-
         accountRepository.createAccount(accountRequest.getUsername(),
                 accountRequest.getPassword(),
                 StatusEnum.ACTIVE.getStatus(),
                 accountRequest.getRoleName(),
                 null);
 
+        // Save User Info Entity
         userInfoRepository.createUserInfo(
                 accountRequest.getUsername(),
                 accountRequest.getFullName(),
@@ -107,11 +117,10 @@ public class AccountServiceImpl implements AccountService {
                 PaymentTypeEnum.TURN.getPaymentValue()
         );
 
+        // Create jwt token and return
         AccountEntity accountEntity = accountRepository.findByUsername(accountRequest.getUsername());
-
         Date now = DateTimeUtil.getDateNow();
         Date expiryDate = new Date(now.getTime() + JwtUtil.JWT_EXPIRATION);
-
         return new TokenDTO(Jwts.builder()
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)

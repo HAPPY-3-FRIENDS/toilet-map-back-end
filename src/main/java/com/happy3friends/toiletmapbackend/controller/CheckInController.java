@@ -23,6 +23,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +41,7 @@ public class CheckInController {
     private CheckInService checkInService;
 
     @Hidden
+    @ConditionalOnExpression("${my.controller.enabled:false}")
     @Operation(summary = "Check-in histories by Toilet ID", description = "[Manager] Get the list of check-in histories of a specific toilet by toilet-id")
     @Parameter(name = "toilet-id", description = "A specific toilet ID", in = ParameterIn.PATH, required = true, example = "1")
     @ApiResponses(value = {

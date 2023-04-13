@@ -26,10 +26,13 @@ public class ToiletServiceServiceImpl implements ToiletServiceService {
 
     @Override
     public List<ToiletServiceResponse> getToiletServicesByToiletId(int toiletId) {
+
+        // Validate Toilet
         Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
         if (!toiletEntity.isPresent())
             throw new NotFoundException("Toilet", "Id", toiletId);
 
+        // Get list Toilet Service Entities by Toilet ID
         List<ToiletServiceEntity> toiletServiceEntityList
                 = toiletServiceRepository.findToiletServiceEntitiesByToiletIdAndFetchServiceEagerly(toiletId);
 

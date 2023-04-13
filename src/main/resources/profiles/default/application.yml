@@ -28,6 +28,10 @@ spring:
   profiles:
     active: default,prod
 
+my:
+  controller:
+    enabled: true
+
 springdoc:
   packages-to-scan: com.happy3friends.toiletmapbackend.controller
   default-consumes-media-type: application/json

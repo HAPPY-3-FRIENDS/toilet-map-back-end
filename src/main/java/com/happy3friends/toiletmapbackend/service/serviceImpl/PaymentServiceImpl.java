@@ -44,18 +44,22 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public PaymentResponse createPaymentByAccountId(PaymentRequest paymentRequest) {
-        CustomAccountInfoDTO customAccountInfoDTO = accountRepository.getCustomAccountInfoByAccountId(paymentRequest.getAccountId());
 
+        CustomAccountInfoDTO customAccountInfoDTO = accountRepository.getCustomAccountInfoByAccountId(paymentRequest.getAccountId());
+        // Validate Account
         if (customAccountInfoDTO == null)
             throw new NotFoundException("Account", "Id", paymentRequest.getAccountId());
         if (!customAccountInfoDTO.getRole().equals(RoleEnum.USER.getRoleName()))
             throw new BadRequestException("Invalid account Id!");
+
+        // Validate Payment Method
         if (!paymentRequest.getMethod().equals(PaymentTypeEnum.VN_PAY.getPaymentValue())
                 && !paymentRequest.getMethod().equals(PaymentTypeEnum.CASH.getPaymentValue()))
             throw new BadRequestException("Invalid payment method!");
 
         // TODO: check userToken with account from accountId
 
+        // Save Payment Entity
         PaymentEntity paymentEntity = new PaymentEntity();
         paymentEntity.setAccountId(paymentRequest.getAccountId());
         paymentEntity.setTotal(paymentRequest.getTotal());
@@ -72,9 +76,12 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public List<PaymentResponse> getPaymentHistoriesByAccountId(int accountId, BasePaginationRequest paginationRequest) {
+
+        // Prepare pagination & sort
         Sort.Order defaultSortOrder = new Sort.Order(Sort.Direction.DESC, DefaultSortPropertyConstant.CREATED_DATE);
         Pageable pageable = PaginationUtil.getPageable(paginationRequest, defaultSortOrder);
 
+        // Validate Account
         Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
         if (!accountEntity.isPresent()) throw new NotFoundException("Account", "Id", accountId);
 
@@ -88,6 +95,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public int count(Integer accountId) {
 
+        // Validate Account
         if (accountId != null) {
             Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
             if (!accountEntity.isPresent()) throw new NotFoundException("Account", "Id", accountId);

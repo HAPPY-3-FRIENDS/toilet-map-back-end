@@ -50,28 +50,31 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponse createOrderByAccountId(OrderRequest orderRequest) {
+
+        // Validate Payment Method
         if (!orderRequest.getPaymentMethod().equals(PaymentTypeEnum.BALANCE.getPaymentValue())
             && !orderRequest.getPaymentMethod().equals(PaymentTypeEnum.VN_PAY.getPaymentValue()))
             throw new BadRequestException("Invalid payment method!");
 
-        // Check account role User
+        // Validate Role - Check account's role is User role
         CustomAccountInfoDTO customAccountInfoDTO = accountRepository.getCustomAccountInfoByAccountId(orderRequest.getAccountId());
         if (!customAccountInfoDTO.getRole().equals(RoleEnum.USER.getRoleName()))
             throw new BadRequestException("Invalid account Id!");
 
         // TODO: check userToken with account from accountId
 
+        // Validate Combo
         Optional<ComboEntity> comboEntity = comboRepository.findById(orderRequest.getComboId());
         if (!comboEntity.isPresent())
             throw new NotFoundException("Combo", "Id", orderRequest.getComboId());
 
+        // Compare Account balance with Combo Price
         int comboPrice = comboEntity.get().getPrice();
         if (orderRequest.getPaymentMethod().equals(PaymentTypeEnum.BALANCE.getPaymentValue())
             && customAccountInfoDTO.getAccountBalance() < comboPrice)
             throw new BadRequestException("Your account balance is not greater than combo price!");
 
         Timestamp now = DateTimeUtil.getTimestampNow();
-
         // Create order - combo
         orderRepository.createOrderByAccountId(orderRequest.getAccountId(),
                 comboEntity.get().getTotalTurn(),
@@ -100,9 +103,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderResponse> getOrderHistoriesByAccountId(int accountId, BasePaginationRequest paginationRequest) {
+
+        // Prepare pagination & sort
         Sort.Order defaultSortOrder = new Sort.Order(Sort.Direction.DESC, DefaultSortPropertyConstant.DATETIME);
         Pageable pageable = PaginationUtil.getPageable(paginationRequest, defaultSortOrder);
 
+        // Validate Account
         Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
         if (!accountEntity.isPresent()) throw new NotFoundException("Account", "Id", accountId);
 

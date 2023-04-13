@@ -57,9 +57,11 @@ public class CheckInServiceImpl implements CheckInService {
     @Override
     public List<CheckInResponse> getCheckInHistoriesByToiletId(int toiletId) {
 
+        // Validate Toilet
         if (!toiletRepository.findById(toiletId).isPresent())
             throw new NotFoundException("Toilet", "Id", toiletId);
 
+        // Get Check-in histories by Toilet ID
         List<CustomCheckInDTO> customCheckInDTOS = checkInRepository.getCheckInHistoriesByToiletId(toiletId);
 
         return customCheckInDTOS.stream()
@@ -69,14 +71,18 @@ public class CheckInServiceImpl implements CheckInService {
 
     @Override
     public List<CheckInResponse> getCheckInHistoriesByAccountId(int accountId, String paymentMethod, BasePaginationRequest paginationRequest) {
+
+        // Prepare pagination & sort
         Sort.Order defaultSortOrder = new Sort.Order(Sort.Direction.DESC, DefaultSortPropertyConstant.DATETIME);
         Pageable pageable = PaginationUtil.getPageable(paginationRequest, defaultSortOrder);
 
+        // Validate Account
         Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
         if (!accountEntity.isPresent()) throw new NotFoundException("Account", "Id", accountId);
 
         // TODO: check paymentMethod valid
 
+        // Get Check-in histories by Account ID
         List<CustomCheckInDTO> customCheckInDTOS
                 = checkInRepository.getCheckInHistoriesByAccountId(accountId, paymentMethod, pageable);
 
@@ -90,6 +96,7 @@ public class CheckInServiceImpl implements CheckInService {
         int toiletId = checkInRequest.getToiletId();
         int accountId = checkInRequest.getAccountId();
 
+        // Validate Toilet
         Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
         if (!toiletEntity.isPresent())
             throw new NotFoundException("Toilet", "Id", toiletId);
@@ -103,12 +110,13 @@ public class CheckInServiceImpl implements CheckInService {
                 .findFirst();
 
         if (toiletServiceEntity.isPresent()) {
-            Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
 
+            // Validate Account
+            Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
             if (!accountEntity.isPresent())
                 throw new NotFoundException("Account", "Id", accountId);
 
-            // Save CheckInEntity
+            // Prepare for saving Check-in Entity
             CustomAccountInfoDTO customAccountInfoDTO = accountRepository.getCustomAccountInfoByAccountId(accountId);
             String defaultAccountPayment = customAccountInfoDTO.getDefaultPayment();
             int accountBalance = customAccountInfoDTO.getAccountBalance();
@@ -117,6 +125,7 @@ public class CheckInServiceImpl implements CheckInService {
             int servicePrice = toiletServiceEntity.get().getServiceByServiceId().getPrice();
             int serviceTurn = toiletServiceEntity.get().getServiceByServiceId().getTurn();
 
+            // Save Check-in Entity
             CheckInEntity checkInEntity = new CheckInEntity();
             checkInEntity.setAccountId(accountId);
             checkInEntity.setToiletServiceId(toiletServiceEntity.get().getId());
@@ -174,16 +183,19 @@ public class CheckInServiceImpl implements CheckInService {
         int toiletId = walkInGuestCheckInRequest.getToiletId();
         int accountId = walkInGuestCheckInRequest.getToiletId();
 
+        // Validate Toilet
         Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
         if (!toiletEntity.isPresent())
             throw new NotFoundException("Toilet", "Id", toiletId);
 
+        // Validate Account of Staff duty at Toilet
         Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
         if (!accountEntity.isPresent())
             throw new NotFoundException("Account", "Id", accountId);
         if (!accountEntity.get().getRoleByRoleId().getName().equals(RoleEnum.TOILET.getRoleName()))
             throw new BadRequestException("This account-id is not an account-id of a staff");
 
+        // Duplicate Walk-in-guest Check-in by Quantity
         List<CheckInRequest> list = new ArrayList<>();
         walkInGuestCheckInRequest.getCheckInRequests().stream()
                 .forEach(obj -> {
@@ -195,6 +207,7 @@ public class CheckInServiceImpl implements CheckInService {
         HashMap<String, ToiletServiceEntity> mapServiceNameAndToiletServiceEntity
                 = getMapServiceNameAndToiletServiceEntity(toiletServiceEntities);
 
+        // Create list Check-in Entity
         List<CheckInEntity> checkInEntities = list.stream()
                 .map(obj -> {
                     CheckInEntity checkInEntity = new CheckInEntity();
@@ -221,6 +234,7 @@ public class CheckInServiceImpl implements CheckInService {
                 })
                 .collect(Collectors.toList());
 
+        // Save list Check-in Entity
         checkInRepository.saveAll(checkInEntities);
 
         return checkInEntities.stream()
@@ -232,6 +246,7 @@ public class CheckInServiceImpl implements CheckInService {
     public int count(Integer accountId, String paymentMethod) {
 
         if (accountId != null) {
+            // Validate Account
             Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
             if (!accountEntity.isPresent()) throw new NotFoundException("Account", "Id", accountId);
 

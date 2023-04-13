@@ -30,9 +30,12 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public CompanyResponse getCompanyByAccountId(int accountId) {
 
+        // Validate Account
         Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
         if (!accountEntity.isPresent())
             throw new NotFoundException("Account", "Id", accountId);
+
+        // Validate Role
         if (accountEntity.get().getRoleByRoleId().getName().equals(RoleEnum.USER.getRoleName()))
             throw new BadRequestException("Account with invalid role!");
 
