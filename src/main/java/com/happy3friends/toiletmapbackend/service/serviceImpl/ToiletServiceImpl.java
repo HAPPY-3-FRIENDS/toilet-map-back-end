@@ -121,6 +121,8 @@ public class ToiletServiceImpl implements ToiletService {
                     toiletDetailsInfoResponse.setRatingStar(dto.getRatingStar());
                     toiletDetailsInfoResponse.setToiletFacilities(toiletFacilityDTOS);
                     toiletDetailsInfoResponse.setToiletImageSources(toiletImageSources);
+                    toiletDetailsInfoResponse.setUsername(dto.getUsername());
+                    toiletDetailsInfoResponse.setStatus(dto.getStatus());
                     return toiletDetailsInfoResponse;
                 })
                 .findAny().orElse(null);

@@ -84,7 +84,9 @@ public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer>, 
             "       COALESCE(tf.Quantity, 0)                        AS FacilityQuantity, " +
             "       CAST(tf.Description AS NVARCHAR(MAX))           AS FacilityDescription, " +
             "       COALESCE(ROUND(AVG(CAST(Star AS FLOAT)), 1), 0) AS RatingStar, " +
-            "       CAST(ti.ImageSource AS NVARCHAR(MAX))           AS ToiletImage " +
+            "       CAST(ti.ImageSource AS NVARCHAR(MAX))           AS ToiletImage, " +
+            "       a.Username, " +
+            "       t.Status " +
             "FROM Toilet t " +
             "         CROSS JOIN Facility f " +
             "         JOIN ToiletService ts " +
@@ -97,10 +99,13 @@ public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer>, 
             "                   ON f.Id = tf.FacilityId AND t.Id = tf.ToiletId " +
             "         LEFT JOIN Rating r " +
             "                   ON r.ToiletId = t.Id " +
+            "         JOIN Account a " +
+            "              ON t.Id = a.Id " +
             "WHERE t.Id = :toiletId " +
             "GROUP BY t.Id, t.Name, t.Address, t.Ward, t.District, t.Province, t.Longitude, t.Latitude, t.NearBy, " +
             "         t.OpenTime, t.CloseTime, t.isFree, " +
-            "         f.Name, f.Type, tf.Quantity, CAST(tf.Description AS NVARCHAR(MAX)), CAST(ti.ImageSource AS NVARCHAR(MAX))", nativeQuery = true)
+            "         f.Name, f.Type, tf.Quantity, CAST(tf.Description AS NVARCHAR(MAX)), CAST(ti.ImageSource AS NVARCHAR(MAX)), " +
+            "         a.Username, t.Status", nativeQuery = true)
     List<CustomToiletDetailsInfoDTO> getCustomToiletInfoDTOByToiletId(@Param("toiletId") int toiletId);
 
     @Query(value = "SELECT Id, Latitude, Longitude " +
