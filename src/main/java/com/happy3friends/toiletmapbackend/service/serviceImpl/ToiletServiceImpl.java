@@ -150,7 +150,7 @@ public class ToiletServiceImpl implements ToiletService {
                         + Math.pow(currentLongitude - deviationLongitudeMax, 2)
         );
 
-        // Get top 10 toilets near by current location
+        // Get top 10 toilets nearby current location
         List<CustomToiletDetailsInfoDTO> customToiletDetailsInfoDTOS
                 = toiletRepository.getTop10ToiletsNearByCurrentLocation(currentLatitude,
                 currentLongitude,
