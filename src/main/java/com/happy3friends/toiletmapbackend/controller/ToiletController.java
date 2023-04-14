@@ -50,8 +50,8 @@ public class ToiletController {
                             "    \"latitude\": 10.759935271800982,\n" +
                             "    \"longitude\": 106.69202149316303,\n" +
                             "    \"nearBy\": \"Gần CircleK, gần Phúc Long\",\n" +
-                            "    \"openTime\": \"09:00:00\",\n" +
-                            "    \"closeTime\": \"23:00:00\",\n" +
+                            "    \"openTime\": \"09:00\",\n" +
+                            "    \"closeTime\": \"23:00\",\n" +
                             "    \"minPrice\": 2000,\n" +
                             "    \"maxPrice\": 8000,\n" +
                             "    \"toiletFacilityDTOS\": [\n" +
@@ -185,8 +185,8 @@ public class ToiletController {
                             "      \"latitude\": 10.845946930378068,\n" +
                             "      \"longitude\": 106.797017719663,\n" +
                             "      \"nearBy\": null,\n" +
-                            "      \"openTime\": \"09:00:00\",\n" +
-                            "      \"closeTime\": \"23:00:00\",\n" +
+                            "      \"openTime\": \"09:00\",\n" +
+                            "      \"closeTime\": \"23:00\",\n" +
                             "      \"minPrice\": 2000,\n" +
                             "      \"maxPrice\": 8000,\n" +
                             "      \"toiletFacilities\": [\n" +
@@ -243,8 +243,8 @@ public class ToiletController {
                             "      \"latitude\": 10.845254597727745,\n" +
                             "      \"longitude\": 106.79238946200942,\n" +
                             "      \"nearBy\": \"Gần CircleK, gần Phúc Long\",\n" +
-                            "      \"openTime\": \"09:00:00\",\n" +
-                            "      \"closeTime\": \"23:00:00\",\n" +
+                            "      \"openTime\": \"09:00\",\n" +
+                            "      \"closeTime\": \"23:00\",\n" +
                             "      \"minPrice\": 2000,\n" +
                             "      \"maxPrice\": 8000,\n" +
                             "      \"toiletFacilities\": [\n" +
