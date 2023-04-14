@@ -41,4 +41,7 @@ public class CheckInEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ToiletServiceId", referencedColumnName = "Id", insertable = false, updatable = false)
     private ToiletServiceEntity toiletServiceByToiletServiceId;
+    @Basic
+    @Column(name = "TurnPrice", nullable = true)
+    private Integer turnPrice;
 }

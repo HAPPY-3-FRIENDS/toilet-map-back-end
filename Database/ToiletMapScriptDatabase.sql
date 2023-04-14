@@ -50,20 +50,20 @@ GO
 
 CREATE TABLE [Toilet]
 (
-    Id        INT                 NOT NULL,
-    Name      NVARCHAR(50)        NOT NULL,
-    Address   NVARCHAR(100)       NOT NULL,
-    Ward      NVARCHAR(50)        NOT NULL,
-    District  NVARCHAR(50)        NOT NULL,
-    Province  NVARCHAR(50)        NOT NULL,
-    Latitude  FLOAT               NOT NULL,
-    Longitude FLOAT               NOT NULL,
-    NearBy    NVARCHAR(200)       NULL,
-    isFree    BIT                 NOT NULL,
-    OpenTime  TIME                NOT NULL,
-    CloseTime TIME                NOT NULL,
-    CompanyId INT                 NOT NULL,
-    Status    NVARCHAR(20)        NOT NULL
+    Id        INT           NOT NULL,
+    Name      NVARCHAR(50)  NOT NULL,
+    Address   NVARCHAR(100) NOT NULL,
+    Ward      NVARCHAR(50)  NOT NULL,
+    District  NVARCHAR(50)  NOT NULL,
+    Province  NVARCHAR(50)  NOT NULL,
+    Latitude  FLOAT         NOT NULL,
+    Longitude FLOAT         NOT NULL,
+    NearBy    NVARCHAR(200) NULL,
+    isFree    BIT           NOT NULL,
+    OpenTime  TIME          NOT NULL,
+    CloseTime TIME          NOT NULL,
+    CompanyId INT           NOT NULL,
+    Status    NVARCHAR(20)  NOT NULL
 )
 GO
 
@@ -87,10 +87,11 @@ GO
 
 CREATE TABLE [Service]
 (
-    Id    INT IDENTITY (1, 1) NOT NULL,
-    Name  NVARCHAR(50)        NOT NULL,
-    Price INT                 NOT NULL,
-    Turn  INT                 NOT NULL
+    Id        INT IDENTITY (1, 1) NOT NULL,
+    Name      NVARCHAR(50)        NOT NULL,
+    Price     INT                 NOT NULL,
+    Turn      INT                 NOT NULL,
+    TurnPrice INT                 NOT NULL
 )
 GO
 
@@ -118,7 +119,8 @@ CREATE TABLE [CheckIn]
     DateTime        DATETIME            NOT NULL,
     PaymentMethod   NVARCHAR(20)        NOT NULL,
     Balance         INT                 NULL,
-    Turn            INT                 NULL
+    Turn            INT                 NULL,
+    TurnPrice       INT                 NULL
 )
 GO
 

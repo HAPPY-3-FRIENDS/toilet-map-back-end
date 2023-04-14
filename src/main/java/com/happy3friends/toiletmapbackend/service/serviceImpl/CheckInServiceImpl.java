@@ -118,6 +118,7 @@ public class CheckInServiceImpl implements CheckInService {
             int accountTurn = customAccountInfoDTO.getAccountTurn();
             String serviceName = toiletServiceEntity.get().getServiceByServiceId().getName();
             int serviceTurn = toiletServiceEntity.get().getServiceByServiceId().getTurn();
+            int serviceTurnPrice = toiletServiceEntity.get().getServiceByServiceId().getTurnPrice();
             // Save Check-in Entity
             CheckInEntity checkInEntity = new CheckInEntity();
             checkInEntity.setAccountId(checkInRequest.getAccountId());
@@ -130,6 +131,7 @@ public class CheckInServiceImpl implements CheckInService {
             if (!toiletEntity.get().isFree()) {
                 userInfoRepository.updateAccountTurn(checkInRequest.getAccountId(), accountTurn - serviceTurn);
                 checkInEntity.setTurn(serviceTurn);
+                checkInEntity.setTurnPrice(serviceTurnPrice);
             } else {
                 checkInEntity.setTurn(0);
             }
@@ -184,6 +186,7 @@ public class CheckInServiceImpl implements CheckInService {
             String serviceName = toiletServiceEntity.get().getServiceByServiceId().getName();
             int servicePrice = toiletServiceEntity.get().getServiceByServiceId().getPrice();
             int serviceTurn = toiletServiceEntity.get().getServiceByServiceId().getTurn();
+            int serviceTurnPrice = toiletServiceEntity.get().getServiceByServiceId().getTurnPrice();
 
             // Save Check-in Entity
             CheckInEntity checkInEntity = new CheckInEntity();
@@ -210,6 +213,7 @@ public class CheckInServiceImpl implements CheckInService {
                     if (!toiletEntity.get().isFree()) {
                         userInfoRepository.updateAccountTurn(checkInRequest.getAccountId(), accountTurn - serviceTurn);
                         checkInEntity.setTurn(serviceTurn);
+                        checkInEntity.setTurnPrice(serviceTurnPrice);
                     } else {
                         checkInEntity.setTurn(0);
                     }
