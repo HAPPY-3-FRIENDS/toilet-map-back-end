@@ -4,6 +4,7 @@ import com.happy3friends.toiletmapbackend.constant.DateTimeConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -77,5 +78,10 @@ public class DateTimeUtil {
 
     public static boolean checkDateBetweenMinMax(Date min, Date max, Date date) {
         return date.after(addDays(min, -1)) && date.before(addDays(max, 1));
+    }
+
+    public static String convertSqlTimeToHHMMPattern(Time time) {
+        String strTime = time.toString();
+        return strTime.substring(0, 5);
     }
 }

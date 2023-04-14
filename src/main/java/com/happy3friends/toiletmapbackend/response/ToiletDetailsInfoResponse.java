@@ -3,7 +3,6 @@ package com.happy3friends.toiletmapbackend.response;
 import com.happy3friends.toiletmapbackend.dto.ToiletFacilityDTO;
 import lombok.*;
 
-import java.sql.Time;
 import java.util.List;
 
 @AllArgsConstructor
@@ -21,8 +20,8 @@ public class ToiletDetailsInfoResponse {
     private double latitude;
     private double longitude;
     private String nearBy;
-    private Time openTime;
-    private Time closeTime;
+    private String openTime;
+    private String closeTime;
     private boolean isFree;
     private int minPrice;
     private int maxPrice;

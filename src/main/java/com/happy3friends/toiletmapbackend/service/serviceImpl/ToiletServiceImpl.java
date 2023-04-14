@@ -19,6 +19,7 @@ import com.happy3friends.toiletmapbackend.repository.*;
 import com.happy3friends.toiletmapbackend.request.ToiletCreateRequest;
 import com.happy3friends.toiletmapbackend.response.ToiletDetailsInfoResponse;
 import com.happy3friends.toiletmapbackend.service.ToiletService;
+import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
 import com.happy3friends.toiletmapbackend.utils.FilterKeysUtil;
 import com.happy3friends.toiletmapbackend.utils.PaginationUtil;
 import org.slf4j.Logger;
@@ -113,8 +114,8 @@ public class ToiletServiceImpl implements ToiletService {
                     toiletDetailsInfoResponse.setLatitude(dto.getLatitude());
                     toiletDetailsInfoResponse.setLongitude(dto.getLongitude());
                     toiletDetailsInfoResponse.setNearBy(dto.getNearBy());
-                    toiletDetailsInfoResponse.setOpenTime(dto.getOpenTime());
-                    toiletDetailsInfoResponse.setCloseTime(dto.getCloseTime());
+                    toiletDetailsInfoResponse.setOpenTime(DateTimeUtil.convertSqlTimeToHHMMPattern(dto.getOpenTime()));
+                    toiletDetailsInfoResponse.setCloseTime(DateTimeUtil.convertSqlTimeToHHMMPattern(dto.getCloseTime()));
                     toiletDetailsInfoResponse.setFree(dto.getIsFree());
                     toiletDetailsInfoResponse.setMinPrice(dto.getMinPrice());
                     toiletDetailsInfoResponse.setMaxPrice(dto.getMaxPrice());
