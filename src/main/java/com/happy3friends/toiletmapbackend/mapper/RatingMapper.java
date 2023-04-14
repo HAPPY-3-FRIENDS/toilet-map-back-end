@@ -2,6 +2,7 @@ package com.happy3friends.toiletmapbackend.mapper;
 
 import com.happy3friends.toiletmapbackend.entity.RatingEntity;
 import com.happy3friends.toiletmapbackend.request.RatingRequest;
+import com.happy3friends.toiletmapbackend.response.RatingResponse;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,5 +23,11 @@ public class RatingMapper {
         return Objects.isNull(ratingRequest)
                 ? null
                 : modelMapper.map(ratingRequest, RatingEntity.class);
+    }
+
+    public RatingResponse convertRatingEntityToRatingResponse(RatingEntity ratingEntity) {
+        return Objects.isNull(ratingEntity)
+                ? null
+                : modelMapper.map(ratingEntity, RatingResponse.class);
     }
 }

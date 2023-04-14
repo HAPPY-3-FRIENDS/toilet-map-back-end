@@ -13,6 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 public class RatingRequest {
+    private int toiletId;
     private int star;
     private String comment;
     private int accountId;

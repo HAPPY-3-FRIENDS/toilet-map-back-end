@@ -1,5 +1,6 @@
 package com.happy3friends.toiletmapbackend.controller;
 
+import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
 import com.happy3friends.toiletmapbackend.base.models.BaseResponse;
 import com.happy3friends.toiletmapbackend.config.OpenApiConfig;
 import com.happy3friends.toiletmapbackend.constant.RoleConstant;
@@ -16,29 +17,45 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
+import java.util.List;
 
-@Hidden
 @Tag(name = "Rating", description = "Rating API")
 @RestController
-@RequestMapping(value = "/api/rating")
+@RequestMapping(value = "/api/ratings")
 public class RatingController {
 
     @Autowired
     private RatingService ratingService;
 
+    @Hidden
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.USER})
-    @PostMapping(value = "/toilets/{toilet-id}")
-    public ResponseEntity<BaseResponse<RatingResponse>> createRating(
-            @PathVariable("toilet-id") int toiletId,
-            @RequestBody RatingRequest ratingRequest) {
+    @PostMapping
+    public ResponseEntity<BaseResponse<RatingResponse>> createRating(@RequestBody RatingRequest ratingRequest) {
 
-        RatingResponse response = ratingService.createRating(toiletId, ratingRequest);
+        RatingResponse response = ratingService.createRating(ratingRequest);
 
         return ResponseBuilder.generateResponse(
                 "Create rating successfully!",
                 HttpStatus.OK,
                 response
+        );
+    }
+
+    @Hidden
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.MANAGER, RoleConstant.USER})
+    @GetMapping
+    public ResponseEntity<BaseResponse<List<RatingResponse>>> getAllRatings(
+            @RequestParam(value = "toilet-id", required = false) Integer toiletId,
+            @ModelAttribute BasePaginationRequest paginationRequest) {
+
+        List<RatingResponse> responses = ratingService.getAllRatings(toiletId, paginationRequest);
+
+        return ResponseBuilder.generateResponse(
+                "Get list of all ratings successfully!",
+                HttpStatus.OK,
+                responses
         );
     }
 }

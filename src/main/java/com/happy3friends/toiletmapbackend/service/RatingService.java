@@ -1,8 +1,12 @@
 package com.happy3friends.toiletmapbackend.service;
 
+import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
 import com.happy3friends.toiletmapbackend.request.RatingRequest;
 import com.happy3friends.toiletmapbackend.response.RatingResponse;
 
+import java.util.List;
+
 public interface RatingService {
-    RatingResponse createRating(int toiletId, RatingRequest ratingRequest);
+    List<RatingResponse> getAllRatings(Integer toiletId, BasePaginationRequest paginationRequest);
+    RatingResponse createRating(RatingRequest ratingRequest);
 }

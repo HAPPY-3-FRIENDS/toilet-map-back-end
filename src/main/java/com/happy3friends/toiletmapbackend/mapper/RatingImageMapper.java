@@ -23,4 +23,10 @@ public class RatingImageMapper {
                 ? null
                 : modelMapper.map(ratingImageDTO, RatingImageEntity.class);
     }
+
+    public RatingImageDTO convertRatingImageEntityToRatingImageDTO(RatingImageEntity ratingImageEntity) {
+        return Objects.isNull(ratingImageEntity)
+                ? null
+                : modelMapper.map(ratingImageEntity, RatingImageDTO.class);
+    }
 }
