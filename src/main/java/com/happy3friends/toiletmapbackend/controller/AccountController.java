@@ -186,7 +186,7 @@ public class AccountController {
         );
     }
 
-    @Operation(summary = "Get user infos of a user", description = "[User] Get user infos of a user by Account username")
+    @Operation(summary = "Get user infos of a user", description = "[Staff, User] Get user infos of a user by Account username")
     @Parameter(name = "account-username", description = "A specific account username", in = ParameterIn.QUERY, required = true, example = "0849666957")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
@@ -206,7 +206,7 @@ public class AccountController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.USER})
+    @RolesAllowed({RoleConstant.STAFF, RoleConstant.USER})
     @GetMapping(value = "/user-infos")
     public ResponseEntity<BaseResponse<UserInfoResponse>> getUserInfoByAccountUsername(@RequestParam(value = "account-username") String accountUsername) {
 
