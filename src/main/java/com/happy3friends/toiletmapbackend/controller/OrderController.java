@@ -49,6 +49,11 @@ public class OrderController {
                             "  \"accountId\": 6,\n" +
                             "  \"comboId\": 2,\n" +
                             "  \"paymentMethod\": \"VNPAY\"\n" +
+                            "}"),
+                    @ExampleObject(name = "Order Request with Bank Transfer Payment Method", value = "{\n" +
+                            "  \"accountId\": 6,\n" +
+                            "  \"comboId\": 2,\n" +
+                            "  \"paymentMethod\": \"Chuyển khoản\"\n" +
                             "}")}))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully!", content = @Content(examples = {

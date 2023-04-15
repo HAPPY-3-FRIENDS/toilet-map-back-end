@@ -53,7 +53,8 @@ public class OrderServiceImpl implements OrderService {
 
         // Validate Payment Method
         if (!orderRequest.getPaymentMethod().equals(PaymentTypeEnum.BALANCE.getPaymentValue())
-            && !orderRequest.getPaymentMethod().equals(PaymentTypeEnum.VN_PAY.getPaymentValue()))
+            && !orderRequest.getPaymentMethod().equals(PaymentTypeEnum.VN_PAY.getPaymentValue())
+            && !orderRequest.getPaymentMethod().equals(PaymentTypeEnum.BANK_TRANSFER.getPaymentValue()))
             throw new BadRequestException("Invalid payment method!");
 
         // Validate Role - Check account's role is User role

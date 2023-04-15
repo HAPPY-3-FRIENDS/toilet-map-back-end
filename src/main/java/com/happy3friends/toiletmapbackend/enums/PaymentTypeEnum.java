@@ -13,7 +13,8 @@ public enum PaymentTypeEnum {
     BALANCE(PaymentTypeConstant.BALANCE),
     TURN(PaymentTypeConstant.TURN),
     CASH(PaymentTypeConstant.CASH),
-    VN_PAY(PaymentTypeConstant.VN_PAY);
+    VN_PAY(PaymentTypeConstant.VN_PAY),
+    BANK_TRANSFER(PaymentTypeConstant.BANK_TRANSFER);
 
     private final String paymentValue;
 

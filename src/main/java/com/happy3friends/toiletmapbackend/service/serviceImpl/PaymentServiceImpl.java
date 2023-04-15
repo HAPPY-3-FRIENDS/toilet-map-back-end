@@ -54,7 +54,8 @@ public class PaymentServiceImpl implements PaymentService {
 
         // Validate Payment Method
         if (!paymentRequest.getMethod().equals(PaymentTypeEnum.VN_PAY.getPaymentValue())
-                && !paymentRequest.getMethod().equals(PaymentTypeEnum.CASH.getPaymentValue()))
+                && !paymentRequest.getMethod().equals(PaymentTypeEnum.CASH.getPaymentValue())
+                && !paymentRequest.getMethod().equals(PaymentTypeEnum.BANK_TRANSFER.getPaymentValue()))
             throw new BadRequestException("Invalid payment method!");
 
         // TODO: check userToken with account from accountId

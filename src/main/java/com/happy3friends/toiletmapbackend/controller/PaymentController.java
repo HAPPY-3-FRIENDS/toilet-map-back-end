@@ -49,6 +49,11 @@ public class PaymentController {
                             "  \"accountId\": 6,\n" +
                             "  \"total\": 100000,\n" +
                             "  \"method\": \"VNPAY\"\n" +
+                            "}"),
+                    @ExampleObject(name = "Payment Request with Bank Transfer Payment Method", value = "{\n" +
+                            "  \"accountId\": 6,\n" +
+                            "  \"total\": 100000,\n" +
+                            "  \"method\": \"Chuyển khoản\"\n" +
                             "}")}))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully!", content = @Content(examples = {
