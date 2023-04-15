@@ -32,7 +32,7 @@ public class ComboController {
     @Autowired
     private ComboService comboService;
 
-    @Operation(summary = "Get all combos", description = "[Admin, User] Get the list of all combos")
+    @Operation(summary = "Get all combos", description = "[Admin, Staff, User] Get the list of all combos")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
                     @ExampleObject(value = "[\n" +
@@ -54,7 +54,7 @@ public class ComboController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.USER})
+    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.STAFF, RoleConstant.USER})
     @GetMapping
     public ResponseEntity<BaseResponse<List<ComboResponse>>> getAllCombo() {
         List<ComboResponse> responses = comboService.getAllCombo();
