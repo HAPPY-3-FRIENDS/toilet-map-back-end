@@ -16,6 +16,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class DateTimeUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(DateTimeUtil.class);
@@ -58,6 +59,16 @@ public class DateTimeUtil {
         return null;
     }
 
+    public static Date convertStringToDate(String strDate, String pattern) {
+        DateFormat df = new SimpleDateFormat(pattern);
+        try {
+            return df.parse(strDate);
+        } catch (ParseException ex) {
+            LOGGER.error("Parse DateTime Exception: " + ex.getMessage());
+        }
+        return null;
+    }
+
     public static Timestamp convertStringToTimestamp(String strDate) {
         DateFormat df = new SimpleDateFormat(DateTimeConstant.yyyy_MM_dd__HH_mm_ssssss);
         try {
@@ -83,5 +94,12 @@ public class DateTimeUtil {
     public static String convertSqlTimeToHHMMPattern(Time time) {
         String strTime = time.toString();
         return strTime.substring(0, 5);
+    }
+
+    public static Date getFirstDateOfCurrentMonth() {
+        Calendar c = Calendar.getInstance(TimeZone.getTimeZone(ZoneId.of(DateTimeConstant.ZONE_ID)));
+        c.set(Calendar.DAY_OF_MONTH, 1);
+
+        return c.getTime();
     }
 }
