@@ -61,4 +61,21 @@ public class PaginationUtil {
 
         return PageRequest.of(pageIndex - 1, pageSize, Sort.by(sortOrders));
     }
+
+    public static Pageable getPageable(BasePaginationRequest paginationRequest, List<Sort.Order> sortOrders) {
+        Integer pageIndex = 1;
+        Integer pageSize = 10;
+
+        if (paginationRequest.getPageIndex() != null){
+            pageIndex = paginationRequest.getPageIndex();
+        }
+        if (paginationRequest.getPageSize() != null){
+            pageSize = paginationRequest.getPageSize();
+        }
+        if (paginationRequest.getSort() != null) {
+            sortOrders = getSortOrders(paginationRequest.getSort());
+        }
+
+        return PageRequest.of(pageIndex - 1, pageSize, Sort.by(sortOrders));
+    }
 }
