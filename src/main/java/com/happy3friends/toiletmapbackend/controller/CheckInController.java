@@ -193,11 +193,10 @@ public class CheckInController {
             @ApiResponse(responseCode = "201", description = "Successfully!", content = @Content(examples = {
                     @ExampleObject(value = "{\n" +
                             "    \"fullName\": \"Huỳnh Lê Thủy Tiên\",\n" +
-                            "    \"dateTime\": \"29/10/2001 - 10:30:00\",\n" +
-                            "    \"serviceName\": \"Đi vệ sinh (Đại tiện)\",\n" +
-                            "    \"paymentMethod\": \"Số dư\",\n" +
-                            "    \"balance\": 4000,\n" +
-                            "    \"turn\": null\n" +
+                            "    \"paymentMethod\": \"Số lượt\",\n" +
+                            "    \"balance\": 50000,\n" +
+                            "    \"turn\": 19,\n" +
+                            "    \"username\": \"0849666957\"\n" +
                             "}")})),
             @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),

@@ -109,7 +109,9 @@ public class CheckInServiceImpl implements CheckInService {
         // Get min service price in Toilet
         Optional<ToiletServiceEntity> toiletServiceEntity = toiletServiceEntities.stream()
                 .min(Comparator.comparing(entity -> entity.getServiceByServiceId().getTurn()));
+
         if (toiletServiceEntity.isPresent()) {
+
             // Prepare for saving Check-in Entity
             CustomAccountInfoDTO customAccountInfoDTO = accountRepository.getCustomAccountInfoByAccountId(checkInRequest.getAccountId());
             String defaultAccountPayment = customAccountInfoDTO.getDefaultPayment();
@@ -119,6 +121,7 @@ public class CheckInServiceImpl implements CheckInService {
             String serviceName = toiletServiceEntity.get().getServiceByServiceId().getName();
             int serviceTurn = toiletServiceEntity.get().getServiceByServiceId().getTurn();
             int serviceTurnPrice = toiletServiceEntity.get().getServiceByServiceId().getTurnPrice();
+
             // Save Check-in Entity
             CheckInEntity checkInEntity = new CheckInEntity();
             checkInEntity.setAccountId(checkInRequest.getAccountId());
@@ -129,7 +132,8 @@ public class CheckInServiceImpl implements CheckInService {
                 throw new BadRequestException("Your account turn is not enough turn for paying service '" + serviceName + "' with price '" + serviceTurn + "'! " +
                         "Please top up your account to use this service!");
             if (!toiletEntity.get().isFree()) {
-                userInfoRepository.updateAccountTurn(checkInRequest.getAccountId(), accountTurn - serviceTurn);
+                accountTurn = accountTurn - serviceTurn;
+                userInfoRepository.updateAccountTurn(checkInRequest.getAccountId(), accountTurn);
                 checkInEntity.setTurn(serviceTurn);
                 checkInEntity.setTurnPrice(serviceTurnPrice);
             } else {
@@ -137,11 +141,13 @@ public class CheckInServiceImpl implements CheckInService {
             }
             checkInRepository.save(checkInEntity);
 
-            // Convert checkInEntity to checkInResponse
-            checkInEntity.setAccountByAccountId(accountEntity.get());
-            checkInEntity.setToiletServiceByToiletServiceId(toiletServiceEntity.get());
-            CheckInResponse checkInResponse
-                    = checkInMapper.convertCheckInEntityToCheckInResponse(checkInEntity);
+            // Return check-in response: phone, fullName, current account balance, current account turn
+            CheckInResponse checkInResponse = new CheckInResponse();
+            checkInResponse.setUsername(customAccountInfoDTO.getUsername());
+            checkInResponse.setFullName(customAccountInfoDTO.getFullName());
+            checkInResponse.setBalance(customAccountInfoDTO.getAccountBalance());
+            checkInResponse.setTurn(accountTurn);
+            checkInResponse.setPaymentMethod(customAccountInfoDTO.getDefaultPayment());
             return checkInResponse;
         } else {
             throw new NotFoundException("List of toilet's services is not found!");
@@ -178,6 +184,7 @@ public class CheckInServiceImpl implements CheckInService {
                 .findFirst();
 
         if (toiletServiceEntity.isPresent()) {
+
             // Prepare for saving Check-in Entity
             CustomAccountInfoDTO customAccountInfoDTO = accountRepository.getCustomAccountInfoByAccountId(checkInRequest.getAccountId());
             String defaultAccountPayment = customAccountInfoDTO.getDefaultPayment();
@@ -200,7 +207,8 @@ public class CheckInServiceImpl implements CheckInService {
                         throw new BadRequestException("Your account balance is not enough money for paying service '" + serviceName + "' with price '" + servicePrice + "'! " +
                                 "Please change your default payment method or top up your account to use this service!");
                     if (!toiletEntity.get().isFree()) {
-                        userInfoRepository.updateAccountBalance(checkInRequest.getAccountId(), accountBalance - servicePrice);
+                        accountBalance = accountBalance - servicePrice;
+                        userInfoRepository.updateAccountBalance(checkInRequest.getAccountId(), accountBalance);
                         checkInEntity.setBalance(servicePrice);
                     } else {
                         checkInEntity.setBalance(0);
@@ -211,7 +219,8 @@ public class CheckInServiceImpl implements CheckInService {
                         throw new BadRequestException("Your account turn is not enough turn for paying service '" + serviceName + "' with price '" + serviceTurn + "'! " +
                                 "Please change your default payment method or top up your account to use this service!");
                     if (!toiletEntity.get().isFree()) {
-                        userInfoRepository.updateAccountTurn(checkInRequest.getAccountId(), accountTurn - serviceTurn);
+                        accountTurn = accountTurn - serviceTurn;
+                        userInfoRepository.updateAccountTurn(checkInRequest.getAccountId(), accountTurn);
                         checkInEntity.setTurn(serviceTurn);
                         checkInEntity.setTurnPrice(serviceTurnPrice);
                     } else {
@@ -221,11 +230,13 @@ public class CheckInServiceImpl implements CheckInService {
             }
             checkInRepository.save(checkInEntity);
 
-            // Convert checkInEntity to checkInResponse
-            checkInEntity.setAccountByAccountId(accountEntity.get());
-            checkInEntity.setToiletServiceByToiletServiceId(toiletServiceEntity.get());
-            CheckInResponse checkInResponse
-                    = checkInMapper.convertCheckInEntityToCheckInResponse(checkInEntity);
+            // Return check-in response: phone, fullName, current account balance, current account turn
+            CheckInResponse checkInResponse = new CheckInResponse();
+            checkInResponse.setUsername(customAccountInfoDTO.getUsername());
+            checkInResponse.setFullName(customAccountInfoDTO.getFullName());
+            checkInResponse.setBalance(accountBalance);
+            checkInResponse.setTurn(accountTurn);
+            checkInResponse.setPaymentMethod(customAccountInfoDTO.getDefaultPayment());
             return checkInResponse;
         } else {
             LOGGER.error("Service '" + checkInRequest.getServiceName() + "' is not contained in Toilet with Id '" + checkInRequest.getToiletId() + "'!");

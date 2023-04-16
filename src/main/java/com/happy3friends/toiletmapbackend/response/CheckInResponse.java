@@ -23,4 +23,5 @@ public class CheckInResponse {
     private Integer turn;
     private String toiletName;
     private Integer toiletId;
+    private String username;
 }
