@@ -8,7 +8,7 @@ spring:
 logging:
   level:
     root: info
-    com.happy3friends.toiletmapbackend.service: error
+    com.happy3friends.toiletmapbackend.service: info
   file:
     path: logs
     name: ${logging.file.path}/mylog.log

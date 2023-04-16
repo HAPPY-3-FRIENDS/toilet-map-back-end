@@ -2,11 +2,16 @@ package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
 import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
 import com.happy3friends.toiletmapbackend.constant.DefaultSortPropertyConstant;
+import com.happy3friends.toiletmapbackend.dto.CustomAccountInfoDTO;
 import com.happy3friends.toiletmapbackend.dto.CustomRatingDetailsDTO;
 import com.happy3friends.toiletmapbackend.entity.RatingEntity;
+import com.happy3friends.toiletmapbackend.entity.RatingImageEntity;
 import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
+import com.happy3friends.toiletmapbackend.enums.RoleEnum;
+import com.happy3friends.toiletmapbackend.exception.BadRequestException;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.RatingMapper;
+import com.happy3friends.toiletmapbackend.repository.AccountRepository;
 import com.happy3friends.toiletmapbackend.repository.RatingImageRepository;
 import com.happy3friends.toiletmapbackend.repository.RatingRepository;
 import com.happy3friends.toiletmapbackend.repository.ToiletRepository;
@@ -15,19 +20,21 @@ import com.happy3friends.toiletmapbackend.response.RatingResponse;
 import com.happy3friends.toiletmapbackend.service.RatingService;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
 import com.happy3friends.toiletmapbackend.utils.PaginationUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Optional;
+import java.sql.Timestamp;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class RatingServiceImpl implements RatingService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RatingServiceImpl.class);
 
     @Autowired
     private RatingRepository ratingRepository;
@@ -37,6 +44,9 @@ public class RatingServiceImpl implements RatingService {
 
     @Autowired
     private ToiletRepository toiletRepository;
+
+    @Autowired
+    private AccountRepository accountRepository;
 
     @Autowired
     private RatingMapper ratingMapper;
@@ -115,11 +125,54 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     public RatingResponse createRating(RatingRequest ratingRequest) {
+
+        // Validate Toilet
+        Optional<ToiletEntity> toiletEntity = toiletRepository.findById(ratingRequest.getToiletId());
+        if (!toiletEntity.isPresent())
+            throw new NotFoundException("Toilet", "Id", ratingRequest.getToiletId());
+
+        // Validate Account
+        CustomAccountInfoDTO customAccountInfoDTO = accountRepository.getCustomAccountInfoByAccountId(ratingRequest.getAccountId());
+        if (customAccountInfoDTO == null)
+            throw new NotFoundException("Account", "Id", ratingRequest.getAccountId());
+        if (!customAccountInfoDTO.getRole().equals(RoleEnum.USER.getRoleName()))
+            throw new BadRequestException("Invalid account role!");
+        // TODO: validate account with check-in for rating
+
+        // Save Rating Entity
+        LOGGER.info("-- Create Rating - Start save Rating Entity! --");
+        // TODO: Common rating comment
+        Timestamp timestampNow = DateTimeUtil.getTimestampNow();
         RatingEntity ratingEntity = ratingMapper.convertRatingRequestToRatingEntity(ratingRequest);
-        ratingEntity.getRatingImagesById().forEach(dto -> dto.setRatingByRatingId(ratingEntity));
         ratingEntity.setToiletId(ratingEntity.getToiletId());
-        ratingEntity.setDateTime(DateTimeUtil.getTimestampNow());
-        ratingRepository.save(ratingEntity);
-        return null;
+        ratingEntity.setDateTime(timestampNow);
+        RatingEntity savedRatingEntity = ratingRepository.save(ratingEntity);
+        LOGGER.info("-- Create Rating - Finish save Rating Entity! --");
+
+        // Prepare Rating Image Entity for saving
+        if (ratingRequest.getImageSources() != null) {
+            LOGGER.info("-- Create Rating - Start save List Rating Image Entity! --");
+            List<RatingImageEntity> ratingImageEntities = ratingRequest.getImageSources().stream()
+                    .map(o -> {
+                        RatingImageEntity ratingImageEntity = new RatingImageEntity();
+                        ratingImageEntity.setRatingId(savedRatingEntity.getId());
+                        ratingImageEntity.setImageSource(o);
+
+                        return ratingImageEntity;
+                    }).collect(Collectors.toList());
+            // Save Rating Image
+            ratingImageRepository.saveAll(ratingImageEntities);
+            LOGGER.info("-- Create Rating - Finish save List Rating Image Entity! --");
+        }
+
+        // Return rating response
+        return new RatingResponse(
+                savedRatingEntity.getId(),
+                customAccountInfoDTO.getFullName(),
+                ratingRequest.getStar(),
+                ratingRequest.getComment(),
+                new Date(timestampNow.getTime()),
+                ratingRequest.getImageSources()
+        );
     }
 }

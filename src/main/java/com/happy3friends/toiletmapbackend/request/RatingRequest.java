@@ -1,6 +1,5 @@
 package com.happy3friends.toiletmapbackend.request;
 
-import com.happy3friends.toiletmapbackend.dto.RatingImageDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,5 +16,5 @@ public class RatingRequest {
     private int star;
     private String comment;
     private int accountId;
-    private List<RatingImageDTO> ratingImagesById;
+    private List<String> imageSources;
 }

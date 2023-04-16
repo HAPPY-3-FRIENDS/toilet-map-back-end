@@ -8,7 +8,6 @@ import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.request.RatingRequest;
 import com.happy3friends.toiletmapbackend.response.RatingResponse;
 import com.happy3friends.toiletmapbackend.service.RatingService;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -37,7 +36,39 @@ public class RatingController {
     @Autowired
     private RatingService ratingService;
 
-    @Hidden
+    @Operation(summary = "Create a rating", description = "[User] Create a rating and its images")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Toilet Create Request", required = true, content = @Content(
+            examples = {
+                    @ExampleObject(value = "{\n" +
+                            "  \"toiletId\": 4,\n" +
+                            "  \"star\": 5,\n" +
+                            "  \"comment\": \"Nhà vệ sinh rất sạch, tớ sẽ ghé sử dụng thường xuyên\",\n" +
+                            "  \"accountId\": 6,\n" +
+                            "  \"imageSources\": [\n" +
+                            "    \"https://meovatchamsocgiadinh.com/ckfinder/userfiles/images/cau-chuyen-ve-chiec-bon-cau-ban-va-cach-xu-ly-ham-cau-bi-day/cau-chuyen-ve-chiec-bon-cau-ban.jpg\",\n" +
+                            "    \"https://afamilycdn.com/k:thumb_w/600/h6ZUmntrbWseKUPJv6Yt1NY22jQBtc/Image/2014/12/6-8429e/tu-su-cua-chiec-bon-cau-ban-va-chuyen-di-ve-sinh-cua-be-o-truong.jpg\"\n" +
+                            "  ]\n" +
+                            "}")}))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Successfully!", content = @Content(examples = {
+                    @ExampleObject(value = "{\n" +
+                            "    \"id\": 8,\n" +
+                            "    \"fullName\": \"Huỳnh Lê Thủy Tiên\",\n" +
+                            "    \"star\": 5,\n" +
+                            "    \"comment\": \"Nhà vệ sinh rất sạch, tớ sẽ ghé sử dụng thường xuyên\",\n" +
+                            "    \"dateTime\": \"16/04/2023 - 13:40:06\",\n" +
+                            "    \"imageSources\": [\n" +
+                            "      \"https://meovatchamsocgiadinh.com/ckfinder/userfiles/images/cau-chuyen-ve-chiec-bon-cau-ban-va-cach-xu-ly-ham-cau-bi-day/cau-chuyen-ve-chiec-bon-cau-ban.jpg\",\n" +
+                            "      \"https://afamilycdn.com/k:thumb_w/600/h6ZUmntrbWseKUPJv6Yt1NY22jQBtc/Image/2014/12/6-8429e/tu-su-cua-chiec-bon-cau-ban-va-chuyen-di-ve-sinh-cua-be-o-truong.jpg\"\n" +
+                            "    ]\n" +
+                            "  }")
+            })),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.USER})
     @PostMapping
@@ -47,7 +78,7 @@ public class RatingController {
 
         return ResponseBuilder.generateResponse(
                 "Create rating successfully!",
-                HttpStatus.OK,
+                HttpStatus.CREATED,
                 response
         );
     }
