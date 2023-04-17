@@ -16,6 +16,8 @@ import com.happy3friends.toiletmapbackend.response.ReportResponse;
 import com.happy3friends.toiletmapbackend.service.ReportService;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
 import com.happy3friends.toiletmapbackend.utils.PaginationUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -28,6 +30,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class ReportServiceImpl implements ReportService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CheckInServiceImpl.class);
 
     @Autowired
     private ReportRepository reportRepository;
@@ -150,6 +154,8 @@ public class ReportServiceImpl implements ReportService {
     public ReportResponse getTotalReportOfMonth(Integer companyId, Integer toiletId) {
         Date toDate = DateTimeUtil.getDateNow();
         Date fromDate = DateTimeUtil.getFirstDateOfCurrentMonth();
+
+        LOGGER.info("getDateNow: " + toDate + " getFirstDateOfCurrentMonth: " + fromDate);
 
         if (companyId != null && toiletId == null) {
             return getTotalReportOfMonthByCompanyId(companyId, fromDate, toDate);
