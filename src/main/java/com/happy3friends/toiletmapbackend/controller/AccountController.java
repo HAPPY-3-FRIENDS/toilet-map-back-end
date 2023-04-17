@@ -206,7 +206,7 @@ public class AccountController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.MANAGER, RoleConstant.STAFF, RoleConstant.USER, RoleConstant.USER})
+    @RolesAllowed({RoleConstant.MANAGER, RoleConstant.STAFF, RoleConstant.TOILET, RoleConstant.USER})
     @GetMapping(value = "/user-infos")
     public ResponseEntity<BaseResponse<UserInfoResponse>> getUserInfoByAccountUsername(@RequestParam(value = "account-username") String accountUsername) {
 

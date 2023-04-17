@@ -294,3 +294,6 @@ java.lang.NullPointerException: null
 [2023-04-18 02:34:09.617] INFO  [http-nio-8081-exec-1] [c.h.t.s.s.StatisticServiceImpl] StatisticServiceImpl.getTotalStatisticOfMonth:166 - getDateNow: Tue Apr 18 02:34:09 ICT 2023 getFirstDateOfCurrentMonth: Sat Apr 01 02:34:09 ICT 2023
 [2023-04-18 02:34:09.619] INFO  [http-nio-8081-exec-1] [c.h.t.s.s.StatisticServiceImpl] StatisticServiceImpl.getTotalStatisticOfMonth:167 - convertZoneDateTimeToDate123: 2023-04-17T19:34:09.618565Z
 [2023-04-18 02:34:09.619] INFO  [http-nio-8081-exec-1] [c.h.t.s.s.StatisticServiceImpl] StatisticServiceImpl.getTotalStatisticOfMonth:168 - convertZoneDateTimeToDate: Tue Apr 18 02:34:09 ICT 2023
+[2023-04-18 02:41:01.367] INFO  [SpringApplicationShutdownHook] [o.s.o.j.LocalContainerEntityManagerFactoryBean] LocalContainerEntityManagerFactoryBean.destroy:651 - Closing JPA EntityManagerFactory for persistence unit 'default'
+[2023-04-18 02:41:01.377] INFO  [SpringApplicationShutdownHook] [c.z.h.HikariDataSource] HikariDataSource.close:350 - HikariPool-1 - Shutdown initiated...
+[2023-04-18 02:41:01.387] INFO  [SpringApplicationShutdownHook] [c.z.h.HikariDataSource] HikariDataSource.close:352 - HikariPool-1 - Shutdown completed.
