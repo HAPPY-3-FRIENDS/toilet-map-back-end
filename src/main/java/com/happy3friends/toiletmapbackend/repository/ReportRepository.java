@@ -22,13 +22,12 @@ public interface ReportRepository extends JpaRepository<CheckInEntity, Integer> 
             "       COUNT(c.TurnPrice)                                          AS UsingTurnCount " +
             "FROM CheckIn c " +
             "         RIGHT JOIN ToiletService ts " +
-            "                    ON c.ToiletServiceId = ts.Id " +
+            "                    ON c.ToiletServiceId = ts.Id AND (c.DateTime IS NULL OR c.DateTime BETWEEN :fromDate AND :toDate) " +
             "         JOIN Service s " +
             "              ON ts.ServiceId = s.Id " +
             "         JOIN Toilet t " +
             "              ON ts.ToiletId = t.Id " +
             "WHERE t.Id = :toiletId " +
-            "  AND (c.DateTime IS NULL OR c.DateTime BETWEEN :fromDate AND :toDate) " +
             "GROUP BY s.Name " +
             "ORDER BY s.Name DESC", nativeQuery = true)
     List<CustomReportDTO> getAllReportsByToiletId(@Param("toiletId") int toiletId,
@@ -46,7 +45,8 @@ public interface ReportRepository extends JpaRepository<CheckInEntity, Integer> 
             "             COUNT(c.TurnPrice)                                            AS UsingTurnCount " +
             "      FROM CheckIn c " +
             "               RIGHT JOIN ToiletService ts " +
-            "                          ON c.ToiletServiceId = ts.Id " +
+            "                          ON c.ToiletServiceId = ts.Id AND " +
+            "                             (c.DateTime IS NULL OR c.DateTime BETWEEN :fromDate AND :toDate) " +
             "               JOIN Service s " +
             "                    ON ts.ServiceId = s.Id " +
             "               JOIN Toilet t " +
@@ -54,7 +54,6 @@ public interface ReportRepository extends JpaRepository<CheckInEntity, Integer> 
             "               JOIN Company cp " +
             "                    ON t.CompanyId = cp.Id " +
             "      WHERE cp.Id = :companyId " +
-            "        AND (c.DateTime IS NULL OR c.DateTime BETWEEN :fromDate AND :toDate) " +
             "      GROUP BY t.Id, t.Name) r", nativeQuery = true)
     List<CustomReportDTO> getAllReportsByCompanyId(@Param("companyId") int companyId,
                                                    @Param("fromDate") Date fromDate,
