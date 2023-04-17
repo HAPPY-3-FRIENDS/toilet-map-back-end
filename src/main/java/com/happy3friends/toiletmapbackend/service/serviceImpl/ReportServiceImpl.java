@@ -163,6 +163,8 @@ public class ReportServiceImpl implements ReportService {
         LOGGER.info("OffsetDateTime: " + OffsetDateTime.now(ZoneOffset.of("+07:00")));
         LOGGER.info("getZoneDateTimeNow: " + DateTimeUtil.getZoneDateTimeNow());
         LOGGER.info("getDateNow: " + toDate + " getFirstDateOfCurrentMonth: " + fromDate);
+        LOGGER.info("convertZoneDateTimeToDate123: " + DateTimeUtil.getZoneDateTimeNow().toInstant());
+        LOGGER.info("convertZoneDateTimeToDate: " + DateTimeUtil.convertZoneDateTimeToDate(DateTimeUtil.getZoneDateTimeNow()));
 
         if (companyId != null && toiletId == null) {
             return getTotalReportOfMonthByCompanyId(companyId, fromDate, toDate);
