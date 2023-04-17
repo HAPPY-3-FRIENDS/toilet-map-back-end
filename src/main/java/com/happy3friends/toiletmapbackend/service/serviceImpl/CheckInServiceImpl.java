@@ -12,6 +12,7 @@ import com.happy3friends.toiletmapbackend.entity.ToiletServiceEntity;
 import com.happy3friends.toiletmapbackend.enums.PaymentTypeEnum;
 import com.happy3friends.toiletmapbackend.enums.RoleEnum;
 import com.happy3friends.toiletmapbackend.enums.ServiceEnum;
+import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
 import com.happy3friends.toiletmapbackend.exception.BadRequestException;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.CheckInMapper;
@@ -61,7 +62,7 @@ public class CheckInServiceImpl implements CheckInService {
 
         // Validate Toilet
         if (!toiletRepository.findById(toiletId).isPresent())
-            throw new NotFoundException("Toilet", "Id", toiletId);
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_TOILET, ToiletMapErrorCodeEnum.NOT_FOUND_TOILET.getMessage());
 
         // Get Check-in histories by Toilet ID
         List<CustomCheckInDTO> customCheckInDTOS = checkInRepository.getCheckInHistoriesByToiletId(toiletId);
@@ -80,7 +81,8 @@ public class CheckInServiceImpl implements CheckInService {
 
         // Validate Account
         Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
-        if (!accountEntity.isPresent()) throw new NotFoundException("Account", "Id", accountId);
+        if (!accountEntity.isPresent())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT.getMessage());
 
         // TODO: check paymentMethod valid
 
@@ -97,12 +99,12 @@ public class CheckInServiceImpl implements CheckInService {
         // Validate Toilet
         Optional<ToiletEntity> toiletEntity = toiletRepository.findById(checkInRequest.getToiletId());
         if (!toiletEntity.isPresent())
-            throw new NotFoundException("Toilet", "Id", checkInRequest.getToiletId());
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_TOILET, ToiletMapErrorCodeEnum.NOT_FOUND_TOILET.getMessage());
 
         // Validate Account
         Optional<AccountEntity> accountEntity = accountRepository.findById(checkInRequest.getAccountId());
         if (!accountEntity.isPresent())
-            throw new NotFoundException("Account", "Id", checkInRequest.getAccountId());
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT.getMessage());
 
         List<ToiletServiceEntity> toiletServiceEntities
                 = toiletServiceRepository.findToiletServiceEntitiesByToiletIdAndFetchServiceEagerly(checkInRequest.getToiletId());
@@ -116,7 +118,7 @@ public class CheckInServiceImpl implements CheckInService {
             CustomAccountInfoDTO customAccountInfoDTO = accountRepository.getCustomAccountInfoByAccountId(checkInRequest.getAccountId());
             String defaultAccountPayment = customAccountInfoDTO.getDefaultPayment();
             if (!defaultAccountPayment.equals(PaymentTypeEnum.TURN.getPaymentValue()))
-                throw new BadRequestException("Default account's payment type of this account is invalid! It's not by turn");
+                throw new BadRequestException(ToiletMapErrorCodeEnum.INVALID_DEFAULT_PAYMENT_METHOD, ToiletMapErrorCodeEnum.INVALID_DEFAULT_PAYMENT_METHOD.getMessage());
             int accountTurn = customAccountInfoDTO.getAccountTurn();
             String serviceName = toiletServiceEntity.get().getServiceByServiceId().getName();
             int serviceTurn = toiletServiceEntity.get().getServiceByServiceId().getTurn();
@@ -129,8 +131,7 @@ public class CheckInServiceImpl implements CheckInService {
             checkInEntity.setDateTime(DateTimeUtil.getTimestampNow());
             checkInEntity.setPaymentMethod(defaultAccountPayment);
             if (accountTurn < serviceTurn)
-                throw new BadRequestException("Your account turn is not enough turn for paying service '" + serviceName + "' with price '" + serviceTurn + "'! " +
-                        "Please top up your account to use this service!");
+                throw new BadRequestException(ToiletMapErrorCodeEnum.ACCOUNT_TURN_NOT_ENOUGH, ToiletMapErrorCodeEnum.ACCOUNT_TURN_NOT_ENOUGH.getMessage());
             if (!toiletEntity.get().isFree()) {
                 accountTurn = accountTurn - serviceTurn;
                 userInfoRepository.updateAccountTurn(checkInRequest.getAccountId(), accountTurn);
@@ -150,7 +151,7 @@ public class CheckInServiceImpl implements CheckInService {
             checkInResponse.setPaymentMethod(customAccountInfoDTO.getDefaultPayment());
             return checkInResponse;
         } else {
-            throw new NotFoundException("List of toilet's services is not found!");
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_LIST_TOILET_SERVICES, ToiletMapErrorCodeEnum.NOT_FOUND_LIST_TOILET_SERVICES.getMessage());
         }
     }
 
@@ -158,22 +159,22 @@ public class CheckInServiceImpl implements CheckInService {
         // Validate Toilet
         Optional<ToiletEntity> toiletEntity = toiletRepository.findById(checkInRequest.getToiletId());
         if (!toiletEntity.isPresent())
-            throw new NotFoundException("Toilet", "Id", checkInRequest.getToiletId());
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_TOILET, ToiletMapErrorCodeEnum.NOT_FOUND_TOILET.getMessage());
 
         // Validate Account
         Optional<AccountEntity> accountEntity = accountRepository.findById(checkInRequest.getAccountId());
         if (!accountEntity.isPresent())
-            throw new NotFoundException("Account", "Id", checkInRequest.getAccountId());
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT.getMessage());
 
         // Validate Datetime - 3 * 60s | 1 second = 1000 milliseconds
         Timestamp datetime = DateTimeUtil.convertStringToTimestamp(checkInRequest.getDatetime());
         Timestamp currentDatetime = DateTimeUtil.getTimestampNow();
         if ((currentDatetime.getTime() - datetime.getTime()) > 1000 * 3 * 60)
-            throw new BadRequestException("Invalid datetime in QR Code!");
+            throw new BadRequestException(ToiletMapErrorCodeEnum.EXPIRED_QR_CODE, ToiletMapErrorCodeEnum.EXPIRED_QR_CODE.getMessage());
 
         // Validate Service Name
         if (!checkInRequest.getServiceName().equals(ServiceEnum.getByValue(checkInRequest.getServiceName()).getServiceName()))
-            throw new BadRequestException("Invalid service name!");
+            throw new BadRequestException(ToiletMapErrorCodeEnum.INVALID_SERVICE, ToiletMapErrorCodeEnum.INVALID_SERVICE.getMessage());
 
         //Check if service chosen is contained in toilet (ToiletService)
         List<ToiletServiceEntity> toiletServiceEntities
@@ -204,8 +205,7 @@ public class CheckInServiceImpl implements CheckInService {
             switch (defaultAccountPayment) {
                 case PaymentTypeConstant.BALANCE:
                     if (accountBalance < servicePrice)
-                        throw new BadRequestException("Your account balance is not enough money for paying service '" + serviceName + "' with price '" + servicePrice + "'! " +
-                                "Please change your default payment method or top up your account to use this service!");
+                        throw new BadRequestException(ToiletMapErrorCodeEnum.ACCOUNT_BALANCE_NOT_ENOUGH, ToiletMapErrorCodeEnum.ACCOUNT_BALANCE_NOT_ENOUGH.getMessage());
                     if (!toiletEntity.get().isFree()) {
                         accountBalance = accountBalance - servicePrice;
                         userInfoRepository.updateAccountBalance(checkInRequest.getAccountId(), accountBalance);
@@ -216,8 +216,7 @@ public class CheckInServiceImpl implements CheckInService {
                     break;
                 default:
                     if (accountTurn < serviceTurn)
-                        throw new BadRequestException("Your account turn is not enough turn for paying service '" + serviceName + "' with price '" + serviceTurn + "'! " +
-                                "Please change your default payment method or top up your account to use this service!");
+                        throw new BadRequestException(ToiletMapErrorCodeEnum.ACCOUNT_TURN_NOT_ENOUGH, ToiletMapErrorCodeEnum.ACCOUNT_BALANCE_NOT_ENOUGH.getMessage());
                     if (!toiletEntity.get().isFree()) {
                         accountTurn = accountTurn - serviceTurn;
                         userInfoRepository.updateAccountTurn(checkInRequest.getAccountId(), accountTurn);
@@ -240,7 +239,7 @@ public class CheckInServiceImpl implements CheckInService {
             return checkInResponse;
         } else {
             LOGGER.error("Service '" + checkInRequest.getServiceName() + "' is not contained in Toilet with Id '" + checkInRequest.getToiletId() + "'!");
-            throw new BadRequestException("Service '" + checkInRequest.getServiceName() + "' is not contained in Toilet with Id '" + checkInRequest.getToiletId() + "'!");
+            throw new BadRequestException(ToiletMapErrorCodeEnum.INVALID_SERVICE, ToiletMapErrorCodeEnum.INVALID_SERVICE.getMessage());
         }
     }
 
@@ -271,14 +270,14 @@ public class CheckInServiceImpl implements CheckInService {
         // Validate Toilet
         Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
         if (!toiletEntity.isPresent())
-            throw new NotFoundException("Toilet", "Id", toiletId);
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_TOILET, ToiletMapErrorCodeEnum.NOT_FOUND_TOILET.getMessage());
 
         // Validate Account of Staff duty at Toilet
         Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
         if (!accountEntity.isPresent())
-            throw new NotFoundException("Account", "Id", accountId);
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT.getMessage());
         if (!accountEntity.get().getRoleByRoleId().getName().equals(RoleEnum.TOILET.getRoleName()))
-            throw new BadRequestException("This account-id is not an account-id of a staff");
+            throw new BadRequestException(ToiletMapErrorCodeEnum.INVALID_ROLE, ToiletMapErrorCodeEnum.INVALID_ROLE.getMessage());
 
         // Duplicate Walk-in-guest Check-in by Quantity
         List<CheckInRequest> list = new ArrayList<>();
@@ -333,7 +332,8 @@ public class CheckInServiceImpl implements CheckInService {
         if (accountId != null) {
             // Validate Account
             Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
-            if (!accountEntity.isPresent()) throw new NotFoundException("Account", "Id", accountId);
+            if (!accountEntity.isPresent())
+                throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT.getMessage());
 
             // TODO: check paymentMethod valid
 

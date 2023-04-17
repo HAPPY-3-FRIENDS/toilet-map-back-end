@@ -3,6 +3,7 @@ package com.happy3friends.toiletmapbackend.service.serviceImpl;
 import com.happy3friends.toiletmapbackend.dto.ServiceDTO;
 import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
 import com.happy3friends.toiletmapbackend.entity.ToiletServiceEntity;
+import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.repository.ToiletRepository;
 import com.happy3friends.toiletmapbackend.repository.ToiletServiceRepository;
@@ -30,7 +31,7 @@ public class ToiletServiceServiceImpl implements ToiletServiceService {
         // Validate Toilet
         Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
         if (!toiletEntity.isPresent())
-            throw new NotFoundException("Toilet", "Id", toiletId);
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_TOILET, ToiletMapErrorCodeEnum.NOT_FOUND_TOILET.getMessage());
 
         // Get list Toilet Service Entities by Toilet ID
         List<ToiletServiceEntity> toiletServiceEntityList

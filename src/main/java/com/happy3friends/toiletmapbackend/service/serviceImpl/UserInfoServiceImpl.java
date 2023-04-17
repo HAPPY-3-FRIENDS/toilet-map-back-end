@@ -4,6 +4,7 @@ import com.happy3friends.toiletmapbackend.dto.CustomAccountInfoDTO;
 import com.happy3friends.toiletmapbackend.entity.AccountEntity;
 import com.happy3friends.toiletmapbackend.entity.UserInfoEntity;
 import com.happy3friends.toiletmapbackend.enums.PaymentTypeEnum;
+import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.UserInfoMapper;
 import com.happy3friends.toiletmapbackend.repository.AccountRepository;
@@ -36,7 +37,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         // Validate Account
         Optional<UserInfoEntity> userInfoEntity = userInfoRepository.findById(accountId);
         if (!userInfoEntity.isPresent())
-            throw new NotFoundException("UserInfo", "accountId", accountId);
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_USER_INFO, ToiletMapErrorCodeEnum.NOT_FOUND_USER_INFO.getMessage());
 
         // Patch user info by field
         fields.forEach((key, value) -> {
@@ -61,7 +62,8 @@ public class UserInfoServiceImpl implements UserInfoService {
 
         // Validate Account
         Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
-        if (!accountEntity.isPresent()) throw new NotFoundException("Account", "Id", accountId);
+        if (!accountEntity.isPresent())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT.getMessage());
 
         // TODO: check role of accountId
 
@@ -75,7 +77,8 @@ public class UserInfoServiceImpl implements UserInfoService {
 
         // Validate Account
         AccountEntity accountEntity = accountRepository.findByUsername(accountUsername);
-        if (accountEntity == null) throw new NotFoundException("Account", "Username", accountUsername);
+        if (accountEntity == null)
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT.getMessage());
 
         CustomAccountInfoDTO customAccountInfoDTO = accountRepository.getCustomAccountInfoByUsername(accountUsername);
 

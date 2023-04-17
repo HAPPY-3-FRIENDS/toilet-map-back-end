@@ -1,6 +1,7 @@
 package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
 import com.happy3friends.toiletmapbackend.entity.ComboEntity;
+import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.ComboMapper;
 import com.happy3friends.toiletmapbackend.repository.ComboRepository;
@@ -25,7 +26,7 @@ public class ComboServiceImpl implements ComboService {
     public List<ComboResponse> getAllCombo() {
         List<ComboEntity> comboEntities = comboRepository.findAll();
         if (comboEntities.isEmpty())
-            throw new NotFoundException("List of all combos is not found!");
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_COMBO, ToiletMapErrorCodeEnum.NOT_FOUND_COMBO.getMessage());
 
         return comboEntities.stream()
                 .map(entity -> comboMapper.convertComboEntityToComboResponse(entity))

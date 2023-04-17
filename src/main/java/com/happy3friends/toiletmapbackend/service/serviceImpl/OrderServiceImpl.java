@@ -8,6 +8,7 @@ import com.happy3friends.toiletmapbackend.entity.ComboEntity;
 import com.happy3friends.toiletmapbackend.entity.OrderEntity;
 import com.happy3friends.toiletmapbackend.enums.PaymentTypeEnum;
 import com.happy3friends.toiletmapbackend.enums.RoleEnum;
+import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
 import com.happy3friends.toiletmapbackend.exception.BadRequestException;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.OrderMapper;
@@ -55,25 +56,25 @@ public class OrderServiceImpl implements OrderService {
         if (!orderRequest.getPaymentMethod().equals(PaymentTypeEnum.BALANCE.getPaymentValue())
             && !orderRequest.getPaymentMethod().equals(PaymentTypeEnum.VN_PAY.getPaymentValue())
             && !orderRequest.getPaymentMethod().equals(PaymentTypeEnum.BANK_TRANSFER.getPaymentValue()))
-            throw new BadRequestException("Invalid payment method!");
+            throw new BadRequestException(ToiletMapErrorCodeEnum.INVALID_PAYMENT_METHOD, ToiletMapErrorCodeEnum.INVALID_PAYMENT_METHOD.getMessage());
 
         // Validate Role - Check account's role is User role
         CustomAccountInfoDTO customAccountInfoDTO = accountRepository.getCustomAccountInfoByAccountId(orderRequest.getAccountId());
         if (!customAccountInfoDTO.getRole().equals(RoleEnum.USER.getRoleName()))
-            throw new BadRequestException("Invalid account Id!");
+            throw new BadRequestException(ToiletMapErrorCodeEnum.INVALID_ROLE, ToiletMapErrorCodeEnum.INVALID_ROLE.getMessage());
 
         // TODO: check userToken with account from accountId
 
         // Validate Combo
         Optional<ComboEntity> comboEntity = comboRepository.findById(orderRequest.getComboId());
         if (!comboEntity.isPresent())
-            throw new NotFoundException("Combo", "Id", orderRequest.getComboId());
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_COMBO, ToiletMapErrorCodeEnum.NOT_FOUND_COMBO.getMessage());
 
         // Compare Account balance with Combo Price
         int comboPrice = comboEntity.get().getPrice();
         if (orderRequest.getPaymentMethod().equals(PaymentTypeEnum.BALANCE.getPaymentValue())
             && customAccountInfoDTO.getAccountBalance() < comboPrice)
-            throw new BadRequestException("Your account balance is not greater than combo price!");
+            throw new BadRequestException(ToiletMapErrorCodeEnum.ACCOUNT_BALANCE_NOT_ENOUGH, ToiletMapErrorCodeEnum.ACCOUNT_BALANCE_NOT_ENOUGH.getMessage());
 
         Timestamp now = DateTimeUtil.getTimestampNow();
         // Create order - combo
@@ -111,7 +112,8 @@ public class OrderServiceImpl implements OrderService {
 
         // Validate Account
         Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
-        if (!accountEntity.isPresent()) throw new NotFoundException("Account", "Id", accountId);
+        if (!accountEntity.isPresent())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_TOILET.getMessage());
 
         List<OrderEntity> orderEntities = orderRepository.findAllByAccountId(accountId, pageable);
 
@@ -125,7 +127,8 @@ public class OrderServiceImpl implements OrderService {
 
         if (accountId != null) {
             Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
-            if (!accountEntity.isPresent()) throw new NotFoundException("Account", "Id", accountId);
+            if (!accountEntity.isPresent())
+                throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT.getMessage());
 
             return orderRepository.countOrderHistoriesByAccountId(accountId);
         }

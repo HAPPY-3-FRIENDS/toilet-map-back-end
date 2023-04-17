@@ -8,6 +8,7 @@ import com.happy3friends.toiletmapbackend.entity.RatingEntity;
 import com.happy3friends.toiletmapbackend.entity.RatingImageEntity;
 import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
 import com.happy3friends.toiletmapbackend.enums.RoleEnum;
+import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
 import com.happy3friends.toiletmapbackend.exception.BadRequestException;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.RatingMapper;
@@ -94,7 +95,7 @@ public class RatingServiceImpl implements RatingService {
         // Validate Toilet
         Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
         if (!toiletEntity.isPresent())
-            throw new NotFoundException("Toilet", "Id", toiletId);
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_TOILET, ToiletMapErrorCodeEnum.NOT_FOUND_TOILET.getMessage());
 
         // Prepare pagination & sort
         List<Sort.Order> sortOrders = new ArrayList<>();
@@ -129,14 +130,14 @@ public class RatingServiceImpl implements RatingService {
         // Validate Toilet
         Optional<ToiletEntity> toiletEntity = toiletRepository.findById(ratingRequest.getToiletId());
         if (!toiletEntity.isPresent())
-            throw new NotFoundException("Toilet", "Id", ratingRequest.getToiletId());
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_TOILET, ToiletMapErrorCodeEnum.NOT_FOUND_TOILET.getMessage());
 
         // Validate Account
         CustomAccountInfoDTO customAccountInfoDTO = accountRepository.getCustomAccountInfoByAccountId(ratingRequest.getAccountId());
         if (customAccountInfoDTO == null)
-            throw new NotFoundException("Account", "Id", ratingRequest.getAccountId());
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT.getMessage());
         if (!customAccountInfoDTO.getRole().equals(RoleEnum.USER.getRoleName()))
-            throw new BadRequestException("Invalid account role!");
+            throw new BadRequestException(ToiletMapErrorCodeEnum.INVALID_ROLE, ToiletMapErrorCodeEnum.INVALID_ROLE.getMessage());
         // TODO: validate account with check-in for rating
 
         // Save Rating Entity

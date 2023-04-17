@@ -3,6 +3,7 @@ package com.happy3friends.toiletmapbackend.service.serviceImpl;
 import com.happy3friends.toiletmapbackend.entity.AccountEntity;
 import com.happy3friends.toiletmapbackend.entity.CompanyEntity;
 import com.happy3friends.toiletmapbackend.enums.RoleEnum;
+import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
 import com.happy3friends.toiletmapbackend.exception.BadRequestException;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.CompanyMapper;
@@ -33,11 +34,11 @@ public class CompanyServiceImpl implements CompanyService {
         // Validate Account
         Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
         if (!accountEntity.isPresent())
-            throw new NotFoundException("Account", "Id", accountId);
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT.getMessage());
 
         // Validate Role
         if (accountEntity.get().getRoleByRoleId().getName().equals(RoleEnum.USER.getRoleName()))
-            throw new BadRequestException("Account with invalid role!");
+            throw new BadRequestException(ToiletMapErrorCodeEnum.INVALID_ROLE, ToiletMapErrorCodeEnum.INVALID_ROLE.getMessage());
 
         CompanyEntity companyEntity = companyRepository.getCompanyByAccountId(accountId);
 

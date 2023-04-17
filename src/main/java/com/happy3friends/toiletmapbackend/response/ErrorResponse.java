@@ -19,5 +19,6 @@ public class ErrorResponse {
     private ZonedDateTime timestamp;
     private int status;
     private String message;
+    private int errorCode;
     private List<String> errors;
 }

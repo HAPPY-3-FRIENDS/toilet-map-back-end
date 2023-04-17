@@ -1,5 +1,6 @@
 package com.happy3friends.toiletmapbackend.exception;
 
+import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -11,9 +12,15 @@ public class NotFoundException extends RuntimeException {
     private String resourceName;
     private String fieldName;
     private Object fieldValue;
+    private ToiletMapErrorCodeEnum toiletMapErrorCodeEnum;
 
     public NotFoundException(String message) {
         super(message);
+    }
+
+    public NotFoundException(ToiletMapErrorCodeEnum toiletMapErrorCodeEnum, String errorMessage) {
+        super(errorMessage);
+        this.toiletMapErrorCodeEnum = toiletMapErrorCodeEnum;
     }
 
     public NotFoundException(String resourceName, String fieldName, Object fieldValue) {

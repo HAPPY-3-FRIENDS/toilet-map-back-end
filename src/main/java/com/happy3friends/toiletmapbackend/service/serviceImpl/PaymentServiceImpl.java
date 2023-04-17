@@ -7,6 +7,7 @@ import com.happy3friends.toiletmapbackend.entity.AccountEntity;
 import com.happy3friends.toiletmapbackend.entity.PaymentEntity;
 import com.happy3friends.toiletmapbackend.enums.PaymentTypeEnum;
 import com.happy3friends.toiletmapbackend.enums.RoleEnum;
+import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
 import com.happy3friends.toiletmapbackend.exception.BadRequestException;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.PaymentMapper;
@@ -48,15 +49,15 @@ public class PaymentServiceImpl implements PaymentService {
         CustomAccountInfoDTO customAccountInfoDTO = accountRepository.getCustomAccountInfoByAccountId(paymentRequest.getAccountId());
         // Validate Account
         if (customAccountInfoDTO == null)
-            throw new NotFoundException("Account", "Id", paymentRequest.getAccountId());
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT.getMessage());
         if (!customAccountInfoDTO.getRole().equals(RoleEnum.USER.getRoleName()))
-            throw new BadRequestException("Invalid account Id!");
+            throw new BadRequestException(ToiletMapErrorCodeEnum.INVALID_ROLE, ToiletMapErrorCodeEnum.INVALID_ROLE.getMessage());
 
         // Validate Payment Method
         if (!paymentRequest.getMethod().equals(PaymentTypeEnum.VN_PAY.getPaymentValue())
                 && !paymentRequest.getMethod().equals(PaymentTypeEnum.CASH.getPaymentValue())
                 && !paymentRequest.getMethod().equals(PaymentTypeEnum.BANK_TRANSFER.getPaymentValue()))
-            throw new BadRequestException("Invalid payment method!");
+            throw new BadRequestException(ToiletMapErrorCodeEnum.INVALID_PAYMENT_METHOD, ToiletMapErrorCodeEnum.INVALID_PAYMENT_METHOD.getMessage());
 
         // TODO: check userToken with account from accountId
 
@@ -84,7 +85,8 @@ public class PaymentServiceImpl implements PaymentService {
 
         // Validate Account
         Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
-        if (!accountEntity.isPresent()) throw new NotFoundException("Account", "Id", accountId);
+        if (!accountEntity.isPresent())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT.getMessage());
 
         List<PaymentEntity> paymentEntities = paymentRepository.findAllByAccountId(accountId, pageable);
 
@@ -99,7 +101,8 @@ public class PaymentServiceImpl implements PaymentService {
         // Validate Account
         if (accountId != null) {
             Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
-            if (!accountEntity.isPresent()) throw new NotFoundException("Account", "Id", accountId);
+            if (!accountEntity.isPresent())
+                throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT.getMessage());
 
             return (int) paymentRepository.countByAccountId(accountId);
         }

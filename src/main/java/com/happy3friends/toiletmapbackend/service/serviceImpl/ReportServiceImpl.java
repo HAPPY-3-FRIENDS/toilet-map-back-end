@@ -6,6 +6,7 @@ import com.happy3friends.toiletmapbackend.constant.DefaultSortPropertyConstant;
 import com.happy3friends.toiletmapbackend.dto.CustomReportDTO;
 import com.happy3friends.toiletmapbackend.entity.CompanyEntity;
 import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
+import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
 import com.happy3friends.toiletmapbackend.exception.BadRequestException;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.ReportMapper;
@@ -35,7 +36,7 @@ import java.util.stream.Collectors;
 @Service
 public class ReportServiceImpl implements ReportService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CheckInServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReportServiceImpl.class);
 
     @Autowired
     private ReportRepository reportRepository;
@@ -62,7 +63,7 @@ public class ReportServiceImpl implements ReportService {
         // Validate Company ID
         Optional<CompanyEntity> companyEntity = companyRepository.findById(companyId);
         if (!companyEntity.isPresent())
-            throw new NotFoundException("Company", "Id", companyId);
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY, ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY.getMessage());
 
         List<CustomReportDTO> customReportDTOS = reportRepository.getAllReportsByCompanyId(companyId, fromDate, toDate, pageable);
 
@@ -79,7 +80,7 @@ public class ReportServiceImpl implements ReportService {
         // Validate Toilet ID
         Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
         if (!toiletEntity.isPresent())
-            throw new NotFoundException("Toilet", "Id", toiletId);
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_TOILET, ToiletMapErrorCodeEnum.NOT_FOUND_TOILET.getMessage());
 
         List<CustomReportDTO> customReportDTOS = reportRepository.getAllReportsByToiletId(toiletId, fromDate, toDate);
 
@@ -120,7 +121,7 @@ public class ReportServiceImpl implements ReportService {
             fromDate = DateTimeUtil.convertStringToDate(fromStrDate, DateTimeConstant.dd_MM_yyyy);
             toDate = DateTimeUtil.convertStringToDate(toStrDate, DateTimeConstant.dd_MM_yyyy);
             if (fromDate != null && fromDate.after(toDate))
-                throw new BadRequestException("Invalid Date!");
+                throw new BadRequestException(ToiletMapErrorCodeEnum.FROM_DATE_AFTER_TO_DATE, ToiletMapErrorCodeEnum.FROM_DATE_AFTER_TO_DATE.getMessage());
         }
 
         if (companyId != null && toiletId == null) {
@@ -136,7 +137,7 @@ public class ReportServiceImpl implements ReportService {
         // Validate Company ID
         Optional<CompanyEntity> companyEntity = companyRepository.findById(companyId);
         if (!companyEntity.isPresent())
-            throw new NotFoundException("Company", "Id", companyId);
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY, ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY.getMessage());
 
         CustomReportDTO customReportDTO = reportRepository.getTotalReportOfMonthByCompanyId(companyId, fromDate, toDate);
 
@@ -147,7 +148,7 @@ public class ReportServiceImpl implements ReportService {
         // Validate Toilet ID
         Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
         if (!toiletEntity.isPresent())
-            throw new NotFoundException("Toilet", "Id", toiletId);
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_TOILET, ToiletMapErrorCodeEnum.NOT_FOUND_TOILET.getMessage());
 
         CustomReportDTO customReportDTO = reportRepository.getTotalReportOfMonthByToiletId(toiletId, fromDate, toDate);
 

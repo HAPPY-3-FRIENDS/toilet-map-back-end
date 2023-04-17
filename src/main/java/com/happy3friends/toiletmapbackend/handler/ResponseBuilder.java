@@ -15,11 +15,12 @@ public class ResponseBuilder {
         return new ResponseEntity<>(response, httpStatus);
     }
 
-    public static ResponseEntity<ErrorResponse> generateErrorResponse(String message, HttpStatus httpStatus, List<String> errors) {
+    public static ResponseEntity<ErrorResponse> generateErrorResponse(String message, HttpStatus httpStatus, int errorCode, List<String> errors) {
         ErrorResponse errorResponse = new ErrorResponse(
                 DateTimeUtil.getZoneDateTimeNow(),
                 httpStatus.value(),
                 message,
+                errorCode,
                 errors
         );
         return new ResponseEntity<>(errorResponse, httpStatus);

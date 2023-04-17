@@ -6,6 +6,7 @@ import com.happy3friends.toiletmapbackend.entity.CompanyEntity;
 import com.happy3friends.toiletmapbackend.enums.PaymentTypeEnum;
 import com.happy3friends.toiletmapbackend.enums.RoleEnum;
 import com.happy3friends.toiletmapbackend.enums.StatusEnum;
+import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
 import com.happy3friends.toiletmapbackend.exception.BadRequestException;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.repository.AccountRepository;
@@ -47,35 +48,35 @@ public class AccountServiceImpl implements AccountService {
         // Validate password
         if (!accountRequest.getPassword().isEmpty()) {
             accountRequest.setPassword(passwordEncoder.encode(accountRequest.getPassword()));
-        } else throw new BadRequestException("Password cannot empty!");
+        } else throw new BadRequestException(ToiletMapErrorCodeEnum.EMPTY_PASSWORD, ToiletMapErrorCodeEnum.EMPTY_PASSWORD.getMessage());
 
         // Validate Company
         if (Integer.valueOf(accountRequest.getCompanyId()) == null)
-            throw new BadRequestException("CompanyId cannot empty!");
+            throw new BadRequestException(ToiletMapErrorCodeEnum.EMPTY_COMPANY_ID, ToiletMapErrorCodeEnum.EMPTY_COMPANY_ID.getMessage());
         Optional<CompanyEntity> companyEntity = companyRepository.findById(accountRequest.getCompanyId());
         if (!companyEntity.isPresent())
-            throw new NotFoundException("Company", "Id", accountRequest.getCompanyId());
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY, ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY.getMessage());
 
         // Validate Role
         if (RoleEnum.getByValue(accountRequest.getRoleName()) == null || RoleEnum.USER.getRoleName().equals(accountRequest.getRoleName()))
-            throw new BadRequestException("Invalid role name: '" + accountRequest.getRoleName() + "'!");
+            throw new BadRequestException(ToiletMapErrorCodeEnum.INVALID_ROLE, ToiletMapErrorCodeEnum.INVALID_ROLE.getMessage());
 
         // Validate action - Cannot register an Admin Account
         if (RoleEnum.ADMIN.getRoleName().equals(accountRequest.getRoleName()))
-            throw new BadRequestException("Cannot register an Admin Account!");
+            throw new BadRequestException(ToiletMapErrorCodeEnum.CREATE_ACCOUNT_ADMIN_ERROR, ToiletMapErrorCodeEnum.CREATE_ACCOUNT_ADMIN_ERROR.getMessage());
 
         // Validate action - Admin can only create an Account for Manager, Manager can only create an Account for Toilet
         String jwt = JwtUtil.getJwtFromRequest();
         Claims claims = JwtUtil.getAllClaimsFromToken(jwt);
         String authRole = claims.get("role", String.class);
         if (RoleEnum.ADMIN.getRoleName().equals(authRole) && !RoleEnum.MANAGER.getRoleName().equals(accountRequest.getRoleName()))
-            throw new BadRequestException("Admin cannot create an account for any role except for Manager role!");
+            throw new BadRequestException(ToiletMapErrorCodeEnum.ADMIN_CREATE_MANAGER_ONLY,ToiletMapErrorCodeEnum.ADMIN_CREATE_MANAGER_ONLY.getMessage());
         if (RoleEnum.MANAGER.getRoleName().equals(authRole) && !RoleEnum.TOILET.getRoleName().equals(accountRequest.getRoleName()))
-            throw new BadRequestException("Manager cannot create an account for any role except for Staff-At-Toilet role!");
+            throw new BadRequestException(ToiletMapErrorCodeEnum.MANAGER_CREATE_STAFF_ONLY, ToiletMapErrorCodeEnum.MANAGER_CREATE_STAFF_ONLY.getMessage());
 
         // Validate username
         if (accountRepository.findByUsername(accountRequest.getUsername()) != null)
-            throw new BadRequestException("Username '" + accountRequest.getUsername() + "' is not unique! It's already used by another employee!");
+            throw new BadRequestException(ToiletMapErrorCodeEnum.EXISTED_USERNAME, ToiletMapErrorCodeEnum.EXISTED_USERNAME.getMessage());
 
         // TODO: username regex
 
@@ -94,7 +95,7 @@ public class AccountServiceImpl implements AccountService {
 
         // Validate phone
         if (accountRepository.findByUsername(accountRequest.getUsername()) != null)
-            throw new BadRequestException("Phone '" + accountRequest.getUsername() + "' is not unique! It's already used by another user!");
+            throw new BadRequestException(ToiletMapErrorCodeEnum.EXISTED_PHONE, ToiletMapErrorCodeEnum.EXISTED_PHONE.getMessage());
 
         // TODO: phone regex
 

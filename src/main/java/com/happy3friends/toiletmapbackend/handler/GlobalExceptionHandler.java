@@ -1,5 +1,6 @@
 package com.happy3friends.toiletmapbackend.handler;
 
+import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
 import com.happy3friends.toiletmapbackend.exception.BadRequestException;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.response.ErrorResponse;
@@ -29,7 +30,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleInternalServerException(Exception ex) {
         LOGGER.error("An exception occurred: ", ex);
-        return ResponseBuilder.generateErrorResponse("Internal Server Error!", HttpStatus.INTERNAL_SERVER_ERROR, Collections.singletonList(String.valueOf(ex)));
+        return ResponseBuilder.generateErrorResponse(
+                "Internal Server Error!",
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                500,
+                Collections.singletonList(String.valueOf(ex)));
     }
 
     @ExceptionHandler(value = AccessDeniedException.class)
@@ -37,7 +42,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         List<String> details = new ArrayList<>();
         details.add(ex.getMessage());
         LOGGER.warn("Access Denied: " + details);
-        return ResponseBuilder.generateErrorResponse("Access Denied!", HttpStatus.FORBIDDEN, details);
+        return ResponseBuilder.generateErrorResponse(
+                "Access Denied!",
+                HttpStatus.FORBIDDEN,
+                ToiletMapErrorCodeEnum.UNAUTHORIZED.getCode(),
+                details);
     }
 
     @ExceptionHandler(value = NotFoundException.class)
@@ -45,7 +54,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         List<String> details = new ArrayList<>();
         details.add(ex.getMessage());
         LOGGER.warn("Resource not found: " + details);
-        return ResponseBuilder.generateErrorResponse("Resource Not Found!", HttpStatus.NOT_FOUND, details);
+        return ResponseBuilder.generateErrorResponse(
+                "Resource Not Found!",
+                HttpStatus.NOT_FOUND,
+                ex.getToiletMapErrorCodeEnum().getCode(),
+                details);
     }
 
     @Override
@@ -60,16 +73,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 DateTimeUtil.getZoneDateTimeNow(),
                 HttpStatus.BAD_REQUEST.value(),
                 "Bad Request (Invalid Validation)!",
+                ToiletMapErrorCodeEnum.INVALID_VALIDATION.getCode(),
                 errorList
         );
         return handleExceptionInternal(ex, errorResponse, headers, HttpStatus.valueOf(errorResponse.getStatus()), request);
     }
 
-    @ExceptionHandler(BadRequestException.class)
+    @ExceptionHandler(value = BadRequestException.class)
     public ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException ex) {
         List<String> details = new ArrayList<>();
         details.add(ex.getMessage());
         LOGGER.warn("An invalid request was rejected: " + details);
-        return ResponseBuilder.generateErrorResponse("Bad Request!", HttpStatus.BAD_REQUEST, details);
+        return ResponseBuilder.generateErrorResponse(
+                "Bad Request!",
+                HttpStatus.BAD_REQUEST,
+                ex.getToiletMapErrorCodeEnum().getCode(),
+                details);
     }
 }

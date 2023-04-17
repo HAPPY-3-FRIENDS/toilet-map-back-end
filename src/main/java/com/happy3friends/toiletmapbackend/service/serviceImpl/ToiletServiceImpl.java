@@ -11,6 +11,7 @@ import com.happy3friends.toiletmapbackend.entity.*;
 import com.happy3friends.toiletmapbackend.enums.RoleEnum;
 import com.happy3friends.toiletmapbackend.enums.ServiceEnum;
 import com.happy3friends.toiletmapbackend.enums.StatusEnum;
+import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
 import com.happy3friends.toiletmapbackend.exception.BadRequestException;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.ToiletImageMapper;
@@ -174,7 +175,7 @@ public class ToiletServiceImpl implements ToiletService {
         // Validate Company
         Optional<CompanyEntity> companyEntity = companyRepository.findById(companyId);
         if (!companyEntity.isPresent())
-            throw new NotFoundException("Company", "Id", companyId);
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY, ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY.getMessage());
 
         // Get all toilets of Company by Company ID
         List<CustomToiletDetailsInfoDTO> customToiletDetailsInfoDTOS
@@ -219,7 +220,7 @@ public class ToiletServiceImpl implements ToiletService {
         if (companyId != null) {
             Optional<CompanyEntity> companyEntity = companyRepository.findById(companyId);
             if (!companyEntity.isPresent())
-                throw new NotFoundException("Company", "Id", companyId);
+                throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY, ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY.getMessage());
 
             return (int) toiletRepository.countByCompanyId(companyId);
         }
@@ -244,30 +245,30 @@ public class ToiletServiceImpl implements ToiletService {
         // Validate company ID
         Optional<CompanyEntity> companyEntity = companyRepository.findById(toiletCreateRequest.getCompanyId());
         if (!companyEntity.isPresent())
-            throw new NotFoundException("Company", "Id", toiletCreateRequest.getCompanyId());
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY, ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY.getMessage());
 
         // Validate Username
         if (accountRepository.findByUsername(toiletCreateRequest.getUsername()) != null)
-            throw new BadRequestException("Username '" + toiletCreateRequest.getUsername() + "' is not unique! It's already used by another toilet!");
+            throw new BadRequestException(ToiletMapErrorCodeEnum.EXISTED_USERNAME, ToiletMapErrorCodeEnum.EXISTED_USERNAME.getMessage());
 
         // Validate Status
         if (StatusEnum.getByValue(toiletCreateRequest.getStatus()) == null)
-            throw new BadRequestException("Invalid status!");
+            throw new BadRequestException(ToiletMapErrorCodeEnum.INVALID_STATUS, ToiletMapErrorCodeEnum.INVALID_STATUS.getMessage());
 
         // Find role Toilet
         List<RoleEntity> roleEntities = roleRepository.findAll();
         int roleId = roleEntities.stream()
                 .filter(entity -> entity.getName().equals(RoleEnum.TOILET.getRoleName()))
-                .findFirst().orElseThrow(() -> new NotFoundException("Can not find Toilet Role in database!")).getId();
+                .findFirst().orElseThrow(() -> new Exception("Can not find Toilet Role in database!")).getId();
 
         // Validate Facility
         List<ToiletFacilityDTO> toiletFacilityDTOS = toiletCreateRequest.getToiletFacilities();
         List<FacilityEntity> facilityEntities = facilityRepository.findAll();
         List<Integer> listFacilityIds = facilityEntities.stream().map(FacilityEntity::getId).collect(Collectors.toList());
         if (!new HashSet<>(listFacilityIds).containsAll(toiletFacilityDTOS.stream().map(ToiletFacilityDTO::getFacilityId).collect(Collectors.toList())))
-            throw new BadRequestException("Invalid facility Id!");
+            throw new BadRequestException(ToiletMapErrorCodeEnum.INVALID_FACILITY, ToiletMapErrorCodeEnum.INVALID_FACILITY.getMessage());
         if (toiletFacilityDTOS.stream().anyMatch(dto -> dto.getQuantity() < 1))
-            throw new BadRequestException("Quantity of facility is less than 1");
+            throw new BadRequestException(ToiletMapErrorCodeEnum.INVALID_FACILITY_QUANTITY, ToiletMapErrorCodeEnum.INVALID_FACILITY_QUANTITY.getMessage());
 
         LOGGER.info("-- Create Toilet - Start save Account Entity! --");
         AccountEntity accountEntity = new AccountEntity();

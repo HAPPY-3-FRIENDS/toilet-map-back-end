@@ -1,6 +1,7 @@
 package com.happy3friends.toiletmapbackend.sercurity;
 
 import com.happy3friends.toiletmapbackend.dto.CustomAccountInfoDTO;
+import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,8 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) {
         CustomAccountInfoDTO customAccountInfoDTO = accountRepository.getCustomAccountInfoByUsername(username);
 
-        if (customAccountInfoDTO == null) throw new NotFoundException("Account", "username", username);
+        if (customAccountInfoDTO == null)
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT.getMessage());
 
         return CustomUserDetails.create(customAccountInfoDTO);
     }
@@ -32,7 +34,8 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserById(int id) {
         CustomAccountInfoDTO customAccountInfoDTO = accountRepository.getCustomAccountInfoByAccountId(id);
 
-        if (customAccountInfoDTO == null) throw new NotFoundException("Account", "id", id);
+        if (customAccountInfoDTO == null)
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT.getMessage());
 
         return CustomUserDetails.create(customAccountInfoDTO);
     }
