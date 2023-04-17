@@ -7,6 +7,7 @@ public interface CustomReportDTO {
     String getToiletName();
     String getServiceName();
     Integer getTotalRevenue();
+    Integer getTotalTurn();
     Integer getWalkInGuestRevenue();
     Integer getWalkInGuestCount();
     Integer getUsingTurnRevenue();

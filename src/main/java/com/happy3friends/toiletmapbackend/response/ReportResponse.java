@@ -16,6 +16,7 @@ public class ReportResponse {
     private String toiletName;
     private String serviceName;
     private Integer totalRevenue;
+    private Integer totalTurn;
     private Integer walkInGuestRevenue;
     private Integer walkInGuestCount;
     private Integer usingTurnRevenue;

@@ -123,4 +123,41 @@ public class ReportServiceImpl implements ReportService {
             return getAllReports(fromDate, toDate, paginationRequest);
         }
     }
+
+    private ReportResponse getTotalReportOfMonthByCompanyId(Integer companyId, Date fromDate, Date toDate) {
+        // Validate Company ID
+        Optional<CompanyEntity> companyEntity = companyRepository.findById(companyId);
+        if (!companyEntity.isPresent())
+            throw new NotFoundException("Company", "Id", companyId);
+
+        CustomReportDTO customReportDTO = reportRepository.getTotalReportOfMonthByCompanyId(companyId, fromDate, toDate);
+
+        return reportMapper.convertCustomReportDTOToReportResponse(customReportDTO);
+    }
+
+    private ReportResponse getTotalReportOfMonthByToiletId(Integer toiletId, Date fromDate, Date toDate) {
+        // Validate Toilet ID
+        Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
+        if (!toiletEntity.isPresent())
+            throw new NotFoundException("Toilet", "Id", toiletId);
+
+        CustomReportDTO customReportDTO = reportRepository.getTotalReportOfMonthByToiletId(toiletId, fromDate, toDate);
+
+        return reportMapper.convertCustomReportDTOToReportResponse(customReportDTO);
+    }
+
+    @Override
+    public ReportResponse getTotalReportOfMonth(Integer companyId, Integer toiletId) {
+        Date toDate = DateTimeUtil.getDateNow();
+        Date fromDate = DateTimeUtil.getFirstDateOfCurrentMonth();
+
+        if (companyId != null && toiletId == null) {
+            return getTotalReportOfMonthByCompanyId(companyId, fromDate, toDate);
+        } else if (companyId == null && toiletId != null) {
+            return getTotalReportOfMonthByToiletId(toiletId, fromDate, toDate);
+        } else {
+            CustomReportDTO customReportDTO = reportRepository.getTotalReportOfMonth(fromDate, toDate);
+            return reportMapper.convertCustomReportDTOToReportResponse(customReportDTO);
+        }
+    }
 }

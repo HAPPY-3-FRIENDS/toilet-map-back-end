@@ -149,4 +149,41 @@ public class ReportController {
                 responses
         );
     }
+
+    @Operation(summary = "Get total report of month",
+            description = "- [Manager] Get total report of month by company ID (All toilets in this company)\n" +
+                    "- [Manager] Get total report of month by toilet ID (All services in this toilet)\n" +
+                    "- Default is get total report of month in the system (All companies in this system)\n" +
+                    "- From date and to date is current month")
+    @Parameters(value = {
+            @Parameter(name = "company-id", description = "A specific company ID", in = ParameterIn.QUERY),
+            @Parameter(name = "toilet-id", description = "A specific toilet ID", in = ParameterIn.QUERY)
+    })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
+                    @ExampleObject(value = "{\n" +
+                            "    \"totalRevenue\": 84000,\n" +
+                            "    \"totalTurn\": 25\n" +
+                            "}")})),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.MANAGER})
+    @GetMapping(value = "/total/month")
+    public ResponseEntity<BaseResponse<ReportResponse>> getTotalReportByMonth(
+            @RequestParam(value = "company-id", required = false) Integer companyId,
+            @RequestParam(value = "toilet-id", required = false) Integer toiletId) {
+
+        ReportResponse response = reportService.getTotalReportOfMonth(companyId, toiletId);
+
+        return ResponseBuilder.generateResponse(
+                "Get total report by month successfully!",
+                HttpStatus.OK,
+                response
+        );
+    }
 }

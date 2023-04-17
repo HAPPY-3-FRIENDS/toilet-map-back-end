@@ -12,4 +12,5 @@ public interface ReportService {
             String fromStrDate,
             String toStrDate,
             BasePaginationRequest paginationRequest);
+    ReportResponse getTotalReportOfMonth(Integer companyId, Integer toiletId);
 }
