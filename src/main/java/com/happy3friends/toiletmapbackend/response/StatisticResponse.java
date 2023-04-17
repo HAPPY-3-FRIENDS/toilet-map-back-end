@@ -9,7 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ReportResponse {
+public class StatisticResponse {
     private Integer companyId;
     private String companyName;
     private Integer toiletId;

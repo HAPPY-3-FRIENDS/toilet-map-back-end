@@ -3,18 +3,18 @@ package com.happy3friends.toiletmapbackend.service.serviceImpl;
 import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
 import com.happy3friends.toiletmapbackend.constant.DateTimeConstant;
 import com.happy3friends.toiletmapbackend.constant.DefaultSortPropertyConstant;
-import com.happy3friends.toiletmapbackend.dto.CustomReportDTO;
+import com.happy3friends.toiletmapbackend.dto.CustomStatisticDTO;
 import com.happy3friends.toiletmapbackend.entity.CompanyEntity;
 import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
 import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
 import com.happy3friends.toiletmapbackend.exception.BadRequestException;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
-import com.happy3friends.toiletmapbackend.mapper.ReportMapper;
+import com.happy3friends.toiletmapbackend.mapper.StatisticMapper;
 import com.happy3friends.toiletmapbackend.repository.CompanyRepository;
-import com.happy3friends.toiletmapbackend.repository.ReportRepository;
+import com.happy3friends.toiletmapbackend.repository.StatisticRepository;
 import com.happy3friends.toiletmapbackend.repository.ToiletRepository;
-import com.happy3friends.toiletmapbackend.response.ReportResponse;
-import com.happy3friends.toiletmapbackend.service.ReportService;
+import com.happy3friends.toiletmapbackend.response.StatisticResponse;
+import com.happy3friends.toiletmapbackend.service.StatisticService;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
 import com.happy3friends.toiletmapbackend.utils.PaginationUtil;
 import org.slf4j.Logger;
@@ -34,12 +34,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class ReportServiceImpl implements ReportService {
+public class StatisticServiceImpl implements StatisticService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReportServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StatisticServiceImpl.class);
 
     @Autowired
-    private ReportRepository reportRepository;
+    private StatisticRepository statisticRepository;
 
     @Autowired
     private ToiletRepository toiletRepository;
@@ -48,9 +48,9 @@ public class ReportServiceImpl implements ReportService {
     private CompanyRepository companyRepository;
 
     @Autowired
-    private ReportMapper reportMapper;
+    private StatisticMapper statisticMapper;
 
-    private List<ReportResponse> getAllReportsByCompanyId(
+    private List<StatisticResponse> getAllStatisticsByCompanyId(
             Integer companyId,
             Date fromDate,
             Date toDate,
@@ -65,14 +65,14 @@ public class ReportServiceImpl implements ReportService {
         if (!companyEntity.isPresent())
             throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY, ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY.getMessage());
 
-        List<CustomReportDTO> customReportDTOS = reportRepository.getAllReportsByCompanyId(companyId, fromDate, toDate, pageable);
+        List<CustomStatisticDTO> customStatisticDTOS = statisticRepository.getAllStatisticsByCompanyId(companyId, fromDate, toDate, pageable);
 
-        return customReportDTOS.stream()
-                .map(dto -> reportMapper.convertCustomReportDTOToReportResponse(dto))
+        return customStatisticDTOS.stream()
+                .map(dto -> statisticMapper.convertCustomStatisticDTOToStatisticResponse(dto))
                 .collect(Collectors.toList());
     }
 
-    private List<ReportResponse> getAllReportsByToiletId(
+    private List<StatisticResponse> getAllStatisticsByToiletId(
             Integer toiletId,
             Date fromDate,
             Date toDate) {
@@ -82,28 +82,28 @@ public class ReportServiceImpl implements ReportService {
         if (!toiletEntity.isPresent())
             throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_TOILET, ToiletMapErrorCodeEnum.NOT_FOUND_TOILET.getMessage());
 
-        List<CustomReportDTO> customReportDTOS = reportRepository.getAllReportsByToiletId(toiletId, fromDate, toDate);
+        List<CustomStatisticDTO> customStatisticDTOS = statisticRepository.getAllStatisticsByToiletId(toiletId, fromDate, toDate);
 
-        return customReportDTOS.stream()
-                .map(dto -> reportMapper.convertCustomReportDTOToReportResponse(dto))
+        return customStatisticDTOS.stream()
+                .map(dto -> statisticMapper.convertCustomStatisticDTOToStatisticResponse(dto))
                 .collect(Collectors.toList());
     }
 
-    private List<ReportResponse> getAllReports(Date fromDate, Date toDate, BasePaginationRequest paginationRequest) {
+    private List<StatisticResponse> getAllStatistics(Date fromDate, Date toDate, BasePaginationRequest paginationRequest) {
 
         // Prepare pagination & sort
         Sort.Order defaultSortOrder = new Sort.Order(Sort.Direction.DESC, DefaultSortPropertyConstant.TOTAL_REVENUE);
         Pageable pageable = PaginationUtil.getPageable(paginationRequest, defaultSortOrder);
 
-        List<CustomReportDTO> customReportDTOS = reportRepository.getAllReports(fromDate, toDate, pageable);
+        List<CustomStatisticDTO> customStatisticDTOS = statisticRepository.getAllStatistics(fromDate, toDate, pageable);
 
-        return customReportDTOS.stream()
-                .map(dto -> reportMapper.convertCustomReportDTOToReportResponse(dto))
+        return customStatisticDTOS.stream()
+                .map(dto -> statisticMapper.convertCustomStatisticDTOToStatisticResponse(dto))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<ReportResponse> getAllReports(
+    public List<StatisticResponse> getAllStatistics(
             Integer companyId,
             Integer toiletId,
             String fromStrDate,
@@ -125,38 +125,38 @@ public class ReportServiceImpl implements ReportService {
         }
 
         if (companyId != null && toiletId == null) {
-            return getAllReportsByCompanyId(companyId, fromDate, toDate, paginationRequest);
+            return getAllStatisticsByCompanyId(companyId, fromDate, toDate, paginationRequest);
         } else if (companyId == null && toiletId != null) {
-            return getAllReportsByToiletId(toiletId, fromDate, toDate);
+            return getAllStatisticsByToiletId(toiletId, fromDate, toDate);
         } else { // List of Total revenue of each companies in System
-            return getAllReports(fromDate, toDate, paginationRequest);
+            return getAllStatistics(fromDate, toDate, paginationRequest);
         }
     }
 
-    private ReportResponse getTotalReportOfMonthByCompanyId(Integer companyId, Date fromDate, Date toDate) {
+    private StatisticResponse getTotalStatisticOfMonthByCompanyId(Integer companyId, Date fromDate, Date toDate) {
         // Validate Company ID
         Optional<CompanyEntity> companyEntity = companyRepository.findById(companyId);
         if (!companyEntity.isPresent())
             throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY, ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY.getMessage());
 
-        CustomReportDTO customReportDTO = reportRepository.getTotalReportOfMonthByCompanyId(companyId, fromDate, toDate);
+        CustomStatisticDTO customStatisticDTO = statisticRepository.getTotalStatisticOfMonthByCompanyId(companyId, fromDate, toDate);
 
-        return reportMapper.convertCustomReportDTOToReportResponse(customReportDTO);
+        return statisticMapper.convertCustomStatisticDTOToStatisticResponse(customStatisticDTO);
     }
 
-    private ReportResponse getTotalReportOfMonthByToiletId(Integer toiletId, Date fromDate, Date toDate) {
+    private StatisticResponse getTotalStatisticOfMonthByToiletId(Integer toiletId, Date fromDate, Date toDate) {
         // Validate Toilet ID
         Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
         if (!toiletEntity.isPresent())
             throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_TOILET, ToiletMapErrorCodeEnum.NOT_FOUND_TOILET.getMessage());
 
-        CustomReportDTO customReportDTO = reportRepository.getTotalReportOfMonthByToiletId(toiletId, fromDate, toDate);
+        CustomStatisticDTO customStatisticDTO = statisticRepository.getTotalStatisticOfMonthByToiletId(toiletId, fromDate, toDate);
 
-        return reportMapper.convertCustomReportDTOToReportResponse(customReportDTO);
+        return statisticMapper.convertCustomStatisticDTOToStatisticResponse(customStatisticDTO);
     }
 
     @Override
-    public ReportResponse getTotalReportOfMonth(Integer companyId, Integer toiletId) {
+    public StatisticResponse getTotalStatisticOfMonth(Integer companyId, Integer toiletId) {
         Date toDate = DateTimeUtil.getDateNow();
         Date fromDate = DateTimeUtil.getFirstDateOfCurrentMonth();
 
@@ -168,12 +168,12 @@ public class ReportServiceImpl implements ReportService {
         LOGGER.info("convertZoneDateTimeToDate: " + DateTimeUtil.convertZoneDateTimeToDate(DateTimeUtil.getZoneDateTimeNow()));
 
         if (companyId != null && toiletId == null) {
-            return getTotalReportOfMonthByCompanyId(companyId, fromDate, toDate);
+            return getTotalStatisticOfMonthByCompanyId(companyId, fromDate, toDate);
         } else if (companyId == null && toiletId != null) {
-            return getTotalReportOfMonthByToiletId(toiletId, fromDate, toDate);
+            return getTotalStatisticOfMonthByToiletId(toiletId, fromDate, toDate);
         } else {
-            CustomReportDTO customReportDTO = reportRepository.getTotalReportOfMonth(fromDate, toDate);
-            return reportMapper.convertCustomReportDTOToReportResponse(customReportDTO);
+            CustomStatisticDTO customStatisticDTO = statisticRepository.getTotalStatisticOfMonth(fromDate, toDate);
+            return statisticMapper.convertCustomStatisticDTOToStatisticResponse(customStatisticDTO);
         }
     }
 }

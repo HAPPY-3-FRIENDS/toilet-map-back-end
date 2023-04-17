@@ -5,8 +5,8 @@ import com.happy3friends.toiletmapbackend.base.models.BaseResponse;
 import com.happy3friends.toiletmapbackend.config.OpenApiConfig;
 import com.happy3friends.toiletmapbackend.constant.RoleConstant;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
-import com.happy3friends.toiletmapbackend.response.ReportResponse;
-import com.happy3friends.toiletmapbackend.service.ReportService;
+import com.happy3friends.toiletmapbackend.response.StatisticResponse;
+import com.happy3friends.toiletmapbackend.service.StatisticService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -27,18 +27,18 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.security.RolesAllowed;
 import java.util.List;
 
-@Tag(name = "Report", description = "Report API")
+@Tag(name = "Statistic", description = "Statistic API")
 @RestController
-@RequestMapping(value = "/api/reports")
-public class ReportController {
+@RequestMapping(value = "/api/statistics")
+public class StatisticController {
 
     @Autowired
-    private ReportService reportService;
+    private StatisticService statisticService;
 
-    @Operation(summary = "Get all reports",
-            description = "- [Manager] Get a list of all reports by company ID (All toilets in this company, with pagination and default sort by Total revenue desc)\n" +
-                    "- [Manager] Get a list of all reports by toilet ID (All services in this toilet)\n" +
-                    "- Default is get all reports in the system (All companies in this system, with pagination and default sort by Total revenue desc)\n" +
+    @Operation(summary = "Get all statistics",
+            description = "- [Manager] Get a list of all statistics by company ID (All toilets in this company, with pagination and default sort by Total revenue desc)\n" +
+                    "- [Manager] Get a list of all statistics by toilet ID (All services in this toilet)\n" +
+                    "- Default is get all statistics in the system (All companies in this system, with pagination and default sort by Total revenue desc)\n" +
                     "- Default from date and to date is current month")
     @Parameters(value = {
             @Parameter(name = "company-id", description = "A specific company ID", in = ParameterIn.QUERY),
@@ -53,7 +53,7 @@ public class ReportController {
     })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
-                    @ExampleObject(name = "Get a list of all reports by company ID", value = "[\n" +
+                    @ExampleObject(name = "Get a list of all statistics by company ID", value = "[\n" +
                             "    {\n" +
                             "      \"toiletId\": 5,\n" +
                             "      \"toiletName\": \"Nhà vệ sinh lưu động số 2\",\n" +
@@ -73,7 +73,7 @@ public class ReportController {
                             "      \"usingTurnCount\": 8\n" +
                             "    }\n" +
                             "]"),
-                    @ExampleObject(name = "Get a list of all reports by toilet ID", value = "[\n" +
+                    @ExampleObject(name = "Get a list of all statistics by toilet ID", value = "[\n" +
                             "    {\n" +
                             "      \"serviceName\": \"Đi vệ sinh (tiểu tiện)\",\n" +
                             "      \"totalRevenue\": 8000,\n" +
@@ -99,7 +99,7 @@ public class ReportController {
                             "      \"usingTurnCount\": 0\n" +
                             "    }\n" +
                             "]"),
-                    @ExampleObject(name = "Get a list of all reports of all companies in the system", value = "[\n" +
+                    @ExampleObject(name = "Get a list of all statistics of all companies in the system", value = "[\n" +
                             "    {\n" +
                             "      \"companyId\": 2,\n" +
                             "      \"companyName\": \"Công ty dịch vụ công ích quận 1\",\n" +
@@ -129,14 +129,14 @@ public class ReportController {
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.MANAGER})
     @GetMapping
-    public ResponseEntity<BaseResponse<List<ReportResponse>>> getAllReports(
+    public ResponseEntity<BaseResponse<List<StatisticResponse>>> getAllStatistics(
             @RequestParam(value = "company-id", required = false) Integer companyId,
             @RequestParam(value = "toilet-id", required = false) Integer toiletId,
             @RequestParam(value = "from-date", required = false) String fromStrDate,
             @RequestParam(value = "to-date", required = false) String toStrDate,
             @ModelAttribute BasePaginationRequest paginationRequest) {
 
-        List<ReportResponse> responses = reportService.getAllReports(
+        List<StatisticResponse> responses = statisticService.getAllStatistics(
                 companyId,
                 toiletId,
                 fromStrDate,
@@ -144,16 +144,16 @@ public class ReportController {
                 paginationRequest);
 
         return ResponseBuilder.generateResponse(
-                "Get list of all reports successfully!",
+                "Get list of all statistics successfully!",
                 HttpStatus.OK,
                 responses
         );
     }
 
-    @Operation(summary = "Get total report of month",
-            description = "- [Manager] Get total report of month by company ID (All toilets in this company)\n" +
-                    "- [Manager] Get total report of month by toilet ID (All services in this toilet)\n" +
-                    "- Default is get total report of month in the system (All companies in this system)\n" +
+    @Operation(summary = "Get total statistic of month",
+            description = "- [Manager] Get total statistic of month by company ID (All toilets in this company)\n" +
+                    "- [Manager] Get total statistic of month by toilet ID (All services in this toilet)\n" +
+                    "- Default is get total statistic of month in the system (All companies in this system)\n" +
                     "- From date and to date is current month")
     @Parameters(value = {
             @Parameter(name = "company-id", description = "A specific company ID", in = ParameterIn.QUERY),
@@ -174,14 +174,14 @@ public class ReportController {
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.MANAGER})
     @GetMapping(value = "/total/month")
-    public ResponseEntity<BaseResponse<ReportResponse>> getTotalReportByMonth(
+    public ResponseEntity<BaseResponse<StatisticResponse>> getTotalStatisticByMonth(
             @RequestParam(value = "company-id", required = false) Integer companyId,
             @RequestParam(value = "toilet-id", required = false) Integer toiletId) {
 
-        ReportResponse response = reportService.getTotalReportOfMonth(companyId, toiletId);
+        StatisticResponse response = statisticService.getTotalStatisticOfMonth(companyId, toiletId);
 
         return ResponseBuilder.generateResponse(
-                "Get total report by month successfully!",
+                "Get total statistic by month successfully!",
                 HttpStatus.OK,
                 response
         );

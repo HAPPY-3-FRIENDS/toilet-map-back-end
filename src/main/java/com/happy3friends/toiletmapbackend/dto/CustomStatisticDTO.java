@@ -1,6 +1,6 @@
 package com.happy3friends.toiletmapbackend.dto;
 
-public interface CustomReportDTO {
+public interface CustomStatisticDTO {
     Integer getCompanyId();
     String getCompanyName();
     Integer getToiletId();

@@ -1,6 +1,6 @@
 package com.happy3friends.toiletmapbackend.repository;
 
-import com.happy3friends.toiletmapbackend.dto.CustomReportDTO;
+import com.happy3friends.toiletmapbackend.dto.CustomStatisticDTO;
 import com.happy3friends.toiletmapbackend.entity.CheckInEntity;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-public interface ReportRepository extends JpaRepository<CheckInEntity, Integer> {
+public interface StatisticRepository extends JpaRepository<CheckInEntity, Integer> {
 
     @Query(value = "SELECT s.Name                                                      AS ServiceName, " +
             "       COALESCE(SUM(c.Balance), 0) + COALESCE(SUM(c.TurnPrice), 0) AS TotalRevenue, " +
@@ -30,9 +30,9 @@ public interface ReportRepository extends JpaRepository<CheckInEntity, Integer> 
             "WHERE t.Id = :toiletId " +
             "GROUP BY s.Name " +
             "ORDER BY s.Name DESC", nativeQuery = true)
-    List<CustomReportDTO> getAllReportsByToiletId(@Param("toiletId") int toiletId,
-                                                  @Param("fromDate") Date fromDate,
-                                                  @Param("toDate") Date toDate);
+    List<CustomStatisticDTO> getAllStatisticsByToiletId(@Param("toiletId") int toiletId,
+                                                     @Param("fromDate") Date fromDate,
+                                                     @Param("toDate") Date toDate);
 
 
     @Query(value = "SELECT * " +
@@ -55,10 +55,10 @@ public interface ReportRepository extends JpaRepository<CheckInEntity, Integer> 
             "                    ON t.CompanyId = cp.Id " +
             "      WHERE cp.Id = :companyId " +
             "      GROUP BY t.Id, t.Name) r", nativeQuery = true)
-    List<CustomReportDTO> getAllReportsByCompanyId(@Param("companyId") int companyId,
-                                                   @Param("fromDate") Date fromDate,
-                                                   @Param("toDate") Date toDate,
-                                                   Pageable pageable);
+    List<CustomStatisticDTO> getAllStatisticsByCompanyId(@Param("companyId") int companyId,
+                                                      @Param("fromDate") Date fromDate,
+                                                      @Param("toDate") Date toDate,
+                                                      Pageable pageable);
 
     @Query(value = "SELECT * " +
             "FROM (SELECT cp.Id                                                       AS CompanyId, " +
@@ -80,9 +80,9 @@ public interface ReportRepository extends JpaRepository<CheckInEntity, Integer> 
             "      WHERE c.DateTime IS NULL " +
             "         OR (c.DateTime BETWEEN :fromDate AND :toDate) " +
             "      GROUP BY cp.Id, cp.Name) r", nativeQuery = true)
-    List<CustomReportDTO> getAllReports(@Param("fromDate") Date fromDate,
-                                        @Param("toDate") Date toDate,
-                                        Pageable pageable);
+    List<CustomStatisticDTO> getAllStatistics(@Param("fromDate") Date fromDate,
+                                           @Param("toDate") Date toDate,
+                                           Pageable pageable);
 
     @Query(value = "SELECT (COALESCE(SUM(c.Balance), 0) + COALESCE(SUM(c.TurnPrice), 0)) AS TotalRevenue, " +
             "       COUNT(c.Balance) + COUNT(c.TurnPrice)                         AS TotalTurn " +
@@ -95,9 +95,9 @@ public interface ReportRepository extends JpaRepository<CheckInEntity, Integer> 
             "         JOIN Company cp " +
             "              ON t.CompanyId = cp.Id " +
             "WHERE cp.Id = :companyId", nativeQuery = true)
-    CustomReportDTO getTotalReportOfMonthByCompanyId(@Param("companyId") int companyId,
-                                                     @Param("fromDate") Date fromDate,
-                                                     @Param("toDate") Date toDate);
+    CustomStatisticDTO getTotalStatisticOfMonthByCompanyId(@Param("companyId") int companyId,
+                                                        @Param("fromDate") Date fromDate,
+                                                        @Param("toDate") Date toDate);
 
     @Query(value = "SELECT COALESCE(SUM(c.Balance), 0) + COALESCE(SUM(c.TurnPrice), 0) AS TotalRevenue, " +
             "       COUNT(c.Balance) + COUNT(c.TurnPrice)                       AS TotalTurn " +
@@ -107,9 +107,9 @@ public interface ReportRepository extends JpaRepository<CheckInEntity, Integer> 
             "         JOIN Toilet t " +
             "              ON ts.ToiletId = t.Id " +
             "WHERE t.Id = :toiletId", nativeQuery = true)
-    CustomReportDTO getTotalReportOfMonthByToiletId(@Param("toiletId") int toiletId,
-                                                    @Param("fromDate") Date fromDate,
-                                                    @Param("toDate") Date toDate);
+    CustomStatisticDTO getTotalStatisticOfMonthByToiletId(@Param("toiletId") int toiletId,
+                                                       @Param("fromDate") Date fromDate,
+                                                       @Param("toDate") Date toDate);
 
     @Query(value = "SELECT COALESCE(SUM(c.Balance), 0) + COALESCE(SUM(c.TurnPrice), 0) AS TotalRevenue, " +
             "       COUNT(c.Balance) + COUNT(c.TurnPrice)                       AS TotalTurn " +
@@ -118,6 +118,6 @@ public interface ReportRepository extends JpaRepository<CheckInEntity, Integer> 
             "                    ON c.ToiletServiceId = ts.Id " +
             "WHERE c.DateTime IS NULL " +
             "   OR (c.DateTime BETWEEN :fromDate AND :toDate)", nativeQuery = true)
-    CustomReportDTO getTotalReportOfMonth(@Param("fromDate") Date fromDate,
-                                          @Param("toDate") Date toDate);
+    CustomStatisticDTO getTotalStatisticOfMonth(@Param("fromDate") Date fromDate,
+                                             @Param("toDate") Date toDate);
 }
