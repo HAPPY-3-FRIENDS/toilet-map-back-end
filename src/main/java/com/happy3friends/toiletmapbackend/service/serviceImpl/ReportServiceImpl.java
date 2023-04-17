@@ -23,6 +23,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -155,6 +159,9 @@ public class ReportServiceImpl implements ReportService {
         Date toDate = DateTimeUtil.getDateNow();
         Date fromDate = DateTimeUtil.getFirstDateOfCurrentMonth();
 
+        LOGGER.info("ZonedDateTime: " + ZonedDateTime.now(ZoneId.of(DateTimeConstant.ZONE_ID)));
+        LOGGER.info("OffsetDateTime: " + OffsetDateTime.now(ZoneOffset.of("+07:00")));
+        LOGGER.info("getZoneDateTimeNow: " + DateTimeUtil.getZoneDateTimeNow());
         LOGGER.info("getDateNow: " + toDate + " getFirstDateOfCurrentMonth: " + fromDate);
 
         if (companyId != null && toiletId == null) {
