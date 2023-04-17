@@ -372,12 +372,8 @@ public class ToiletController {
                             "  \"closeTime\": \"20:00\",\n" +
                             "  \"status\": \"Đang hoạt động\",\n" +
                             "  \"toiletImages\": [\n" +
-                            "    {\n" +
-                            "      \"imageSource\": \"imageSource1\"\n" +
-                            "    },\n" +
-                            "    {\n" +
-                            "      \"imageSource\": \"imageSource2\"\n" +
-                            "    }\n" +
+                            "      \"imageSource1\",\n" +
+                            "      \"imageSource2\"\n" +
                             "  ],\n" +
                             "  \"toiletFacilities\": [\n" +
                             "    {\n" +

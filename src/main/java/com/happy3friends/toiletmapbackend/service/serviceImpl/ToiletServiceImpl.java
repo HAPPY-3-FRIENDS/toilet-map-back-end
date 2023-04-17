@@ -14,7 +14,6 @@ import com.happy3friends.toiletmapbackend.enums.StatusEnum;
 import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
 import com.happy3friends.toiletmapbackend.exception.BadRequestException;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
-import com.happy3friends.toiletmapbackend.mapper.ToiletImageMapper;
 import com.happy3friends.toiletmapbackend.mapper.ToiletMapper;
 import com.happy3friends.toiletmapbackend.repository.*;
 import com.happy3friends.toiletmapbackend.request.ToiletCreateRequest;
@@ -59,9 +58,6 @@ public class ToiletServiceImpl implements ToiletService {
 
     @Autowired
     private ToiletMapper toiletMapper;
-
-    @Autowired
-    private ToiletImageMapper toiletImageMapper;
 
     public LinkedHashMap<Integer, List<CustomToiletDetailsInfoDTO>> getMapIdListCustomToiletDetailsInfoDTO(
             List<CustomToiletDetailsInfoDTO> customToiletDetailsInfoDTOS) {
@@ -288,10 +284,10 @@ public class ToiletServiceImpl implements ToiletService {
 
         // Toilet Image Entity
         List<ToiletImageEntity> toiletImageEntities = toiletCreateRequest.getToiletImages().stream()
-                .map(dto -> {
+                .map(o -> {
                     ToiletImageEntity toiletImageEntity = new ToiletImageEntity();
                     toiletImageEntity.setToiletId(toiletId);
-                    toiletImageEntity.setImageSource(dto.getImageSource());
+                    toiletImageEntity.setImageSource(o);
 
                     return toiletImageEntity;
                 })

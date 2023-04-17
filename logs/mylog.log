@@ -190,3 +190,42 @@ java.lang.NullPointerException: null
 	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
 	at java.base/java.lang.Thread.run(Thread.java:834)
+[2023-04-18 02:11:11.023] INFO  [SpringApplicationShutdownHook] [o.s.o.j.LocalContainerEntityManagerFactoryBean] LocalContainerEntityManagerFactoryBean.destroy:651 - Closing JPA EntityManagerFactory for persistence unit 'default'
+[2023-04-18 02:11:11.027] INFO  [SpringApplicationShutdownHook] [c.z.h.HikariDataSource] HikariDataSource.close:350 - HikariPool-1 - Shutdown initiated...
+[2023-04-18 02:11:11.045] INFO  [SpringApplicationShutdownHook] [c.z.h.HikariDataSource] HikariDataSource.close:352 - HikariPool-1 - Shutdown completed.
+[2023-04-18 02:11:21.713] INFO  [main] [c.h.t.ToiletMapBackEndApplication] ToiletMapBackEndApplication.logStarting:55 - Starting ToiletMapBackEndApplication using Java 11.0.16.1 on TienHuynhTN with PID 26852 (F:\FPT\Semester-9-Summer-2023\Capstone-Project\Implementation\toilet-map-back-end\target\classes started by tienhltse151104 in F:\FPT\Semester-9-Summer-2023\Capstone-Project\Implementation\toilet-map-back-end)
+[2023-04-18 02:11:21.721] INFO  [main] [c.h.t.ToiletMapBackEndApplication] ToiletMapBackEndApplication.logStartupProfileInfo:637 - The following 2 profiles are active: "default", "prod"
+[2023-04-18 02:11:23.671] INFO  [main] [o.s.d.r.c.RepositoryConfigurationDelegate] RepositoryConfigurationDelegate.registerRepositoriesIn:132 - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+[2023-04-18 02:11:23.874] INFO  [main] [o.s.d.r.c.RepositoryConfigurationDelegate] RepositoryConfigurationDelegate.registerRepositoriesIn:201 - Finished Spring Data repository scanning in 179 ms. Found 15 JPA repository interfaces.
+[2023-04-18 02:11:24.569] INFO  [main] [o.s.b.w.e.t.TomcatWebServer] TomcatWebServer.initialize:108 - Tomcat initialized with port(s): 8081 (http)
+[2023-04-18 02:11:24.570] INFO  [main] [o.a.c.c.AprLifecycleListener] AprLifecycleListener.log:173 - Loaded Apache Tomcat Native library [1.2.35] using APR version [1.7.0].
+[2023-04-18 02:11:24.570] INFO  [main] [o.a.c.c.AprLifecycleListener] AprLifecycleListener.log:173 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true], UDS [true].
+[2023-04-18 02:11:24.570] INFO  [main] [o.a.c.c.AprLifecycleListener] AprLifecycleListener.log:173 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
+[2023-04-18 02:11:24.574] INFO  [main] [o.a.c.c.AprLifecycleListener] AprLifecycleListener.log:173 - OpenSSL successfully initialized [OpenSSL 1.1.1q  5 Jul 2022]
+[2023-04-18 02:11:24.582] INFO  [main] [o.a.c.c.StandardService] StandardService.log:173 - Starting service [Tomcat]
+[2023-04-18 02:11:24.583] INFO  [main] [o.a.c.c.StandardEngine] StandardEngine.log:173 - Starting Servlet engine: [Apache Tomcat/9.0.71]
+[2023-04-18 02:11:24.714] INFO  [main] [o.a.c.c.C.[.[.[/]] [/].log:173 - Initializing Spring embedded WebApplicationContext
+[2023-04-18 02:11:24.714] INFO  [main] [o.s.b.w.s.c.ServletWebServerApplicationContext] ServletWebServerApplicationContext.prepareWebApplicationContext:292 - Root WebApplicationContext: initialization completed in 2900 ms
+[2023-04-18 02:11:25.218] INFO  [main] [o.h.j.i.u.LogHelper] LogHelper.logPersistenceUnitInformation:31 - HHH000204: Processing PersistenceUnitInfo [name: default]
+[2023-04-18 02:11:25.288] INFO  [main] [o.h.Version] Version.logVersion:44 - HHH000412: Hibernate ORM core version 5.6.14.Final
+[2023-04-18 02:11:25.531] INFO  [main] [o.h.a.c.Version] Version.<clinit>:56 - HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+[2023-04-18 02:11:25.774] INFO  [main] [c.z.h.HikariDataSource] HikariDataSource.getConnection:110 - HikariPool-1 - Starting...
+[2023-04-18 02:11:27.579] INFO  [main] [c.z.h.HikariDataSource] HikariDataSource.getConnection:123 - HikariPool-1 - Start completed.
+[2023-04-18 02:11:27.598] INFO  [main] [o.h.d.Dialect] Dialect.<init>:175 - HHH000400: Using dialect: org.hibernate.dialect.SQLServer2012Dialect
+[2023-04-18 02:11:28.987] INFO  [main] [o.h.e.t.j.p.i.JtaPlatformInitiator] JtaPlatformInitiator.initiateService:52 - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+[2023-04-18 02:11:28.999] INFO  [main] [o.s.o.j.LocalContainerEntityManagerFactoryBean] LocalContainerEntityManagerFactoryBean.buildNativeEntityManagerFactory:437 - Initialized JPA EntityManagerFactory for persistence unit 'default'
+[2023-04-18 02:11:31.063] INFO  [main] [o.s.s.w.DefaultSecurityFilterChain] DefaultSecurityFilterChain.<init>:55 - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@3ed2a30c, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@adbc3bc, org.springframework.security.web.context.SecurityContextPersistenceFilter@39f3285d, org.springframework.security.web.header.HeaderWriterFilter@24381e4a, org.springframework.web.filter.CorsFilter@3c6d3ba, org.springframework.security.web.authentication.logout.LogoutFilter@20724c21, com.happy3friends.toiletmapbackend.sercurity.TokenAuthenticationFilter@5d8a1456, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@1cf7c055, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@7e4bbda4, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@5d3f583d, org.springframework.security.web.session.SessionManagementFilter@e5d9fa7, org.springframework.security.web.access.ExceptionTranslationFilter@654dbb78, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@760ac834]
+[2023-04-18 02:11:31.414] INFO  [main] [o.s.b.w.e.t.TomcatWebServer] TomcatWebServer.start:220 - Tomcat started on port(s): 8081 (http) with context path ''
+[2023-04-18 02:11:31.426] INFO  [main] [c.h.t.ToiletMapBackEndApplication] ToiletMapBackEndApplication.logStarted:61 - Started ToiletMapBackEndApplication in 10.701 seconds (JVM running for 12.393)
+[2023-04-18 02:11:39.926] INFO  [http-nio-8081-exec-1] [o.a.c.c.C.[.[.[/]] [/].log:173 - Initializing Spring DispatcherServlet 'dispatcherServlet'
+[2023-04-18 02:11:39.927] INFO  [http-nio-8081-exec-1] [o.s.w.s.DispatcherServlet] DispatcherServlet.initServletBean:525 - Initializing Servlet 'dispatcherServlet'
+[2023-04-18 02:11:39.930] INFO  [http-nio-8081-exec-1] [o.s.w.s.DispatcherServlet] DispatcherServlet.initServletBean:547 - Completed initialization in 1 ms
+[2023-04-18 02:11:41.612] INFO  [http-nio-8081-exec-7] [o.s.a.AbstractOpenApiResource] AbstractOpenApiResource.getOpenApi:398 - Init duration for springdoc-openapi is: 662 ms
+[2023-04-18 02:11:58.345] ERROR [http-nio-8081-exec-10] [c.h.t.s.RestAuthenticationEntryPoint] RestAuthenticationEntryPoint.commence:31 - Responding with unauthorized error. Message - Full authentication is required to access this resource
+[2023-04-18 02:12:43.675] INFO  [http-nio-8081-exec-4] [c.h.t.s.s.ToiletServiceImpl] ToiletServiceImpl.createToilet:273 - -- Create Toilet - Start save Account Entity! --
+[2023-04-18 02:12:43.897] INFO  [http-nio-8081-exec-4] [c.h.t.s.s.ToiletServiceImpl] ToiletServiceImpl.createToilet:281 - -- Create Toilet - Finish save Account Entity! --
+[2023-04-18 02:12:43.898] INFO  [http-nio-8081-exec-4] [c.h.t.s.s.ToiletServiceImpl] ToiletServiceImpl.createToilet:283 - -- Create Toilet - Start save Toilet Entity & its information! --
+[2023-04-18 02:12:45.777] INFO  [http-nio-8081-exec-4] [c.h.t.s.s.ToiletServiceImpl] ToiletServiceImpl.createToilet:357 - -- Create Toilet - Finish save Toilet Entity & its information! --
+[2023-04-18 02:14:42.038] INFO  [SpringApplicationShutdownHook] [o.s.o.j.LocalContainerEntityManagerFactoryBean] LocalContainerEntityManagerFactoryBean.destroy:651 - Closing JPA EntityManagerFactory for persistence unit 'default'
+[2023-04-18 02:14:42.047] INFO  [SpringApplicationShutdownHook] [c.z.h.HikariDataSource] HikariDataSource.close:350 - HikariPool-1 - Shutdown initiated...
+[2023-04-18 02:14:42.057] INFO  [SpringApplicationShutdownHook] [c.z.h.HikariDataSource] HikariDataSource.close:352 - HikariPool-1 - Shutdown completed.

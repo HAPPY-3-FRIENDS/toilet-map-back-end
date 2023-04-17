@@ -3,7 +3,6 @@ package com.happy3friends.toiletmapbackend.request;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.happy3friends.toiletmapbackend.constant.DateTimeConstant;
 import com.happy3friends.toiletmapbackend.dto.ToiletFacilityDTO;
-import com.happy3friends.toiletmapbackend.dto.ToiletImageDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,6 +32,6 @@ public class ToiletCreateRequest {
     @JsonFormat(pattern = DateTimeConstant.HH_mm)
     private Timestamp closeTime;
     private String status;
-    private List<ToiletImageDTO> toiletImages;
+    private List<String> toiletImages;
     private List<ToiletFacilityDTO> toiletFacilities;
 }
