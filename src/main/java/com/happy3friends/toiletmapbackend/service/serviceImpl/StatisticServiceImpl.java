@@ -160,12 +160,11 @@ public class StatisticServiceImpl implements StatisticService {
         Date toDate = DateTimeUtil.getDateNow();
         Date fromDate = DateTimeUtil.getFirstDateOfCurrentMonth();
 
-        LOGGER.info("ZonedDateTime: " + ZonedDateTime.now(ZoneId.of(DateTimeConstant.ZONE_ID)));
-        LOGGER.info("OffsetDateTime: " + OffsetDateTime.now(ZoneOffset.of("+07:00")));
         LOGGER.info("getZoneDateTimeNow: " + DateTimeUtil.getZoneDateTimeNow());
-        LOGGER.info("getDateNow: " + toDate + " getFirstDateOfCurrentMonth: " + fromDate);
-        LOGGER.info("convertZoneDateTimeToDate123: " + DateTimeUtil.getZoneDateTimeNow().toInstant());
-        LOGGER.info("convertZoneDateTimeToDate: " + DateTimeUtil.convertZoneDateTimeToDate(DateTimeUtil.getZoneDateTimeNow()));
+        LOGGER.info("getDateNow: " + toDate);
+        LOGGER.info("getFirstDateOfCurrentMonth: " + fromDate);
+        LOGGER.info("getTimestampNow: " + DateTimeUtil.getTimestampNow());
+        LOGGER.info("convertDateToTimestamp: " + DateTimeUtil.convertDateToTimestamp(toDate));
 
         if (companyId != null && toiletId == null) {
             return getTotalStatisticOfMonthByCompanyId(companyId, fromDate, toDate);

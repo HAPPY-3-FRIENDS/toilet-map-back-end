@@ -26,11 +26,11 @@ public class DateTimeUtil {
     }
 
     public static Date getDateNow() {
-        return convertZoneDateTimeToDate(getZoneDateTimeNow());
+        return new Date(convertZoneDateTimeToDate(getZoneDateTimeNow()).getTime() + 7 * 60 * 60 * 1000);
     }
 
     public static Timestamp getTimestampNow() {
-        return new Timestamp(convertZoneDateTimeToDate(getZoneDateTimeNow()).getTime());
+        return new Timestamp(convertZoneDateTimeToDate(getZoneDateTimeNow()).getTime() + 7 * 60 * 60 * 1000);
     }
 
     public static Date convertZoneDateTimeToDate(ZonedDateTime zonedDateTime) {
@@ -38,7 +38,7 @@ public class DateTimeUtil {
     }
 
     public static Timestamp convertDateToTimestamp(Date datetime) {
-        return new Timestamp(datetime.getTime());
+        return new Timestamp(datetime.getTime() + 7 * 60 * 60 * 1000);
     }
 
     public static Date convertDateSqlToDate(java.sql.Date dateSql) {
@@ -100,6 +100,6 @@ public class DateTimeUtil {
         Calendar c = Calendar.getInstance(TimeZone.getTimeZone(ZoneId.of(DateTimeConstant.ZONE_ID)));
         c.set(Calendar.DAY_OF_MONTH, 1);
 
-        return c.getTime();
+        return new Date(c.getTime().getTime() + 7 * 60 * 60 * 1000);
     }
 }
