@@ -3,10 +3,10 @@ package com.happy3friends.toiletmapbackend.controller;
 import com.happy3friends.toiletmapbackend.base.models.BaseResponse;
 import com.happy3friends.toiletmapbackend.config.OpenApiConfig;
 import com.happy3friends.toiletmapbackend.constant.RoleConstant;
-import com.happy3friends.toiletmapbackend.entity.CompanyEntity;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.request.CompanyCreateRequest;
 import com.happy3friends.toiletmapbackend.response.CompanyResponse;
+import com.happy3friends.toiletmapbackend.response.UpdateCompanyResponse;
 import com.happy3friends.toiletmapbackend.service.CompanyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -25,7 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
-import java.util.Optional;
+import java.util.Map;
 
 @Tag(name = "Company", description = "Company API")
 @RestController
@@ -82,7 +82,9 @@ public class CompanyController {
                             "    \"ward\": \"Phường Long Thạnh Mỹ\",\n" +
                             "    \"district\": \"Quận Thủ Đức\",\n" +
                             "    \"province\": \"Thành phố Hồ Chí Minh\",\n" +
-                            "    \"phone\": \"(028) 7300 5588\"\n" +
+                            "    \"phone\": \"(028) 7300 5588\",\n" +
+                            "    \"username\": \"manager-1\",\n" +
+                            "    \"password\": \"$2a$10$/dH1LFY1VeSe9aQoibV8puAthiOjM/7Cb0NwnDfSA40wUxnagEkRG\"\n" +
                             "  }")}))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
@@ -93,7 +95,9 @@ public class CompanyController {
                             "    \"ward\": \"Phường Long Thạnh Mỹ\",\n" +
                             "    \"district\": \"Quận Thủ Đức\",\n" +
                             "    \"province\": \"Thành phố Hồ Chí Minh\",\n" +
-                            "    \"phone\": \"(028) 7300 5588\"\n" +
+                            "    \"phone\": \"(028) 7300 5588\",\n" +
+                            "    \"username\": \"manager-1\",\n" +
+                            "    \"password\": \"$2a$10$/dH1LFY1VeSe9aQoibV8puAthiOjM/7Cb0NwnDfSA40wUxnagEkRG\"\n" +
                             "  }")})),
             @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
@@ -117,28 +121,22 @@ public class CompanyController {
 
 
     @Operation(summary = "Update a company", description = "[Admin] Update a company and its information")
-    @Parameter(name = "company-id", description = "A specific company ID", in = ParameterIn.PATH, required = true, example = "4")
-    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Company Create Request", required = true, content = @Content(
+    @Parameter(name = "manager-id", description = "A specific manager ID", in = ParameterIn.PATH, required = true, example = "4")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Fields Request", required = true, content = @Content(
             examples = {
-                    @ExampleObject(value = "{\n" +
-                            "    \"name\": \"Toilet Map\",\n" +
-                            "    \"logo\": \"https://drive.google.com/file/d/1qmWrHPZ6e-XA8NZtaT9UVWXRXwpMXXA2/view?usp=sharing\",\n" +
-                            "    \"address\": \"Lô E2a-7, Đường D1\",\n" +
-                            "    \"ward\": \"Phường Long Thạnh Mỹ\",\n" +
-                            "    \"district\": \"Quận Thủ Đức\",\n" +
-                            "    \"province\": \"Thành phố Hồ Chí Minh\",\n" +
-                            "    \"phone\": \"(028) 7300 5588\"\n" +
-                            "  }")}))
+                    @ExampleObject(name = "Update password", value = "{\n" +
+                            "  \"password\": \"$2a$10$/dH1LFY1VeSe9aQoibV8puAthiOjM/7Cb0NwnDfSA40wUxnagEkRG\"\n" +
+                            "}"),
+                    @ExampleObject(name = "Update status", value = "{\n" +
+                            "  \"status\": \"Đang hoạt động\"\n" +
+                            "}")}))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
                     @ExampleObject(value = "{\n" +
-                            "    \"name\": \"Toilet Map\",\n" +
-                            "    \"logo\": \"https://drive.google.com/file/d/1qmWrHPZ6e-XA8NZtaT9UVWXRXwpMXXA2/view?usp=sharing\",\n" +
-                            "    \"address\": \"Lô E2a-7, Đường D1\",\n" +
-                            "    \"ward\": \"Phường Long Thạnh Mỹ\",\n" +
-                            "    \"district\": \"Quận Thủ Đức\",\n" +
-                            "    \"province\": \"Thành phố Hồ Chí Minh\",\n" +
-                            "    \"phone\": \"(028) 7300 5588\"\n" +
+                            "    \"id\": \"2\",\n" +
+                            "    \"username\": \"manager-1\",\n" +
+                            "    \"password\": \"$2a$10$/dH1LFY1VeSe9aQoibV8puAthiOjM/7Cb0NwnDfSA40wUxnagEkRG\",\n" +
+                            "    \"status\": \"Đang hoạt động\"\n" +
                             "  }")})),
             @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
@@ -148,15 +146,17 @@ public class CompanyController {
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.ADMIN})
-    @PutMapping("{company-id}")
-    public ResponseEntity<BaseResponse<CompanyCreateRequest>> updateCompany(@PathVariable("company-id") Integer id ,@RequestBody CompanyCreateRequest request) {
+    @PatchMapping("{manager-id}")
+    public ResponseEntity<BaseResponse<UpdateCompanyResponse>> updateCompanyStatus(
+            @PathVariable("manager-id") Integer id,
+            @RequestBody Map<String, Object> fields) {
 
-        companyService.updateCompany(id, request);
+        UpdateCompanyResponse response = companyService.updateCompany(id, fields);
 
         return ResponseBuilder.generateResponse(
-                "Update company successfully!",
+                "Update company status successfully!",
                 HttpStatus.OK,
-                request
+                response
         );
     }
 }

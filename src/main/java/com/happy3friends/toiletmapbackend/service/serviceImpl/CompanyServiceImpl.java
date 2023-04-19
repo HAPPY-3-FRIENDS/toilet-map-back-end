@@ -1,5 +1,6 @@
 package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
+import com.happy3friends.toiletmapbackend.constant.StatusConstant;
 import com.happy3friends.toiletmapbackend.entity.AccountEntity;
 import com.happy3friends.toiletmapbackend.entity.CompanyEntity;
 import com.happy3friends.toiletmapbackend.enums.RoleEnum;
@@ -11,12 +12,19 @@ import com.happy3friends.toiletmapbackend.repository.AccountRepository;
 import com.happy3friends.toiletmapbackend.repository.CompanyRepository;
 import com.happy3friends.toiletmapbackend.request.CompanyCreateRequest;
 import com.happy3friends.toiletmapbackend.response.CompanyResponse;
+import com.happy3friends.toiletmapbackend.response.UpdateCompanyResponse;
 import com.happy3friends.toiletmapbackend.service.CompanyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.util.ReflectionUtils;
 
+import javax.persistence.EntityManager;
+import java.lang.reflect.Field;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -32,6 +40,9 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Autowired
     private CompanyMapper companyMapper;
+
+    @Autowired
+    private EntityManager entityManager;
 
     @Override
     public CompanyResponse getCompanyByAccountId(int accountId) {
@@ -51,31 +62,46 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    @Transactional(rollbackFor = { Exception.class })
     public void createCompany(CompanyCreateRequest request) {
-        LOGGER.info("-- Create Company - Start save Company Entity and its information! --");
-        CompanyEntity companyEntity = companyMapper.convertCompanyCreateRequestToCompanyEntity(request);
-        companyRepository.save(companyEntity);
-        LOGGER.info("-- Create Company - Finish save Company Entity and its information! --");
+        try {
+            LOGGER.info("-- Create Company - Start save Company Entity and its information! --");
+            CompanyEntity companyEntity = companyMapper.convertCompanyCreateRequestToCompanyEntity(request);
+            entityManager.persist(companyEntity);
+            int companyId = companyEntity.getId();
+
+            AccountEntity accountEntity = new AccountEntity();
+            accountEntity.setUsername(request.getUsername());
+            accountEntity.setPassword(request.getPassword());
+            accountEntity.setStatus(StatusConstant.ACTIVE);
+            accountEntity.setCompanyId(companyId);
+            //Define constant!!!
+            accountEntity.setRoleId(2);
+            accountRepository.save(accountEntity);
+
+            LOGGER.info("-- Create Company - Finish save Company Entity and its information! --");
+        } catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            LOGGER.error("-- Create Company failed: ", e);
+            throw new BadRequestException(ToiletMapErrorCodeEnum.CREATE_COMPANY_ERROR, ToiletMapErrorCodeEnum.CREATE_COMPANY_ERROR.getMessage());
+        }
     }
 
     @Override
-    public void updateCompany(Integer id, CompanyCreateRequest request) {
-        Optional<CompanyEntity> companyEntity = companyRepository.findById(id);
-        if (!companyEntity.isPresent())
-            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY, ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY.getMessage());
+    public UpdateCompanyResponse updateCompany(Integer id, Map<String, Object> fields) {
+        Optional<AccountEntity> accountEntity = accountRepository.findById(id);
+        if (!accountEntity.isPresent())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT.getMessage());
 
-        LOGGER.info("-- Update Company - Start save Company Entity and its information! --");
-        CompanyEntity entity = companyEntity.get();
-        entity.setName(request.getName());
-        entity.setLogo(request.getLogo());
-        entity.setAddress(request.getAddress());
-        entity.setWard(request.getWard());
-        entity.setDistrict(request.getDistrict());
-        entity.setProvince(request.getProvince());
-        entity.setPhone(request.getPhone());
+        LOGGER.info("-- Update Company status - Start save Company Entity and its information! --");
+        fields.forEach((key, value) -> {
+            Field field = ReflectionUtils.findField(AccountEntity.class, key);
+            field.setAccessible(true);
+            ReflectionUtils.setField(field, accountEntity.get(), value);
+        });
 
-        companyRepository.save(entity);
+        AccountEntity entity = accountRepository.save(accountEntity.get());
         LOGGER.info("-- Update Company - Finish save Company Entity and its information! --");
-
+        return companyMapper.convertAccountEntityToUpdateCompanyResponse(entity);
     }
 }

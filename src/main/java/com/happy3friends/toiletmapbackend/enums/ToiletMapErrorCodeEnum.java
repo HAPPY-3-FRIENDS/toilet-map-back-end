@@ -28,6 +28,7 @@ public enum ToiletMapErrorCodeEnum {
     INVALID_FACILITY(HttpStatus.BAD_REQUEST, 400016, "Trang thiết bị không hợp lệ"),
     INVALID_FACILITY_QUANTITY(HttpStatus.BAD_REQUEST, 400017, "Số lượng của trang thiết bị không hợp lệ"),
     INVALID_VALIDATION(HttpStatus.BAD_REQUEST, 400018, "Tham số không hợp lệ"),
+    CREATE_COMPANY_ERROR(HttpStatus.BAD_REQUEST, 400019, "Tạo công ty thất bại"),
 
     // 401 - UNAUTHENTICATED
     UNAUTHENTICATED(HttpStatus.UNAUTHORIZED, 401000, "Chưa xác thực người dùng"),

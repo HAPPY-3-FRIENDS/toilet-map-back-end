@@ -26,4 +26,8 @@ public class CompanyCreateRequest {
     private String province;
     @NotNull
     private String phone;
+    @NotNull
+    private String username;
+    @NotNull
+    private String password;
 }

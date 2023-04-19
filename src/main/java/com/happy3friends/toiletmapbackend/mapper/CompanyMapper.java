@@ -1,8 +1,10 @@
 package com.happy3friends.toiletmapbackend.mapper;
 
+import com.happy3friends.toiletmapbackend.entity.AccountEntity;
 import com.happy3friends.toiletmapbackend.entity.CompanyEntity;
 import com.happy3friends.toiletmapbackend.request.CompanyCreateRequest;
 import com.happy3friends.toiletmapbackend.response.CompanyResponse;
+import com.happy3friends.toiletmapbackend.response.UpdateCompanyResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,5 +27,11 @@ public class CompanyMapper {
         return Objects.isNull(request)
                 ? null
                 : modelMapper.map(request, CompanyEntity.class);
+    }
+
+    public UpdateCompanyResponse convertAccountEntityToUpdateCompanyResponse(AccountEntity accountEntity) {
+        return Objects.isNull(accountEntity)
+                ? null
+                : modelMapper.map(accountEntity, UpdateCompanyResponse.class);
     }
 }
