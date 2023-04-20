@@ -43,6 +43,7 @@ public enum ToiletMapErrorCodeEnum {
     NOT_FOUND_LIST_TOILET_SERVICES(HttpStatus.NOT_FOUND, 404003, "Không tìm thấy danh sách các dịch vụ của Nhà vệ sinh"),
     NOT_FOUND_COMBO(HttpStatus.NOT_FOUND, 404004, "Không tìm thấy Gói lượt"),
     NOT_FOUND_USER_INFO(HttpStatus.NOT_FOUND, 404005, "Không tìm thấy thông tin người dùng"),
+    NOT_FOUND_TOILET_NEARBY(HttpStatus.NOT_FOUND, 404005, "Không tìm thấy toilet gần đây"),
     ;
 
     private final HttpStatus httpStatus;

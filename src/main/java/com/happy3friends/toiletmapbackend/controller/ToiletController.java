@@ -408,4 +408,109 @@ public class ToiletController {
                 toiletCreateRequest
         );
     }
+
+
+    @Operation(summary = "Get nearest toilet",
+            description = "- [USER] Get nearest toilet for urgent situation")
+    @Parameters(value = {
+            @Parameter(name = "current-latitude", description = "Current latitude", in = ParameterIn.QUERY),
+            @Parameter(name = "current-longitude", description = "Current longitude", in = ParameterIn.QUERY),
+            @Parameter(name = "vehicle", description = "Vehicle type", in = ParameterIn.QUERY)
+    })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
+                    @ExampleObject(value = "{\n" +
+                            "  \"message\": \"Get nearest toilet successfully!\",\n" +
+                            "  \"status\": 200,\n" +
+                            "  \"data\": {\n" +
+                            "    \"id\": 5,\n" +
+                            "    \"toiletName\": \"Nhà vệ sinh lưu động số 2\",\n" +
+                            "    \"address\": \"79 Nguyễn Huệ\",\n" +
+                            "    \"ward\": \"Bến Nghé\",\n" +
+                            "    \"district\": \"Quận 1\",\n" +
+                            "    \"province\": \"Thành phố Hồ Chí Minh\",\n" +
+                            "    \"latitude\": 10.8360458,\n" +
+                            "    \"longitude\": 106.8084369,\n" +
+                            "    \"nearBy\": null,\n" +
+                            "    \"openTime\": \"09:00\",\n" +
+                            "    \"closeTime\": \"23:00\",\n" +
+                            "    \"minPrice\": 5000,\n" +
+                            "    \"maxPrice\": 15000,\n" +
+                            "    \"toiletFacilities\": [\n" +
+                            "      {\n" +
+                            "        \"facilityId\": 0,\n" +
+                            "        \"facilityName\": \"Phòng tắm\",\n" +
+                            "        \"facilityType\": \"Phòng\",\n" +
+                            "        \"quantity\": 0,\n" +
+                            "        \"description\": null\n" +
+                            "      },\n" +
+                            "      {\n" +
+                            "        \"facilityId\": 0,\n" +
+                            "        \"facilityName\": \"Phòng vệ sinh\",\n" +
+                            "        \"facilityType\": \"Phòng\",\n" +
+                            "        \"quantity\": 0,\n" +
+                            "        \"description\": null\n" +
+                            "      },\n" +
+                            "      {\n" +
+                            "        \"facilityId\": 0,\n" +
+                            "        \"facilityName\": \"Phòng vệ sinh dành cho người khuyết tật\",\n" +
+                            "        \"facilityType\": \"Phòng\",\n" +
+                            "        \"quantity\": 0,\n" +
+                            "        \"description\": null\n" +
+                            "      },\n" +
+                            "      {\n" +
+                            "        \"facilityId\": 0,\n" +
+                            "        \"facilityName\": \"Giấy vệ sinh\",\n" +
+                            "        \"facilityType\": \"Trang thiết bị\",\n" +
+                            "        \"quantity\": 0,\n" +
+                            "        \"description\": null\n" +
+                            "      },\n" +
+                            "      {\n" +
+                            "        \"facilityId\": 0,\n" +
+                            "        \"facilityName\": \"Máy sấy tay\",\n" +
+                            "        \"facilityType\": \"Trang thiết bị\",\n" +
+                            "        \"quantity\": 0,\n" +
+                            "        \"description\": null\n" +
+                            "      },\n" +
+                            "      {\n" +
+                            "        \"facilityId\": 0,\n" +
+                            "        \"facilityName\": \"Vòi xịt\",\n" +
+                            "        \"facilityType\": \"Trang thiết bị\",\n" +
+                            "        \"quantity\": 0,\n" +
+                            "        \"description\": null\n" +
+                            "      }\n" +
+                            "    ],\n" +
+                            "    \"toiletImageSources\": [\n" +
+                            "      \"https://anh.eva.vn/upload/2-2015/images/2015-05-13/1431482470-ava.jpg\"\n" +
+                            "    ],\n" +
+                            "    \"ratingStar\": 2,\n" +
+                            "    \"username\": null,\n" +
+                            "    \"status\": null,\n" +
+                            "    \"free\": false\n" +
+                            "  }\n" +
+                            "}")
+            })),
+            @ApiResponse(responseCode = "201", description = "Successfully!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.USER})
+    @GetMapping("/nearest-toilet")
+    public ResponseEntity<BaseResponse<ToiletDetailsInfoResponse>> getNearestToilet(
+            @RequestParam(name = "current-latitude", required = false) Double currentLatitude,
+            @RequestParam(name = "current-longitude", required = false) Double currentLongitude,
+            @RequestParam(name = "vehicle", required = false) String vehicle) {
+
+        ToiletDetailsInfoResponse responses = toiletService.getNearestToilet(currentLatitude, currentLongitude, vehicle);
+
+        return ResponseBuilder.generateResponse(
+                "Get nearest toilet successfully!",
+                HttpStatus.OK,
+                responses
+        );
+    }
 }

@@ -17,6 +17,8 @@ import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.ToiletMapper;
 import com.happy3friends.toiletmapbackend.repository.*;
 import com.happy3friends.toiletmapbackend.request.ToiletCreateRequest;
+import com.happy3friends.toiletmapbackend.response.DistanceMatrixResponse;
+import com.happy3friends.toiletmapbackend.response.Element;
 import com.happy3friends.toiletmapbackend.response.ToiletDetailsInfoResponse;
 import com.happy3friends.toiletmapbackend.service.ToiletService;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
@@ -28,6 +30,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 
 import javax.transaction.Transactional;
 import java.util.*;
@@ -351,5 +355,41 @@ public class ToiletServiceImpl implements ToiletService {
 
         toiletRepository.save(toiletEntity);
         LOGGER.info("-- Create Toilet - Finish save Toilet Entity & its information! --");
+    }
+
+    @Override
+    public ToiletDetailsInfoResponse getNearestToilet(Double lat, Double lng, String vehicle) {
+        List<ToiletDetailsInfoResponse> list10ToiletNearByLatLng = getTop10ToiletsNearByCurrentLocation(lat, lng);
+        if (list10ToiletNearByLatLng == null || list10ToiletNearByLatLng.isEmpty()) {
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_TOILET_NEARBY, ToiletMapErrorCodeEnum.NOT_FOUND_TOILET_NEARBY.getMessage());
+        }
+
+        List<String> listDestinations = new ArrayList<>();
+        for (ToiletDetailsInfoResponse toilet : list10ToiletNearByLatLng) {
+            listDestinations.add(toilet.getLatitude() + "," + toilet.getLongitude());
+        }
+        String destinations = String.join("|", listDestinations);
+
+        WebClient webClient = WebClient.create("https://rsapi.goong.io");
+        String url = "/DistanceMatrix?" +
+                "origins=" + lat + "," + lng + "&" +
+                "destinations=" + destinations + "&" +
+                "vehicle=" + vehicle + "&" +
+                "api_key=ZXrUvqdTcl9AYCA8ZRbSoCqscAev0tBcFvpCS3QQ";
+        Flux<DistanceMatrixResponse> fluxDistanceMatrixResponse = webClient.get().uri(url).retrieve().bodyToFlux(DistanceMatrixResponse.class);
+        List<DistanceMatrixResponse> listDistanceMatrixResponse = fluxDistanceMatrixResponse.collectList().block();
+
+        Element element = listDistanceMatrixResponse.get(0).getRows().get(0).getElements().stream()
+                .min((x, y) -> convertDurationOrDistanceTextToInt(x.getDuration().getText()) - convertDurationOrDistanceTextToInt(y.getDuration().getText()))
+                .get();
+
+        int index = listDistanceMatrixResponse.get(0).getRows().get(0).getElements().indexOf(element);
+
+        return list10ToiletNearByLatLng.get(index);
+    }
+
+    private int convertDurationOrDistanceTextToInt(String durationText) {
+        String[] result = durationText.split(" ");
+        return Integer.parseInt(result[0]);
     }
 }
