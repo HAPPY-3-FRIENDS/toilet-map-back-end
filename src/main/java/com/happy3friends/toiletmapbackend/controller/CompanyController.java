@@ -154,7 +154,7 @@ public class CompanyController {
         UpdateCompanyResponse response = companyService.updateCompany(id, fields);
 
         return ResponseBuilder.generateResponse(
-                "Update company status successfully!",
+                "Update company successfully!",
                 HttpStatus.OK,
                 response
         );
