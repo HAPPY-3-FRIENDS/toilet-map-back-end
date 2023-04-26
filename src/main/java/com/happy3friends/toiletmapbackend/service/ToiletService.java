@@ -15,4 +15,6 @@ public interface ToiletService {
     ToiletDetailsInfoResponse getToiletByToiletId(int toiletId);
     int count(Integer companyId);
     void createToilet(ToiletCreateRequest toiletCreateRequest) throws Exception;
+
+    ToiletDetailsInfoResponse getNearestToilet(Double lat, Double lng, String vehicle);
 }

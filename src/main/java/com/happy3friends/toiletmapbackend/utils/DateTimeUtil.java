@@ -38,7 +38,7 @@ public class DateTimeUtil {
     }
 
     public static Timestamp convertDateToTimestamp(Date datetime) {
-        return new Timestamp(datetime.getTime() + 7 * 60 * 60 * 1000);
+        return new Timestamp(datetime.getTime());
     }
 
     public static Date convertDateSqlToDate(java.sql.Date dateSql) {

@@ -93,7 +93,7 @@ public class CompanyServiceImpl implements CompanyService {
         if (!accountEntity.isPresent())
             throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT.getMessage());
 
-        LOGGER.info("-- Update Company status - Start save Company Entity and its information! --");
+        LOGGER.info("-- Update Company - Start save Company Entity and its information! --");
         fields.forEach((key, value) -> {
             Field field = ReflectionUtils.findField(AccountEntity.class, key);
             field.setAccessible(true);
