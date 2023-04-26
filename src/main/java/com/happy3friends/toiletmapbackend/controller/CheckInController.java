@@ -193,9 +193,9 @@ public class CheckInController {
             @ApiResponse(responseCode = "201", description = "Successfully!", content = @Content(examples = {
                     @ExampleObject(value = "{\n" +
                             "    \"fullName\": \"Huỳnh Lê Thủy Tiên\",\n" +
-                            "    \"paymentMethod\": \"Số lượt\",\n" +
-                            "    \"balance\": 50000,\n" +
-                            "    \"turn\": 19,\n" +
+                            "    \"defaultPayment\": \"Số lượt\",\n" +
+                            "    \"accountBalance\": 50000,\n" +
+                            "    \"accountTurn\": 19,\n" +
                             "    \"username\": \"0849666957\"\n" +
                             "}")})),
             @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),

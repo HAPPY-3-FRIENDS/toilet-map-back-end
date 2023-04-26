@@ -146,9 +146,9 @@ public class CheckInServiceImpl implements CheckInService {
             CheckInResponse checkInResponse = new CheckInResponse();
             checkInResponse.setUsername(customAccountInfoDTO.getUsername());
             checkInResponse.setFullName(customAccountInfoDTO.getFullName());
-            checkInResponse.setBalance(customAccountInfoDTO.getAccountBalance());
-            checkInResponse.setTurn(accountTurn);
-            checkInResponse.setPaymentMethod(customAccountInfoDTO.getDefaultPayment());
+            checkInResponse.setAccountBalance(customAccountInfoDTO.getAccountBalance());
+            checkInResponse.setAccountTurn(accountTurn);
+            checkInResponse.setDefaultPayment(customAccountInfoDTO.getDefaultPayment());
             return checkInResponse;
         } else {
             throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_LIST_TOILET_SERVICES, ToiletMapErrorCodeEnum.NOT_FOUND_LIST_TOILET_SERVICES.getMessage());
@@ -233,9 +233,9 @@ public class CheckInServiceImpl implements CheckInService {
             CheckInResponse checkInResponse = new CheckInResponse();
             checkInResponse.setUsername(customAccountInfoDTO.getUsername());
             checkInResponse.setFullName(customAccountInfoDTO.getFullName());
-            checkInResponse.setBalance(accountBalance);
-            checkInResponse.setTurn(accountTurn);
-            checkInResponse.setPaymentMethod(customAccountInfoDTO.getDefaultPayment());
+            checkInResponse.setAccountBalance(accountBalance);
+            checkInResponse.setAccountTurn(accountTurn);
+            checkInResponse.setDefaultPayment(customAccountInfoDTO.getDefaultPayment());
             return checkInResponse;
         } else {
             LOGGER.error("Service '" + checkInRequest.getServiceName() + "' is not contained in Toilet with Id '" + checkInRequest.getToiletId() + "'!");
