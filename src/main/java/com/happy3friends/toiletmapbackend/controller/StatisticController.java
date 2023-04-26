@@ -186,4 +186,49 @@ public class StatisticController {
                 response
         );
     }
+
+    @Operation(summary = "Count all statistics",
+            description = "- [Manager] Count a list of all statistics by company ID (All toilets in this company)\n" +
+                    "- [Manager] Count a list of all statistics by toilet ID (All services in this toilet)\n" +
+                    "- Default is get all statistics in the system (All companies in this system)\n" +
+                    "- Default from date and to date is current month")
+    @Parameters(value = {
+            @Parameter(name = "company-id", description = "A specific Company ID", in = ParameterIn.QUERY, example = "6"),
+            @Parameter(name = "toilet-id", description = "A specific Toilet ID", in = ParameterIn.QUERY, example = "6"),
+            @Parameter(name = "from-date", description = "Start of the period (dd/MM/yyyy)", in = ParameterIn.QUERY, allowReserved = true),
+            @Parameter(name = "to-date", description = "End of the period (dd/MM/yyyy)", in = ParameterIn.QUERY, allowReserved = true)
+    })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {@ExampleObject(value = "10")})),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.MANAGER})
+    @GetMapping(value = "/count")
+    public ResponseEntity<BaseResponse<Integer>> count(
+            @RequestParam(value = "company-id", required = false) Integer companyId,
+            @RequestParam(value = "toilet-id", required = false) Integer toiletId,
+            @RequestParam(value = "from-date", required = false) String fromStrDate,
+            @RequestParam(value = "to-date", required = false) String toStrDate) {
+
+        int response = statisticService.count(companyId ,toiletId, fromStrDate, toStrDate);
+
+        if (toiletId != null) {
+            return ResponseBuilder.generateResponse(
+                    "Count list of statistic by Company ID and Toilet ID successfully!",
+                    HttpStatus.OK,
+                    response
+            );
+        }
+
+        return ResponseBuilder.generateResponse(
+                "Count list of statistic successfully!",
+                HttpStatus.OK,
+                response
+        );
+    }
 }

@@ -176,4 +176,19 @@ public class RatingServiceImpl implements RatingService {
                 ratingRequest.getImageSources()
         );
     }
+
+    @Override
+    public int count(Integer toiletId) {
+
+        if (toiletId != null) {
+            Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
+            if (!toiletEntity.isPresent()) {
+                throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_TOILET, ToiletMapErrorCodeEnum.NOT_FOUND_TOILET.getMessage());
+            }
+
+            return (int) ratingRepository.countByToiletId(toiletId);
+        }
+
+        return (int) ratingRepository.count();
+    }
 }

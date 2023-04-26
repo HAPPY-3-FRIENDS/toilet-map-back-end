@@ -13,4 +13,6 @@ public interface StatisticService {
             String toStrDate,
             BasePaginationRequest paginationRequest);
     StatisticResponse getTotalStatisticOfMonth(Integer companyId, Integer toiletId);
+
+    int count(Integer companyId, Integer toiletId, String fromStrDate, String toStrDate);
 }

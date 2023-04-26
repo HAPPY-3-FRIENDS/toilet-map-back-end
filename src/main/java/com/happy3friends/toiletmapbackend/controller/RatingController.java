@@ -172,4 +172,40 @@ public class RatingController {
                 responses
         );
     }
+
+
+    @Operation(summary = "Count list of all ratings", description = "[Manager] Count list of rating of a specific Toilet by Toilet ID")
+    @Parameters(value = {
+            @Parameter(name = "toilet-id", description = "A specific Toilet ID", in = ParameterIn.QUERY, example = "6")
+    })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {@ExampleObject(value = "10")})),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.MANAGER, RoleConstant.USER})
+    @GetMapping(value = "/count")
+    public ResponseEntity<BaseResponse<Integer>> count(
+            @RequestParam(name = "toilet-id", required = false) Integer toiletId) {
+
+        int response = ratingService.count(toiletId);
+
+        if (toiletId != null) {
+            return ResponseBuilder.generateResponse(
+                    "Count list of rating by Toilet ID successfully!",
+                    HttpStatus.OK,
+                    response
+            );
+        }
+
+        return ResponseBuilder.generateResponse(
+                "Count list of rating successfully!",
+                HttpStatus.OK,
+                response
+        );
+    }
 }

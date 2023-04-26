@@ -9,4 +9,6 @@ import java.util.List;
 public interface RatingService {
     List<RatingResponse> getAllRatings(Integer toiletId, BasePaginationRequest paginationRequest);
     RatingResponse createRating(RatingRequest ratingRequest);
+
+    int count(Integer toiletId);
 }

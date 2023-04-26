@@ -160,12 +160,6 @@ public class StatisticServiceImpl implements StatisticService {
         Date toDate = DateTimeUtil.getDateNow();
         Date fromDate = DateTimeUtil.getFirstDateOfCurrentMonth();
 
-        LOGGER.info("getZoneDateTimeNow: " + DateTimeUtil.getZoneDateTimeNow());
-        LOGGER.info("getDateNow: " + toDate);
-        LOGGER.info("getFirstDateOfCurrentMonth: " + fromDate);
-        LOGGER.info("getTimestampNow: " + DateTimeUtil.getTimestampNow());
-        LOGGER.info("convertDateToTimestamp: " + DateTimeUtil.convertDateToTimestamp(toDate));
-
         if (companyId != null && toiletId == null) {
             return getTotalStatisticOfMonthByCompanyId(companyId, fromDate, toDate);
         } else if (companyId == null && toiletId != null) {
@@ -173,6 +167,31 @@ public class StatisticServiceImpl implements StatisticService {
         } else {
             CustomStatisticDTO customStatisticDTO = statisticRepository.getTotalStatisticOfMonth(fromDate, toDate);
             return statisticMapper.convertCustomStatisticDTOToStatisticResponse(customStatisticDTO);
+        }
+    }
+
+    @Override
+    public int count(Integer companyId, Integer toiletId, String fromStrDate, String toStrDate) {
+        Date fromDate = null;
+        Date toDate = null;
+
+        // If fromDate && toDate is null -> Default fromDate and toDate is currentMonth
+        if (fromStrDate == null || toStrDate == null) {
+            toDate = DateTimeUtil.getDateNow();
+            fromDate = DateTimeUtil.getFirstDateOfCurrentMonth();
+        } else {  // Validate fromDate & toDate
+            fromDate = DateTimeUtil.convertStringToDate(fromStrDate, DateTimeConstant.dd_MM_yyyy);
+            toDate = DateTimeUtil.convertStringToDate(toStrDate, DateTimeConstant.dd_MM_yyyy);
+            if (fromDate != null && fromDate.after(toDate))
+                throw new BadRequestException(ToiletMapErrorCodeEnum.FROM_DATE_AFTER_TO_DATE, ToiletMapErrorCodeEnum.FROM_DATE_AFTER_TO_DATE.getMessage());
+        }
+
+        if (companyId != null && toiletId == null) {
+            return statisticRepository.countAllStatisticsByCompanyId(companyId, fromDate, toDate);
+        } else if (companyId == null && toiletId != null) {
+            return statisticRepository.countAllStatisticsByToiletId(toiletId, fromDate, toDate);
+        } else { // List of Total revenue of each companies in System
+            return statisticRepository.countAllStatistics(fromDate, toDate);
         }
     }
 }
