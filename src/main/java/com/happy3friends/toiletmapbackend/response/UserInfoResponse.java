@@ -10,11 +10,12 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserInfoResponse {
-    private int accountId;
+    private Integer accountId;
     private String fullName;
     private String gmail;
     private String avatar;
     private String defaultPayment;
-    private int accountBalance;
-    private int accountTurn;
+    private Integer accountBalance;
+    private Integer accountTurn;
+    private String username;
 }
