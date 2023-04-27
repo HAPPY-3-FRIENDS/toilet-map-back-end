@@ -16,5 +16,6 @@ public class RatingRequest {
     private int star;
     private String comment;
     private int accountId;
+    private int checkInId;
     private List<String> imageSources;
 }

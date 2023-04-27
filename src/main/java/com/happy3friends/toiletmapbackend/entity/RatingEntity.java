@@ -31,6 +31,9 @@ public class RatingEntity {
     @Column(name = "ToiletId", nullable = false)
     private int toiletId;
     @Basic
+    @Column(name = "CheckInId", nullable = false)
+    private int checkInId;
+    @Basic
     @Column(name = "DateTime", nullable = false)
     private Timestamp DateTime;
     @Basic
@@ -41,4 +44,7 @@ public class RatingEntity {
     private ToiletEntity toiletByToiletId;
     @OneToMany(mappedBy = "ratingByRatingId", cascade = CascadeType.ALL)
     private Collection<RatingImageEntity> ratingImagesById;
+    @OneToOne
+    @JoinColumn(name = "Id", referencedColumnName = "Id", nullable = false)
+    private CheckInEntity checkInById;
 }

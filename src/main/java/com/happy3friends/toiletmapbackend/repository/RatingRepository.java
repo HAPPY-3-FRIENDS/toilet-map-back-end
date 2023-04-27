@@ -45,4 +45,6 @@ public interface RatingRepository extends JpaRepository<RatingEntity, Integer> {
                                                          Pageable pageable);
 
     long countByToiletId(int toiletId);
+
+    Boolean existsByCheckInId(Integer checkInId);
 }
