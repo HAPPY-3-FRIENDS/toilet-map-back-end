@@ -38,7 +38,7 @@ public class StatisticController {
     @Operation(summary = "Get all statistics",
             description = "- [Manager] Get a list of all statistics by company ID (All toilets in this company, with pagination and default sort by Total revenue desc)\n" +
                     "- [Manager] Get a list of all statistics by toilet ID (All services in this toilet)\n" +
-                    "- Default is get all statistics in the system (All companies in this system, with pagination and default sort by Total revenue desc)\n" +
+                    "- [Admin] Default is get all statistics in the system (All companies in this system, with pagination and default sort by Total revenue desc)\n" +
                     "- Default from date and to date is current month")
     @Parameters(value = {
             @Parameter(name = "company-id", description = "A specific company ID", in = ParameterIn.QUERY),
@@ -127,7 +127,7 @@ public class StatisticController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.MANAGER})
+    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.MANAGER})
     @GetMapping
     public ResponseEntity<BaseResponse<List<StatisticResponse>>> getAllStatistics(
             @RequestParam(value = "company-id", required = false) Integer companyId,
@@ -153,7 +153,7 @@ public class StatisticController {
     @Operation(summary = "Get total statistic of month",
             description = "- [Manager] Get total statistic of month by company ID (All toilets in this company)\n" +
                     "- [Manager] Get total statistic of month by toilet ID (All services in this toilet)\n" +
-                    "- Default is get total statistic of month in the system (All companies in this system)\n" +
+                    "- [Admin] Default is get total statistic of month in the system (All companies in this system)\n" +
                     "- From date and to date is current month")
     @Parameters(value = {
             @Parameter(name = "company-id", description = "A specific company ID", in = ParameterIn.QUERY),
@@ -172,7 +172,7 @@ public class StatisticController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.MANAGER})
+    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.MANAGER})
     @GetMapping(value = "/total/month")
     public ResponseEntity<BaseResponse<StatisticResponse>> getTotalStatisticByMonth(
             @RequestParam(value = "company-id", required = false) Integer companyId,
@@ -190,7 +190,7 @@ public class StatisticController {
     @Operation(summary = "Count all statistics",
             description = "- [Manager] Count a list of all statistics by company ID (All toilets in this company)\n" +
                     "- [Manager] Count a list of all statistics by toilet ID (All services in this toilet)\n" +
-                    "- Default is get all statistics in the system (All companies in this system)\n" +
+                    "- [Admin] Default is get all statistics in the system (All companies in this system)\n" +
                     "- Default from date and to date is current month")
     @Parameters(value = {
             @Parameter(name = "company-id", description = "A specific Company ID", in = ParameterIn.QUERY, example = "6"),
@@ -207,7 +207,7 @@ public class StatisticController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.MANAGER})
+    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.MANAGER})
     @GetMapping(value = "/count")
     public ResponseEntity<BaseResponse<Integer>> count(
             @RequestParam(value = "company-id", required = false) Integer companyId,
