@@ -4,6 +4,7 @@ import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
 import com.happy3friends.toiletmapbackend.constant.DefaultSortPropertyConstant;
 import com.happy3friends.toiletmapbackend.dto.CustomAccountInfoDTO;
 import com.happy3friends.toiletmapbackend.dto.CustomRatingDetailsDTO;
+import com.happy3friends.toiletmapbackend.entity.CheckInEntity;
 import com.happy3friends.toiletmapbackend.entity.RatingEntity;
 import com.happy3friends.toiletmapbackend.entity.RatingImageEntity;
 import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
@@ -12,10 +13,7 @@ import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
 import com.happy3friends.toiletmapbackend.exception.BadRequestException;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.RatingMapper;
-import com.happy3friends.toiletmapbackend.repository.AccountRepository;
-import com.happy3friends.toiletmapbackend.repository.RatingImageRepository;
-import com.happy3friends.toiletmapbackend.repository.RatingRepository;
-import com.happy3friends.toiletmapbackend.repository.ToiletRepository;
+import com.happy3friends.toiletmapbackend.repository.*;
 import com.happy3friends.toiletmapbackend.request.RatingRequest;
 import com.happy3friends.toiletmapbackend.response.RatingResponse;
 import com.happy3friends.toiletmapbackend.service.RatingService;
@@ -51,6 +49,9 @@ public class RatingServiceImpl implements RatingService {
 
     @Autowired
     private RatingMapper ratingMapper;
+
+    @Autowired
+    private CheckInRepository checkInRepository;
 
     private LinkedHashMap<Integer, List<CustomRatingDetailsDTO>> getMapIdListCustomRatingDetailsDTO(
             List<CustomRatingDetailsDTO> customRatingDetailsDTOS) {
@@ -138,11 +139,20 @@ public class RatingServiceImpl implements RatingService {
             throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT.getMessage());
         if (!customAccountInfoDTO.getRole().equals(RoleEnum.USER.getRoleName()))
             throw new BadRequestException(ToiletMapErrorCodeEnum.INVALID_ROLE, ToiletMapErrorCodeEnum.INVALID_ROLE.getMessage());
-        // TODO: validate account with check-in for rating
+        // Validate only rating one time in a check-in
+        boolean checkRating = ratingRepository.existsByCheckInId(ratingRequest.getCheckInId());
+        if (checkRating) {
+            throw new NotFoundException(ToiletMapErrorCodeEnum.EXISTED_RATING, ToiletMapErrorCodeEnum.EXISTED_RATING.getMessage());
+        }
+
+        // Validate expired rating
+        Optional<CheckInEntity> checkInEntity = checkInRepository.findById(ratingRequest.getCheckInId());
+        if (checkInEntity.get().getDateTime().compareTo(new Timestamp(DateTimeUtil.getTimestampNow().getTime() - 8 * 60 * 60 * 1000)) < 0) {
+            throw new NotFoundException(ToiletMapErrorCodeEnum.EXPIRED_RATING, ToiletMapErrorCodeEnum.EXPIRED_RATING.getMessage());
+        }
 
         // Save Rating Entity
         LOGGER.info("-- Create Rating - Start save Rating Entity! --");
-        // TODO: Common rating comment
         Timestamp timestampNow = DateTimeUtil.getTimestampNow();
         RatingEntity ratingEntity = ratingMapper.convertRatingRequestToRatingEntity(ratingRequest);
         ratingEntity.setToiletId(ratingEntity.getToiletId());

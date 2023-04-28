@@ -44,6 +44,7 @@ public class RatingController {
                             "  \"star\": 5,\n" +
                             "  \"comment\": \"Nhà vệ sinh rất sạch, tớ sẽ ghé sử dụng thường xuyên\",\n" +
                             "  \"accountId\": 6,\n" +
+                            "  \"checkInId\": 6,\n" +
                             "  \"imageSources\": [\n" +
                             "    \"https://meovatchamsocgiadinh.com/ckfinder/userfiles/images/cau-chuyen-ve-chiec-bon-cau-ban-va-cach-xu-ly-ham-cau-bi-day/cau-chuyen-ve-chiec-bon-cau-ban.jpg\",\n" +
                             "    \"https://afamilycdn.com/k:thumb_w/600/h6ZUmntrbWseKUPJv6Yt1NY22jQBtc/Image/2014/12/6-8429e/tu-su-cua-chiec-bon-cau-ban-va-chuyen-di-ve-sinh-cua-be-o-truong.jpg\"\n" +

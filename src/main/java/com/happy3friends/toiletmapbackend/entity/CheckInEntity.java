@@ -44,4 +44,6 @@ public class CheckInEntity {
     @Basic
     @Column(name = "TurnPrice", nullable = true)
     private Integer turnPrice;
+    @OneToOne(mappedBy = "checkInById")
+    private RatingEntity ratingById;
 }
