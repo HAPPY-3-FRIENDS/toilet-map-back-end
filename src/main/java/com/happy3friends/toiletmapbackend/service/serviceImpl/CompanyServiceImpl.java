@@ -1,6 +1,9 @@
 package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
+import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
+import com.happy3friends.toiletmapbackend.constant.DefaultSortPropertyConstant;
 import com.happy3friends.toiletmapbackend.constant.StatusConstant;
+import com.happy3friends.toiletmapbackend.dto.CompanyHasStatusDTO;
 import com.happy3friends.toiletmapbackend.entity.AccountEntity;
 import com.happy3friends.toiletmapbackend.entity.CompanyEntity;
 import com.happy3friends.toiletmapbackend.enums.RoleEnum;
@@ -11,12 +14,16 @@ import com.happy3friends.toiletmapbackend.mapper.CompanyMapper;
 import com.happy3friends.toiletmapbackend.repository.AccountRepository;
 import com.happy3friends.toiletmapbackend.repository.CompanyRepository;
 import com.happy3friends.toiletmapbackend.request.CompanyCreateRequest;
+import com.happy3friends.toiletmapbackend.response.CompanyHasStatusResponse;
 import com.happy3friends.toiletmapbackend.response.CompanyResponse;
 import com.happy3friends.toiletmapbackend.response.UpdateCompanyResponse;
 import com.happy3friends.toiletmapbackend.service.CompanyService;
+import com.happy3friends.toiletmapbackend.utils.PaginationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -24,8 +31,8 @@ import org.springframework.util.ReflectionUtils;
 
 import javax.persistence.EntityManager;
 import java.lang.reflect.Field;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CompanyServiceImpl implements CompanyService {
@@ -43,6 +50,43 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Autowired
     private EntityManager entityManager;
+
+    private LinkedHashMap<Integer, List<CompanyHasStatusDTO>> getMapIdListCompanyHasStatusDTO(
+            List<CompanyHasStatusDTO> companyHasStatusDTOS) {
+
+        return companyHasStatusDTOS.stream()
+                .collect(Collectors.groupingBy(
+                        CompanyHasStatusDTO::getId,
+                        LinkedHashMap::new,
+                        Collectors.toCollection(ArrayList::new)));
+    }
+
+    private CompanyHasStatusResponse getCompanyHasStatusResponseFromListCompanyHasStatusDTO(
+            List<CompanyHasStatusDTO> customRatingDetailsDTOS) {
+
+        return new CompanyHasStatusResponse(
+                customRatingDetailsDTOS.get(0).getId(),
+                customRatingDetailsDTOS.get(0).getName(),
+                customRatingDetailsDTOS.get(0).getLogo(),
+                customRatingDetailsDTOS.get(0).getAddress(),
+                customRatingDetailsDTOS.get(0).getWard(),
+                customRatingDetailsDTOS.get(0).getDistrict(),
+                customRatingDetailsDTOS.get(0).getProvince(),
+                customRatingDetailsDTOS.get(0).getPhone(),
+                customRatingDetailsDTOS.get(0).getStatus()
+        );
+    }
+
+    private List<CompanyHasStatusResponse> getListCompanyHasStatusResponseFromListCompanyHasStatusDTO(
+            List<CompanyHasStatusDTO> companyHasStatusDTOS
+    ) {
+        LinkedHashMap<Integer, List<CompanyHasStatusDTO>> mapIdListCompanyHasStatusDTO
+                = getMapIdListCompanyHasStatusDTO(companyHasStatusDTOS);
+
+        return mapIdListCompanyHasStatusDTO.values()
+                .stream().map(this::getCompanyHasStatusResponseFromListCompanyHasStatusDTO)
+                .collect(Collectors.toList());
+    }
 
     @Override
     public CompanyResponse getCompanyByAccountId(int accountId) {
@@ -104,4 +148,20 @@ public class CompanyServiceImpl implements CompanyService {
         LOGGER.info("-- Update Company - Finish save Company Entity and its information! --");
         return companyMapper.convertAccountEntityToUpdateCompanyResponse(entity);
     }
+
+    @Override
+    public List<CompanyHasStatusResponse> getAllCompanies(BasePaginationRequest paginationRequest) {
+        Sort.Order defaultSortOrder = new Sort.Order(Sort.Direction.DESC, DefaultSortPropertyConstant.ID);
+        Pageable pageable = PaginationUtil.getPageable(paginationRequest, defaultSortOrder);
+
+        List<CompanyHasStatusDTO> result = companyRepository.getAllCompanies(pageable);
+        return getListCompanyHasStatusResponseFromListCompanyHasStatusDTO(result);
+    }
+
+    @Override
+    public int count() {
+        return (int) companyRepository.count() - 1;
+    }
+
+
 }
