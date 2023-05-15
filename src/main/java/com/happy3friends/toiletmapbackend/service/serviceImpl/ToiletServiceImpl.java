@@ -20,6 +20,7 @@ import com.happy3friends.toiletmapbackend.request.ToiletCreateRequest;
 import com.happy3friends.toiletmapbackend.response.DistanceMatrixResponse;
 import com.happy3friends.toiletmapbackend.response.Element;
 import com.happy3friends.toiletmapbackend.response.ToiletDetailsInfoResponse;
+import com.happy3friends.toiletmapbackend.response.UpdateToiletInfoResponse;
 import com.happy3friends.toiletmapbackend.service.ToiletService;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
 import com.happy3friends.toiletmapbackend.utils.FilterKeysUtil;
@@ -30,10 +31,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 
 import javax.transaction.Transactional;
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -59,6 +62,9 @@ public class ToiletServiceImpl implements ToiletService {
 
     @Autowired
     private ServiceRepository serviceRepository;
+
+    @Autowired
+    private ToiletImageRepository toiletImageRepository;
 
     @Autowired
     private ToiletMapper toiletMapper;
@@ -389,6 +395,44 @@ public class ToiletServiceImpl implements ToiletService {
         int index = listDistanceMatrixResponse.get(0).getRows().get(0).getElements().indexOf(element);
 
         return list10ToiletNearByLatLng.get(index);
+    }
+
+    @Override
+    public UpdateToiletInfoResponse updateToiletInfo(Integer id, Map<String, Object> fields) {
+        Optional<ToiletEntity> toiletEntity = toiletRepository.findById(id);
+        if (!toiletEntity.isPresent())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_TOILET, ToiletMapErrorCodeEnum.NOT_FOUND_TOILET.getMessage());
+
+        LOGGER.info("-- Update Toilet info - Start save Toilet Entity and its information! --");
+        fields.forEach((key, value) -> {
+            if (key.equals("toiletImagesById")) {
+                //Delete all images
+                toiletImageRepository.deleteByToiletId(id);
+
+                //Update new images
+                Collection<ToiletImageEntity> toiletImageEntities = new ArrayList<>();
+
+                String value2String = value.toString().substring(1, value.toString().length() - 1);
+                List<String> listImages = Arrays.asList(value2String.split(", "));
+
+                listImages.forEach((s) -> {
+                    ToiletImageEntity toiletImageEntity = new ToiletImageEntity();
+                    toiletImageEntity.setToiletId(id);
+                    toiletImageEntity.setImageSource(s);
+                    toiletImageEntities.add(toiletImageEntity);
+                });
+
+                toiletEntity.get().setToiletImagesById(toiletImageEntities);
+            } else {
+                Field field = ReflectionUtils.findField(ToiletEntity.class, key);
+                field.setAccessible(true);
+                ReflectionUtils.setField(field, toiletEntity.get(), value);
+            }
+        });
+
+        ToiletEntity entity = toiletRepository.save(toiletEntity.get());
+        LOGGER.info("-- Update Toilet info - Finish save Toilet Entity and its information! --");
+        return toiletMapper.convertToiletEntityToUpdateToiletInfoResponse(entity);
     }
 
     private int convertDurationOrDistanceTextToInt(String durationText) {
