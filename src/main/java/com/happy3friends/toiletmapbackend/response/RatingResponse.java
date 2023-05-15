@@ -22,4 +22,5 @@ public class RatingResponse {
     @JsonFormat(pattern = DateTimeConstant.dd_MM_yyyy__HH_mm_ss)
     private Date dateTime;
     private List<String> imageSources;
+    private String avatar;
 }

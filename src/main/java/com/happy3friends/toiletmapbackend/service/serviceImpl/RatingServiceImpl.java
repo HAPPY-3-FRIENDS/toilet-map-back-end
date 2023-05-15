@@ -77,7 +77,8 @@ public class RatingServiceImpl implements RatingService {
                 customRatingDetailsDTOS.get(0).getStar(),
                 customRatingDetailsDTOS.get(0).getComment(),
                 customRatingDetailsDTOS.get(0).getDateTime(),
-                imageSources
+                imageSources,
+                customRatingDetailsDTOS.get(0).getAvatar()
         );
     }
 
@@ -183,7 +184,8 @@ public class RatingServiceImpl implements RatingService {
                 ratingRequest.getStar(),
                 ratingRequest.getComment(),
                 new Date(timestampNow.getTime()),
-                ratingRequest.getImageSources()
+                ratingRequest.getImageSources(),
+                null
         );
     }
 

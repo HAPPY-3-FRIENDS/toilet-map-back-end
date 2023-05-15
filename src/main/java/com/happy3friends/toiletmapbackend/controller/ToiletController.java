@@ -516,6 +516,41 @@ public class ToiletController {
         );
     }
 
+    @Operation(summary = "Update toilet info", description = "[Manager] Update toilet and its information")
+    @Parameter(name = "toilet-id", description = "A specific toilet ID", in = ParameterIn.PATH, required = true, example = "4")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Fields Request", required = true, content = @Content(
+            examples = {
+                    @ExampleObject(name = "Update toilet info", value = "{\n" +
+                            "    \"name\": \"Hieu toilet updated\",\n" +
+                            "    \"address\": \"Trường Đại học FPT TP. HCM\",\n" +
+                            "    \"ward\": \"Long Thạnh Mỹ\",\n" +
+                            "    \"district\": \"Thủ Đức\",\n" +
+                            "    \"province\": \"Hồ Chí Minh\",\n" +
+                            "    \"toiletImagesById\": [\n" +
+                            "\t\t\"Update1\",\n" +
+                            "\t\t\"Update2\"\n" +
+                            "    ]\n" +
+                            "}")}))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
+                    @ExampleObject(value = "{\n" +
+                            "    \"id\": 88,\n" +
+                            "    \"name\": \"Hieu toilet updated\",\n" +
+                            "    \"address\": \"Trường Đại học FPT TP. HCM\",\n" +
+                            "    \"ward\": \"Long Thạnh Mỹ\",\n" +
+                            "    \"district\": \"Thủ Đức\",\n" +
+                            "    \"province\": \"Hồ Chí Minh\",\n" +
+                            "    \"toiletImagesById\": [\n" +
+                            "      \"Update1\",\n" +
+                            "      \"Update2\"\n" +
+                            "    ]\n" +
+                            "  }")})),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.MANAGER})
     @PatchMapping("{toilet-id}")

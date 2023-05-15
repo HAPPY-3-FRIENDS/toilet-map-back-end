@@ -9,4 +9,5 @@ public interface CustomRatingDetailsDTO {
     String getComment();
     Date getDateTime();
     String getImageSource();
+    String getAvatar();
 }
