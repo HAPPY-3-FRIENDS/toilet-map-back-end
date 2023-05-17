@@ -7,6 +7,7 @@ import com.happy3friends.toiletmapbackend.dto.TokenDTO;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.request.AccountRequest;
 import com.happy3friends.toiletmapbackend.response.AccountResponse;
+import com.happy3friends.toiletmapbackend.response.UpdateAccountResponse;
 import com.happy3friends.toiletmapbackend.response.UserInfoResponse;
 import com.happy3friends.toiletmapbackend.service.AccountService;
 import com.happy3friends.toiletmapbackend.service.UserInfoService;
@@ -214,6 +215,45 @@ public class AccountController {
 
         return ResponseBuilder.generateResponse(
                 "Get user info by Account username successfully!",
+                HttpStatus.OK,
+                response
+        );
+    }
+
+    @Operation(summary = "Update an account", description = "[User] Update an account and its information")
+    @Parameter(name = "id", description = "A specific account ID", in = ParameterIn.PATH, required = true, example = "6")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Fields Request", required = true, content = @Content(
+            examples = {
+                    @ExampleObject(name = "Update username", value = "{\n" +
+                            "  \"username\": \"0849666957\" \n" +
+                            "}"),
+                    @ExampleObject(name = "Update status", value = "{\n" +
+                            "  \"status\": \"Đang hoạt động\" \n" +
+                            "}")}))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
+                    @ExampleObject(value = "{\n" +
+                            "    \"username\": \"0849666957\",\n" +
+                            "    \"password\": null,\n" +
+                            "    \"status\": \"Đang hoạt động\"\n" +
+                            "  }")})),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.USER})
+    @PatchMapping(value = "/{id}")
+    public ResponseEntity<BaseResponse<UpdateAccountResponse>> updateAccountById(
+            @PathVariable("id") int id,
+            @RequestBody Map<String, Object> fields) {
+
+        UpdateAccountResponse response = accountService.updateAccount(id, fields);
+
+        return ResponseBuilder.generateResponse(
+                "Update account by ID successfully!",
                 HttpStatus.OK,
                 response
         );

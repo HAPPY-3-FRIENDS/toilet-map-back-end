@@ -14,21 +14,29 @@ import com.happy3friends.toiletmapbackend.repository.CompanyRepository;
 import com.happy3friends.toiletmapbackend.repository.UserInfoRepository;
 import com.happy3friends.toiletmapbackend.request.AccountRequest;
 import com.happy3friends.toiletmapbackend.response.AccountResponse;
+import com.happy3friends.toiletmapbackend.response.UpdateAccountResponse;
 import com.happy3friends.toiletmapbackend.service.AccountService;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
 import com.happy3friends.toiletmapbackend.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Field;
 import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
 public class AccountServiceImpl implements AccountService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccountServiceImpl.class);
 
     @Autowired
     private AccountRepository accountRepository;
@@ -130,5 +138,26 @@ public class AccountServiceImpl implements AccountService {
                 .claim("username", accountRequest.getUsername())
                 .claim("role", accountRequest.getRoleName())
                 .compact());
+    }
+
+    @Override
+    public UpdateAccountResponse updateAccount(int id, Map<String, Object> fields) {
+        Optional<AccountEntity> accountEntity = accountRepository.findById(id);
+        if (!accountEntity.isPresent())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT.getMessage());
+
+        LOGGER.info("-- Update Account - Start save Account Entity and its information! --");
+        fields.forEach((key, value) -> {
+            Field field = ReflectionUtils.findField(AccountEntity.class, key);
+            field.setAccessible(true);
+            ReflectionUtils.setField(field, accountEntity.get(), value);
+        });
+        AccountEntity entity = accountRepository.save(accountEntity.get());
+        LOGGER.info("-- Update Account - Finish save Account Entity and its information! --");
+        return new UpdateAccountResponse(
+                entity.getUsername(),
+                entity.getPassword(),
+                entity.getStatus()
+        );
     }
 }
