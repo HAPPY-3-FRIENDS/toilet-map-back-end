@@ -7,6 +7,10 @@ import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.response.FacilityResponse;
 import com.happy3friends.toiletmapbackend.service.FacilityService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.security.RolesAllowed;
@@ -86,6 +91,55 @@ public class FacilityController {
 
         return ResponseBuilder.generateResponse(
                 "Get list of all facilities successfully!",
+                HttpStatus.OK,
+                responses
+        );
+    }
+
+    @Operation(summary = "Get list of facilities by type", description = "[Manager] Get list of facilities by type")
+    @Parameters(value = {
+            @Parameter(name = "type", description = "Type of facility", in = ParameterIn.QUERY, required = true, example = "Phòng")
+    })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
+                    @ExampleObject(value = "[\n" +
+                            "    {\n" +
+                            "      \"id\": 1,\n" +
+                            "      \"name\": \"Phòng vệ sinh\",\n" +
+                            "      \"type\": \"Phòng\"\n" +
+                            "    },\n" +
+                            "    {\n" +
+                            "      \"id\": 2,\n" +
+                            "      \"name\": \"Phòng tắm\",\n" +
+                            "      \"type\": \"Phòng\"\n" +
+                            "    },\n" +
+                            "    {\n" +
+                            "      \"id\": 3,\n" +
+                            "      \"name\": \"Phòng vệ sinh dành cho người khuyết tật\",\n" +
+                            "      \"type\": \"Phòng\"\n" +
+                            "    }\n" +
+                            "  ]")})),
+            @ApiResponse(responseCode = "204", description = "No Content!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.MANAGER})
+    @GetMapping("/type")
+    public ResponseEntity<BaseResponse<List<FacilityResponse>>> getFacilitiesByType(
+            @RequestParam(name = "type") String type
+    ) {
+
+        List<FacilityResponse> responses = facilityService.getFacilitiesByType(type);
+
+        if (responses.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+        return ResponseBuilder.generateResponse(
+                "Get list of facilities by type successfully!",
                 HttpStatus.OK,
                 responses
         );

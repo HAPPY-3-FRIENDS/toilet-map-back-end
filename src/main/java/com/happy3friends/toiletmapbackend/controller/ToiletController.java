@@ -526,10 +526,40 @@ public class ToiletController {
                             "    \"ward\": \"Long Thạnh Mỹ\",\n" +
                             "    \"district\": \"Thủ Đức\",\n" +
                             "    \"province\": \"Hồ Chí Minh\",\n" +
+                            "    \"openTime\": \"09:00\",\n" +
+                            "    \"closeTime\": \"23:00\",\n" +
                             "    \"toiletImagesById\": [\n" +
                             "\t\t\"Update1\",\n" +
                             "\t\t\"Update2\"\n" +
-                            "    ]\n" +
+                            "    ],\n" +
+                            "\t\"toiletFacilitiesById\": [\n" +
+                            "\t\t{\n" +
+                            "\t\t\t\"facilityId\": 4,\n" +
+                            "\t\t\t\"quantity\":1\n" +
+                            "\t\t},\n" +
+                            "\t\t{\n" +
+                            "\t\t\t\"facilityId\": 5,\n" +
+                            "\t\t\t\"quantity\":1\n" +
+                            "\t\t},\n" +
+                            "\t\t{\n" +
+                            "\t\t\t\"facilityId\": 6,\n" +
+                            "\t\t\t\"quantity\":1\n" +
+                            "\t\t},\n" +
+                            "\t\t{\n" +
+                            "\t\t\t\"facilityId\": 1,\n" +
+                            "\t\t\t\"quantity\":10\n" +
+                            "\t\t},\n" +
+                            "\t\t{\n" +
+                            "\t\t\t\"facilityId\": 2,\n" +
+                            "\t\t\t\"quantity\":10\n" +
+                            "\t\t},\n" +
+                            "\t\t{\n" +
+                            "\t\t\t\"facilityId\": 3,\n" +
+                            "\t\t\t\"quantity\":10\n" +
+                            "\t\t}\n" +
+                            "\t],\n" +
+                            "    \"status\": \"Không hoạt động\",\n" +
+                            "    \"isFree\": true\n" +
                             "}")}))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
@@ -540,10 +570,58 @@ public class ToiletController {
                             "    \"ward\": \"Long Thạnh Mỹ\",\n" +
                             "    \"district\": \"Thủ Đức\",\n" +
                             "    \"province\": \"Hồ Chí Minh\",\n" +
+                            "    \"openTime\": \"09:00:00\",\n" +
+                            "    \"closeTime\": \"23:00:00\",\n" +
                             "    \"toiletImagesById\": [\n" +
                             "      \"Update1\",\n" +
                             "      \"Update2\"\n" +
-                            "    ]\n" +
+                            "    ],\n" +
+                            "    \"toiletFacilitiesById\": [\n" +
+                            "      {\n" +
+                            "        \"facilityId\": 4,\n" +
+                            "        \"facilityName\": \"Vòi xịt\",\n" +
+                            "        \"facilityType\": \"Trang thiết bị\",\n" +
+                            "        \"quantity\": 1,\n" +
+                            "        \"description\": null\n" +
+                            "      },\n" +
+                            "      {\n" +
+                            "        \"facilityId\": 5,\n" +
+                            "        \"facilityName\": \"Máy sấy tay\",\n" +
+                            "        \"facilityType\": \"Trang thiết bị\",\n" +
+                            "        \"quantity\": 1,\n" +
+                            "        \"description\": null\n" +
+                            "      },\n" +
+                            "      {\n" +
+                            "        \"facilityId\": 6,\n" +
+                            "        \"facilityName\": \"Giấy vệ sinh\",\n" +
+                            "        \"facilityType\": \"Trang thiết bị\",\n" +
+                            "        \"quantity\": 1,\n" +
+                            "        \"description\": null\n" +
+                            "      },\n" +
+                            "      {\n" +
+                            "        \"facilityId\": 1,\n" +
+                            "        \"facilityName\": \"Phòng vệ sinh\",\n" +
+                            "        \"facilityType\": \"Phòng\",\n" +
+                            "        \"quantity\": 10,\n" +
+                            "        \"description\": null\n" +
+                            "      },\n" +
+                            "      {\n" +
+                            "        \"facilityId\": 2,\n" +
+                            "        \"facilityName\": \"Phòng tắm\",\n" +
+                            "        \"facilityType\": \"Phòng\",\n" +
+                            "        \"quantity\": 10,\n" +
+                            "        \"description\": null\n" +
+                            "      },\n" +
+                            "      {\n" +
+                            "        \"facilityId\": 3,\n" +
+                            "        \"facilityName\": \"Phòng vệ sinh dành cho người khuyết tật\",\n" +
+                            "        \"facilityType\": \"Phòng\",\n" +
+                            "        \"quantity\": 10,\n" +
+                            "        \"description\": null\n" +
+                            "      }\n" +
+                            "    ],\n" +
+                            "    \"status\": \"Không hoạt động\",\n" +
+                            "    \"free\": true\n" +
                             "  }")})),
             @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),

@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface FacilityService {
     List<FacilityResponse> getAllFacilities();
+
+    List<FacilityResponse> getFacilitiesByType(String type);
 }

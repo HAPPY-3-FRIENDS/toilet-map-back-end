@@ -29,4 +29,12 @@ public class FacilityServiceImpl implements FacilityService {
                 .map(entity -> facilityMapper.convertFacilityEntityToFacilityResponse(entity))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<FacilityResponse> getFacilitiesByType(String type) {
+        List<FacilityEntity> facilityEntities = facilityRepository.findByType(type);
+        return facilityEntities.stream()
+                .map(entity -> facilityMapper.convertFacilityEntityToFacilityResponse(entity))
+                .collect(Collectors.toList());
+    }
 }
