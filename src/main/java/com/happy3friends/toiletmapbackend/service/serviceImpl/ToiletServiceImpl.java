@@ -1,5 +1,7 @@
 package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
 import com.happy3friends.toiletmapbackend.constant.DefaultSortPropertyConstant;
 import com.happy3friends.toiletmapbackend.constant.FacilityNameConstant;
@@ -25,6 +27,8 @@ import com.happy3friends.toiletmapbackend.service.ToiletService;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
 import com.happy3friends.toiletmapbackend.utils.FilterKeysUtil;
 import com.happy3friends.toiletmapbackend.utils.PaginationUtil;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +41,7 @@ import reactor.core.publisher.Flux;
 
 import javax.transaction.Transactional;
 import java.lang.reflect.Field;
+import java.sql.Time;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -65,6 +70,9 @@ public class ToiletServiceImpl implements ToiletService {
 
     @Autowired
     private ToiletImageRepository toiletImageRepository;
+
+    @Autowired
+    private ToiletFacilityRepository toiletFacilityRepository;
 
     @Autowired
     private ToiletMapper toiletMapper;
@@ -423,6 +431,37 @@ public class ToiletServiceImpl implements ToiletService {
                 });
 
                 toiletEntity.get().setToiletImagesById(toiletImageEntities);
+            } else if(key.equals("toiletFacilitiesById")) {
+                //Delete all toilet facility
+                toiletFacilityRepository.deleteByToiletId(id);
+
+                //Update new toilet facility
+                Collection<ToiletFacilityEntity> toiletFacilityEntities = new ArrayList<>();
+
+                try {
+                    String json = new ObjectMapper().writeValueAsString(value);
+                    JSONArray array = new JSONArray(json);
+
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject object = array.getJSONObject(i);
+
+                        ToiletFacilityEntity toiletFacilityEntity = new ToiletFacilityEntity();
+                        toiletFacilityEntity.setToiletId(id);
+                        toiletFacilityEntity.setFacilityId(object.getInt("facilityId"));
+                        toiletFacilityEntity.setQuantity(object.getInt("quantity"));
+                        toiletFacilityEntities.add(toiletFacilityEntity);
+                    }
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+
+                toiletEntity.get().setToiletFacilitiesById(toiletFacilityEntities);
+            } else if (key.equals("openTime")) {
+                String value2String = value.toString();
+                toiletEntity.get().setOpenTime(new Time(DateTimeUtil.convertStringToDate(value2String, "HH:mm").getTime()));
+            } else if (key.equals("closeTime")) {
+                String value2String = value.toString();
+                toiletEntity.get().setCloseTime(new Time(DateTimeUtil.convertStringToDate(value2String, "HH:mm").getTime()));
             } else {
                 Field field = ReflectionUtils.findField(ToiletEntity.class, key);
                 field.setAccessible(true);

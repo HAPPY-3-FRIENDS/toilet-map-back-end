@@ -1,5 +1,6 @@
 package com.happy3friends.toiletmapbackend.response;
 
+import com.happy3friends.toiletmapbackend.dto.ToiletFacilityDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,5 +19,10 @@ public class UpdateToiletInfoResponse {
     private String ward;
     private String district;
     private String province;
+    private String openTime;
+    private String closeTime;
     private List<String> toiletImagesById;
+    private List<ToiletFacilityDTO> toiletFacilitiesById;
+    private boolean isFree;
+    private String status;
 }
