@@ -127,7 +127,7 @@ public class CommonCommentController {
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.ADMIN})
-    @PatchMapping("{common-comment-id}")
+    @PatchMapping("/{common-comment-id}")
     public ResponseEntity<BaseResponse<CommonCommentResponse>> updateCommonComment(
             @PathVariable("common-comment-id") Integer id,
             @RequestBody Map<String, Object> fields

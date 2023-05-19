@@ -631,7 +631,7 @@ public class ToiletController {
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.MANAGER})
-    @PatchMapping("{toilet-id}")
+    @PatchMapping("/{toilet-id}")
     public ResponseEntity<BaseResponse<UpdateToiletInfoResponse>> updateToiletInfo(
             @PathVariable("toilet-id") Integer id,
             @RequestBody Map<String, Object> fields) {

@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface FacilityRepository extends JpaRepository<FacilityEntity, Integer> {
     List<FacilityEntity> findByType(String type);
+
+    boolean existsByName(String name);
 }

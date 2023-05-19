@@ -16,4 +16,6 @@ public interface ToiletFacilityRepository extends JpaRepository<ToiletFacilityEn
             "FROM ToiletFacility " +
             "WHERE ToiletId = :toiletId", nativeQuery = true)
     void deleteByToiletId(@Param("toiletId") int toiletId);
+
+    boolean existsByFacilityId(int id);
 }

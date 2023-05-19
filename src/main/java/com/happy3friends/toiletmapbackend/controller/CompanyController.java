@@ -150,7 +150,7 @@ public class CompanyController {
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.ADMIN})
-    @PatchMapping("{manager-id}")
+    @PatchMapping("/{manager-id}")
     public ResponseEntity<BaseResponse<UpdateCompanyResponse>> updateCompanyStatus(
             @PathVariable("manager-id") Integer id,
             @RequestBody Map<String, Object> fields) {
