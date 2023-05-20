@@ -5,10 +5,7 @@ import com.happy3friends.toiletmapbackend.constant.DefaultSortPropertyConstant;
 import com.happy3friends.toiletmapbackend.constant.PaymentTypeConstant;
 import com.happy3friends.toiletmapbackend.dto.CustomAccountInfoDTO;
 import com.happy3friends.toiletmapbackend.dto.CustomCheckInDTO;
-import com.happy3friends.toiletmapbackend.entity.AccountEntity;
-import com.happy3friends.toiletmapbackend.entity.CheckInEntity;
-import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
-import com.happy3friends.toiletmapbackend.entity.ToiletServiceEntity;
+import com.happy3friends.toiletmapbackend.entity.*;
 import com.happy3friends.toiletmapbackend.enums.PaymentTypeEnum;
 import com.happy3friends.toiletmapbackend.enums.RoleEnum;
 import com.happy3friends.toiletmapbackend.enums.ServiceEnum;
@@ -118,9 +115,8 @@ public class CheckInServiceImpl implements CheckInService {
             CustomAccountInfoDTO customAccountInfoDTO = accountRepository.getCustomAccountInfoByAccountId(checkInRequest.getAccountId());
             String defaultAccountPayment = customAccountInfoDTO.getDefaultPayment();
             if (!defaultAccountPayment.equals(PaymentTypeEnum.TURN.getPaymentValue()))
-                throw new BadRequestException(ToiletMapErrorCodeEnum.INVALID_DEFAULT_PAYMENT_METHOD, ToiletMapErrorCodeEnum.INVALID_DEFAULT_PAYMENT_METHOD.getMessage());
+                defaultAccountPayment = PaymentTypeEnum.TURN.getPaymentValue();
             int accountTurn = customAccountInfoDTO.getAccountTurn();
-            String serviceName = toiletServiceEntity.get().getServiceByServiceId().getName();
             int serviceTurn = toiletServiceEntity.get().getServiceByServiceId().getTurn();
             int serviceTurnPrice = toiletServiceEntity.get().getServiceByServiceId().getTurnPrice();
 
@@ -134,7 +130,15 @@ public class CheckInServiceImpl implements CheckInService {
                 throw new BadRequestException(ToiletMapErrorCodeEnum.ACCOUNT_TURN_NOT_ENOUGH, ToiletMapErrorCodeEnum.ACCOUNT_TURN_NOT_ENOUGH.getMessage());
             if (!toiletEntity.get().isFree()) {
                 accountTurn = accountTurn - serviceTurn;
-                userInfoRepository.updateAccountTurn(checkInRequest.getAccountId(), accountTurn);
+                UserInfoEntity userInfoEntity = new UserInfoEntity();
+                userInfoEntity.setAccountId(customAccountInfoDTO.getAccountId());
+                userInfoEntity.setFullName(customAccountInfoDTO.getFullName());
+                userInfoEntity.setGmail(customAccountInfoDTO.getGmail());
+                userInfoEntity.setAvatar(customAccountInfoDTO.getAvatar());
+                userInfoEntity.setAccountBalance(customAccountInfoDTO.getAccountBalance());
+                userInfoEntity.setAccountTurn(accountTurn);
+                userInfoEntity.setDefaultPayment(defaultAccountPayment);
+                userInfoRepository.save(userInfoEntity);
                 checkInEntity.setTurn(serviceTurn);
                 checkInEntity.setTurnPrice(serviceTurnPrice);
             } else {
