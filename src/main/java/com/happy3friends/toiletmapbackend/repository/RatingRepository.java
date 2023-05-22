@@ -20,7 +20,8 @@ public interface RatingRepository extends JpaRepository<RatingEntity, Integer> {
             "             CAST(r.Comment AS NVARCHAR(MAX))     AS Comment, " +
             "             r.DateTime, " +
             "             CAST(ri.ImageSource AS VARCHAR(MAX)) AS ImageSource, " +
-            "             ui.Avatar " +
+            "             ui.Avatar, " +
+            "             r.Status " +
             "      FROM Rating r " +
             "               JOIN Account a " +
             "                    ON r.AccountId = a.Id " +
@@ -35,7 +36,8 @@ public interface RatingRepository extends JpaRepository<RatingEntity, Integer> {
             "             CAST(r.Comment AS NVARCHAR(MAX))     AS Comment, " +
             "             r.DateTime, " +
             "             CAST(ri.ImageSource AS VARCHAR(MAX)) AS ImageSource, " +
-            "             ui.Avatar " +
+            "             ui.Avatar, " +
+            "             r.Status " +
             "      FROM Rating r " +
             "               JOIN Account a " +
             "                    ON r.AccountId = a.Id " +
