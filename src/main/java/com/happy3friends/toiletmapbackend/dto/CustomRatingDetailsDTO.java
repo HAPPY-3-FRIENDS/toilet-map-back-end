@@ -10,4 +10,5 @@ public interface CustomRatingDetailsDTO {
     Date getDateTime();
     String getImageSource();
     String getAvatar();
+    String getStatus();
 }

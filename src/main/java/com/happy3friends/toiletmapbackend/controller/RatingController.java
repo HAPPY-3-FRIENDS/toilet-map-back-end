@@ -7,6 +7,7 @@ import com.happy3friends.toiletmapbackend.constant.RoleConstant;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.request.RatingRequest;
 import com.happy3friends.toiletmapbackend.response.RatingResponse;
+import com.happy3friends.toiletmapbackend.response.UpdateToiletInfoResponse;
 import com.happy3friends.toiletmapbackend.service.RatingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "Rating", description = "Rating API")
 @RestController
@@ -205,6 +207,38 @@ public class RatingController {
 
         return ResponseBuilder.generateResponse(
                 "Count list of rating successfully!",
+                HttpStatus.OK,
+                response
+        );
+    }
+
+    @Operation(summary = "Update rating info", description = "[Manager] Update rating and its information")
+    @Parameter(name = "rating-id", description = "A specific rating ID", in = ParameterIn.PATH, required = true, example = "4")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Fields Request", required = true, content = @Content(
+            examples = {
+                    @ExampleObject(name = "Update status rating", value = "{\n" +
+                            "    \"status\": \"Đã giải quyết // Từ chối giải quyết\"\n" +
+                            "  }")}))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
+                    @ExampleObject(value = "hihihi ai rảnh đâu mà viết doc, giờ đang gấp lắm")})),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.MANAGER})
+    @PatchMapping("/{rating-id}")
+    public ResponseEntity<BaseResponse<RatingResponse>> update(
+            @PathVariable("rating-id") Integer id,
+            @RequestBody Map<String, Object> fields) {
+
+        RatingResponse response = ratingService.update(id, fields);
+
+        return ResponseBuilder.generateResponse(
+                "Update rating info successfully!",
                 HttpStatus.OK,
                 response
         );

@@ -23,4 +23,5 @@ public class RatingResponse {
     private Date dateTime;
     private List<String> imageSources;
     private String avatar;
+    private String status;
 }

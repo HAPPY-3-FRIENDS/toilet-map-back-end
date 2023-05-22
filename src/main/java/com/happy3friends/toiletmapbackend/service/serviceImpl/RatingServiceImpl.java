@@ -78,7 +78,8 @@ public class RatingServiceImpl implements RatingService {
                 customRatingDetailsDTOS.get(0).getComment(),
                 customRatingDetailsDTOS.get(0).getDateTime(),
                 imageSources,
-                customRatingDetailsDTOS.get(0).getAvatar()
+                customRatingDetailsDTOS.get(0).getAvatar(),
+                customRatingDetailsDTOS.get(0).getStatus()
         );
     }
 
@@ -185,6 +186,7 @@ public class RatingServiceImpl implements RatingService {
                 ratingRequest.getComment(),
                 new Date(timestampNow.getTime()),
                 ratingRequest.getImageSources(),
+                null,
                 null
         );
     }
@@ -202,5 +204,22 @@ public class RatingServiceImpl implements RatingService {
         }
 
         return (int) ratingRepository.count();
+    }
+
+    @Override
+    public RatingResponse update(int id, Map<String, Object> fields) {
+        Optional<RatingEntity> ratingEntity = ratingRepository.findById(id);
+        if (!ratingEntity.isPresent())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_RATING, ToiletMapErrorCodeEnum.NOT_FOUND_RATING.getMessage());
+
+        fields.forEach((key, value) -> {
+            if (key.equals("status")) {
+                ratingEntity.get().setStatus(value.toString());
+            }
+        });
+
+        RatingEntity entity = ratingRepository.save(ratingEntity.get());
+
+        return ratingMapper.convertRatingEntityToRatingResponse(ratingEntity.get());
     }
 }
