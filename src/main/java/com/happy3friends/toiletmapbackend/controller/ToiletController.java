@@ -560,7 +560,10 @@ public class ToiletController {
                             "\t],\n" +
                             "    \"status\": \"Không hoạt động\",\n" +
                             "    \"isFree\": true\n" +
-                            "}")}))
+                            "}"),
+                    @ExampleObject(name = "Update status toilet", value = "{\n" +
+                            "    \"status\": \"Để gì cũm được, để trống cũm được, khùn đin cũm được\"\n" +
+                            "  }")}))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
                     @ExampleObject(value = "{\n" +

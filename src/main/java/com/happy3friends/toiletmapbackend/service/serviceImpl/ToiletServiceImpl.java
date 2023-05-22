@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
 import com.happy3friends.toiletmapbackend.constant.DefaultSortPropertyConstant;
 import com.happy3friends.toiletmapbackend.constant.FacilityNameConstant;
+import com.happy3friends.toiletmapbackend.constant.StatusConstant;
 import com.happy3friends.toiletmapbackend.constant.ToiletConstant;
 import com.happy3friends.toiletmapbackend.dto.CustomToiletDTO;
 import com.happy3friends.toiletmapbackend.dto.CustomToiletDetailsInfoDTO;
@@ -462,7 +463,17 @@ public class ToiletServiceImpl implements ToiletService {
             } else if (key.equals("closeTime")) {
                 String value2String = value.toString();
                 toiletEntity.get().setCloseTime(new Time(DateTimeUtil.convertStringToDate(value2String, "HH:mm").getTime()));
+            } else if (key.equals("status")) {
+                switch (toiletEntity.get().getStatus()) {
+                    case StatusConstant.ACTIVE:
+                        toiletEntity.get().setStatus(StatusEnum.IN_ACTIVE.getStatus());
+                        break;
+                    case StatusConstant.IN_ACTIVE:
+                        toiletEntity.get().setStatus(StatusEnum.ACTIVE.getStatus());
+                        break;
+                }
             } else {
+
                 Field field = ReflectionUtils.findField(ToiletEntity.class, key);
                 field.setAccessible(true);
                 ReflectionUtils.setField(field, toiletEntity.get(), value);
