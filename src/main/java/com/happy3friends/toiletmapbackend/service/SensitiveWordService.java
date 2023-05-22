@@ -16,4 +16,6 @@ public interface SensitiveWordService {
     SensitiveWordEntity update(int id, SensitiveWordRequest sensitiveWordRequest);
 
     void delete(int id);
+
+    SensitiveWordEntity getById(int id);
 }

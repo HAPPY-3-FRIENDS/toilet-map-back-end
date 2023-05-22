@@ -57,6 +57,20 @@ public class SensitiveWordController {
 
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.ADMIN})
+    @GetMapping(value = "/{sensitive-word-id}")
+    public ResponseEntity<BaseResponse<SensitiveWordEntity>> getById(@PathVariable("sensitive-word-id") int id) {
+
+        SensitiveWordEntity response = sensitiveWordService.getById(id);
+
+        return ResponseBuilder.generateResponse(
+                "Get sensitive word by id successfully!",
+                HttpStatus.OK,
+                response
+        );
+    }
+
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.ADMIN})
     @PostMapping
     public ResponseEntity<BaseResponse<String>> create(@RequestBody SensitiveWordRequest sensitiveWordRequest) {
 
