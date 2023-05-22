@@ -58,7 +58,7 @@ public class RatingServiceImpl implements RatingService {
 
         return customRatingDetailsDTOS.stream()
                 .collect(Collectors.groupingBy(
-                        CustomRatingDetailsDTO::getStar,
+                        CustomRatingDetailsDTO::getId,
                         LinkedHashMap::new,
                         Collectors.toCollection(ArrayList::new)));
     }
