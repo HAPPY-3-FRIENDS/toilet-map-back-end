@@ -57,4 +57,14 @@ public class SensitiveWordServiceImpl implements SensitiveWordService {
 
         return sensitiveWordEntity.get();
     }
+
+    @Override
+    public void delete(int id) {
+
+        Optional<SensitiveWordEntity> sensitiveWordEntity = sensitiveWordRepository.findById(id);
+        if (!sensitiveWordEntity.isPresent())
+            throw new BadRequestException(ToiletMapErrorCodeEnum.NOT_FOUND_SENSITIVE_WORD, ToiletMapErrorCodeEnum.NOT_FOUND_SENSITIVE_WORD.getMessage());
+
+        sensitiveWordRepository.delete(sensitiveWordEntity.get());
+    }
 }

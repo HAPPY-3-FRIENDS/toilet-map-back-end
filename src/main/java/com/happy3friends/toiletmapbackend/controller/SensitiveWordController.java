@@ -81,4 +81,18 @@ public class SensitiveWordController {
                 response
         );
     }
+
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.ADMIN})
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<BaseResponse<String>> delete(@PathVariable("id") int id) {
+
+        sensitiveWordService.delete(id);
+
+        return ResponseBuilder.generateResponse(
+                "Delete sensitive word successfully!",
+                HttpStatus.OK,
+                "Xóa thành công rồi nè hihi!"
+        );
+    }
 }
