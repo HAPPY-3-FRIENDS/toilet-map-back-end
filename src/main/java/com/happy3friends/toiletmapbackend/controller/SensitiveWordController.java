@@ -70,8 +70,8 @@ public class SensitiveWordController {
 
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.ADMIN})
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<BaseResponse<SensitiveWordEntity>> update(@PathVariable("id") int id, @RequestBody String word) {
+    @PutMapping(value = "/{sensitive-word-id}")
+    public ResponseEntity<BaseResponse<SensitiveWordEntity>> update(@PathVariable("sensitive-word-id") int id, @RequestBody String word) {
 
         SensitiveWordEntity response = sensitiveWordService.update(id, word);
 
@@ -84,8 +84,8 @@ public class SensitiveWordController {
 
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.ADMIN})
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<BaseResponse<String>> delete(@PathVariable("id") int id) {
+    @DeleteMapping(value = "/{sensitive-word-id}")
+    public ResponseEntity<BaseResponse<String>> delete(@PathVariable("sensitive-word-id") int id) {
 
         sensitiveWordService.delete(id);
 
