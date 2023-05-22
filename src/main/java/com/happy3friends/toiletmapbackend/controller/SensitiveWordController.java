@@ -6,6 +6,7 @@ import com.happy3friends.toiletmapbackend.config.OpenApiConfig;
 import com.happy3friends.toiletmapbackend.constant.RoleConstant;
 import com.happy3friends.toiletmapbackend.entity.SensitiveWordEntity;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
+import com.happy3friends.toiletmapbackend.request.SensitiveWordRequest;
 import com.happy3friends.toiletmapbackend.service.SensitiveWordService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -57,9 +58,9 @@ public class SensitiveWordController {
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.ADMIN})
     @PostMapping
-    public ResponseEntity<BaseResponse<String>> create(@RequestBody String word) {
+    public ResponseEntity<BaseResponse<String>> create(@RequestBody SensitiveWordRequest sensitiveWordRequest) {
 
-        sensitiveWordService.create(word);
+        sensitiveWordService.create(sensitiveWordRequest);
 
         return ResponseBuilder.generateResponse(
                 "Create sensitive word successfully!",
@@ -71,9 +72,11 @@ public class SensitiveWordController {
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.ADMIN})
     @PutMapping(value = "/{sensitive-word-id}")
-    public ResponseEntity<BaseResponse<SensitiveWordEntity>> update(@PathVariable("sensitive-word-id") int id, @RequestBody String word) {
+    public ResponseEntity<BaseResponse<SensitiveWordEntity>> update(
+            @PathVariable("sensitive-word-id") int id,
+            @RequestBody SensitiveWordRequest sensitiveWordRequest) {
 
-        SensitiveWordEntity response = sensitiveWordService.update(id, word);
+        SensitiveWordEntity response = sensitiveWordService.update(id, sensitiveWordRequest);
 
         return ResponseBuilder.generateResponse(
                 "Update sensitive word successfully!",
