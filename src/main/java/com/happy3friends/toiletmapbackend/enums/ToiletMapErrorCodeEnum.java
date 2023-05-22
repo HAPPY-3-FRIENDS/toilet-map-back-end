@@ -33,6 +33,7 @@ public enum ToiletMapErrorCodeEnum {
     EXPIRED_RATING(HttpStatus.BAD_REQUEST, 400021, "Đánh giá hết hạn"),
     EXISTED_FACILITY(HttpStatus.BAD_REQUEST, 400022, "Tên thiết bị đã tồn tại"),
     EXISTED_FACILITY_IN_USE(HttpStatus.BAD_REQUEST, 400023, "Thiết bị đang được sử dụng"),
+    INVALID_PASSWORD(HttpStatus.BAD_REQUEST, 400024, "Mật khẩu không hợp lệ"),
 
     // 401 - UNAUTHENTICATED
     UNAUTHENTICATED(HttpStatus.UNAUTHORIZED, 401000, "Chưa xác thực người dùng"),

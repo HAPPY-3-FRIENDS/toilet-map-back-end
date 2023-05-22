@@ -13,6 +13,7 @@ import com.happy3friends.toiletmapbackend.repository.AccountRepository;
 import com.happy3friends.toiletmapbackend.repository.CompanyRepository;
 import com.happy3friends.toiletmapbackend.repository.UserInfoRepository;
 import com.happy3friends.toiletmapbackend.request.AccountRequest;
+import com.happy3friends.toiletmapbackend.request.UpdatePasswordRequest;
 import com.happy3friends.toiletmapbackend.response.AccountResponse;
 import com.happy3friends.toiletmapbackend.response.UpdateAccountResponse;
 import com.happy3friends.toiletmapbackend.service.AccountService;
@@ -154,6 +155,26 @@ public class AccountServiceImpl implements AccountService {
         });
         AccountEntity entity = accountRepository.save(accountEntity.get());
         LOGGER.info("-- Update Account - Finish save Account Entity and its information! --");
+        return new UpdateAccountResponse(
+                entity.getUsername(),
+                entity.getPassword(),
+                entity.getStatus()
+        );
+    }
+
+    @Override
+    public UpdateAccountResponse updatePassword(int id, UpdatePasswordRequest request) {
+        Optional<AccountEntity> accountEntity = accountRepository.findById(id);
+        if (!accountEntity.isPresent())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT.getMessage());
+
+        if (!request.getOldPassword().equals(accountEntity.get().getPassword())) {
+            throw new BadRequestException(ToiletMapErrorCodeEnum.INVALID_PASSWORD, ToiletMapErrorCodeEnum.INVALID_PASSWORD.getMessage());
+        }
+
+        accountEntity.get().setPassword(request.getNewPassword());
+        AccountEntity entity = accountRepository.save(accountEntity.get());
+
         return new UpdateAccountResponse(
                 entity.getUsername(),
                 entity.getPassword(),
