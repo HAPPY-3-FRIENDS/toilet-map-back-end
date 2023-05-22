@@ -34,7 +34,7 @@ public class FacilityController {
     @Autowired
     private FacilityService facilityService;
 
-    @Operation(summary = "Get list of all facilities", description = "[Manager] Get list of all facilities")
+    @Operation(summary = "Get list of all facilities", description = "[Admin, Manager] Get list of all facilities")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
                     @ExampleObject(value = "[\n" +
@@ -77,7 +77,7 @@ public class FacilityController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.MANAGER})
+    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.MANAGER})
     @GetMapping
     public ResponseEntity<BaseResponse<List<FacilityResponse>>> getAllFacilities() {
 
@@ -93,7 +93,7 @@ public class FacilityController {
         );
     }
 
-    @Operation(summary = "Get list of facilities by type", description = "[Manager] Get list of facilities by type")
+    @Operation(summary = "Get list of facilities by type", description = "[Admin, Manager] Get list of facilities by type")
     @Parameters(value = {
             @Parameter(name = "type", description = "Type of facility", in = ParameterIn.QUERY, required = true, example = "Phòng")
     })
@@ -124,7 +124,7 @@ public class FacilityController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.MANAGER})
+    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.MANAGER})
     @GetMapping("/type")
     public ResponseEntity<BaseResponse<List<FacilityResponse>>> getFacilitiesByType(
             @RequestParam(name = "type") String type
