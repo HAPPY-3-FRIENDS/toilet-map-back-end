@@ -65,7 +65,7 @@ public class SensitiveWordController {
         return ResponseBuilder.generateResponse(
                 "Create sensitive word successfully!",
                 HttpStatus.CREATED,
-                "Created word: " + word
+                "Created word: " + sensitiveWordRequest.getWord()
         );
     }
 
