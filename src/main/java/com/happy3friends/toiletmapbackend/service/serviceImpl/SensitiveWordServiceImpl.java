@@ -34,4 +34,11 @@ public class SensitiveWordServiceImpl implements SensitiveWordService {
     public int count() {
         return (int) sensitiveWordRepository.count();
     }
+
+    @Override
+    public void create(String word) {
+        SensitiveWordEntity sensitiveWordEntity = new SensitiveWordEntity();
+        sensitiveWordEntity.setWord(word);
+        sensitiveWordRepository.save(sensitiveWordEntity);
+    }
 }

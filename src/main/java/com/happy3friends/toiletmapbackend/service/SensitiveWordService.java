@@ -9,4 +9,6 @@ public interface SensitiveWordService {
     List<SensitiveWordEntity> getAllSensitiveWords(BasePaginationRequest paginationRequest);
 
     int count();
+
+    void create(String word);
 }

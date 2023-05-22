@@ -237,6 +237,8 @@ ALTER TABLE [Configuration]
 --- UNIQUE ---
 ALTER TABLE [Account]
     ADD CONSTRAINT UNIQUE_Username UNIQUE (Username);
+ALTER TABLE [SensitiveWord]
+    ADD CONSTRAINT UNIQUE_Word UNIQUE (Word);
 
 --- FOREIGN KEY ---
 ALTER TABLE [Account]
