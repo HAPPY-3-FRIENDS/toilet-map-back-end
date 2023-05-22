@@ -34,7 +34,7 @@ public class CommonCommentController {
     @Autowired
     private CommonCommentService commonCommentService;
 
-    @Operation(summary = "Get all common comment", description = "[Admin, Manager] Get the list of all common comment")
+    @Operation(summary = "Get all common comment", description = "[Admin, Manager, User] Get the list of all common comment")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
                     @ExampleObject(value = "[\n" +
@@ -56,7 +56,7 @@ public class CommonCommentController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.MANAGER})
+    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.MANAGER, RoleConstant.USER})
     @GetMapping
     public ResponseEntity<BaseResponse<List<CommonCommentResponse>>> getAllCommonComment() {
 
