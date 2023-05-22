@@ -6,4 +6,5 @@ public class DefaultSortPropertyConstant {
     public static final String ID = "Id";
     public static final String TOTAL_REVENUE = "TotalRevenue";
     public static final String STAR = "Star";
+    public static final String WORD = "Word";
 }
