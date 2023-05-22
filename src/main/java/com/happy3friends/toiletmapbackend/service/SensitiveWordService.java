@@ -11,4 +11,6 @@ public interface SensitiveWordService {
     int count();
 
     void create(String word);
+
+    SensitiveWordEntity update(int id, String word);
 }
