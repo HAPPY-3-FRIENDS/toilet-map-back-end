@@ -46,6 +46,9 @@ public interface RatingRepository extends JpaRepository<RatingEntity, Integer> {
     List<CustomRatingDetailsDTO> getAllRatingsByToiletId(@Param("toiletId") int toiletId,
                                                          Pageable pageable);
 
+    @Query(value = "SELECT COUNT(*) " +
+            "FROM Rating " +
+            "WHERE ToiletId = :toiletId", nativeQuery = true)
     long countByToiletId(int toiletId);
 
     Boolean existsByCheckInId(Integer checkInId);
