@@ -18,4 +18,5 @@ public class CompanyResponse {
     private String district;
     private String province;
     private String phone;
+    private String status;
 }

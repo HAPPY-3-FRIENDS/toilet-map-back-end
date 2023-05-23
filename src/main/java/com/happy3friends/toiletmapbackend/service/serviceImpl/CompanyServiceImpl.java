@@ -16,7 +16,6 @@ import com.happy3friends.toiletmapbackend.repository.CompanyRepository;
 import com.happy3friends.toiletmapbackend.request.CompanyCreateRequest;
 import com.happy3friends.toiletmapbackend.response.CompanyHasStatusResponse;
 import com.happy3friends.toiletmapbackend.response.CompanyResponse;
-import com.happy3friends.toiletmapbackend.response.UpdateCompanyResponse;
 import com.happy3friends.toiletmapbackend.service.CompanyService;
 import com.happy3friends.toiletmapbackend.utils.PaginationUtil;
 import org.slf4j.Logger;
@@ -111,6 +110,7 @@ public class CompanyServiceImpl implements CompanyService {
         try {
             LOGGER.info("-- Create Company - Start save Company Entity and its information! --");
             CompanyEntity companyEntity = companyMapper.convertCompanyCreateRequestToCompanyEntity(request);
+            companyEntity.setStatus(StatusConstant.ACTIVE);
             entityManager.persist(companyEntity);
             int companyId = companyEntity.getId();
 
@@ -132,19 +132,19 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public UpdateCompanyResponse updateCompany(Integer id, Map<String, Object> fields) {
-        Optional<AccountEntity> accountEntity = accountRepository.findById(id);
-        if (!accountEntity.isPresent())
-            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT.getMessage());
+    public CompanyHasStatusResponse updateCompany(Integer id, Map<String, Object> fields) {
+        Optional<CompanyEntity> companyEntity = companyRepository.findById(id);
+        if (!companyEntity.isPresent())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY, ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY.getMessage());
 
         LOGGER.info("-- Update Company - Start save Company Entity and its information! --");
         fields.forEach((key, value) -> {
-            Field field = ReflectionUtils.findField(AccountEntity.class, key);
+            Field field = ReflectionUtils.findField(CompanyEntity.class, key);
             field.setAccessible(true);
-            ReflectionUtils.setField(field, accountEntity.get(), value);
+            ReflectionUtils.setField(field, companyEntity.get(), value);
         });
 
-        AccountEntity entity = accountRepository.save(accountEntity.get());
+        CompanyEntity entity = companyRepository.save(companyEntity.get());
         LOGGER.info("-- Update Company - Finish save Company Entity and its information! --");
         return companyMapper.convertAccountEntityToUpdateCompanyResponse(entity);
     }

@@ -19,7 +19,7 @@ public interface CompanyRepository extends JpaRepository<CompanyEntity, Integer>
             "WHERE a.Id = :accountId", nativeQuery = true)
     CompanyEntity getCompanyByAccountId(@Param("accountId") int accountID);
 
-    @Query(value = "SELECT c.*, a.Status " +
+    @Query(value = "SELECT c.* " +
             "FROM Company c " +
             "INNER JOIN Account a " +
             "    ON c.Id = a.CompanyId " +

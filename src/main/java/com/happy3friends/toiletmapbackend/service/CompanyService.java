@@ -4,7 +4,6 @@ import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
 import com.happy3friends.toiletmapbackend.request.CompanyCreateRequest;
 import com.happy3friends.toiletmapbackend.response.CompanyHasStatusResponse;
 import com.happy3friends.toiletmapbackend.response.CompanyResponse;
-import com.happy3friends.toiletmapbackend.response.UpdateCompanyResponse;
 
 import java.util.List;
 import java.util.Map;
@@ -14,7 +13,7 @@ public interface CompanyService {
 
     void createCompany(CompanyCreateRequest request);
 
-    UpdateCompanyResponse updateCompany(Integer id, Map<String, Object> fields);
+    CompanyHasStatusResponse updateCompany(Integer id, Map<String, Object> fields);
 
     List<CompanyHasStatusResponse> getAllCompanies(BasePaginationRequest paginationRequest);
 

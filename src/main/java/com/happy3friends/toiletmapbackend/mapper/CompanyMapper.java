@@ -3,6 +3,7 @@ package com.happy3friends.toiletmapbackend.mapper;
 import com.happy3friends.toiletmapbackend.entity.AccountEntity;
 import com.happy3friends.toiletmapbackend.entity.CompanyEntity;
 import com.happy3friends.toiletmapbackend.request.CompanyCreateRequest;
+import com.happy3friends.toiletmapbackend.response.CompanyHasStatusResponse;
 import com.happy3friends.toiletmapbackend.response.CompanyResponse;
 import com.happy3friends.toiletmapbackend.response.UpdateCompanyResponse;
 import org.modelmapper.ModelMapper;
@@ -29,9 +30,9 @@ public class CompanyMapper {
                 : modelMapper.map(request, CompanyEntity.class);
     }
 
-    public UpdateCompanyResponse convertAccountEntityToUpdateCompanyResponse(AccountEntity accountEntity) {
-        return Objects.isNull(accountEntity)
+    public CompanyHasStatusResponse convertAccountEntityToUpdateCompanyResponse(CompanyEntity companyEntity) {
+        return Objects.isNull(companyEntity)
                 ? null
-                : modelMapper.map(accountEntity, UpdateCompanyResponse.class);
+                : modelMapper.map(companyEntity, CompanyHasStatusResponse.class);
     }
 }

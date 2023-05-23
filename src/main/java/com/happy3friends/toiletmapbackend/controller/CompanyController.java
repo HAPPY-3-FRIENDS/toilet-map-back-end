@@ -125,12 +125,9 @@ public class CompanyController {
 
 
     @Operation(summary = "Update a company", description = "[Admin] Update a company and its information")
-    @Parameter(name = "manager-id", description = "A specific manager ID", in = ParameterIn.PATH, required = true, example = "4")
+    @Parameter(name = "company-id", description = "A specific company ID", in = ParameterIn.PATH, required = true, example = "4")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Fields Request", required = true, content = @Content(
             examples = {
-                    @ExampleObject(name = "Update password", value = "{\n" +
-                            "  \"password\": \"$2a$10$/dH1LFY1VeSe9aQoibV8puAthiOjM/7Cb0NwnDfSA40wUxnagEkRG\"\n" +
-                            "}"),
                     @ExampleObject(name = "Update status", value = "{\n" +
                             "  \"status\": \"Đang hoạt động\"\n" +
                             "}")}))
@@ -150,12 +147,12 @@ public class CompanyController {
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.ADMIN})
-    @PatchMapping("/{manager-id}")
-    public ResponseEntity<BaseResponse<UpdateCompanyResponse>> updateCompanyStatus(
-            @PathVariable("manager-id") Integer id,
+    @PatchMapping("/{company-id}")
+    public ResponseEntity<BaseResponse<CompanyHasStatusResponse>> updateCompany(
+            @PathVariable("company-id") Integer id,
             @RequestBody Map<String, Object> fields) {
 
-        UpdateCompanyResponse response = companyService.updateCompany(id, fields);
+        CompanyHasStatusResponse response = companyService.updateCompany(id, fields);
 
         return ResponseBuilder.generateResponse(
                 "Update company successfully!",

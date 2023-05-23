@@ -38,6 +38,9 @@ public class CompanyEntity {
     @Basic
     @Column(name = "Phone", nullable = true, length = 20)
     private String phone;
+    @Basic
+    @Column(name = "Status", nullable = false, length = 20)
+    private String status;
     @OneToMany(mappedBy = "companyByCompanyId")
     private Collection<AccountEntity> accountsById;
     @OneToMany(mappedBy = "companyByCompanyId")
