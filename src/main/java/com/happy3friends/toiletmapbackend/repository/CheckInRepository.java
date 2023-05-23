@@ -35,21 +35,27 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
             "ORDER BY DateTime DESC ", nativeQuery = true)
     List<CustomCheckInDTO> getCheckInHistoriesByToiletId(@Param("toiletId") int toiletId);
 
-    @Query(value = "SELECT c.DateTime, " +
-            "       t.Name AS ToiletName, " +
-            "       t.Id AS ToiletId, " +
-            "       s.Name AS ServiceName, " +
-            "       c.Balance, " +
-            "       c.Turn " +
-            "FROM CheckIn c " +
-            "         INNER JOIN ToiletService ts " +
-            "                    ON c.ToiletServiceId = ts.Id " +
-            "         INNER JOIN Toilet t " +
-            "                    ON ts.ToiletId = t.Id " +
-            "         INNER JOIN Service s " +
-            "                    ON ts.ServiceId = s.Id " +
-            "WHERE c.AccountId = :accountId " +
-            "  AND (:paymentMethod IS NULL OR c.PaymentMethod = :paymentMethod) ",
+    @Query(value = "SELECT c.DateTime,\n" +
+            "    t.Name AS ToiletName,\n" +
+            "    t.Id AS ToiletId,\n" +
+            "    s.Name AS ServiceName,\n" +
+            "    c.Balance,\n" +
+            "    c.Turn,\n" +
+            "    CASE\n" +
+            "        WHEN r.CheckInId IS NOT NULL THEN N'Đã đánh giá'\n" +
+            "        WHEN DATEDIFF(second, CONVERT(DATETIME2, c.DateTime), DATEADD(hour , 7, sysdatetime())) > 3600 THEN N'Đã hết hạn'\n" +
+            "        ELSE N'Chưa đánh giá'\n" +
+            "    END AS status\n" +
+            "FROM CheckIn c\n" +
+            "INNER JOIN ToiletService ts\n" +
+            "    ON c.ToiletServiceId = ts.Id\n" +
+            "INNER JOIN Toilet t\n" +
+            "    ON ts.ToiletId = t.Id\n" +
+            "INNER JOIN Service s\n" +
+            "    ON ts.ServiceId = s.Id\n" +
+            "LEFT JOIN Rating r on c.Id = r.CheckInId\n" +
+            "WHERE c.AccountId = :accountId\n" +
+            "    AND (:paymentMethod IS NULL OR c.PaymentMethod = :paymentMethod)",
             nativeQuery = true)
     List<CustomCheckInDTO> getCheckInHistoriesByAccountId(@Param("accountId") int accountId,
                                                           @Param("paymentMethod") String paymentMethod,

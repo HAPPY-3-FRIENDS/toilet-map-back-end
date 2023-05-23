@@ -27,4 +27,5 @@ public class CheckInResponse {
     private String defaultPayment;
     private Integer accountBalance;
     private Integer accountTurn;
+    private String status;
 }
