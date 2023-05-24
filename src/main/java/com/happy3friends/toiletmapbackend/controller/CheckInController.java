@@ -26,6 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
@@ -278,6 +280,21 @@ public class CheckInController {
 
         return ResponseBuilder.generateResponse(
                 "Walk-in-guest check-in toilet successfully!",
+                HttpStatus.CREATED,
+                response
+        );
+    }
+
+    @MessageMapping("/check-in")
+    @SendTo("/topic/rating")
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.TOILET})
+    public ResponseEntity<BaseResponse<CheckInResponse>> userCheckInUsingWebSocket(@RequestBody @Valid CheckInRequest checkInRequest) {
+
+        CheckInResponse response = checkInService.userCheckIn(checkInRequest);
+
+        return ResponseBuilder.generateResponse(
+                "User check-in toilet successfully!",
                 HttpStatus.CREATED,
                 response
         );
