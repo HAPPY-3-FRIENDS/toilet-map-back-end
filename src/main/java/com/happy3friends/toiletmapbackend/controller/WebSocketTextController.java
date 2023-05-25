@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.security.RolesAllowed;
 
-@RestController
+@RestController(value = "/api/test")
 public class WebSocketTextController {
 
     @Autowired
