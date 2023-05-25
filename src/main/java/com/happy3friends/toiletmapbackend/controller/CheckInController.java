@@ -28,6 +28,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
@@ -41,6 +42,9 @@ public class CheckInController {
 
     @Autowired
     private CheckInService checkInService;
+
+    @Autowired
+    SimpMessagingTemplate template;
 
     @Hidden
     @ConditionalOnExpression("${my.controller.enabled:false}")
@@ -212,6 +216,8 @@ public class CheckInController {
     public ResponseEntity<BaseResponse<CheckInResponse>> userCheckIn(@RequestBody @Valid CheckInRequest checkInRequest) {
 
         CheckInResponse response = checkInService.userCheckIn(checkInRequest);
+
+        template.convertAndSend("/topic/check-in", response);
 
         return ResponseBuilder.generateResponse(
                 "User check-in toilet successfully!",
