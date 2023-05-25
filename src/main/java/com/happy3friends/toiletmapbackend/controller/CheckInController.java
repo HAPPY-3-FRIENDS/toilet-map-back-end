@@ -208,6 +208,7 @@ public class CheckInController {
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.TOILET})
+    @SendTo("/topic/rating")
     @PostMapping(value = "/toilets/user")
     public ResponseEntity<BaseResponse<CheckInResponse>> userCheckIn(@RequestBody @Valid CheckInRequest checkInRequest) {
 
