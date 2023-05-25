@@ -144,7 +144,7 @@ public class CheckInServiceImpl implements CheckInService {
             } else {
                 checkInEntity.setTurn(0);
             }
-            checkInRepository.save(checkInEntity);
+            CheckInEntity entity = checkInRepository.save(checkInEntity);
 
             // Return check-in response: phone, fullName, current account balance, current account turn
             CheckInResponse checkInResponse = new CheckInResponse();
@@ -153,6 +153,10 @@ public class CheckInServiceImpl implements CheckInService {
             checkInResponse.setAccountBalance(customAccountInfoDTO.getAccountBalance());
             checkInResponse.setAccountTurn(accountTurn);
             checkInResponse.setDefaultPayment(customAccountInfoDTO.getDefaultPayment());
+            checkInResponse.setId(entity.getId());
+            checkInResponse.setToiletId(toiletServiceEntity.get().getToiletId());
+            checkInResponse.setToiletName(toiletServiceEntity.get().getToiletByToiletId().getName());
+            checkInResponse.setServiceName(toiletServiceEntity.get().getServiceByServiceId().getName());
             return checkInResponse;
         } else {
             throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_LIST_TOILET_SERVICES, ToiletMapErrorCodeEnum.NOT_FOUND_LIST_TOILET_SERVICES.getMessage());
@@ -231,7 +235,7 @@ public class CheckInServiceImpl implements CheckInService {
                     }
                     break;
             }
-            checkInRepository.save(checkInEntity);
+            CheckInEntity entity = checkInRepository.save(checkInEntity);
 
             // Return check-in response: phone, fullName, current account balance, current account turn
             CheckInResponse checkInResponse = new CheckInResponse();
@@ -240,6 +244,10 @@ public class CheckInServiceImpl implements CheckInService {
             checkInResponse.setAccountBalance(accountBalance);
             checkInResponse.setAccountTurn(accountTurn);
             checkInResponse.setDefaultPayment(customAccountInfoDTO.getDefaultPayment());
+            checkInResponse.setId(entity.getId());
+            checkInResponse.setToiletId(toiletServiceEntity.get().getToiletId());
+            checkInResponse.setToiletName(toiletServiceEntity.get().getToiletByToiletId().getName());
+            checkInResponse.setServiceName(toiletServiceEntity.get().getServiceByServiceId().getName());
             return checkInResponse;
         } else {
             LOGGER.error("Service '" + checkInRequest.getServiceName() + "' is not contained in Toilet with Id '" + checkInRequest.getToiletId() + "'!");

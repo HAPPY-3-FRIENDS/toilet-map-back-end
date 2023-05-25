@@ -12,4 +12,5 @@ public interface CustomCheckInDTO {
     String getToiletName();
     Integer getToiletId();
     String getStatus();
+    Integer getId();
 }

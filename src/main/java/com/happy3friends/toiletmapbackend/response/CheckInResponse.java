@@ -28,4 +28,5 @@ public class CheckInResponse {
     private Integer accountBalance;
     private Integer accountTurn;
     private String status;
+    private Integer id;
 }
