@@ -356,4 +356,13 @@ public class CheckInServiceImpl implements CheckInService {
 
         return (int) checkInRepository.count();
     }
+
+    @Override
+    public int countCheckInNotRatingYet(Integer accountId, String paymentMethod) {
+        Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
+        if (!accountEntity.isPresent())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT.getMessage());
+
+        return checkInRepository.countCheckInNotRatingYetHistoriesByAccountId(accountId, paymentMethod);
+    }
 }

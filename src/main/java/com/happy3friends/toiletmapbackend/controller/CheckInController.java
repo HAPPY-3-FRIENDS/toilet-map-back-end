@@ -305,4 +305,19 @@ public class CheckInController {
                 response
         );
     }
+
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.USER})
+    @GetMapping(value = "/count/check-in-not-rating-yet")
+    public ResponseEntity<BaseResponse<Integer>> countCheckInNotRatingYet(
+            @RequestParam(name = "account-id", required = false) Integer accountId,
+            @RequestParam(name = "payment-method", required = false) String paymentMethod) {
+        int response = checkInService.countCheckInNotRatingYet(accountId, paymentMethod);
+
+        return ResponseBuilder.generateResponse(
+                "Count list check-in not rating yet histories successfully!",
+                HttpStatus.OK,
+                response
+        );
+    }
 }

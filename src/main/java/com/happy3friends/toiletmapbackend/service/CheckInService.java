@@ -13,4 +13,6 @@ public interface CheckInService {
     CheckInResponse userCheckIn(CheckInRequest checkInRequest);
     List<CheckInResponse> walkInGuestCheckIn(WalkInGuestCheckInRequest walkInGuestCheckInRequest);
     int count(Integer accountId, String paymentMethod);
+
+    int countCheckInNotRatingYet(Integer accountId, String paymentMethod);
 }

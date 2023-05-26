@@ -74,4 +74,27 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
             "  AND (:paymentMethod IS NULL OR c.PaymentMethod = :paymentMethod) ", nativeQuery = true)
     int countCheckInHistoriesByAccountId(@Param("accountId") int accountId,
                                          @Param("paymentMethod") String paymentMethod);
+
+    @Query(value = "SELECT COUNT(*)\n" +
+            "FROM (\n" +
+            "    SELECT\n" +
+            "        CASE\n" +
+            "            WHEN r.CheckInId IS NOT NULL THEN N'Đã đánh giá'\n" +
+            "            WHEN DATEDIFF(second, CONVERT(DATETIME2, c.DateTime), DATEADD(hour , 7, sysdatetime())) > 3600 THEN N'Đã hết hạn'\n" +
+            "            ELSE N'Chưa đánh giá'\n" +
+            "        END AS status\n" +
+            "    FROM CheckIn c\n" +
+            "    INNER JOIN ToiletService ts\n" +
+            "        ON c.ToiletServiceId = ts.Id\n" +
+            "    INNER JOIN Toilet t\n" +
+            "        ON ts.ToiletId = t.Id\n" +
+            "    INNER JOIN Service s\n" +
+            "        ON ts.ServiceId = s.Id\n" +
+            "    LEFT JOIN Rating r\n" +
+            "        ON c.Id = r.CheckInId\n" +
+            "    WHERE c.AccountId = :accountId\n" +
+            "    AND (:paymentMethod IS NULL OR c.PaymentMethod = :paymentMethod)) c\n" +
+            "WHERE c.status = N'Chưa đánh giá'", nativeQuery = true)
+    int countCheckInNotRatingYetHistoriesByAccountId(@Param("accountId") int accountId,
+                                         @Param("paymentMethod") String paymentMethod);
 }
