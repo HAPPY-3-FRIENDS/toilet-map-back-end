@@ -157,6 +157,7 @@ public class CheckInServiceImpl implements CheckInService {
             checkInResponse.setToiletId(toiletServiceEntity.get().getToiletId());
             checkInResponse.setToiletName(toiletServiceEntity.get().getToiletByToiletId().getName());
             checkInResponse.setServiceName(toiletServiceEntity.get().getServiceByServiceId().getName());
+            checkInResponse.setDateTime(entity.getDateTime());
             return checkInResponse;
         } else {
             throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_LIST_TOILET_SERVICES, ToiletMapErrorCodeEnum.NOT_FOUND_LIST_TOILET_SERVICES.getMessage());
@@ -248,6 +249,7 @@ public class CheckInServiceImpl implements CheckInService {
             checkInResponse.setToiletId(toiletServiceEntity.get().getToiletId());
             checkInResponse.setToiletName(toiletServiceEntity.get().getToiletByToiletId().getName());
             checkInResponse.setServiceName(toiletServiceEntity.get().getServiceByServiceId().getName());
+            checkInResponse.setDateTime(entity.getDateTime());
             return checkInResponse;
         } else {
             LOGGER.error("Service '" + checkInRequest.getServiceName() + "' is not contained in Toilet with Id '" + checkInRequest.getToiletId() + "'!");
