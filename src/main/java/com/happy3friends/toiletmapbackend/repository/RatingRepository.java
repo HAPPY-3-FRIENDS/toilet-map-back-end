@@ -21,11 +21,14 @@ public interface RatingRepository extends JpaRepository<RatingEntity, Integer> {
             "             r.DateTime, " +
             "             CAST(ri.ImageSource AS VARCHAR(MAX)) AS ImageSource, " +
             "             ui.Avatar, " +
-            "             r.Status " +
+            "             r.Status, " +
+            "             cc.Name AS CommonComment " +
             "      FROM Rating r " +
             "               JOIN Account a " +
             "                    ON r.AccountId = a.Id " +
             "               JOIN UserInfo ui ON a.Id = ui.AccountId " +
+            "               LEFT JOIN RatingCommonComment rcc ON rcc.RatingId = r.Id " +
+            "               LEFT JOIN CommonComment cc ON rcc.CommonCommentId = cc.Id " +
             "               LEFT JOIN RatingImage ri ON ri.RatingId = r.Id) r", nativeQuery = true)
     List<CustomRatingDetailsDTO> getAllRatings(Pageable pageable);
 
@@ -37,13 +40,16 @@ public interface RatingRepository extends JpaRepository<RatingEntity, Integer> {
             "             r.DateTime, " +
             "             CAST(ri.ImageSource AS VARCHAR(MAX)) AS ImageSource, " +
             "             ui.Avatar, " +
-            "             r.Status " +
+            "             r.Status, " +
+            "             cc.Name AS CommonComment " +
             "      FROM Rating r " +
             "               JOIN Account a " +
             "                    ON r.AccountId = a.Id " +
             "               JOIN UserInfo ui ON a.Id = ui.AccountId " +
             "               LEFT JOIN RatingImage ri ON ri.RatingId = r.Id " +
             "               JOIN Toilet t ON r.ToiletId = t.Id " +
+            "               LEFT JOIN RatingCommonComment rcc ON rcc.RatingId = r.Id " +
+            "               LEFT JOIN CommonComment cc ON rcc.CommonCommentId = cc.Id " +
             "      WHERE t.Id = :toiletId) r", nativeQuery = true)
     List<CustomRatingDetailsDTO> getAllRatingsByToiletId(@Param("toiletId") int toiletId,
                                                          Pageable pageable);

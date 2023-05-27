@@ -11,4 +11,5 @@ public interface CustomRatingDetailsDTO {
     String getImageSource();
     String getAvatar();
     String getStatus();
+    String getCommonComment();
 }

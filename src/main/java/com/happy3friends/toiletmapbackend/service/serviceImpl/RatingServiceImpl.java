@@ -4,10 +4,7 @@ import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
 import com.happy3friends.toiletmapbackend.constant.DefaultSortPropertyConstant;
 import com.happy3friends.toiletmapbackend.dto.CustomAccountInfoDTO;
 import com.happy3friends.toiletmapbackend.dto.CustomRatingDetailsDTO;
-import com.happy3friends.toiletmapbackend.entity.CheckInEntity;
-import com.happy3friends.toiletmapbackend.entity.RatingEntity;
-import com.happy3friends.toiletmapbackend.entity.RatingImageEntity;
-import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
+import com.happy3friends.toiletmapbackend.entity.*;
 import com.happy3friends.toiletmapbackend.enums.RoleEnum;
 import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
 import com.happy3friends.toiletmapbackend.exception.BadRequestException;
@@ -53,6 +50,9 @@ public class RatingServiceImpl implements RatingService {
     @Autowired
     private CheckInRepository checkInRepository;
 
+    @Autowired
+    private RatingCommonCommentRepository ratingCommonCommentRepository;
+
     private LinkedHashMap<Integer, List<CustomRatingDetailsDTO>> getMapIdListCustomRatingDetailsDTO(
             List<CustomRatingDetailsDTO> customRatingDetailsDTOS) {
 
@@ -71,15 +71,28 @@ public class RatingServiceImpl implements RatingService {
                 .map(CustomRatingDetailsDTO::getImageSource)
                 .collect(Collectors.toList());
 
+        List<String> resultImageSources = imageSources.stream()
+                .distinct()
+                .collect(Collectors.toList());
+
+        List<String> commonComments = customRatingDetailsDTOS.stream()
+                .map(CustomRatingDetailsDTO::getCommonComment)
+                .collect(Collectors.toList());
+
+        List<String> resultCommonComments = commonComments.stream()
+                .distinct()
+                .collect(Collectors.toList());
+
         return new RatingResponse(
                 customRatingDetailsDTOS.get(0).getId(),
                 customRatingDetailsDTOS.get(0).getFullName(),
                 customRatingDetailsDTOS.get(0).getStar(),
                 customRatingDetailsDTOS.get(0).getComment(),
                 customRatingDetailsDTOS.get(0).getDateTime(),
-                imageSources,
+                resultImageSources,
                 customRatingDetailsDTOS.get(0).getAvatar(),
-                customRatingDetailsDTOS.get(0).getStatus()
+                customRatingDetailsDTOS.get(0).getStatus(),
+                resultCommonComments
         );
     }
 
@@ -178,6 +191,21 @@ public class RatingServiceImpl implements RatingService {
             LOGGER.info("-- Create Rating - Finish save List Rating Image Entity! --");
         }
 
+        // Prepare Rating Common Comment Entity for saving
+        if (ratingRequest.getCommonComments() != null) {
+            LOGGER.info("-- Create Rating - Start save List Rating Common Comment Entity! --");
+            List<RatingCommonCommentEntity> ratingCommonCommentEntities = ratingRequest.getCommonComments().stream()
+                            .map(o -> {
+                                RatingCommonCommentEntity ratingCommonCommentEntity = new RatingCommonCommentEntity();
+                                ratingCommonCommentEntity.setRatingId(savedRatingEntity.getId());
+                                ratingCommonCommentEntity.setCommonCommentId(o);
+
+                                return ratingCommonCommentEntity;
+                            }).collect(Collectors.toList());
+            ratingCommonCommentRepository.saveAll(ratingCommonCommentEntities);
+            LOGGER.info("-- Create Rating - Finish save List Rating Common Comment Entity! --");
+        }
+
         // Return rating response
         return new RatingResponse(
                 savedRatingEntity.getId(),
@@ -186,6 +214,7 @@ public class RatingServiceImpl implements RatingService {
                 ratingRequest.getComment(),
                 new Date(timestampNow.getTime()),
                 ratingRequest.getImageSources(),
+                null,
                 null,
                 null
         );

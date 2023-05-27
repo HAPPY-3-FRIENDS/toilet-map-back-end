@@ -3,6 +3,7 @@ package com.happy3friends.toiletmapbackend.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 @Entity
 @AllArgsConstructor
@@ -24,4 +25,6 @@ public class CommonCommentEntity {
     @Basic
     @Column(name = "Status", nullable = false, length = 20)
     private String status;
+    @OneToMany(mappedBy = "commonCommentByCommonCommentId")
+    private Collection<RatingCommonCommentEntity> ratingCommonCommentById;
 }

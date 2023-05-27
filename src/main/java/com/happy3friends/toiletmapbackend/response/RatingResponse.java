@@ -24,4 +24,5 @@ public class RatingResponse {
     private List<String> imageSources;
     private String avatar;
     private String status;
+    private List<String> commonComments;
 }

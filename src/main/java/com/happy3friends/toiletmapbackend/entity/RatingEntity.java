@@ -47,4 +47,6 @@ public class RatingEntity {
     @OneToOne
     @JoinColumn(name = "Id", referencedColumnName = "Id", nullable = false)
     private CheckInEntity checkInById;
+    @OneToMany(mappedBy = "ratingByRatingId", cascade = CascadeType.ALL)
+    private Collection<RatingCommonCommentEntity> ratingCommonCommentById;
 }

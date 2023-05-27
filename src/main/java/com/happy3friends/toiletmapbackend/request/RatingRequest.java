@@ -18,4 +18,5 @@ public class RatingRequest {
     private int accountId;
     private int checkInId;
     private List<String> imageSources;
+    private List<Integer> commonComments;
 }
