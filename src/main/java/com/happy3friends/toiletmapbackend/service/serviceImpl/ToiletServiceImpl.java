@@ -96,6 +96,7 @@ public class ToiletServiceImpl implements ToiletService {
                 .filter(FilterKeysUtil.distinctByKeys(CustomToiletDetailsInfoDTO::getFacilityName))
                 .map(dto -> {
                     ToiletFacilityDTO toiletFacilityDTO = new ToiletFacilityDTO();
+                    toiletFacilityDTO.setFacilityId(dto.getFacilityId());
                     toiletFacilityDTO.setFacilityName(dto.getFacilityName());
                     toiletFacilityDTO.setFacilityType(dto.getFacilityType());
                     toiletFacilityDTO.setQuantity(dto.getFacilityQuantity());

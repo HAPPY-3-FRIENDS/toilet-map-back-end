@@ -17,6 +17,7 @@ public interface CustomToiletDetailsInfoDTO {
     Boolean getIsFree();
     Integer getMinPrice();
     Integer getMaxPrice();
+    Integer getFacilityId();
     String getFacilityName();
     String getFacilityType();
     Integer getFacilityQuantity();

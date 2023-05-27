@@ -58,36 +58,42 @@ public class ToiletController {
                             "    \"maxPrice\": 8000,\n" +
                             "    \"toiletFacilityDTOS\": [\n" +
                             "      {\n" +
+                            "        \"facilityId\": 6,\n" +
                             "        \"facilityName\": \"Giấy vệ sinh\",\n" +
                             "        \"facilityType\": \"Trang thiết bị\",\n" +
                             "        \"quantity\": 1,\n" +
                             "        \"description\": null\n" +
                             "      },\n" +
                             "      {\n" +
+                            "        \"facilityId\": 5,\n" +
                             "        \"facilityName\": \"Máy sấy tay\",\n" +
                             "        \"facilityType\": \"Trang thiết bị\",\n" +
                             "        \"quantity\": 0,\n" +
                             "        \"description\": null\n" +
                             "      },\n" +
                             "      {\n" +
+                            "        \"facilityId\": 2,\n" +
                             "        \"facilityName\": \"Phòng tắm\",\n" +
                             "        \"facilityType\": \"Phòng\",\n" +
                             "        \"quantity\": 0,\n" +
                             "        \"description\": null\n" +
                             "      },\n" +
                             "      {\n" +
+                            "        \"facilityId\": 1,\n" +
                             "        \"facilityName\": \"Phòng vệ sinh\",\n" +
                             "        \"facilityType\": \"Phòng\",\n" +
                             "        \"quantity\": 8,\n" +
                             "        \"description\": \"4 phòng vệ sinh cho nữ, 4 phòng vệ sinh cho nam\"\n" +
                             "      },\n" +
                             "      {\n" +
+                            "        \"facilityId\": 3,\n" +
                             "        \"facilityName\": \"Phòng vệ sinh dành cho người khuyết tật\",\n" +
                             "        \"facilityType\": \"Phòng\",\n" +
                             "        \"quantity\": 1,\n" +
                             "        \"description\": null\n" +
                             "      },\n" +
                             "      {\n" +
+                            "        \"facilityId\": 4,\n" +
                             "        \"facilityName\": \"Vòi xịt\",\n" +
                             "        \"facilityType\": \"Trang thiết bị\",\n" +
                             "        \"quantity\": 1,\n" +
