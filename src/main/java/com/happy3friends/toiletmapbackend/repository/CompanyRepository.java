@@ -25,4 +25,31 @@ public interface CompanyRepository extends JpaRepository<CompanyEntity, Integer>
             "    ON c.Id = a.CompanyId " +
             "WHERE a.RoleId = 2", nativeQuery = true)
     List<CompanyHasStatusDTO> getAllCompanies(Pageable pageable);
+
+    @Query(value = "SELECT c.* " +
+            "FROM Company c " +
+            "INNER JOIN Account a " +
+            "    ON c.Id = a.CompanyId " +
+            "WHERE a.RoleId = 2 " +
+            "    AND (UPPER(c.Name) LIKE :searchText " +
+            "        OR UPPER(c.Address) LIKE :searchText " +
+            "        OR UPPER(c.Ward) LIKE :searchText " +
+            "        OR UPPER(c.District) LIKE :searchText " +
+            "        OR UPPER(c.Province) LIKE :searchText)", nativeQuery = true)
+    List<CompanyHasStatusDTO> searchCompany(String searchText, Pageable pageable);
+
+
+    @Query(value = "SELECT COUNT(*) " +
+            "FROM " +
+            "    (SELECT c.* " +
+            "    FROM Company c " +
+            "    INNER JOIN Account a " +
+            "        ON c.Id = a.CompanyId " +
+            "    WHERE a.RoleId = 2 " +
+            "        AND (UPPER(c.Name) LIKE :searchText " +
+            "        OR UPPER(c.Address) LIKE :searchText " +
+            "        OR UPPER(c.Ward) LIKE :searchText " +
+            "        OR UPPER(c.District) LIKE :searchText " +
+            "        OR UPPER(c.Province) LIKE :searchText)) r", nativeQuery = true)
+    int countSearchingCompanies(String searchText);
 }

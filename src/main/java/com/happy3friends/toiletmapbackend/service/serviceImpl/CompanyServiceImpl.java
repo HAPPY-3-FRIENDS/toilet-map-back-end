@@ -163,5 +163,21 @@ public class CompanyServiceImpl implements CompanyService {
         return (int) companyRepository.count() - 1;
     }
 
+    @Override
+    public List<CompanyHasStatusResponse> searchCompany(String searchText, BasePaginationRequest paginationRequest) {
+        Sort.Order defaultSortOrder = new Sort.Order(Sort.Direction.DESC, DefaultSortPropertyConstant.ID);
+        Pageable pageable = PaginationUtil.getPageable(paginationRequest, defaultSortOrder);
+
+        String searchParam = ("%" + searchText + "%").toUpperCase();
+        List<CompanyHasStatusDTO> result = companyRepository.searchCompany(searchParam, pageable);
+        return getListCompanyHasStatusResponseFromListCompanyHasStatusDTO(result);
+    }
+
+    @Override
+    public int countSearchingCompanies(String searchText) {
+        String searchParam = ("%" + searchText + "%").toUpperCase();
+        return companyRepository.countSearchingCompanies(searchParam);
+    }
+
 
 }
