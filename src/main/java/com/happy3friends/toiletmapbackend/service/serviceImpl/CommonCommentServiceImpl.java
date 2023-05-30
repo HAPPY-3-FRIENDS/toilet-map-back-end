@@ -70,4 +70,20 @@ public class CommonCommentServiceImpl implements CommonCommentService {
         LOGGER.info("-- Update Common Comment - Finish save Common Comment Entity and its information! --");
         return commonCommentMapper.convertCommonCommentEntityToCommonCommentResponse(entity);
     }
+
+    @Override
+    public boolean delete(Integer id) {
+        boolean result = true;
+
+        Optional<CommonCommentEntity> commonCommentEntity = commonCommentRepository.findById(id);
+        if (!commonCommentEntity.isPresent())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_COMMON_COMMENT, ToiletMapErrorCodeEnum.NOT_FOUND_COMMON_COMMENT.getMessage());
+        try {
+            commonCommentRepository.deleteById(id);
+        } catch (Exception e) {
+            result = false;
+        }
+
+        return result;
+    }
 }
