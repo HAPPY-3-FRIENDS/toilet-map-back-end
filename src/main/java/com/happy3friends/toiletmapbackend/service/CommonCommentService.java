@@ -12,4 +12,6 @@ public interface CommonCommentService {
     CommonCommentResponse createCommonComment(CommonCommentRequest request);
 
     CommonCommentResponse updateCommonComment(Integer id, Map<String, Object> fields);
+
+    boolean delete(Integer id);
 }

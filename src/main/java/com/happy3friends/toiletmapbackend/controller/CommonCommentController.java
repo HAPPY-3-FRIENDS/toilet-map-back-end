@@ -141,4 +141,40 @@ public class CommonCommentController {
                 responses
         );
     }
+
+    @Operation(summary = "Delete common comment", description = "[Admin] Delete common comment")
+    @Parameter(name = "common-comment-id", description = "A specific common comment ID", in = ParameterIn.PATH, required = true, example = "4")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
+                    @ExampleObject(value = "{\n" +
+                            "    \"id\": 1\n" +
+                            "}")})),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.ADMIN})
+    @DeleteMapping("/{common-comment-id}")
+    public ResponseEntity<BaseResponse<Integer>> deleteCommonComment(
+            @PathVariable("common-comment-id") Integer id) {
+
+        boolean isRemoved = commonCommentService.delete(id);
+
+        if (!isRemoved) {
+            return ResponseBuilder.generateResponse(
+                    "Delete common comment failed!",
+                    HttpStatus.NOT_FOUND,
+                    id
+            );
+        }
+
+        return ResponseBuilder.generateResponse(
+                "Delete common comment successfully!",
+                HttpStatus.OK,
+                id
+        );
+    }
 }
