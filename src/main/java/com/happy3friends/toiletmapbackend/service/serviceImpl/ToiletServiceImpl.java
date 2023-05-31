@@ -158,27 +158,16 @@ public class ToiletServiceImpl implements ToiletService {
 
     public List<ToiletDetailsInfoResponse> getTop10ToiletsNearByCurrentLocation(Double currentLatitude, Double currentLongitude) {
 
-        // Create deviation location depend on current location
-        Double deviationLatitudeMax = currentLatitude + ToiletConstant.LOCATED_DEVIATION;
-        Double deviationLongitudeMax = currentLongitude + ToiletConstant.LOCATED_DEVIATION;
-
-        // Distance of radius between current location and deviation location
-        Double distanceCurrentAndDeviationMax = Math.sqrt(
-                Math.pow(currentLatitude - deviationLatitudeMax, 2)
-                        + Math.pow(currentLongitude - deviationLongitudeMax, 2)
-        );
-
         // Get top 10 toilets nearby current location
         List<CustomToiletDetailsInfoDTO> customToiletDetailsInfoDTOS
-                = toiletRepository.getTop10ToiletsNearByCurrentLocation(currentLatitude,
-                currentLongitude,
-                distanceCurrentAndDeviationMax);
+                = toiletRepository.getTop10ToiletsNearByCurrentLocation(currentLatitude, currentLongitude);
 
         LinkedHashMap<Integer, List<CustomToiletDetailsInfoDTO>> mapIdListCustomToiletDetailsInfoDTO
                 = getMapIdListCustomToiletDetailsInfoDTO(customToiletDetailsInfoDTOS);
 
         return mapIdListCustomToiletDetailsInfoDTO.entrySet()
                 .stream().map(dto -> getToiletFromListCustomToiletDetailsInfoDTOS(dto.getValue()))
+                .limit(10)
                 .collect(Collectors.toList());
     }
 
