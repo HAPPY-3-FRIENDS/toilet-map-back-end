@@ -43,3 +43,6 @@ springdoc:
     try-it-out-enabled: true
     filter: true
     default-models-expand-depth: -1
+
+goong:
+  api_key: ZXrUvqdTcl9AYCA8ZRbSoCqscAev0tBcFvpCS3QQ

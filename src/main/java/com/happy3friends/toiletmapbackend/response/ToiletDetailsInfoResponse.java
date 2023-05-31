@@ -30,4 +30,6 @@ public class ToiletDetailsInfoResponse {
     private double ratingStar;
     private String username;
     private String status;
+    private String duration;
+    private String distance;
 }

@@ -6,7 +6,6 @@ import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
 import com.happy3friends.toiletmapbackend.constant.DefaultSortPropertyConstant;
 import com.happy3friends.toiletmapbackend.constant.FacilityNameConstant;
 import com.happy3friends.toiletmapbackend.constant.StatusConstant;
-import com.happy3friends.toiletmapbackend.constant.ToiletConstant;
 import com.happy3friends.toiletmapbackend.dto.CustomToiletDTO;
 import com.happy3friends.toiletmapbackend.dto.CustomToiletDetailsInfoDTO;
 import com.happy3friends.toiletmapbackend.dto.ToiletFacilityDTO;
@@ -33,6 +32,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -45,11 +45,15 @@ import java.lang.reflect.Field;
 import java.sql.Time;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class ToiletServiceImpl implements ToiletService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ToiletServiceImpl.class);
+
+    @Value("${goong.api_key}")
+    private String GOONG_API_KEY;
 
     @Autowired
     private AccountRepository accountRepository;
@@ -156,6 +160,49 @@ public class ToiletServiceImpl implements ToiletService {
                 .collect(Collectors.toList());
     }
 
+    private List<Element> getElementsFromGoongDistanceMatrixAPI(double currentLatitude, double currentLongitude, String destinations, String vehicle) {
+        WebClient webClient = WebClient.create("https://rsapi.goong.io");
+        String url = "/DistanceMatrix?" +
+                "origins=" + Double.toString(currentLatitude) + "," + Double.toString(currentLongitude) + "&" +
+                "destinations=" + destinations + "&" +
+                "vehicle=" + vehicle + "&" +
+                "api_key=" + GOONG_API_KEY;
+        Flux<DistanceMatrixResponse> fluxDistanceMatrixResponse = webClient.get().uri(url).retrieve().bodyToFlux(DistanceMatrixResponse.class);
+        List<DistanceMatrixResponse> listDistanceMatrixResponse = fluxDistanceMatrixResponse.collectList().block();
+
+        return new ArrayList<>(listDistanceMatrixResponse.get(0).getRows().get(0).getElements());
+    }
+
+    private List<ToiletDetailsInfoResponse> mapDurationAndDistanceFromGoongAPI(
+            Double currentLatitude, Double currentLongitude,
+            List<ToiletDetailsInfoResponse> toiletDetailsInfoResponses) {
+
+        // Prepare query params
+        List<String> listLatLongDestination = toiletDetailsInfoResponses.stream()
+                .map(obj  -> {
+                    String latitude = Double.toString(obj.getLatitude());
+                    String longitude = Double.toString(obj.getLongitude());
+
+                    return String.join(",", latitude, longitude);
+                })
+                .collect(Collectors.toList());
+
+        String destinations = String.join("|", listLatLongDestination);
+
+        // Connect to Goong API
+        List<Element> elements = getElementsFromGoongDistanceMatrixAPI(currentLatitude, currentLongitude, destinations, "car");
+
+        // Map Distance and Duration to response
+        return IntStream.range(0, toiletDetailsInfoResponses.size())
+                .mapToObj(index -> {
+                    toiletDetailsInfoResponses.get(index).setDuration(elements.get(index).getDuration().getText());
+                    toiletDetailsInfoResponses.get(index).setDistance(elements.get(index).getDistance().getText());
+
+                    return toiletDetailsInfoResponses.get(index);
+                })
+                .collect(Collectors.toList());
+    }
+
     public List<ToiletDetailsInfoResponse> getTop10ToiletsNearByCurrentLocation(Double currentLatitude, Double currentLongitude) {
 
         // Get top 10 toilets nearby current location
@@ -165,10 +212,12 @@ public class ToiletServiceImpl implements ToiletService {
         LinkedHashMap<Integer, List<CustomToiletDetailsInfoDTO>> mapIdListCustomToiletDetailsInfoDTO
                 = getMapIdListCustomToiletDetailsInfoDTO(customToiletDetailsInfoDTOS);
 
-        return mapIdListCustomToiletDetailsInfoDTO.entrySet()
+        List<ToiletDetailsInfoResponse> toiletDetailsInfoResponses = mapIdListCustomToiletDetailsInfoDTO.entrySet()
                 .stream().map(dto -> getToiletFromListCustomToiletDetailsInfoDTOS(dto.getValue()))
                 .limit(10)
                 .collect(Collectors.toList());
+
+        return mapDurationAndDistanceFromGoongAPI(currentLatitude, currentLongitude, toiletDetailsInfoResponses);
     }
 
     public List<ToiletDetailsInfoResponse> getAllToiletsByCompanyId(Integer companyId, BasePaginationRequest paginationRequest) {
