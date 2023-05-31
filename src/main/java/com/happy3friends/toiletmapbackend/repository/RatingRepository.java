@@ -36,12 +36,13 @@ public interface RatingRepository extends JpaRepository<RatingEntity, Integer> {
             "FROM (SELECT r.Id, " +
             "             ui.FullName, " +
             "             r.Star, " +
-            "             CAST(r.Comment AS NVARCHAR(MAX))     AS Comment, " +
+            "             CAST(r.Comment AS NVARCHAR(MAX))                     AS Comment, " +
             "             r.DateTime, " +
-            "             CAST(ri.ImageSource AS VARCHAR(MAX)) AS ImageSource, " +
+            "             CAST(ri.ImageSource AS VARCHAR(MAX))                 AS ImageSource, " +
             "             ui.Avatar, " +
             "             r.Status, " +
-            "             cc.Name AS CommonComment " +
+            "             cc.Name                                              AS CommonComment, " +
+            "             DENSE_RANK() OVER (ORDER BY Star ASC, DateTime DESC) AS Rank " +
             "      FROM Rating r " +
             "               JOIN Account a " +
             "                    ON r.AccountId = a.Id " +
@@ -50,9 +51,11 @@ public interface RatingRepository extends JpaRepository<RatingEntity, Integer> {
             "               JOIN Toilet t ON r.ToiletId = t.Id " +
             "               LEFT JOIN RatingCommonComment rcc ON rcc.RatingId = r.Id " +
             "               LEFT JOIN CommonComment cc ON rcc.CommonCommentId = cc.Id " +
-            "      WHERE t.Id = :toiletId) r", nativeQuery = true)
+            "      WHERE t.Id = :toiletId) r " +
+            "WHERE Rank BETWEEN (:pageSize * :pageIndex - :pageSize + 1) AND (:pageSize * :pageIndex)", nativeQuery = true)
     List<CustomRatingDetailsDTO> getAllRatingsByToiletId(@Param("toiletId") int toiletId,
-                                                         Pageable pageable);
+                                                         @Param("pageSize") int pageSize,
+                                                         @Param("pageIndex") int pageIndex);
 
     @Query(value = "SELECT COUNT(*) " +
             "FROM Rating " +

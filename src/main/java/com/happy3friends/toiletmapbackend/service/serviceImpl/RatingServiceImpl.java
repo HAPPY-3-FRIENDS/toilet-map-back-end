@@ -119,7 +119,8 @@ public class RatingServiceImpl implements RatingService {
         sortOrders.add(new Sort.Order(Sort.Direction.DESC, DefaultSortPropertyConstant.DATETIME));
         Pageable pageable = PaginationUtil.getPageable(paginationRequest, sortOrders);
 
-        List<CustomRatingDetailsDTO> customRatingDetailsDTOS = ratingRepository.getAllRatingsByToiletId(toiletId, pageable);
+        List<CustomRatingDetailsDTO> customRatingDetailsDTOS
+                = ratingRepository.getAllRatingsByToiletId(toiletId, paginationRequest.getPageSize(), paginationRequest.getPageIndex());
 
         return getListRatingResponseFromListCustomRatingDetailsDTO(customRatingDetailsDTOS);
     }
