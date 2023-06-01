@@ -249,4 +249,110 @@ public class RatingController {
                 response
         );
     }
+
+    @Operation(summary = "Filter rating by star", description = "[User] Filter rating by star")
+    @Parameters(value = {
+            @Parameter(name = "toilet-id", description = "A specific toilet ID", in = ParameterIn.QUERY),
+            @Parameter(name = "star", description = "Number of star", in = ParameterIn.QUERY),
+            @Parameter(name = "sort",
+                    in = ParameterIn.QUERY,
+                    description = "Sorting criteria in the format: property(,asc|desc). Default sort order is ascending by Star and descending by DateTime. Multiple sort criteria are supported.",
+                    array = @ArraySchema(schema = @Schema(implementation = String.class), maxItems = 5),
+                    allowReserved = true)
+    })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
+                    @ExampleObject(name = "Filter rating by star", value = "[\n" +
+                            "    {\n" +
+                            "      \"id\": 1,\n" +
+                            "      \"fullName\": \"Huỳnh Lê Thủy Tiên\",\n" +
+                            "      \"star\": 5,\n" +
+                            "      \"comment\": \"Nhà vệ sinh tuyệt đỉnh\",\n" +
+                            "      \"dateTime\": \"14/04/2023 - 16:45:00\",\n" +
+                            "      \"imageSources\": [\n" +
+                            "        \"https://nhavesinhcongcong.vn/wp-content/uploads/2018/02/NT-nh%C3%A0-vs-%C4%91%C3%B4i.jpg\",\n" +
+                            "        \"https://ashui.com/mag/images/stories/202008/toilet1.jpg\"\n" +
+                            "      ]\n" +
+                            "    },\n" +
+                            "    {\n" +
+                            "      \"id\": 2,\n" +
+                            "      \"fullName\": \"Phạm Huỳnh Anh Hoàng\",\n" +
+                            "      \"star\": 4,\n" +
+                            "      \"comment\": \"Nhà vệ sinh sạch quá\",\n" +
+                            "      \"dateTime\": \"14/04/2023 - 16:45:00\",\n" +
+                            "      \"imageSources\": [\n" +
+                            "        null\n" +
+                            "      ]\n" +
+                            "    },\n" +
+                            "    {\n" +
+                            "      \"id\": 3,\n" +
+                            "      \"fullName\": \"Huỳnh Lê Thủy Tiên\",\n" +
+                            "      \"star\": 2,\n" +
+                            "      \"comment\": \"Nhà vệ sinh dơ\",\n" +
+                            "      \"dateTime\": \"14/04/2023 - 16:45:00\",\n" +
+                            "      \"imageSources\": [\n" +
+                            "        null\n" +
+                            "      ]\n" +
+                            "    }\n" +
+                            "  ]")
+            })),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.USER})
+    @GetMapping("/filter-rating-by-star")
+    public ResponseEntity<BaseResponse<List<RatingResponse>>> filterRatingByStar(
+            @RequestParam(value = "toilet-id", required = false) Integer toiletId,
+            @RequestParam(value = "star", required = false) Integer star,
+            @ModelAttribute BasePaginationRequest paginationRequest) {
+
+        List<RatingResponse> responses = ratingService.filterRatingByStar(toiletId, star, paginationRequest);
+
+        if (responses.isEmpty()) {
+            return ResponseBuilder.generateResponse(
+                    "Filter rating by star successfully!",
+                    HttpStatus.NO_CONTENT,
+                    responses
+            );
+        } else {
+            return ResponseBuilder.generateResponse(
+                    "Filter rating by star successfully!",
+                    HttpStatus.OK,
+                    responses
+            );
+        }
+    }
+
+    @Operation(summary = "Count list of all ratings when filter by star", description = "[Manager] Count list of rating of a specific Toilet by Toilet ID when filter by star")
+    @Parameters(value = {
+            @Parameter(name = "toilet-id", description = "A specific Toilet ID", in = ParameterIn.QUERY, example = "6"),
+            @Parameter(name = "star", description = "Number of star", in = ParameterIn.QUERY),
+    })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {@ExampleObject(value = "10")})),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.MANAGER, RoleConstant.USER})
+    @GetMapping(value = "/count-rating-by-star")
+    public ResponseEntity<BaseResponse<Integer>> countTheListRatingWhenFilterByStar(
+            @RequestParam(name = "toilet-id", required = false) Integer toiletId,
+            @RequestParam(value = "star", required = false) Integer star) {
+
+        int response = ratingService.countTheListRatingWhenFilterByStar(toiletId, star);
+
+        return ResponseBuilder.generateResponse(
+                "Count list of rating when filter by star successfully!",
+                HttpStatus.OK,
+                response
+        );
+    }
 }

@@ -252,4 +252,25 @@ public class RatingServiceImpl implements RatingService {
 
         return ratingMapper.convertRatingEntityToRatingResponse(ratingEntity.get());
     }
+
+    @Override
+    public List<RatingResponse> filterRatingByStar(Integer toiletId, Integer star, BasePaginationRequest paginationRequest) {
+        Sort.Order defaultSortOrder = new Sort.Order(Sort.Direction.DESC, DefaultSortPropertyConstant.DATETIME);
+        Pageable pageable = PaginationUtil.getPageable(paginationRequest, defaultSortOrder);
+
+        List<CustomRatingDetailsDTO> customRatingDetailsDTOS = ratingRepository.filterRatingByStar(toiletId, star, paginationRequest.getPageSize(), paginationRequest.getPageIndex());
+
+        return getListRatingResponseFromListCustomRatingDetailsDTO(customRatingDetailsDTOS);
+    }
+
+    @Override
+    public int countTheListRatingWhenFilterByStar(Integer toiletId, Integer star) {
+
+        Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
+        if (!toiletEntity.isPresent()) {
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_TOILET, ToiletMapErrorCodeEnum.NOT_FOUND_TOILET.getMessage());
+        }
+
+        return ratingRepository.countRatingByStar(toiletId, star);
+    }
 }

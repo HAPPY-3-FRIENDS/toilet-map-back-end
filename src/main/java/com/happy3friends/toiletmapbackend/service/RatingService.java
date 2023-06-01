@@ -15,4 +15,8 @@ public interface RatingService {
     int count(Integer toiletId);
 
     RatingResponse update(int id, Map<String, Object> fields);
+
+    List<RatingResponse> filterRatingByStar(Integer toiletId, Integer star, BasePaginationRequest paginationRequest);
+
+    int countTheListRatingWhenFilterByStar(Integer toiletId, Integer star);
 }
