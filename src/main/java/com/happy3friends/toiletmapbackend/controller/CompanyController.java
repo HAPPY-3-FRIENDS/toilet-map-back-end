@@ -386,11 +386,20 @@ public class CompanyController {
             responses = companyService.searchCompany(searchText ,paginationRequest);
         }
 
-        return ResponseBuilder.generateResponse(
-                "Search companies successfully!",
-                HttpStatus.OK,
-                responses
-        );
+        if (responses.isEmpty()) {
+            return ResponseBuilder.generateResponse(
+                    "Search companies successfully!",
+                    HttpStatus.NO_CONTENT,
+                    responses
+            );
+        } else {
+            return ResponseBuilder.generateResponse(
+                    "Search companies successfully!",
+                    HttpStatus.OK,
+                    responses
+            );
+        }
+
     }
 
     @Operation(summary = "Count list of search companies", description = "[Admin] Count list of search companies")
