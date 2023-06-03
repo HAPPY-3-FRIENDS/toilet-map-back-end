@@ -9,9 +9,7 @@ import com.happy3friends.toiletmapbackend.response.AnnouncementResponse;
 import com.happy3friends.toiletmapbackend.service.AnnouncementService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -26,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "Announcement", description = "Announcement API")
 @RestController
@@ -156,6 +155,51 @@ public class AnnouncementController {
 
         return ResponseBuilder.generateResponse(
                 "Get list of all announcements successfully!",
+                HttpStatus.OK,
+                responses
+        );
+    }
+
+    @Operation(summary = "Update announcement", description = "[Admin] update announcement")
+    @Parameter(name = "announcement-id", description = "A specific announcement ID", in = ParameterIn.PATH, required = true, example = "1")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Fields Request", required = true, content = @Content(
+            examples = {
+                    @ExampleObject(name = "Update announcement", value = "{\n" +
+                            "  \"title\": \"Update nè\",\n" +
+                            "  \"url\": \"Url nè\",\n" +
+                            "  \"startDate\": \"2023-06-04\",\n" +
+                            "  \"endDate\": \"2023-06-10\",\n" +
+                            "  \"type\": \"External\"\n" +
+                            "}")}))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
+                    @ExampleObject(value = "{\n" +
+                            "    \"id\": 1,\n" +
+                            "    \"title\": \"Update nè\",\n" +
+                            "    \"url\": \"Url nè\",\n" +
+                            "    \"imageSource\": \"ImageSource\",\n" +
+                            "    \"startDate\": \"2023-06-03T17:00:00.000+00:00\",\n" +
+                            "    \"endDate\": \"2023-06-09T17:00:00.000+00:00\",\n" +
+                            "    \"description\": \"Description nè\",\n" +
+                            "    \"type\": \"External\"\n" +
+                            "  }")})),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.ADMIN})
+    @PatchMapping("/{announcement-id}")
+    public ResponseEntity<BaseResponse<AnnouncementResponse>> updateAnnouncement(
+            @PathVariable("announcement-id") int announcementId,
+            @RequestBody Map<String, Object> fields) {
+
+        AnnouncementResponse responses = announcementService.updateAnnouncement(announcementId, fields);
+
+        return ResponseBuilder.generateResponse(
+                "Update announcement successfully!",
                 HttpStatus.OK,
                 responses
         );

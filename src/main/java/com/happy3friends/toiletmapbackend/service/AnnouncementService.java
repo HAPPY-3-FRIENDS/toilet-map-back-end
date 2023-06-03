@@ -4,6 +4,7 @@ import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
 import com.happy3friends.toiletmapbackend.response.AnnouncementResponse;
 
 import java.util.List;
+import java.util.Map;
 
 public interface AnnouncementService {
 
@@ -12,4 +13,6 @@ public interface AnnouncementService {
     int count(String announcementType);
 
     AnnouncementResponse getAnnouncementById(int id);
+
+    AnnouncementResponse updateAnnouncement(Integer id, Map<String, Object> fields);
 }

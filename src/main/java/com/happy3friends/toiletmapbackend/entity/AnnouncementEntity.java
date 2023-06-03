@@ -3,7 +3,7 @@ package com.happy3friends.toiletmapbackend.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.util.Date;
 
 @Entity
 @AllArgsConstructor
