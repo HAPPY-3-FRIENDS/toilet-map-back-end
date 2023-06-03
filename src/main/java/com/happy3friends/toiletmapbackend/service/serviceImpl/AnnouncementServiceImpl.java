@@ -1,12 +1,14 @@
 package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
 import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
+import com.happy3friends.toiletmapbackend.constant.AnnouncementTypeConstant;
 import com.happy3friends.toiletmapbackend.constant.DefaultSortPropertyConstant;
 import com.happy3friends.toiletmapbackend.entity.AnnouncementEntity;
 import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.AnnouncementMapper;
 import com.happy3friends.toiletmapbackend.repository.AnnouncementRepository;
+import com.happy3friends.toiletmapbackend.request.CreateAnnouncementRequest;
 import com.happy3friends.toiletmapbackend.response.AnnouncementResponse;
 import com.happy3friends.toiletmapbackend.service.AnnouncementService;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
@@ -92,6 +94,42 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         AnnouncementEntity result = announcementRepository.save(entity.get());
 
         return announcementMapper.convertAnnouncementEntityToAnnouncementResponse(result);
+    }
+
+    @Override
+    public AnnouncementResponse createAnnouncement(CreateAnnouncementRequest request) {
+
+        AnnouncementEntity entity = new AnnouncementEntity();
+
+        entity.setTitle(request.getTitle());
+        entity.setUrl(request.getUrl());
+        entity.setImageSource(request.getImageSource());
+
+        if (request.getType().equals(AnnouncementTypeConstant.INTERNAL)) {
+            entity.setStartDate(request.getStartDate());
+            entity.setEndDate(request.getEndDate());
+        }
+        entity.setDescription(request.getDescription());
+        entity.setType(request.getType());
+
+        return announcementMapper.convertAnnouncementEntityToAnnouncementResponse(announcementRepository.save(entity));
+    }
+
+    @Override
+    public boolean delete(Integer id) {
+        boolean result = true;
+
+        Optional<AnnouncementEntity> entity = announcementRepository.findById(id);
+        if (entity.isEmpty())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ANNOUNCEMENT, ToiletMapErrorCodeEnum.NOT_FOUND_ANNOUNCEMENT.getMessage());
+
+        try {
+            announcementRepository.deleteById(id);
+        } catch (Exception e) {
+            result = false;
+        }
+
+        return result;
     }
 
     private List<AnnouncementResponse> getAllAnnouncementsByType(String announcementType, BasePaginationRequest paginationRequest) {

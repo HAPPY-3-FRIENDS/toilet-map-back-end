@@ -5,6 +5,7 @@ import com.happy3friends.toiletmapbackend.base.models.BaseResponse;
 import com.happy3friends.toiletmapbackend.config.OpenApiConfig;
 import com.happy3friends.toiletmapbackend.constant.RoleConstant;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
+import com.happy3friends.toiletmapbackend.request.CreateAnnouncementRequest;
 import com.happy3friends.toiletmapbackend.response.AnnouncementResponse;
 import com.happy3friends.toiletmapbackend.service.AnnouncementService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -202,6 +203,86 @@ public class AnnouncementController {
                 "Update announcement successfully!",
                 HttpStatus.OK,
                 responses
+        );
+    }
+
+    @Operation(summary = "Create announcement", description = "[Admin] create announcement")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Announcement Request", required = true, content = @Content(
+            examples = {
+                    @ExampleObject(value = "{\n" +
+                            "  \"title\": \"Create nè\",\n" +
+                            "  \"url\": \"Url\",\n" +
+                            "  \"imageSource\": \"Image\",\n" +
+                            "  \"startDate\": \"2023-06-04\",\n" +
+                            "  \"endDate\": \"2023-06-10\",\n" +
+                            "  \"description\": \"Description\",\n" +
+                            "  \"type\": \"Internal\"\n" +
+                            "}")}))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
+                    @ExampleObject(value = "{\n" +
+                            "    \"id\": 6,\n" +
+                            "    \"title\": \"Create nè\",\n" +
+                            "    \"url\": \"Url\",\n" +
+                            "    \"imageSource\": \"Image\",\n" +
+                            "    \"startDate\": \"2023-06-04T00:00:00.000+00:00\",\n" +
+                            "    \"endDate\": \"2023-06-10T00:00:00.000+00:00\",\n" +
+                            "    \"description\": \"Description\",\n" +
+                            "    \"type\": \"Internal\"\n" +
+                            "  }")})),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.ADMIN})
+    @PostMapping
+    public ResponseEntity<BaseResponse<AnnouncementResponse>> createAnnouncement(@RequestBody CreateAnnouncementRequest request) {
+
+        AnnouncementResponse responses = announcementService.createAnnouncement(request);
+
+        return ResponseBuilder.generateResponse(
+                "Create announcement successfully!",
+                HttpStatus.OK,
+                responses
+        );
+    }
+
+    @Operation(summary = "Delete announcement", description = "[Admin] Delete announcement")
+    @Parameter(name = "announcement-id", description = "A specific announcement ID", in = ParameterIn.PATH, required = true, example = "4")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
+                    @ExampleObject(value = "{\n" +
+                            "    \"id\": 1\n" +
+                            "}")})),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.ADMIN})
+    @DeleteMapping("/{announcement-id}")
+    public ResponseEntity<BaseResponse<Integer>> deleteAnnouncement(
+            @PathVariable("announcement-id") Integer id) {
+
+        boolean isRemoved = announcementService.delete(id);
+
+        if (!isRemoved) {
+            return ResponseBuilder.generateResponse(
+                    "Delete announcement failed!",
+                    HttpStatus.NOT_FOUND,
+                    id
+            );
+        }
+
+        return ResponseBuilder.generateResponse(
+                "Delete announcement successfully!",
+                HttpStatus.OK,
+                id
         );
     }
 }
