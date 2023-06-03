@@ -3,6 +3,8 @@ package com.happy3friends.toiletmapbackend.service.serviceImpl;
 import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
 import com.happy3friends.toiletmapbackend.constant.DefaultSortPropertyConstant;
 import com.happy3friends.toiletmapbackend.entity.AnnouncementEntity;
+import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
+import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.AnnouncementMapper;
 import com.happy3friends.toiletmapbackend.repository.AnnouncementRepository;
 import com.happy3friends.toiletmapbackend.response.AnnouncementResponse;
@@ -15,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,6 +52,16 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         } else {
             return (int) announcementRepository.count();
         }
+    }
+
+    @Override
+    public AnnouncementResponse getAnnouncementById(int id) {
+
+        Optional<AnnouncementEntity> entity = announcementRepository.findById(id);
+        if (!entity.isPresent())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ANNOUNCEMENT, ToiletMapErrorCodeEnum.NOT_FOUND_ANNOUNCEMENT.getMessage());
+
+        return announcementMapper.convertAnnouncementEntityToAnnouncementResponse(entity.get());
     }
 
     private List<AnnouncementResponse> getAllAnnouncementsByType(String announcementType, BasePaginationRequest paginationRequest) {

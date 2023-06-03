@@ -52,7 +52,8 @@ public enum ToiletMapErrorCodeEnum {
     NOT_FOUND_COMMON_COMMENT(HttpStatus.NOT_FOUND, 404007, "Không tìm thấy bình luận thông dụng"),
     NOT_FOUND_SERVICE(HttpStatus.NOT_FOUND, 404008, "Không tìm thấy dịch vụ"),
     NOT_FOUND_SENSITIVE_WORD(HttpStatus.NOT_FOUND, 404009, "Không tìm thấy từ nhạy cảm"),
-    NOT_FOUND_RATING(HttpStatus.NOT_FOUND, 404010, "Không tìm thấy từ đánh giá")
+    NOT_FOUND_RATING(HttpStatus.NOT_FOUND, 404010, "Không tìm thấy từ đánh giá"),
+    NOT_FOUND_ANNOUNCEMENT(HttpStatus.NOT_FOUND, 404011, "Không tìm thấy thông báo")
     ;
 
     private final HttpStatus httpStatus;

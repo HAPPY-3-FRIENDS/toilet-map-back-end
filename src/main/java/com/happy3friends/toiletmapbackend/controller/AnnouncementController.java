@@ -125,4 +125,39 @@ public class AnnouncementController {
                 response
         );
     }
+
+    @Operation(summary = "Get announcement info by id", description = "[Admin, User] Get announcement info by id")
+    @Parameter(name = "announcement-id", description = "A specific announcement ID", in = ParameterIn.PATH, required = true, example = "1")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
+                    @ExampleObject(value = "{\n" +
+                            "    \"id\": 1,\n" +
+                            "    \"title\": \"Tra cứu hóa đơn tiền rác\",\n" +
+                            "    \"url\": \"Url\",\n" +
+                            "    \"imageSource\": \"ImageSource\",\n" +
+                            "    \"startDate\": \"2023-06-03\",\n" +
+                            "    \"endDate\": \"2023-06-07\",\n" +
+                            "    \"description\": \"Description nè\",\n" +
+                            "    \"type\": \"External\"\n" +
+                            "  }")})),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.USER})
+    @GetMapping(value = "/{announcement-id}")
+    public ResponseEntity<BaseResponse<AnnouncementResponse>> getAnnouncementById(
+            @PathVariable("announcement-id") int announcementId) {
+
+        AnnouncementResponse responses = announcementService.getAnnouncementById(announcementId);
+
+        return ResponseBuilder.generateResponse(
+                "Get list of all announcements successfully!",
+                HttpStatus.OK,
+                responses
+        );
+    }
 }

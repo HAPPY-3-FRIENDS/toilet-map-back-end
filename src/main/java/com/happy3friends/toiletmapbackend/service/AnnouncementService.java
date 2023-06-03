@@ -10,4 +10,6 @@ public interface AnnouncementService {
     List<AnnouncementResponse> getAllAnnouncements(String announcementType, BasePaginationRequest paginationRequest);
 
     int count(String announcementType);
+
+    AnnouncementResponse getAnnouncementById(int id);
 }
