@@ -69,7 +69,7 @@ public class AnnouncementController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.MANAGER, RoleConstant.TOILET, RoleConstant.USER})
+    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.MANAGER, RoleConstant.STAFF, RoleConstant.TOILET, RoleConstant.USER})
     @GetMapping
     public ResponseEntity<BaseResponse<List<AnnouncementResponse>>> getAllAnnouncements(
             @RequestParam(value = "announcement-type", required = false) String announcementType,
@@ -104,7 +104,7 @@ public class AnnouncementController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.MANAGER, RoleConstant.TOILET,  RoleConstant.USER})
+    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.MANAGER, RoleConstant.STAFF, RoleConstant.TOILET,  RoleConstant.USER})
     @GetMapping(value = "/count")
     public ResponseEntity<BaseResponse<Integer>> count(
             @RequestParam(value = "announcement-type", required = false) String announcementType) {
@@ -147,7 +147,7 @@ public class AnnouncementController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.MANAGER, RoleConstant.TOILET,  RoleConstant.USER})
+    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.MANAGER, RoleConstant.STAFF, RoleConstant.TOILET,  RoleConstant.USER})
     @GetMapping(value = "/{announcement-id}")
     public ResponseEntity<BaseResponse<AnnouncementResponse>> getAnnouncementById(
             @PathVariable("announcement-id") int announcementId) {
@@ -191,7 +191,7 @@ public class AnnouncementController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.MANAGER, RoleConstant.TOILET})
+    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.MANAGER, RoleConstant.STAFF, RoleConstant.TOILET})
     @PatchMapping("/{announcement-id}")
     public ResponseEntity<BaseResponse<AnnouncementResponse>> updateAnnouncement(
             @PathVariable("announcement-id") int announcementId,
@@ -237,7 +237,7 @@ public class AnnouncementController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.ADMIN,  RoleConstant.MANAGER, RoleConstant.TOILET})
+    @RolesAllowed({RoleConstant.ADMIN,  RoleConstant.MANAGER, RoleConstant.STAFF, RoleConstant.TOILET})
     @PostMapping
     public ResponseEntity<BaseResponse<AnnouncementResponse>> createAnnouncement(@RequestBody CreateAnnouncementRequest request) {
 
@@ -264,7 +264,7 @@ public class AnnouncementController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.ADMIN,  RoleConstant.MANAGER, RoleConstant.TOILET})
+    @RolesAllowed({RoleConstant.ADMIN,  RoleConstant.MANAGER, RoleConstant.STAFF, RoleConstant.TOILET})
     @DeleteMapping("/{announcement-id}")
     public ResponseEntity<BaseResponse<Integer>> deleteAnnouncement(
             @PathVariable("announcement-id") Integer id) {
