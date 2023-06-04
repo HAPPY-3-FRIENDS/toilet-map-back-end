@@ -11,6 +11,7 @@ import com.happy3friends.toiletmapbackend.exception.BadRequestException;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.RatingMapper;
 import com.happy3friends.toiletmapbackend.repository.*;
+import com.happy3friends.toiletmapbackend.request.FilterRatingRequest;
 import com.happy3friends.toiletmapbackend.request.RatingRequest;
 import com.happy3friends.toiletmapbackend.response.RatingResponse;
 import com.happy3friends.toiletmapbackend.service.RatingService;
@@ -272,5 +273,38 @@ public class RatingServiceImpl implements RatingService {
         }
 
         return ratingRepository.countRatingByStar(toiletId, star);
+    }
+
+    @Override
+    public List<RatingResponse> filterRating(FilterRatingRequest request, BasePaginationRequest paginationRequest) {
+
+        Optional<ToiletEntity> toiletEntity = toiletRepository.findById(request.getToiletId());
+        if (!toiletEntity.isPresent()) {
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_TOILET, ToiletMapErrorCodeEnum.NOT_FOUND_TOILET.getMessage());
+        }
+
+        List<CustomRatingDetailsDTO> customRatingDetailsDTOS = ratingRepository.filterRating(request.getToiletId(),
+                request.getListCommonComment(),
+                request.getListStars(),
+                request.getListStatus(),
+                paginationRequest.getPageSize(),
+                paginationRequest.getPageIndex());
+
+        return getListRatingResponseFromListCustomRatingDetailsDTO(customRatingDetailsDTOS);
+    }
+
+    @Override
+    public int countFilterRating(FilterRatingRequest request) {
+
+        Optional<ToiletEntity> toiletEntity = toiletRepository.findById(request.getToiletId());
+        if (!toiletEntity.isPresent()) {
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_TOILET, ToiletMapErrorCodeEnum.NOT_FOUND_TOILET.getMessage());
+        }
+
+        List<CustomRatingDetailsDTO> customRatingDetailsDTOS = ratingRepository.filterRatingToCount(request.getToiletId(),
+                request.getListCommonComment(),
+                request.getListStars(),
+                request.getListStatus());
+        return getListRatingResponseFromListCustomRatingDetailsDTO(customRatingDetailsDTOS).size();
     }
 }

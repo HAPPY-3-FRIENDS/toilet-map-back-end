@@ -97,4 +97,70 @@ public interface RatingRepository extends JpaRepository<RatingEntity, Integer> {
             "AND Star = :star", nativeQuery = true)
     int countRatingByStar(@Param("toiletId") int toiletId,
                            @Param("star") int star);
+
+    @Query(value =
+            "SELECT *\n" +
+                    "FROM (SELECT r.Id,\n" +
+                    "        ui.FullName,\n" +
+                    "        r.Star,\n" +
+                    "        CAST(r.Comment AS NVARCHAR(MAX)) AS Comment,\n" +
+                    "        r.DateTime,\n" +
+                    "        CAST(ri.ImageSource AS VARCHAR(MAX)) AS ImageSource,\n" +
+                    "        ui.Avatar,\n" +
+                    "        r.Status,\n" +
+                    "        CASE\n" +
+                    "            WHEN cc.Name IS NULL THEN 'No common comment'\n" +
+                    "            ELSE cc.Name\n" +
+                    "        END AS CommonComment,\n" +
+                    "        DENSE_RANK() OVER (ORDER BY Star ASC, DateTime DESC) AS Rank\n" +
+                    "    FROM Rating r\n" +
+                    "    JOIN Account a ON r.AccountId = a.Id\n" +
+                    "    JOIN UserInfo ui ON a.Id = ui.AccountId\n" +
+                    "    LEFT JOIN RatingImage ri ON ri.RatingId = r.Id\n" +
+                    "    JOIN Toilet t ON r.ToiletId = t.Id\n" +
+                    "    LEFT JOIN RatingCommonComment rcc ON rcc.RatingId = r.Id\n" +
+                    "    LEFT JOIN CommonComment cc ON rcc.CommonCommentId = cc.Id\n" +
+                    "    WHERE t.Id = :toiletId\n" +
+                    "    ) r\n" +
+                    "WHERE Rank BETWEEN (:pageSize * :pageIndex - :pageSize + 1) AND (:pageSize * :pageIndex)\n" +
+                    "    AND r.CommonComment IN (:listCommonComment)\n" +
+                    "    AND r.Status IN (:listStatus)\n" +
+                    "    AND r.Star IN (:listStars)", nativeQuery = true)
+    List<CustomRatingDetailsDTO> filterRating(@Param("toiletId") int toiletId,
+                                              @Param("listCommonComment") List<String> listCommonComment,
+                                              @Param("listStars") List<Integer> listStars,
+                                              @Param("listStatus") List<String> listStatus,
+                                              @Param("pageSize") int pageSize,
+                                              @Param("pageIndex") int pageIndex);
+
+    @Query(value =
+            "SELECT *\n" +
+                    "FROM (SELECT r.Id,\n" +
+                    "        ui.FullName,\n" +
+                    "        r.Star,\n" +
+                    "        CAST(r.Comment AS NVARCHAR(MAX)) AS Comment,\n" +
+                    "        r.DateTime,\n" +
+                    "        CAST(ri.ImageSource AS VARCHAR(MAX)) AS ImageSource,\n" +
+                    "        ui.Avatar,\n" +
+                    "        r.Status,\n" +
+                    "        CASE\n" +
+                    "            WHEN cc.Name IS NULL THEN 'No common comment'\n" +
+                    "            ELSE cc.Name\n" +
+                    "        END AS CommonComment\n" +
+                    "    FROM Rating r\n" +
+                    "    JOIN Account a ON r.AccountId = a.Id\n" +
+                    "    JOIN UserInfo ui ON a.Id = ui.AccountId\n" +
+                    "    LEFT JOIN RatingImage ri ON ri.RatingId = r.Id\n" +
+                    "    JOIN Toilet t ON r.ToiletId = t.Id\n" +
+                    "    LEFT JOIN RatingCommonComment rcc ON rcc.RatingId = r.Id\n" +
+                    "    LEFT JOIN CommonComment cc ON rcc.CommonCommentId = cc.Id\n" +
+                    "    WHERE t.Id = :toiletId\n" +
+                    "    ) r\n" +
+                    "WHERE r.CommonComment IN (:listCommonComment)\n" +
+                    "    AND r.Status IN (:listStatus)\n" +
+                    "    AND r.Star IN (:listStars)", nativeQuery = true)
+    List<CustomRatingDetailsDTO> filterRatingToCount(@Param("toiletId") int toiletId,
+                                              @Param("listCommonComment") List<String> listCommonComment,
+                                              @Param("listStars") List<Integer> listStars,
+                                              @Param("listStatus") List<String> listStatus);
 }

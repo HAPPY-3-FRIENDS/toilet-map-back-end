@@ -5,6 +5,7 @@ import com.happy3friends.toiletmapbackend.base.models.BaseResponse;
 import com.happy3friends.toiletmapbackend.config.OpenApiConfig;
 import com.happy3friends.toiletmapbackend.constant.RoleConstant;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
+import com.happy3friends.toiletmapbackend.request.FilterRatingRequest;
 import com.happy3friends.toiletmapbackend.request.RatingRequest;
 import com.happy3friends.toiletmapbackend.response.RatingResponse;
 import com.happy3friends.toiletmapbackend.response.UpdateToiletInfoResponse;
@@ -351,6 +352,99 @@ public class RatingController {
 
         return ResponseBuilder.generateResponse(
                 "Count list of rating when filter by star successfully!",
+                HttpStatus.OK,
+                response
+        );
+    }
+
+
+    @Operation(summary = "Filter rating", description = "[Manager, User] Filter rating")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
+                    @ExampleObject(name = "Filter rating", value = "[\n" +
+                            "    {\n" +
+                            "      \"id\": 19,\n" +
+                            "      \"fullName\": \"Đức Quân\",\n" +
+                            "      \"star\": 1,\n" +
+                            "      \"comment\": \"Đây là hàng fake\",\n" +
+                            "      \"dateTime\": \"26/05/2023 - 04:36:35\",\n" +
+                            "      \"imageSources\": [\n" +
+                            "        null\n" +
+                            "      ],\n" +
+                            "      \"avatar\": null,\n" +
+                            "      \"status\": \"Đã giải quyết\",\n" +
+                            "      \"commonComments\": [\n" +
+                            "        \"Thái độ nhân viên kém\",\n" +
+                            "        \"Nhà vệ sinh bẩn, hôi\",\n" +
+                            "        \"Trang thiết bị hư hỏng\"\n" +
+                            "      ]\n" +
+                            "    },\n" +
+                            "    {\n" +
+                            "      \"id\": 21,\n" +
+                            "      \"fullName\": \"Đức Quân\",\n" +
+                            "      \"star\": 2,\n" +
+                            "      \"comment\": \"Xấu\",\n" +
+                            "      \"dateTime\": \"30/05/2023 - 14:40:10\",\n" +
+                            "      \"imageSources\": [\n" +
+                            "        null\n" +
+                            "      ],\n" +
+                            "      \"avatar\": null,\n" +
+                            "      \"status\": \"Từ chối giải quyết\",\n" +
+                            "      \"commonComments\": [\n" +
+                            "        \"No common comment\"\n" +
+                            "      ]\n" +
+                            "    }\n" +
+                            "  ]")
+            })),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.MANAGER, RoleConstant.USER})
+    @GetMapping("/filter-rating")
+    public ResponseEntity<BaseResponse<List<RatingResponse>>> filterRating(
+            FilterRatingRequest request,
+            @ModelAttribute BasePaginationRequest paginationRequest) {
+
+        List<RatingResponse> responses = ratingService.filterRating(request, paginationRequest);
+
+        if (responses.isEmpty()) {
+            return ResponseBuilder.generateResponse(
+                    "Filter rating successfully!",
+                    HttpStatus.NO_CONTENT,
+                    responses
+            );
+        } else {
+            return ResponseBuilder.generateResponse(
+                    "Filter rating successfully!",
+                    HttpStatus.OK,
+                    responses
+            );
+        }
+    }
+
+    @Operation(summary = "Count list of all ratings when filter", description = "[Manager, User] Count list of rating of a specific Toilet by Toilet ID when filter")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {@ExampleObject(value = "10")})),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.MANAGER, RoleConstant.USER})
+    @GetMapping(value = "/count-rating")
+    public ResponseEntity<BaseResponse<Integer>> countFilterRating(
+            FilterRatingRequest request) {
+
+        int response = ratingService.countFilterRating(request);
+
+        return ResponseBuilder.generateResponse(
+                "Count list of rating when filter successfully!",
                 HttpStatus.OK,
                 response
         );

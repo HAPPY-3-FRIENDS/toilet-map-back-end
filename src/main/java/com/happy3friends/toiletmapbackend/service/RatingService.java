@@ -1,6 +1,7 @@
 package com.happy3friends.toiletmapbackend.service;
 
 import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
+import com.happy3friends.toiletmapbackend.request.FilterRatingRequest;
 import com.happy3friends.toiletmapbackend.request.RatingRequest;
 import com.happy3friends.toiletmapbackend.response.RatingResponse;
 
@@ -19,4 +20,8 @@ public interface RatingService {
     List<RatingResponse> filterRatingByStar(Integer toiletId, Integer star, BasePaginationRequest paginationRequest);
 
     int countTheListRatingWhenFilterByStar(Integer toiletId, Integer star);
+
+    List<RatingResponse> filterRating(FilterRatingRequest request, BasePaginationRequest paginationRequest);
+
+    int countFilterRating(FilterRatingRequest request);
 }
