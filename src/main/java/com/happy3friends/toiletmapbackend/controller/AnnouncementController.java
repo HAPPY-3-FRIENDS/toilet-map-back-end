@@ -45,8 +45,8 @@ public class AnnouncementController {
                             "      \"title\": \"Lễ nên cho free\",\n" +
                             "      \"url\": \"Url\",\n" +
                             "      \"imageSource\": \"ImageSource\",\n" +
-                            "      \"startDate\": \"2023-06-03\",\n" +
-                            "      \"endDate\": \"2023-06-04\",\n" +
+                            "      \"startDate\": \"03-06-2023\",\n" +
+                            "      \"endDate\": \"04-06-2023\",\n" +
                             "      \"description\": \"Description nè\",\n" +
                             "      \"type\": \"Internal\"\n" +
                             "    },\n" +
@@ -55,8 +55,8 @@ public class AnnouncementController {
                             "      \"title\": \"Tra cứu hóa đơn tiền rác\",\n" +
                             "      \"url\": \"Url\",\n" +
                             "      \"imageSource\": \"ImageSource\",\n" +
-                            "      \"startDate\": \"2023-06-03\",\n" +
-                            "      \"endDate\": \"2023-06-07\",\n" +
+                            "      \"startDate\": \"03-06-2023\",\n" +
+                            "      \"endDate\": \"07-06-2023\",\n" +
                             "      \"description\": \"Description nè\",\n" +
                             "      \"type\": \"External\"\n" +
                             "    }\n" +
@@ -135,8 +135,8 @@ public class AnnouncementController {
                             "    \"title\": \"Tra cứu hóa đơn tiền rác\",\n" +
                             "    \"url\": \"Url\",\n" +
                             "    \"imageSource\": \"ImageSource\",\n" +
-                            "    \"startDate\": \"2023-06-03\",\n" +
-                            "    \"endDate\": \"2023-06-07\",\n" +
+                            "    \"startDate\": \"03-06-2023\",\n" +
+                            "    \"endDate\": \"07-06-2023\",\n" +
                             "    \"description\": \"Description nè\",\n" +
                             "    \"type\": \"External\"\n" +
                             "  }")})),
@@ -168,8 +168,8 @@ public class AnnouncementController {
                     @ExampleObject(name = "Update announcement", value = "{\n" +
                             "  \"title\": \"Update nè\",\n" +
                             "  \"url\": \"Url nè\",\n" +
-                            "  \"startDate\": \"2023-06-04\",\n" +
-                            "  \"endDate\": \"2023-06-10\",\n" +
+                            "  \"startDate\": \"04-06-2023\",\n" +
+                            "  \"endDate\": \"10-06-2023\",\n" +
                             "  \"type\": \"External\"\n" +
                             "}")}))
     @ApiResponses(value = {
@@ -179,8 +179,8 @@ public class AnnouncementController {
                             "    \"title\": \"Update nè\",\n" +
                             "    \"url\": \"Url nè\",\n" +
                             "    \"imageSource\": \"ImageSource\",\n" +
-                            "    \"startDate\": \"2023-06-03T17:00:00.000+00:00\",\n" +
-                            "    \"endDate\": \"2023-06-09T17:00:00.000+00:00\",\n" +
+                            "    \"startDate\": \"05-06-2023\",\n" +
+                            "    \"endDate\": \"10-06-2023\",\n" +
                             "    \"description\": \"Description nè\",\n" +
                             "    \"type\": \"External\"\n" +
                             "  }")})),
@@ -213,8 +213,8 @@ public class AnnouncementController {
                             "  \"title\": \"Create nè\",\n" +
                             "  \"url\": \"Url\",\n" +
                             "  \"imageSource\": \"Image\",\n" +
-                            "  \"startDate\": \"2023-06-04\",\n" +
-                            "  \"endDate\": \"2023-06-10\",\n" +
+                            "  \"startDate\": \"05-06-2023\",\n" +
+                            "  \"endDate\": \"10-06-2023\",\n" +
                             "  \"description\": \"Description\",\n" +
                             "  \"type\": \"Internal\"\n" +
                             "}")}))
@@ -225,8 +225,8 @@ public class AnnouncementController {
                             "    \"title\": \"Create nè\",\n" +
                             "    \"url\": \"Url\",\n" +
                             "    \"imageSource\": \"Image\",\n" +
-                            "    \"startDate\": \"2023-06-04T00:00:00.000+00:00\",\n" +
-                            "    \"endDate\": \"2023-06-10T00:00:00.000+00:00\",\n" +
+                            "    \"startDate\": \"05-06-2023\",\n" +
+                            "    \"endDate\": \"10-06-2023\",\n" +
                             "    \"description\": \"Description\",\n" +
                             "    \"type\": \"Internal\"\n" +
                             "  }")})),
