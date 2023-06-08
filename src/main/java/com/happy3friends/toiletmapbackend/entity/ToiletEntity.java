@@ -72,4 +72,7 @@ public class ToiletEntity {
     @MapsId
     @JoinColumn(name = "Id", referencedColumnName = "Id", nullable = false)
     private AccountEntity accountById;
+    @OneToOne(mappedBy = "toiletByToiletId")
+    private SuggestionEntity suggestionById;
+
 }

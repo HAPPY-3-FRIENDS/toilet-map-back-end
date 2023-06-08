@@ -21,4 +21,6 @@ public class StatisticResponse {
     private Integer walkInGuestCount;
     private Integer usingTurnRevenue;
     private Integer usingTurnCount;
+    private String message;
+    private Boolean isAccepted;
 }

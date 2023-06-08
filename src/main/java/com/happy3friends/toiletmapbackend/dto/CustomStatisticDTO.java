@@ -12,4 +12,6 @@ public interface CustomStatisticDTO {
     Integer getWalkInGuestCount();
     Integer getUsingTurnRevenue();
     Integer getUsingTurnCount();
+    String getMessage();
+    Boolean isAccepted();
 }

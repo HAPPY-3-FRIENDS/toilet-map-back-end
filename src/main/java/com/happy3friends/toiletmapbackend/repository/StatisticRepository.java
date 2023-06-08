@@ -42,7 +42,9 @@ public interface StatisticRepository extends JpaRepository<CheckInEntity, Intege
             "             COALESCE(SUM(c.Balance), 0)                                   AS WalkInGuestRevenue, " +
             "             COUNT(c.Balance)                                              AS WalkInGuestCount, " +
             "             COALESCE(SUM(c.TurnPrice), 0)                                 AS UsingTurnRevenue, " +
-            "             COUNT(c.TurnPrice)                                            AS UsingTurnCount " +
+            "             COUNT(c.TurnPrice)                                            AS UsingTurnCount, " +
+            "             CAST(sg.Message AS NVARCHAR(MAX))                             AS Message, " +
+            "             sg.IsAccepted " +
             "      FROM CheckIn c " +
             "               RIGHT JOIN ToiletService ts " +
             "                          ON c.ToiletServiceId = ts.Id AND " +
@@ -53,8 +55,10 @@ public interface StatisticRepository extends JpaRepository<CheckInEntity, Intege
             "                    ON ts.ToiletId = t.Id " +
             "               JOIN Company cp " +
             "                    ON t.CompanyId = cp.Id " +
+            "               LEFT JOIN Suggestion sg " +
+            "                         ON t.Id = sg.ToiletId " +
             "      WHERE cp.Id = :companyId " +
-            "      GROUP BY t.Id, t.Name) r", nativeQuery = true)
+            "      GROUP BY t.Id, t.Name, CAST(sg.Message AS NVARCHAR(MAX)), sg.IsAccepted) r", nativeQuery = true)
     List<CustomStatisticDTO> getAllStatisticsByCompanyId(@Param("companyId") int companyId,
                                                       @Param("fromDate") Date fromDate,
                                                       @Param("toDate") Date toDate,
@@ -128,7 +132,9 @@ public interface StatisticRepository extends JpaRepository<CheckInEntity, Intege
             "             COALESCE(SUM(c.Balance), 0)                                   AS WalkInGuestRevenue, " +
             "             COUNT(c.Balance)                                              AS WalkInGuestCount, " +
             "             COALESCE(SUM(c.TurnPrice), 0)                                 AS UsingTurnRevenue, " +
-            "             COUNT(c.TurnPrice)                                            AS UsingTurnCount " +
+            "             COUNT(c.TurnPrice)                                            AS UsingTurnCount, " +
+            "             CAST(sg.Message AS NVARCHAR(MAX))                             AS Message, " +
+            "             sg.IsAccepted " +
             "      FROM CheckIn c " +
             "               RIGHT JOIN ToiletService ts " +
             "                          ON c.ToiletServiceId = ts.Id AND " +
@@ -139,26 +145,28 @@ public interface StatisticRepository extends JpaRepository<CheckInEntity, Intege
             "                    ON ts.ToiletId = t.Id " +
             "               JOIN Company cp " +
             "                    ON t.CompanyId = cp.Id " +
+            "               LEFT JOIN Suggestion sg " +
+            "                         ON t.Id = sg.ToiletId " +
             "      WHERE cp.Id = :companyId " +
-            "      GROUP BY t.Id, t.Name) r", nativeQuery = true)
+            "      GROUP BY t.Id, t.Name, CAST(sg.Message AS NVARCHAR(MAX)), sg.IsAccepted) r", nativeQuery = true)
     int countAllStatisticsByCompanyId(Integer companyId, Date fromDate, Date toDate);
 
     @Query(value =
-            "SELECT COUNT(*)\n" +
-            "FROM (SELECT s.Name AS ServiceName,\n" +
-            "    COALESCE(SUM(c.Balance), 0) + COALESCE(SUM(c.TurnPrice), 0) AS TotalRevenue,\n" +
-            "    COALESCE(SUM(c.Balance), 0) AS WalkInGuestRevenue,\n" +
-            "    COUNT(c.Balance) AS WalkInGuestCount,\n" +
-            "    COALESCE(SUM(c.TurnPrice), 0) AS UsingTurnRevenue,\n" +
-            "    COUNT(c.TurnPrice) AS UsingTurnCount\n" +
-            "FROM CheckIn c\n" +
-            "    RIGHT JOIN ToiletService ts\n" +
-            "        ON c.ToiletServiceId = ts.Id AND (c.DateTime IS NULL OR c.DateTime BETWEEN :fromDate AND :toDate)\n" +
-            "    JOIN Service s\n" +
-            "        ON ts.ServiceId = s.Id\n" +
-            "    JOIN Toilet t\n" +
-            "        ON ts.ToiletId = t.Id\n" +
-            "WHERE t.Id = :toiletId\n" +
+            "SELECT COUNT(*) " +
+            "FROM (SELECT s.Name AS ServiceName, " +
+            "    COALESCE(SUM(c.Balance), 0) + COALESCE(SUM(c.TurnPrice), 0) AS TotalRevenue, " +
+            "    COALESCE(SUM(c.Balance), 0) AS WalkInGuestRevenue, " +
+            "    COUNT(c.Balance) AS WalkInGuestCount, " +
+            "    COALESCE(SUM(c.TurnPrice), 0) AS UsingTurnRevenue, " +
+            "    COUNT(c.TurnPrice) AS UsingTurnCount " +
+            "FROM CheckIn c " +
+            "    RIGHT JOIN ToiletService ts " +
+            "        ON c.ToiletServiceId = ts.Id AND (c.DateTime IS NULL OR c.DateTime BETWEEN :fromDate AND :toDate) " +
+            "    JOIN Service s " +
+            "        ON ts.ServiceId = s.Id " +
+            "    JOIN Toilet t " +
+            "        ON ts.ToiletId = t.Id " +
+            "WHERE t.Id = :toiletId " +
             "GROUP BY s.Name) a", nativeQuery = true)
     int countAllStatisticsByToiletId(Integer toiletId, Date fromDate, Date toDate);
 
