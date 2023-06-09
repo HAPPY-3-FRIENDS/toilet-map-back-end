@@ -4,7 +4,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Date;
-import java.util.Objects;
 
 @Entity
 @AllArgsConstructor
@@ -18,6 +17,7 @@ public class SuggestionEntity {
     @Id
     @Column(name = "Id", nullable = false)
     private int id;
+    @Basic
     @Column(name = "ToiletId", nullable = false)
     private int toiletId;
     @Basic
