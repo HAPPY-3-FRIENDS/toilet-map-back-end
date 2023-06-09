@@ -429,12 +429,12 @@ public class ToiletServiceImpl implements ToiletService {
                 "origins=" + lat + "," + lng + "&" +
                 "destinations=" + destinations + "&" +
                 "vehicle=" + vehicle + "&" +
-                "api_key=ZXrUvqdTcl9AYCA8ZRbSoCqscAev0tBcFvpCS3QQ";
+                "api_key=OnwCCr1HHOeOCqofMVaXBaf9t82lC25Vqsm6iJJa";
         Flux<DistanceMatrixResponse> fluxDistanceMatrixResponse = webClient.get().uri(url).retrieve().bodyToFlux(DistanceMatrixResponse.class);
         List<DistanceMatrixResponse> listDistanceMatrixResponse = fluxDistanceMatrixResponse.collectList().block();
 
         Element element = listDistanceMatrixResponse.get(0).getRows().get(0).getElements().stream()
-                .min((x, y) -> convertDurationOrDistanceTextToInt(x.getDuration().getText()) - convertDurationOrDistanceTextToInt(y.getDuration().getText()))
+                .min((x, y) -> x.getDuration().getValue() - y.getDuration().getValue())
                 .get();
 
         int index = listDistanceMatrixResponse.get(0).getRows().get(0).getElements().indexOf(element);
@@ -532,10 +532,5 @@ public class ToiletServiceImpl implements ToiletService {
         return entities.stream()
                 .map(e -> toiletMapper.convertToiletFacilityEntityToToiletFacilityResponse(e))
                 .collect(Collectors.toList());
-    }
-
-    private int convertDurationOrDistanceTextToInt(String durationText) {
-        String[] result = durationText.split(" ");
-        return Integer.parseInt(result[0]);
     }
 }
