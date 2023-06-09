@@ -16,6 +16,8 @@ import java.util.Objects;
 public class SuggestionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @Column(name = "Id", nullable = false)
+    private int id;
     @Column(name = "ToiletId", nullable = false)
     private int toiletId;
     @Basic
