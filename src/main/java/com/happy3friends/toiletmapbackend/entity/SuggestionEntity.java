@@ -3,6 +3,7 @@ package com.happy3friends.toiletmapbackend.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.sql.Date;
 import java.util.Objects;
 
 @Entity
@@ -26,5 +27,16 @@ public class SuggestionEntity {
     @OneToOne
     @JoinColumn(name = "ToiletId", referencedColumnName = "Id", nullable = false)
     private ToiletEntity toiletByToiletId;
-
+    @Basic
+    @Column(name = "StartDate", nullable = true)
+    private Date startDate;
+    @Basic
+    @Column(name = "EndDate", nullable = true)
+    private Date endDate;
+    @Basic
+    @Column(name = "ActualCount", nullable = true)
+    private Integer actualCount;
+    @Basic
+    @Column(name = "ExpectedCount", nullable = true, precision = 0)
+    private Double expectedCount;
 }

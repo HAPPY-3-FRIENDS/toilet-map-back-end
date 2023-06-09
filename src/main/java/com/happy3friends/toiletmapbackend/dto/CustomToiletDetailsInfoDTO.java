@@ -1,6 +1,7 @@
 package com.happy3friends.toiletmapbackend.dto;
 
 import java.sql.Time;
+import java.util.Date;
 
 public interface CustomToiletDetailsInfoDTO {
     Integer getId();
@@ -26,4 +27,10 @@ public interface CustomToiletDetailsInfoDTO {
     String getToiletImage();
     String getUsername();
     String getStatus();
+    String getMessage();
+    Boolean isAccepted();
+    Date getStartDate();
+    Date getEndDate();
+    Integer getExpectedCount();
+    Integer getActualCount();
 }
