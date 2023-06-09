@@ -132,4 +132,9 @@ public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer>, 
     List<CustomToiletDetailsInfoDTO> getAllToiletsByCompanyId(@Param("companyId") int companyId, Pageable pageable);
 
     long countByCompanyId(int companyId);
+
+    @Query(value =
+            "SELECT Id " +
+            "FROM Toilet", nativeQuery = true)
+    List<Integer> getAllToiletId();
 }

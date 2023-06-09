@@ -4,9 +4,11 @@ import com.happy3friends.toiletmapbackend.dto.CustomToiletDTO;
 import com.happy3friends.toiletmapbackend.dto.CustomToiletDetailsInfoDTO;
 import com.happy3friends.toiletmapbackend.dto.ToiletFacilityDTO;
 import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
+import com.happy3friends.toiletmapbackend.entity.ToiletFacilityEntity;
 import com.happy3friends.toiletmapbackend.repository.FacilityRepository;
 import com.happy3friends.toiletmapbackend.request.ToiletCreateRequest;
 import com.happy3friends.toiletmapbackend.response.ToiletDetailsInfoResponse;
+import com.happy3friends.toiletmapbackend.response.ToiletFacilityResponse;
 import com.happy3friends.toiletmapbackend.response.UpdateToiletInfoResponse;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -77,5 +79,11 @@ public class ToiletMapper {
         result.setStatus(toiletEntity.getStatus());
 
         return result;
+    }
+
+    public ToiletFacilityResponse convertToiletFacilityEntityToToiletFacilityResponse(ToiletFacilityEntity toiletFacilityEntity) {
+        return Objects.isNull(toiletFacilityEntity)
+                ? null
+                : modelMapper.map(toiletFacilityEntity, ToiletFacilityResponse.class);
     }
 }

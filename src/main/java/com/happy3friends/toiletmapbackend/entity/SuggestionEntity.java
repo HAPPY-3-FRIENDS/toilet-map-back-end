@@ -24,9 +24,6 @@ public class SuggestionEntity {
     @Basic
     @Column(name = "IsAccepted", nullable = true)
     private Boolean isAccepted;
-    @OneToOne
-    @JoinColumn(name = "ToiletId", referencedColumnName = "Id", nullable = false)
-    private ToiletEntity toiletByToiletId;
     @Basic
     @Column(name = "StartDate", nullable = true)
     private Date startDate;
@@ -39,4 +36,7 @@ public class SuggestionEntity {
     @Basic
     @Column(name = "ExpectedCount", nullable = true, precision = 0)
     private Double expectedCount;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ToiletId", referencedColumnName = "Id", insertable = false, updatable = false)
+    private ToiletEntity toiletByToiletId;
 }

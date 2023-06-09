@@ -1,6 +1,7 @@
 package com.happy3friends.toiletmapbackend.repository;
 
 import com.happy3friends.toiletmapbackend.dto.CustomStatisticDTO;
+import com.happy3friends.toiletmapbackend.dto.CustomStatisticForSuggestionDTO;
 import com.happy3friends.toiletmapbackend.entity.CheckInEntity;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -191,4 +192,26 @@ public interface StatisticRepository extends JpaRepository<CheckInEntity, Intege
             "         OR (c.DateTime BETWEEN :fromDate AND :toDate) " +
             "      GROUP BY cp.Id, cp.Name) r", nativeQuery = true)
     int countAllStatistics(Date fromDate, Date toDate);
+
+    @Query(value =
+            "SELECT r.ToiletId,\n" +
+                    "       r.WalkInGuestCount + r.UsingTurnCount AS ActualCount,\n" +
+                    "       CAST(DATEDIFF(MINUTE, t.OpenTime, t.CloseTime) AS float)/60 AS Hours\n" +
+                    "FROM (SELECT t.Id AS ToiletId,\n" +
+                    "        COUNT(c.Balance) AS WalkInGuestCount,\n" +
+                    "        COUNT(c.TurnPrice) AS UsingTurnCount\n" +
+                    "    FROM CheckIn c\n" +
+                    "    RIGHT JOIN ToiletService ts\n" +
+                    "        ON c.ToiletServiceId = ts.Id AND\n" +
+                    "            (c.DateTime IS NULL OR c.DateTime BETWEEN :fromDate AND :toDate)\n" +
+                    "    JOIN Service s\n" +
+                    "        ON ts.ServiceId = s.Id\n" +
+                    "    JOIN Toilet t\n" +
+                    "        ON ts.ToiletId = t.Id\n" +
+                    "    WHERE t.Id = :toiletId\n" +
+                    "    GROUP BY t.Id, t.Name) r\n" +
+                    "LEFT JOIN Toilet t ON r.ToiletId = t.Id", nativeQuery = true)
+    List<CustomStatisticForSuggestionDTO> getStatisticsByToiletId(@Param("toiletId") Integer toiletId,
+                                                                  @Param("fromDate") Date fromDate,
+                                                                  @Param("toDate") Date toDate);
 }

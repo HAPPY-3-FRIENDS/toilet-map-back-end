@@ -4,6 +4,7 @@ import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
 import com.happy3friends.toiletmapbackend.constant.DateTimeConstant;
 import com.happy3friends.toiletmapbackend.constant.DefaultSortPropertyConstant;
 import com.happy3friends.toiletmapbackend.dto.CustomStatisticDTO;
+import com.happy3friends.toiletmapbackend.dto.CustomStatisticForSuggestionDTO;
 import com.happy3friends.toiletmapbackend.entity.CompanyEntity;
 import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
 import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
@@ -13,6 +14,7 @@ import com.happy3friends.toiletmapbackend.mapper.StatisticMapper;
 import com.happy3friends.toiletmapbackend.repository.CompanyRepository;
 import com.happy3friends.toiletmapbackend.repository.StatisticRepository;
 import com.happy3friends.toiletmapbackend.repository.ToiletRepository;
+import com.happy3friends.toiletmapbackend.response.StatisticForSuggestionResponse;
 import com.happy3friends.toiletmapbackend.response.StatisticResponse;
 import com.happy3friends.toiletmapbackend.service.StatisticService;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
@@ -193,5 +195,13 @@ public class StatisticServiceImpl implements StatisticService {
         } else { // List of Total revenue of each companies in System
             return statisticRepository.countAllStatistics(fromDate, toDate);
         }
+    }
+
+    @Override
+    public List<StatisticForSuggestionResponse> getStatisticsByToiletId(Integer toiletId, Date fromDate, Date toDate) {
+        List<CustomStatisticForSuggestionDTO> customStatisticForSuggestionDTOS = statisticRepository.getStatisticsByToiletId(toiletId ,fromDate, toDate);
+        return customStatisticForSuggestionDTOS.stream()
+                .map(dto -> statisticMapper.convertCustomStatisticForSuggestionDTOToStatisticForSuggestionResponse(dto))
+                .collect(Collectors.toList());
     }
 }

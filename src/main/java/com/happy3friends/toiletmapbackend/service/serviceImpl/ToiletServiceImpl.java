@@ -19,10 +19,7 @@ import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.ToiletMapper;
 import com.happy3friends.toiletmapbackend.repository.*;
 import com.happy3friends.toiletmapbackend.request.ToiletCreateRequest;
-import com.happy3friends.toiletmapbackend.response.DistanceMatrixResponse;
-import com.happy3friends.toiletmapbackend.response.Element;
-import com.happy3friends.toiletmapbackend.response.ToiletDetailsInfoResponse;
-import com.happy3friends.toiletmapbackend.response.UpdateToiletInfoResponse;
+import com.happy3friends.toiletmapbackend.response.*;
 import com.happy3friends.toiletmapbackend.service.ToiletService;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
 import com.happy3friends.toiletmapbackend.utils.FilterKeysUtil;
@@ -522,6 +519,19 @@ public class ToiletServiceImpl implements ToiletService {
         ToiletEntity entity = toiletRepository.save(toiletEntity.get());
         LOGGER.info("-- Update Toilet info - Finish save Toilet Entity and its information! --");
         return toiletMapper.convertToiletEntityToUpdateToiletInfoResponse(entity);
+    }
+
+    @Override
+    public List<Integer> getAllToiletId() {
+        return toiletRepository.getAllToiletId();
+    }
+
+    @Override
+    public List<ToiletFacilityResponse> getListToiletFacilityByToiletId(int toiletId) {
+        List<ToiletFacilityEntity> entities = toiletFacilityRepository.getListToiletFacilityByToiletId(toiletId);
+        return entities.stream()
+                .map(e -> toiletMapper.convertToiletFacilityEntityToToiletFacilityResponse(e))
+                .collect(Collectors.toList());
     }
 
     private int convertDurationOrDistanceTextToInt(String durationText) {

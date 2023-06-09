@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Repository
 @Transactional
 public interface ToiletFacilityRepository extends JpaRepository<ToiletFacilityEntity, Integer> {
@@ -18,4 +20,13 @@ public interface ToiletFacilityRepository extends JpaRepository<ToiletFacilityEn
     void deleteByToiletId(@Param("toiletId") int toiletId);
 
     boolean existsByFacilityId(int id);
+
+    @Query(value =
+            "SELECT *\n" +
+            "FROM ToiletFacility\n" +
+            "WHERE ToiletId = :toiletId\n" +
+            "    AND (FacilityId = 1\n" +
+            "    OR FacilityId = 2\n" +
+            "    OR FacilityId = 3)", nativeQuery = true)
+    List<ToiletFacilityEntity> getListToiletFacilityByToiletId(@Param("toiletId") int toiletId);
 }
