@@ -74,4 +74,6 @@ public class ToiletEntity {
     private AccountEntity accountById;
     @OneToMany(mappedBy = "toiletByToiletId")
     private Collection<SuggestionEntity> suggestionsById;
+    @OneToMany(mappedBy = "toiletByToiletId")
+    private Collection<ReportEntity> reportsById;
 }
