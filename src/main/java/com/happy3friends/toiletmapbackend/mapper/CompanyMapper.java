@@ -1,11 +1,9 @@
 package com.happy3friends.toiletmapbackend.mapper;
 
-import com.happy3friends.toiletmapbackend.entity.AccountEntity;
 import com.happy3friends.toiletmapbackend.entity.CompanyEntity;
 import com.happy3friends.toiletmapbackend.request.CompanyCreateRequest;
 import com.happy3friends.toiletmapbackend.response.CompanyHasStatusResponse;
 import com.happy3friends.toiletmapbackend.response.CompanyResponse;
-import com.happy3friends.toiletmapbackend.response.UpdateCompanyResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

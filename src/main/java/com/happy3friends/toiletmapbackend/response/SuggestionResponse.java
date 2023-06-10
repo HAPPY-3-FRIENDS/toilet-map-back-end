@@ -9,10 +9,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ToiletFacilityResponse {
+public class SuggestionResponse {
     private int id;
     private int toiletId;
-    private int facilityId;
-    private Integer quantity;
-    private String description;
+    private String status;
 }

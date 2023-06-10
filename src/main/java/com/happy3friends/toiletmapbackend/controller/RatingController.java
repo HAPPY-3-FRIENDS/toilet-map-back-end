@@ -8,7 +8,6 @@ import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.request.FilterRatingRequest;
 import com.happy3friends.toiletmapbackend.request.RatingRequest;
 import com.happy3friends.toiletmapbackend.response.RatingResponse;
-import com.happy3friends.toiletmapbackend.response.UpdateToiletInfoResponse;
 import com.happy3friends.toiletmapbackend.service.RatingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

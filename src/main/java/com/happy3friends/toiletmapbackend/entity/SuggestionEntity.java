@@ -41,4 +41,7 @@ public class SuggestionEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ToiletId", referencedColumnName = "Id", insertable = false, updatable = false)
     private ToiletEntity toiletByToiletId;
+    @Basic
+    @Column(name = "Status", nullable = true, length = 20)
+    private String status;
 }
