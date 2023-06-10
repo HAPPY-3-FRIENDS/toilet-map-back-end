@@ -5,10 +5,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 public class ReportResponse {
-    private int id;
+    private int toiletId;
+    private String toiletName;
+    private List<String> message;
+    private int count;
 }
