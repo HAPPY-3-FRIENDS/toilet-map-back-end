@@ -72,7 +72,8 @@ public class CompanyServiceImpl implements CompanyService {
                 customRatingDetailsDTOS.get(0).getDistrict(),
                 customRatingDetailsDTOS.get(0).getProvince(),
                 customRatingDetailsDTOS.get(0).getPhone(),
-                customRatingDetailsDTOS.get(0).getStatus()
+                customRatingDetailsDTOS.get(0).getStatus(),
+                customRatingDetailsDTOS.get(0).getNumberOfReport()
         );
     }
 

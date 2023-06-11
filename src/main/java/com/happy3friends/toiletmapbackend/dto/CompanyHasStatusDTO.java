@@ -10,4 +10,5 @@ public interface CompanyHasStatusDTO {
     String getProvince();
     String getPhone();
     String getStatus();
+    Integer getNumberOfReport();
 }

@@ -19,10 +19,15 @@ public interface CompanyRepository extends JpaRepository<CompanyEntity, Integer>
             "WHERE a.Id = :accountId", nativeQuery = true)
     CompanyEntity getCompanyByAccountId(@Param("accountId") int accountID);
 
-    @Query(value = "SELECT c.* " +
-            "FROM Company c " +
-            "INNER JOIN Account a " +
-            "    ON c.Id = a.CompanyId " +
+    @Query(value =
+            "SELECT c.*,\n" +
+            "       (SELECT COUNT(*)\n" +
+            "        FROM Report r\n" +
+            "        LEFT JOIN Toilet t ON r.ToiletId = t.Id\n" +
+            "        LEFT JOIN Company co on t.CompanyId = co.Id\n" +
+            "        WHERE co.Id = c.Id) AS NumberOfReport\n" +
+            "FROM Company c\n" +
+            "INNER JOIN Account a ON c.Id = a.CompanyId\n" +
             "WHERE a.RoleId = 2", nativeQuery = true)
     List<CompanyHasStatusDTO> getAllCompanies(Pageable pageable);
 

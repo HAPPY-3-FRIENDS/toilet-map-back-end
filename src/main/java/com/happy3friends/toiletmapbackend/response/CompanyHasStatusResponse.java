@@ -19,4 +19,5 @@ public class CompanyHasStatusResponse {
     private String province;
     private String phone;
     private String status;
+    private int numberOfReport;
 }

@@ -172,17 +172,6 @@ public class CompanyController {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
                     @ExampleObject(name = "Get all companies", value = "[\n" +
                             "    {\n" +
-                            "      \"id\": 11,\n" +
-                            "      \"name\": \"Dịch vụ vệ sinh bất ổn\",\n" +
-                            "      \"logo\": \"https://firebasestorage.googleapis.com/v0/b/toilet-map-img.appspot.com/o/logo%2Fvesinh-1249.png?alt=media&token=d62144ea-6e2d-4f52-84b9-8eba78fe7b73\",\n" +
-                            "      \"address\": \"48 Binh Hung Hoa\",\n" +
-                            "      \"ward\": \"Bình Hưng Hòa B\",\n" +
-                            "      \"district\": \"Bình Tân\",\n" +
-                            "      \"province\": \"Hồ Chí Minh\",\n" +
-                            "      \"phone\": \"0909900999\",\n" +
-                            "      \"status\": \"Đang hoạt động\"\n" +
-                            "    },\n" +
-                            "    {\n" +
                             "      \"id\": 10,\n" +
                             "      \"name\": \"Dịch vụ vệ sinh quận Tân Phú\",\n" +
                             "      \"logo\": \"https://firebasestorage.googleapis.com/v0/b/toilet-map-img.appspot.com/o/logo%2Fdownload%20(1).jpg?alt=media&token=a7c06b54-9abb-4468-8abe-38b9431febba\",\n" +
@@ -191,7 +180,8 @@ public class CompanyController {
                             "      \"district\": \"Tân Phú\",\n" +
                             "      \"province\": \"Hồ Chí Minh\",\n" +
                             "      \"phone\": \"19008682\",\n" +
-                            "      \"status\": \"Đang hoạt động\"\n" +
+                            "      \"status\": \"Đang hoạt động\",\n" +
+                            "      \"numberOfReport\": 0\n" +
                             "    },\n" +
                             "    {\n" +
                             "      \"id\": 9,\n" +
@@ -202,7 +192,8 @@ public class CompanyController {
                             "      \"district\": \"Quận 6\",\n" +
                             "      \"province\": \"Hồ Chí Minh\",\n" +
                             "      \"phone\": \"19008787\",\n" +
-                            "      \"status\": \"Đang hoạt động\"\n" +
+                            "      \"status\": \"Đang hoạt động\",\n" +
+                            "      \"numberOfReport\": 0\n" +
                             "    },\n" +
                             "    {\n" +
                             "      \"id\": 6,\n" +
@@ -213,7 +204,8 @@ public class CompanyController {
                             "      \"district\": \"Quận 6\",\n" +
                             "      \"province\": \"Hồ Chí Minh\",\n" +
                             "      \"phone\": \"19006088\",\n" +
-                            "      \"status\": \"Đang hoạt động\"\n" +
+                            "      \"status\": \"Không hoạt động\",\n" +
+                            "      \"numberOfReport\": 0\n" +
                             "    },\n" +
                             "    {\n" +
                             "      \"id\": 4,\n" +
@@ -224,7 +216,8 @@ public class CompanyController {
                             "      \"district\": \"Quận Thủ Đức\",\n" +
                             "      \"province\": \"Thành phố Hồ Chí Minh\",\n" +
                             "      \"phone\": \"(028) 1111 2222\",\n" +
-                            "      \"status\": \"Đang hoạt động\"\n" +
+                            "      \"status\": \"Không hoạt động\",\n" +
+                            "      \"numberOfReport\": 0\n" +
                             "    },\n" +
                             "    {\n" +
                             "      \"id\": 2,\n" +
@@ -235,7 +228,8 @@ public class CompanyController {
                             "      \"district\": \"Quận 1\",\n" +
                             "      \"province\": \"Thành phố Hồ Chí Minh\",\n" +
                             "      \"phone\": \"(028) 38.215.611\",\n" +
-                            "      \"status\": \"Đang hoạt động\"\n" +
+                            "      \"status\": \"Không hoạt động\",\n" +
+                            "      \"numberOfReport\": 7\n" +
                             "    }\n" +
                             "  ]")
             })),
