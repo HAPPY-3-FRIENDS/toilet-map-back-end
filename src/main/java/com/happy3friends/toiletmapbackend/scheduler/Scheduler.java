@@ -27,13 +27,13 @@ public class Scheduler {
     @Autowired
     private SuggestionService suggestionService;
 
-    @Scheduled(cron = "0 0 0 1 1,5,9 ?")
+    @Scheduled(cron = "0 0 0 1 1,4,7,10 ?")
 //    @Scheduled(cron = "15 * * * * ?")
     public void scheduleTaskWithCronExpression() throws ParseException {
         Date endDate = DateTimeUtil.getDateNow();
 //        String endDateStr = "01-01-2023";
 //        Date endDate = new SimpleDateFormat("dd-MM-yyyy").parse(endDateStr);
-        Date startDate = DateUtils.addMonths(endDate, -4);
+        Date startDate = DateUtils.addMonths(endDate, -3);
 
         List<Integer> listToiletId = toiletService.getAllToiletId();
         listToiletId.forEach(toiletId -> {
