@@ -11,4 +11,6 @@ public interface ReportService {
     List<ReportResponse> getReports(BasePaginationRequest paginationRequest);
 
     CreateReportResponse createReport(CreateReportRequest request);
+
+    CreateReportResponse updateStatus(int id, String message);
 }

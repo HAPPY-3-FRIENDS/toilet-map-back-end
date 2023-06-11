@@ -5,6 +5,8 @@ import com.happy3friends.toiletmapbackend.constant.DefaultSortPropertyConstant;
 import com.happy3friends.toiletmapbackend.constant.ReportStatusConstant;
 import com.happy3friends.toiletmapbackend.dto.CustomReportDTO;
 import com.happy3friends.toiletmapbackend.entity.ReportEntity;
+import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
+import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.ReportMapper;
 import com.happy3friends.toiletmapbackend.repository.ReportRepository;
 import com.happy3friends.toiletmapbackend.request.CreateReportRequest;
@@ -18,6 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ReportServiceImpl implements ReportService {
@@ -45,5 +48,18 @@ public class ReportServiceImpl implements ReportService {
         entity.setStatus(ReportStatusConstant.NEW);
 
         return reportMapper.convertReportEntitytoCreateReportResponse(reportRepository.save(entity));
+    }
+
+    @Override
+    public CreateReportResponse updateStatus(int id, String message) {
+
+        Optional<ReportEntity> entity = reportRepository.findById(id);
+        if (!entity.isPresent())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_REPORT, ToiletMapErrorCodeEnum.NOT_FOUND_REPORT.getMessage());
+
+        ReportEntity result = entity.get();
+        result.setStatus(message);
+
+        return reportMapper.convertReportEntitytoCreateReportResponse(reportRepository.save(result));
     }
 }

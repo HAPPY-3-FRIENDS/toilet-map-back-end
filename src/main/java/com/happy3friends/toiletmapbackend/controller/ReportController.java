@@ -10,6 +10,8 @@ import com.happy3friends.toiletmapbackend.response.CreateReportResponse;
 import com.happy3friends.toiletmapbackend.response.ReportResponse;
 import com.happy3friends.toiletmapbackend.service.ReportService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -79,6 +81,38 @@ public class ReportController {
 
         return ResponseBuilder.generateResponse(
                 "Create report successfully!",
+                HttpStatus.OK,
+                responses
+        );
+    }
+
+    @Operation(summary = "Update report", description = "[Admin, Manager] update report")
+    @Parameter(name = "report-id", description = "A specific report ID", in = ParameterIn.PATH, required = true, example = "1")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
+                    @ExampleObject(value = "{\n" +
+                            "    \"id\": 3,\n" +
+                            "    \"toiletId\": 4,\n" +
+                            "    \"message\": \"Nhà vệ sinh không tồn tại\",\n" +
+                            "    \"status\": \"Đã từ chối\"\n" +
+                            "  }")})),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.MANAGER})
+    @PutMapping(value = "/{report-id}")
+    public ResponseEntity<BaseResponse<CreateReportResponse>> updateStatus(
+            @PathVariable("report-id") int id,
+            String message) {
+
+        CreateReportResponse responses = reportService.updateStatus(id, message);
+
+        return ResponseBuilder.generateResponse(
+                "Update report successfully!",
                 HttpStatus.OK,
                 responses
         );
