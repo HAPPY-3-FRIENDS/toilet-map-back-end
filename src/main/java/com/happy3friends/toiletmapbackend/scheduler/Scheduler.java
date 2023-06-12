@@ -55,7 +55,7 @@ public class Scheduler {
             result.setNumberOfRestroom(numberOfRestroom.get());
             result.setNumberOfBathroom(numberOfBathroom.get());
 
-            double expectedCount = result.getHours() * (result.getNumberOfBathroom() * 2 + result.getNumberOfRestroom() * 3);
+            double expectedCount = result.getHours() * (result.getNumberOfBathroom() * 2 + result.getNumberOfRestroom() * 3) * 90;
 
             if (result.getActualCount() >= expectedCount * 175 / 100) {
                 String message = "Số lượt đi thực tế vượt 175% so với sức chứa, gợi ý mở thêm nhà vệ sinh gần đây hoặc mở thêm phòng vệ sinh.";
