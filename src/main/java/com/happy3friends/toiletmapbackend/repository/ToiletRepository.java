@@ -114,20 +114,12 @@ public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer>, 
             "       t.Ward, " +
             "       t.District, " +
             "       t.Province, " +
-            "       t.Status, " +
-            "       CAST(sg.Message AS NVARCHAR(MAX)) AS Message, " +
-            "       sg.IsAccepted, " +
-            "       sg.StartDate, " +
-            "       sg.EndDate, " +
-            "       sg.ExpectedCount, " +
-            "       sg.ActualCount " +
+            "       t.Status " +
             "FROM Toilet t " +
             "         JOIN Company c " +
             "              ON t.CompanyId = c.Id " +
             "         JOIN Account a " +
             "              ON t.Id = a.Id " +
-            "         LEFT JOIN Suggestion sg " +
-            "                   ON t.Id = sg.ToiletId " +
             "WHERE c.Id = :companyId", nativeQuery = true)
     List<CustomToiletDetailsInfoDTO> getAllToiletsByCompanyId(@Param("companyId") int companyId, Pageable pageable);
 

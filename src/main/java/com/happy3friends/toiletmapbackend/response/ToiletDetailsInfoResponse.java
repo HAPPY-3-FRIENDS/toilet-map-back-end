@@ -1,5 +1,6 @@
 package com.happy3friends.toiletmapbackend.response;
 
+import com.happy3friends.toiletmapbackend.dto.SuggestionDTO;
 import com.happy3friends.toiletmapbackend.dto.ToiletFacilityDTO;
 import lombok.*;
 
@@ -33,10 +34,5 @@ public class ToiletDetailsInfoResponse {
     private String status;
     private String duration;
     private String distance;
-    private String message;
-    private Boolean isAccepted;
-    private Date startDate;
-    private Date endDate;
-    private Integer expectedCount;
-    private Integer actualCount;
+    private List<SuggestionDTO> suggestions;
 }
