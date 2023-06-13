@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
+import java.util.List;
 import java.util.Map;
 
 @Tag(name = "Suggestion", description = "Suggestion API")
@@ -26,17 +27,17 @@ public class SuggestionController {
 
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.MANAGER})
-    @PatchMapping("/{suggestion-id}")
-    public ResponseEntity<BaseResponse<SuggestionResponse>> updateSuggestion(
-            @PathVariable("suggestion-id") Integer id,
-            @RequestBody Map<String, Object> fields) {
+    @PutMapping("/acceptance")
+    public ResponseEntity<BaseResponse<Object>> updateAcceptedSuggestion(
+            @RequestParam(name = "suggestion-ids") List<Integer> suggestionIds,
+            @RequestParam(name = "is-accepted") Boolean isAccepted) {
 
-        SuggestionResponse response = suggestionService.updateSuggestion(id, fields);
+        suggestionService.updateAcceptedSuggestion(suggestionIds, isAccepted);
 
         return ResponseBuilder.generateResponse(
                 "Update suggestion successfully!",
                 HttpStatus.OK,
-                response
+                null
         );
     }
 }
