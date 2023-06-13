@@ -42,7 +42,7 @@ public interface RatingRepository extends JpaRepository<RatingEntity, Integer> {
             "             ui.Avatar, " +
             "             r.Status, " +
             "             cc.Name                                              AS CommonComment, " +
-            "             DENSE_RANK() OVER (ORDER BY Star ASC, DateTime DESC) AS Rank " +
+            "             DENSE_RANK() OVER (ORDER BY :strListSort) AS Rank " +
             "      FROM Rating r " +
             "               JOIN Account a " +
             "                    ON r.AccountId = a.Id " +
@@ -55,7 +55,8 @@ public interface RatingRepository extends JpaRepository<RatingEntity, Integer> {
             "WHERE Rank BETWEEN (:pageSize * :pageIndex - :pageSize + 1) AND (:pageSize * :pageIndex)", nativeQuery = true)
     List<CustomRatingDetailsDTO> getAllRatingsByToiletId(@Param("toiletId") int toiletId,
                                                          @Param("pageSize") int pageSize,
-                                                         @Param("pageIndex") int pageIndex);
+                                                         @Param("pageIndex") int pageIndex,
+                                                         @Param("strListSort") String strListSort);
 
     @Query(value = "SELECT COUNT(*) " +
             "FROM Rating " +
