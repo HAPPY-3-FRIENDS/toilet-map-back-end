@@ -42,7 +42,7 @@ public interface RatingRepository extends JpaRepository<RatingEntity, Integer> {
             "             ui.Avatar, " +
             "             r.Status, " +
             "             cc.Name                                              AS CommonComment, " +
-            "             DENSE_RANK() OVER (ORDER BY Star ASC, DateTime DESC) AS Rank " +
+            "             DENSE_RANK() OVER (ORDER BY :strListSort) AS Rank " +
             "      FROM Rating r " +
             "               JOIN Account a " +
             "                    ON r.AccountId = a.Id " +
@@ -55,7 +55,8 @@ public interface RatingRepository extends JpaRepository<RatingEntity, Integer> {
             "WHERE Rank BETWEEN (:pageSize * :pageIndex - :pageSize + 1) AND (:pageSize * :pageIndex)", nativeQuery = true)
     List<CustomRatingDetailsDTO> getAllRatingsByToiletId(@Param("toiletId") int toiletId,
                                                          @Param("pageSize") int pageSize,
-                                                         @Param("pageIndex") int pageIndex);
+                                                         @Param("pageIndex") int pageIndex,
+                                                         @Param("strListSort") String strListSort);
 
     @Query(value = "SELECT COUNT(*) " +
             "FROM Rating " +
@@ -64,28 +65,28 @@ public interface RatingRepository extends JpaRepository<RatingEntity, Integer> {
 
     Boolean existsByCheckInId(Integer checkInId);
 
-@Query(value = "SELECT * " +
-        "FROM (SELECT r.Id, " +
-        "             ui.FullName, " +
-        "             r.Star, " +
-        "             CAST(r.Comment AS NVARCHAR(MAX))                     AS Comment, " +
-        "             r.DateTime, " +
-        "             CAST(ri.ImageSource AS VARCHAR(MAX))                 AS ImageSource, " +
-        "             ui.Avatar, " +
-        "             r.Status, " +
-        "             cc.Name                                              AS CommonComment, " +
-        "             DENSE_RANK() OVER (ORDER BY Star ASC, DateTime DESC) AS Rank " +
-        "      FROM Rating r " +
-        "               JOIN Account a " +
-        "                    ON r.AccountId = a.Id " +
-        "               JOIN UserInfo ui ON a.Id = ui.AccountId " +
-        "               LEFT JOIN RatingImage ri ON ri.RatingId = r.Id " +
-        "               JOIN Toilet t ON r.ToiletId = t.Id " +
-        "               LEFT JOIN RatingCommonComment rcc ON rcc.RatingId = r.Id " +
-        "               LEFT JOIN CommonComment cc ON rcc.CommonCommentId = cc.Id " +
-        "      WHERE t.Id = :toiletId " +
-        "    AND r.Star = :star) r " +
-        "WHERE Rank BETWEEN (:pageSize * :pageIndex - :pageSize + 1) AND (:pageSize * :pageIndex)", nativeQuery = true)
+    @Query(value = "SELECT * " +
+            "FROM (SELECT r.Id, " +
+            "             ui.FullName, " +
+            "             r.Star, " +
+            "             CAST(r.Comment AS NVARCHAR(MAX))                     AS Comment, " +
+            "             r.DateTime, " +
+            "             CAST(ri.ImageSource AS VARCHAR(MAX))                 AS ImageSource, " +
+            "             ui.Avatar, " +
+            "             r.Status, " +
+            "             cc.Name                                              AS CommonComment, " +
+            "             DENSE_RANK() OVER (ORDER BY Star ASC, DateTime DESC) AS Rank " +
+            "      FROM Rating r " +
+            "               JOIN Account a " +
+            "                    ON r.AccountId = a.Id " +
+            "               JOIN UserInfo ui ON a.Id = ui.AccountId " +
+            "               LEFT JOIN RatingImage ri ON ri.RatingId = r.Id " +
+            "               JOIN Toilet t ON r.ToiletId = t.Id " +
+            "               LEFT JOIN RatingCommonComment rcc ON rcc.RatingId = r.Id " +
+            "               LEFT JOIN CommonComment cc ON rcc.CommonCommentId = cc.Id " +
+            "      WHERE t.Id = :toiletId " +
+            "    AND r.Star = :star) r " +
+            "WHERE Rank BETWEEN (:pageSize * :pageIndex - :pageSize + 1) AND (:pageSize * :pageIndex)", nativeQuery = true)
     List<CustomRatingDetailsDTO> filterRatingByStar(@Param("toiletId") int toiletId,
                                                     @Param("star") int star,
                                                     @Param("pageSize") int pageSize,
@@ -96,7 +97,7 @@ public interface RatingRepository extends JpaRepository<RatingEntity, Integer> {
             "WHERE ToiletId = :toiletId " +
             "AND Star = :star", nativeQuery = true)
     int countRatingByStar(@Param("toiletId") int toiletId,
-                           @Param("star") int star);
+                          @Param("star") int star);
 
     @Query(value =
             "SELECT *\n" +
@@ -160,7 +161,7 @@ public interface RatingRepository extends JpaRepository<RatingEntity, Integer> {
                     "    AND r.Status IN (:listStatus)\n" +
                     "    AND r.Star IN (:listStars)", nativeQuery = true)
     List<CustomRatingDetailsDTO> filterRatingToCount(@Param("toiletId") int toiletId,
-                                              @Param("listCommonComment") List<String> listCommonComment,
-                                              @Param("listStars") List<Integer> listStars,
-                                              @Param("listStatus") List<String> listStatus);
+                                                     @Param("listCommonComment") List<String> listCommonComment,
+                                                     @Param("listStars") List<Integer> listStars,
+                                                     @Param("listStatus") List<String> listStatus);
 }

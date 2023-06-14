@@ -17,6 +17,7 @@ import com.happy3friends.toiletmapbackend.response.RatingResponse;
 import com.happy3friends.toiletmapbackend.service.RatingService;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
 import com.happy3friends.toiletmapbackend.utils.PaginationUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,9 +120,18 @@ public class RatingServiceImpl implements RatingService {
         sortOrders.add(new Sort.Order(Sort.Direction.ASC, DefaultSortPropertyConstant.STAR));
         sortOrders.add(new Sort.Order(Sort.Direction.DESC, DefaultSortPropertyConstant.DATETIME));
         Pageable pageable = PaginationUtil.getPageable(paginationRequest, sortOrders);
+        List<String> listSort = new ArrayList<>();
+        pageable.getSort().forEach(sort -> {
+            listSort.add(sort.getProperty() + " " + sort.getDirection());
+        });
+        String strListSort = StringUtils.join(listSort, ",");
 
         List<CustomRatingDetailsDTO> customRatingDetailsDTOS
-                = ratingRepository.getAllRatingsByToiletId(toiletId, paginationRequest.getPageSize(), paginationRequest.getPageIndex());
+                = ratingRepository.getAllRatingsByToiletId(
+                toiletId,
+                paginationRequest.getPageSize(),
+                paginationRequest.getPageIndex(),
+                strListSort);
 
         return getListRatingResponseFromListCustomRatingDetailsDTO(customRatingDetailsDTOS);
     }
@@ -197,13 +207,13 @@ public class RatingServiceImpl implements RatingService {
         if (ratingRequest.getCommonComments() != null) {
             LOGGER.info("-- Create Rating - Start save List Rating Common Comment Entity! --");
             List<RatingCommonCommentEntity> ratingCommonCommentEntities = ratingRequest.getCommonComments().stream()
-                            .map(o -> {
-                                RatingCommonCommentEntity ratingCommonCommentEntity = new RatingCommonCommentEntity();
-                                ratingCommonCommentEntity.setRatingId(savedRatingEntity.getId());
-                                ratingCommonCommentEntity.setCommonCommentId(o);
+                    .map(o -> {
+                        RatingCommonCommentEntity ratingCommonCommentEntity = new RatingCommonCommentEntity();
+                        ratingCommonCommentEntity.setRatingId(savedRatingEntity.getId());
+                        ratingCommonCommentEntity.setCommonCommentId(o);
 
-                                return ratingCommonCommentEntity;
-                            }).collect(Collectors.toList());
+                        return ratingCommonCommentEntity;
+                    }).collect(Collectors.toList());
             ratingCommonCommentRepository.saveAll(ratingCommonCommentEntities);
             LOGGER.info("-- Create Rating - Finish save List Rating Common Comment Entity! --");
         }

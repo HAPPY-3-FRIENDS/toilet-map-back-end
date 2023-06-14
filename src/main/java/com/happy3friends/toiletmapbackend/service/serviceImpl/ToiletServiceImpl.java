@@ -8,6 +8,7 @@ import com.happy3friends.toiletmapbackend.constant.FacilityNameConstant;
 import com.happy3friends.toiletmapbackend.constant.StatusConstant;
 import com.happy3friends.toiletmapbackend.dto.CustomToiletDTO;
 import com.happy3friends.toiletmapbackend.dto.CustomToiletDetailsInfoDTO;
+import com.happy3friends.toiletmapbackend.dto.SuggestionDTO;
 import com.happy3friends.toiletmapbackend.dto.ToiletFacilityDTO;
 import com.happy3friends.toiletmapbackend.entity.*;
 import com.happy3friends.toiletmapbackend.enums.RoleEnum;
@@ -16,6 +17,7 @@ import com.happy3friends.toiletmapbackend.enums.StatusEnum;
 import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
 import com.happy3friends.toiletmapbackend.exception.BadRequestException;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
+import com.happy3friends.toiletmapbackend.mapper.SuggestionMapper;
 import com.happy3friends.toiletmapbackend.mapper.ToiletMapper;
 import com.happy3friends.toiletmapbackend.repository.*;
 import com.happy3friends.toiletmapbackend.request.ToiletCreateRequest;
@@ -77,7 +79,13 @@ public class ToiletServiceImpl implements ToiletService {
     private ToiletFacilityRepository toiletFacilityRepository;
 
     @Autowired
+    private SuggestionRepository suggestionRepository;
+
+    @Autowired
     private ToiletMapper toiletMapper;
+
+    @Autowired
+    private SuggestionMapper suggestionMapper;
 
     public LinkedHashMap<Integer, List<CustomToiletDetailsInfoDTO>> getMapIdListCustomToiletDetailsInfoDTO(
             List<CustomToiletDetailsInfoDTO> customToiletDetailsInfoDTOS) {
@@ -231,10 +239,39 @@ public class ToiletServiceImpl implements ToiletService {
         // Get all toilets of Company by Company ID
         List<CustomToiletDetailsInfoDTO> customToiletDetailsInfoDTOS
                 = toiletRepository.getAllToiletsByCompanyId(companyId, pageable);
-
-        return customToiletDetailsInfoDTOS.stream()
-                .map(dto -> toiletMapper.convertCustomToiletDetailsInfoDTOToToiletDetailsInfoResponse(dto))
+        List<Integer> listToiletIds = customToiletDetailsInfoDTOS.stream()
+                .map(dto -> dto.getId())
                 .collect(Collectors.toList());
+        List<SuggestionEntity> suggestionEntities = suggestionRepository.getListSuggestionByListToiletIds(companyId, listToiletIds);
+        List<SuggestionDTO> suggestionDTOS = suggestionEntities.stream()
+                .map(entity -> suggestionMapper.convertSuggestionEntityToSuggestionDTO(entity))
+                .collect(Collectors.toList());
+        Map<Integer, List<SuggestionDTO>> mapToiletIdListSuggestionDTO = getMapToiletIdListSuggestionDTO(suggestionDTOS);
+
+        List<ToiletDetailsInfoResponse> toiletDetailsInfoResponses =
+                customToiletDetailsInfoDTOS.stream()
+                        .map(dto -> toiletMapper.convertCustomToiletDetailsInfoDTOToToiletDetailsInfoResponse(dto))
+                        .collect(Collectors.toList());
+        return toiletDetailsInfoResponses.stream()
+                .map(res -> {
+                    int toiletId = res.getId();
+                    List<SuggestionDTO> suggestionDTOs = mapToiletIdListSuggestionDTO.get(toiletId);
+                    if (suggestionDTOs != null && suggestionDTOs.size() == 2) {
+                        res.setSuggestions(suggestionDTOs);
+                    }
+                    return res;
+                })
+                .collect(Collectors.toList());
+    }
+
+    public LinkedHashMap<Integer, List<SuggestionDTO>> getMapToiletIdListSuggestionDTO(
+            List<SuggestionDTO> suggestionDTOS) {
+
+        return suggestionDTOS.stream()
+                .collect(Collectors.groupingBy(
+                        SuggestionDTO::getToiletId,
+                        LinkedHashMap::new,
+                        Collectors.toCollection(ArrayList::new)));
     }
 
     @Override
@@ -403,8 +440,8 @@ public class ToiletServiceImpl implements ToiletService {
                 }).collect(Collectors.toList());
         toiletServiceEntities.add(addingDoubleToiletServiceEntity);
         List<ToiletServiceEntity> toiletServiceEntitiesFinal = toiletServiceEntities.stream()
-                        .filter(e -> e.getServiceId() != 0)
-                        .collect(Collectors.toList());
+                .filter(e -> e.getServiceId() != 0)
+                .collect(Collectors.toList());
         toiletEntity.setToiletServicesById(toiletServiceEntitiesFinal);
 
         toiletRepository.save(toiletEntity);
