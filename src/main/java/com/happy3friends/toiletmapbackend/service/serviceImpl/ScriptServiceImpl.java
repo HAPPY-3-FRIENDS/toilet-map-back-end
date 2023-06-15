@@ -39,71 +39,84 @@ public class ScriptServiceImpl implements ScriptService {
             listAllUsers.remove(index);
         }
 
-        Date now = DateTimeUtil.getDateNow();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        String strDate = dateFormat.format(now);
-
         List<String> result = new ArrayList<>();
-        for (int i = 0; i < list100Users.size(); i++) {
-            if (i < 13) {
-                String message = process(4, list100Users.get(i).getAccountId(), "Đi vệ sinh (tiểu tiện)", strDate);
-                result.add(message);
-            } else if (i < 16) {
-                String message = process(5, list100Users.get(i).getAccountId(), "Đi vệ sinh (tiểu tiện)", strDate);
-                result.add(message);
-            } else if (i < 26) {
-                String message = process(45, list100Users.get(i).getAccountId(), "Đi vệ sinh (tiểu tiện)", strDate);
-                result.add(message);
-            } else if (i < 56) {
-                String message = process(232, list100Users.get(i).getAccountId(), "Đi vệ sinh (tiểu tiện)", strDate);
-                result.add(message);
-            } else if (i < 64) {
-                String message = process(233, list100Users.get(i).getAccountId(), "Đi vệ sinh (tiểu tiện)", strDate);
-                result.add(message);
-            } else if (i < 74) {
-                String message = process(4, list100Users.get(i).getAccountId(), "Đi vệ sinh (đại tiện)", strDate);
-                result.add(message);
-            } else if (i < 76) {
-                String message = process(5, list100Users.get(i).getAccountId(), "Đi vệ sinh (đại tiện)", strDate);
-                result.add(message);
-            } else if (i < 84) {
-                String message = process(45, list100Users.get(i).getAccountId(), "Đi vệ sinh (đại tiện)", strDate);
-                result.add(message);
-            } else if (i < 89) {
-                String message = process(232, list100Users.get(i).getAccountId(), "Đi vệ sinh (đại tiện)", strDate);
-                result.add(message);
-            } else if (i < 90) {
-                String message = process(233, list100Users.get(i).getAccountId(), "Đi vệ sinh (đại tiện)", strDate);
-                result.add(message);
-            } else if (i < 92) {
-                String message = process(4, list100Users.get(i).getAccountId(), "Đi tắm", strDate);
-                result.add(message);
-            } else if (i < 94) {
-                String message = process(45, list100Users.get(i).getAccountId(), "Đi tắm", strDate);
-                result.add(message);
-            } else if (i < 99) {
-                String message = process(232, list100Users.get(i).getAccountId(), "Đi tắm", strDate);
-                result.add(message);
-            } else if (i < 100) {
-                String message = process(233, list100Users.get(i).getAccountId(), "Đi tắm", strDate);
-                result.add(message);
-            }
+        for (int i = 0; i < 13; i++) {
+            String message = process(4, list100Users.get(i).getAccountId(), "Đi vệ sinh (tiểu tiện)");
+            result.add(message);
+        }
+        for (int i = 13; i < 16; i++) {
+            String message = process(5, list100Users.get(i).getAccountId(), "Đi vệ sinh (tiểu tiện)");
+            result.add(message);
+        }
+        for (int i = 16; i < 26; i++) {
+            String message = process(45, list100Users.get(i).getAccountId(), "Đi vệ sinh (tiểu tiện)");
+            result.add(message);
+        }
+        for (int i = 26; i < 56; i++) {
+            String message = process(232, list100Users.get(i).getAccountId(), "Đi vệ sinh (tiểu tiện)");
+            result.add(message);
+        }
+        for (int i = 56; i < 64; i++) {
+            String message = process(233, list100Users.get(i).getAccountId(), "Đi vệ sinh (tiểu tiện)");
+            result.add(message);
+        }
+        for (int i = 64; i < 74; i++) {
+            String message = process(4, list100Users.get(i).getAccountId(), "Đi vệ sinh (đại tiện)");
+            result.add(message);
+        }
+        for (int i = 74; i < 76; i++) {
+            String message = process(5, list100Users.get(i).getAccountId(), "Đi vệ sinh (đại tiện)");
+            result.add(message);
+        }
+        for (int i = 76; i < 84; i++) {
+            String message = process(45, list100Users.get(i).getAccountId(), "Đi vệ sinh (đại tiện)");
+            result.add(message);
+        }
+        for (int i = 84; i < 89; i++) {
+            String message = process(232, list100Users.get(i).getAccountId(), "Đi vệ sinh (đại tiện)");
+            result.add(message);
+        }
+        for (int i = 89; i < 90; i++) {
+            String message = process(233, list100Users.get(i).getAccountId(), "Đi vệ sinh (đại tiện)");
+            result.add(message);
+        }
+        for (int i = 90; i < 92; i++) {
+            String message = process(4, list100Users.get(i).getAccountId(), "Đi tắm");
+            result.add(message);
+        }
+        for (int i = 92; i < 94; i++) {
+            String message = process(45, list100Users.get(i).getAccountId(), "Đi tắm");
+            result.add(message);
+        }
+        for (int i = 94; i < 99; i++) {
+            String message = process(232, list100Users.get(i).getAccountId(), "Đi tắm");
+            result.add(message);
+        }
+        for (int i = 99; i < 100; i++) {
+            String message = process(233, list100Users.get(i).getAccountId(), "Đi tắm");
+            result.add(message);
         }
 
         return result;
     }
 
-    private String process(int toiletId, int accountId, String serviceName, String strDate) {
+    private String process(int toiletId, int accountId, String serviceName) {
         CheckInRequest checkInRequest = new CheckInRequest();
         checkInRequest.setToiletId(toiletId);
         checkInRequest.setAccountId(accountId);
         checkInRequest.setServiceName(serviceName);
-        checkInRequest.setDatetime(strDate);
+        checkInRequest.setDatetime(initDate());
         CheckInResponse response = checkInService.userCheckIn(checkInRequest);
         return response.getFullName()
                 + " đã check-in tại "
                 + response.getToiletName()
                 + " với "
                 + response.getServiceName();
+    }
+
+    private String initDate() {
+        Date now = DateTimeUtil.getDateNow();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        return dateFormat.format(now);
     }
 }
