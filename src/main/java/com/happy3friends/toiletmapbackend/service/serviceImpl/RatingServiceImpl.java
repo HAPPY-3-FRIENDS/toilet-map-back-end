@@ -207,13 +207,13 @@ public class RatingServiceImpl implements RatingService {
         if (ratingRequest.getCommonComments() != null) {
             LOGGER.info("-- Create Rating - Start save List Rating Common Comment Entity! --");
             List<RatingCommonCommentEntity> ratingCommonCommentEntities = ratingRequest.getCommonComments().stream()
-                            .map(o -> {
-                                RatingCommonCommentEntity ratingCommonCommentEntity = new RatingCommonCommentEntity();
-                                ratingCommonCommentEntity.setRatingId(savedRatingEntity.getId());
-                                ratingCommonCommentEntity.setCommonCommentId(o);
+                    .map(o -> {
+                        RatingCommonCommentEntity ratingCommonCommentEntity = new RatingCommonCommentEntity();
+                        ratingCommonCommentEntity.setRatingId(savedRatingEntity.getId());
+                        ratingCommonCommentEntity.setCommonCommentId(o);
 
-                                return ratingCommonCommentEntity;
-                            }).collect(Collectors.toList());
+                        return ratingCommonCommentEntity;
+                    }).collect(Collectors.toList());
             ratingCommonCommentRepository.saveAll(ratingCommonCommentEntities);
             LOGGER.info("-- Create Rating - Finish save List Rating Common Comment Entity! --");
         }

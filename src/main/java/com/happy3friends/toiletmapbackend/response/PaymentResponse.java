@@ -19,4 +19,5 @@ public class PaymentResponse {
     private String method;
     @JsonFormat(pattern = DateTimeConstant.dd_MM_yyyy__HH_mm_ss)
     private Date createdDate;
+    private String paymentUrl;
 }

@@ -127,6 +127,6 @@ public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer>, 
 
     @Query(value =
             "SELECT Id " +
-            "FROM Toilet", nativeQuery = true)
+                    "FROM Toilet", nativeQuery = true)
     List<Integer> getAllToiletId();
 }

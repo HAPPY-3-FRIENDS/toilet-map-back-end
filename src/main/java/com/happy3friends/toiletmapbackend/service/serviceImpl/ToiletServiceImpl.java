@@ -440,8 +440,8 @@ public class ToiletServiceImpl implements ToiletService {
                 }).collect(Collectors.toList());
         toiletServiceEntities.add(addingDoubleToiletServiceEntity);
         List<ToiletServiceEntity> toiletServiceEntitiesFinal = toiletServiceEntities.stream()
-                        .filter(e -> e.getServiceId() != 0)
-                        .collect(Collectors.toList());
+                .filter(e -> e.getServiceId() != 0)
+                .collect(Collectors.toList());
         toiletEntity.setToiletServicesById(toiletServiceEntitiesFinal);
 
         toiletRepository.save(toiletEntity);

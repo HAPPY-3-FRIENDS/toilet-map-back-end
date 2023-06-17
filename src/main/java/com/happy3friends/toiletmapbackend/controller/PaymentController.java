@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 @Tag(name = "Payment", description = "Payment API")
@@ -72,7 +73,7 @@ public class PaymentController {
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.STAFF, RoleConstant.TOILET, RoleConstant.USER})
     @PostMapping
-    public ResponseEntity<BaseResponse<PaymentResponse>> createPaymentByAccountId(@RequestBody @Valid PaymentRequest paymentRequest) {
+    public ResponseEntity<BaseResponse<PaymentResponse>> createPaymentByAccountId(@RequestBody @Valid PaymentRequest paymentRequest) throws UnsupportedEncodingException {
 
         PaymentResponse response = paymentService.createPaymentByAccountId(paymentRequest);
 
@@ -80,6 +81,29 @@ public class PaymentController {
                 "Create payment with account-id successfully!",
                 HttpStatus.CREATED,
                 response
+        );
+    }
+
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.USER})
+    @GetMapping(value = "/VNPay-response")
+    public ResponseEntity<BaseResponse<String>> getVNPayResponse(
+            @RequestParam("vnp_Amount") int vnp_Amount,
+            @RequestParam("vnp_BankCode") int vnp_BankCode,
+            @RequestParam("vnp_BankTranNo") int vnp_BankTranNo,
+            @RequestParam("vnp_CardType") int vnp_CardType,
+            @RequestParam("vnp_OrderInfo") int vnp_OrderInfo,
+            @RequestParam("vnp_PayDate") int vnp_PayDate,
+            @RequestParam("vnp_ResponseCode") int vnp_ResponseCode,
+            @RequestParam("vnp_TransactionNo") int vnp_TransactionNo,
+            @RequestParam("vnp_TransactionStatus") int vnp_TransactionStatus,
+            @RequestParam("vnp_TxnRef") int vnp_TxnRef,
+            @RequestParam("vnp_SecureHash") int vnp_SecureHash) {
+
+        return ResponseBuilder.generateResponse(
+                "Get VNPay response!",
+                HttpStatus.OK,
+                "Hello"
         );
     }
 
