@@ -108,4 +108,9 @@ public class SuggestionServiceImpl implements SuggestionService {
 
         return result;
     }
+
+    @Override
+    public SuggestionEntity getPreviousQuarterSuggestion(int toiletId, Date endDate) {
+        return suggestionRepository.getPreviousQuarterSuggestion(toiletId, endDate);
+    }
 }

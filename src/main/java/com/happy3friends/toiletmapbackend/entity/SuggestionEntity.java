@@ -38,6 +38,9 @@ public class SuggestionEntity {
     @Basic
     @Column(name = "ExpectedCount", nullable = true, precision = 0)
     private Double expectedCount;
+    @Basic
+    @Column(name = "Streak", nullable = true)
+    private int streak;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ToiletId", referencedColumnName = "Id", insertable = false, updatable = false)
     private ToiletEntity toiletByToiletId;

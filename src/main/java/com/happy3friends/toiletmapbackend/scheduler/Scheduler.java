@@ -63,11 +63,21 @@ public class Scheduler {
                 SuggestionEntity entity = new SuggestionEntity();
                 entity.setToiletId(toiletId);
                 entity.setStartDate(new java.sql.Date(startDate.getTime()));
-                entity.setEndDate(new java.sql.Date(endDate.getTime()));
+                Date endDateOfQuarter = DateUtils.addDays(endDate, -1);
+                entity.setEndDate(new java.sql.Date(endDateOfQuarter.getTime()));
                 entity.setMessage(message);
                 entity.setActualCount(result.getActualCount());
                 entity.setExpectedCount(expectedCount);
                 entity.setIsAccepted(false);
+
+                Date endDatePrevious = DateUtils.addDays(startDate, -1);
+                SuggestionEntity previous = suggestionService.getPreviousQuarterSuggestion(toiletId, endDatePrevious);
+                int streak = 1;
+                if (previous != null && previous.getIsAccepted() != null && !Boolean.TRUE.equals(previous.getIsAccepted())) {
+                    streak = previous.getStreak() + 1;
+                }
+                entity.setStreak(streak);
+
                 suggestionService.save(entity);
             }
         });
