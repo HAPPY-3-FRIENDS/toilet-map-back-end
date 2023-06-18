@@ -20,4 +20,5 @@ public class SuggestionDTO {
     private Date endDate;
     private Integer actualCount;
     private Double expectedCount;
+    private int streak;
 }

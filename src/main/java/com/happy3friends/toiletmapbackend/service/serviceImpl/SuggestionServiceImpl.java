@@ -81,8 +81,8 @@ public class SuggestionServiceImpl implements SuggestionService {
         }
         endDate = new SimpleDateFormat("dd-MM-yyyy").parse(endDateStr);
         Date startDate = DateUtils.addMonths(endDate, -6);
-
-        List<SuggestionEntity> listSuggestionsIn2LastQuarter = suggestionRepository.getAllSuggestionsIn2LastQuarter(startDate, endDate);
+        Date endDateOfQuarter = DateUtils.addDays(endDate, -1);
+        List<SuggestionEntity> listSuggestionsIn2LastQuarter = suggestionRepository.getAllSuggestionsIn2LastQuarter(startDate, endDateOfQuarter);
         List<SuggestionDTO> suggestionDTOS = listSuggestionsIn2LastQuarter.stream()
                 .map(entity -> suggestionMapper.convertSuggestionEntityToSuggestionDTO(entity))
                 .collect(Collectors.toList());

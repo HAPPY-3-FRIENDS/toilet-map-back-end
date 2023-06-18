@@ -43,18 +43,18 @@ public interface SuggestionRepository extends JpaRepository<SuggestionEntity, In
                     "       StartDate,\n" +
                     "       EndDate,\n" +
                     "       ActualCount,\n" +
-                    "       ExpectedCount\n" +
+                    "       ExpectedCount,\n" +
+                    "       Streak\n" +
                     "FROM\n" +
                     "    (SELECT ToiletId, COUNT(*) AS Times\n" +
                     "    FROM Suggestion\n" +
                     "    WHERE StartDate = :startDate OR EndDate = :endDate\n" +
-                    "        AND IsAccepted = 'false'\n" +
                     "    GROUP BY (ToiletId)) t1\n" +
                     "LEFT JOIN\n" +
                     "    (SELECT *\n" +
                     "    FROM Suggestion\n" +
                     "    WHERE StartDate = :startDate OR EndDate = :endDate\n" +
-                    "        AND IsAccepted = 'false') t2\n" +
+                    "    ) t2\n" +
                     "ON t1.ToiletId = t2.ToiletId\n" +
                     "WHERE t1.Times = 2", nativeQuery = true)
     List<SuggestionEntity> getAllSuggestionsIn2LastQuarter(Date startDate,
