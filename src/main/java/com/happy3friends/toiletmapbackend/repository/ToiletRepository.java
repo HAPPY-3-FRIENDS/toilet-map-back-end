@@ -108,12 +108,14 @@ public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer>, 
     List<CustomToiletDTO> getAllToiletsIncludeIdLatitudeLongitude();
 
     @Query(value = "SELECT t.Id, " +
-            "       t.Name                            AS ToiletName, " +
-            "       a.Username                        AS Username, " +
+            "       t.Name     AS ToiletName, " +
+            "       a.Username AS Username, " +
             "       t.Address, " +
             "       t.Ward, " +
             "       t.District, " +
             "       t.Province, " +
+            "       t.Latitude, " +
+            "       t.Longitude, " +
             "       t.Status " +
             "FROM Toilet t " +
             "         JOIN Company c " +

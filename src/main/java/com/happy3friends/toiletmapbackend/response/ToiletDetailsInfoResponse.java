@@ -34,5 +34,6 @@ public class ToiletDetailsInfoResponse {
     private String status;
     private String duration;
     private String distance;
+    private String suggestionMessage;
     private List<SuggestionDTO> suggestions;
 }

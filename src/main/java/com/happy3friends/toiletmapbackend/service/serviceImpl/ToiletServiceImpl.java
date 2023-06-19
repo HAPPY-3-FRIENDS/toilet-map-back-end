@@ -258,6 +258,7 @@ public class ToiletServiceImpl implements ToiletService {
                     List<SuggestionDTO> suggestionDTOs = mapToiletIdListSuggestionDTO.get(toiletId);
                     if (suggestionDTOs != null && suggestionDTOs.size() == 2) {
                         res.setSuggestions(suggestionDTOs);
+                        res.setSuggestionMessage(suggestionDTOs.size() + " quý liên tục");
                     }
                     return res;
                 })
