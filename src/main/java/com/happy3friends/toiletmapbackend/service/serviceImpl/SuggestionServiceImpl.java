@@ -106,7 +106,12 @@ public class SuggestionServiceImpl implements SuggestionService {
             result.add(suggestionAdminResponse);
         });
 
-        return result;
+        return result.stream()
+                .peek((r) -> {
+                    String message = Integer.toString(r.getSuggestions().get(1).getStreak());
+                    r.setSuggestionMessage(message + " quý liên tục");
+                })
+                .collect(Collectors.toList());
     }
 
     @Override

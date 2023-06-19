@@ -19,5 +19,6 @@ public class SuggestionAdminResponse {
     private String ward;
     private String district;
     private String province;
+    private String suggestionMessage;
     private List<SuggestionDTO> suggestions;
 }
