@@ -23,7 +23,8 @@ public class CorsConfig {
                                 "http://localhost:8081",
                                 "http://localhost:3000",
                                 "https://toiletmap.azurewebsites.net",
-                                "https://toilet-map.azurewebsites.net")
+                                "https://toilet-map.azurewebsites.net",
+                                "https://toiletmap.netlify.app/")
                         .allowCredentials(true)
                         .maxAge(MAX_AGE_SECS);
             }
