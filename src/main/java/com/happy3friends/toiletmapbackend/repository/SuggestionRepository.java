@@ -46,7 +46,8 @@ public interface SuggestionRepository extends JpaRepository<SuggestionEntity, In
                     "       EndDate, " +
                     "       ActualCount, " +
                     "       ExpectedCount, " +
-                    "       Streak " +
+                    "       Streak, " +
+                    "       IsLow " +
                     "FROM " +
                     "    (SELECT ToiletId, COUNT(*) AS Times " +
                     "    FROM Suggestion " +
@@ -66,6 +67,7 @@ public interface SuggestionRepository extends JpaRepository<SuggestionEntity, In
             "SELECT * " +
             "FROM Suggestion " +
             "WHERE ToiletId = :toiletId " +
-            "      AND EndDate = :endDate", nativeQuery = true)
+            "      AND EndDate = :endDate " +
+            "      AND IsLow = 'false'", nativeQuery = true)
     SuggestionEntity getPreviousQuarterSuggestion(int toiletId, Date endDate);
 }

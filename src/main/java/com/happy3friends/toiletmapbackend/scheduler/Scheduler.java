@@ -55,10 +55,12 @@ public class Scheduler {
             result.setNumberOfRestroom(numberOfRestroom.get());
             result.setNumberOfBathroom(numberOfBathroom.get());
 
-            double expectedCount = result.getHours() * (result.getNumberOfBathroom() * 2 + result.getNumberOfRestroom() * 3) * 90;
+            double expectedCountMax = result.getHours() * (result.getNumberOfBathroom() * 2 + result.getNumberOfRestroom() * 3) * 90;
 
-            if (result.getActualCount() >= expectedCount * 175 / 100) {
-                String message = "Số lượt đi thực tế vượt 175% so với sức chứa, gợi ý mở thêm nhà vệ sinh gần đây hoặc mở thêm phòng vệ sinh.";
+            int expectedCountMin = (result.getNumberOfBathroom() + result.getNumberOfRestroom()) * 90;
+
+            if (result.getActualCount() >= expectedCountMax * 150 / 100) {
+                String message = "Số lượt đi thực tế vượt 150% so với sức chứa, gợi ý mở thêm nhà vệ sinh gần đây hoặc mở thêm phòng vệ sinh.";
 
                 SuggestionEntity entity = new SuggestionEntity();
                 entity.setToiletId(toiletId);
@@ -67,7 +69,7 @@ public class Scheduler {
                 entity.setEndDate(new java.sql.Date(endDateOfQuarter.getTime()));
                 entity.setMessage(message);
                 entity.setActualCount(result.getActualCount());
-                entity.setExpectedCount(expectedCount);
+                entity.setExpectedCount(expectedCountMax);
                 entity.setIsAccepted(false);
 
                 Date endDatePrevious = DateUtils.addDays(startDate, -1);
@@ -77,9 +79,29 @@ public class Scheduler {
                     streak = previous.getStreak() + 1;
                 }
                 entity.setStreak(streak);
+                entity.setIsLow(false);
 
                 suggestionService.save(entity);
             }
+
+            if (result.getActualCount() < expectedCountMin) {
+                String message = "Số lượt đi thực tế dưới " + expectedCountMin + " lượt.";
+
+                SuggestionEntity entity = new SuggestionEntity();
+                entity.setToiletId(toiletId);
+                entity.setStartDate(new java.sql.Date(startDate.getTime()));
+                Date endDateOfQuarter = DateUtils.addDays(endDate, -1);
+                entity.setEndDate(new java.sql.Date(endDateOfQuarter.getTime()));
+                entity.setMessage(message);
+                entity.setActualCount(result.getActualCount());
+                entity.setExpectedCount((double) expectedCountMin);
+                entity.setIsAccepted(false);
+                entity.setIsLow(true);
+
+                suggestionService.save(entity);
+            }
+
+
         });
     }
 }

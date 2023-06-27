@@ -41,6 +41,9 @@ public class SuggestionEntity {
     @Basic
     @Column(name = "Streak", nullable = true)
     private int streak;
+    @Basic
+    @Column(name = "IsLow", nullable = true)
+    private Boolean isLow;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ToiletId", referencedColumnName = "Id", insertable = false, updatable = false)
     private ToiletEntity toiletByToiletId;

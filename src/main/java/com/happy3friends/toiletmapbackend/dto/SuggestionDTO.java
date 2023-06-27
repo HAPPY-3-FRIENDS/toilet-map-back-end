@@ -21,4 +21,5 @@ public class SuggestionDTO {
     private Integer actualCount;
     private Double expectedCount;
     private int streak;
+    private Boolean isLow;
 }
