@@ -118,6 +118,7 @@ public class StatisticServiceImpl implements StatisticService {
         } else {  // Validate fromDate & toDate
             fromDate = DateTimeUtil.convertStringToDate(fromStrDate, DateTimeConstant.dd_MM_yyyy);
             toDate = DateTimeUtil.convertStringToDate(toStrDate, DateTimeConstant.dd_MM_yyyy);
+            toDate = DateTimeUtil.addDays(toDate, 1);
             if (fromDate != null && fromDate.after(toDate))
                 throw new BadRequestException(ToiletMapErrorCodeEnum.FROM_DATE_AFTER_TO_DATE, ToiletMapErrorCodeEnum.FROM_DATE_AFTER_TO_DATE.getMessage());
         }
