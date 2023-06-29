@@ -27,12 +27,6 @@ public interface SuggestionRepository extends JpaRepository<SuggestionEntity, In
             "              ON t.CompanyId = c.Id " +
             "         JOIN Suggestion sg " +
             "              ON t.Id = sg.ToiletId " +
-            "                  AND ((sg.StartDate = DATEADD(QUARTER, DATEDIFF(QUARTER, 0, GETDATE()) - 2, 0) AND " +
-            "                        sg.EndDate = DATEADD(QUARTER, DATEDIFF(QUARTER, 0, GETDATE()) - 1, -1)) " +
-            "                      OR " +
-            "                       (sg.StartDate = DATEADD(QUARTER, DATEDIFF(QUARTER, 0, GETDATE()) - 1, 0) AND " +
-            "                        sg.EndDate = DATEADD(QUARTER, DATEDIFF(QUARTER, 0, GETDATE()), -1)) " +
-            "                     ) " +
             "WHERE c.Id = :companyId " +
             "  AND sg.ToiletId IN (:listToiletIds) " +
             "ORDER BY t.Id ASC, sg.Streak DESC", nativeQuery = true)
