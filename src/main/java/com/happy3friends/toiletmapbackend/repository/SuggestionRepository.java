@@ -20,7 +20,8 @@ public interface SuggestionRepository extends JpaRepository<SuggestionEntity, In
             "       sg.EndDate, " +
             "       sg.ExpectedCount, " +
             "       sg.ActualCount, " +
-            "       sg.Streak " +
+            "       sg.Streak, " +
+            "       sg.IsLow " +
             "FROM Toilet t " +
             "         JOIN Company c " +
             "              ON t.CompanyId = c.Id " +
