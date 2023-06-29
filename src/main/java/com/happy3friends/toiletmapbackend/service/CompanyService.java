@@ -22,4 +22,6 @@ public interface CompanyService {
     List<CompanyHasStatusResponse> searchCompany(String searchText, BasePaginationRequest paginationRequest);
 
     int countSearchingCompanies(String searchText);
+
+    CompanyResponse getCompanyByCompanyId(int companyId);
 }

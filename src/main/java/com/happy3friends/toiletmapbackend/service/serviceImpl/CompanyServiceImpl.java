@@ -180,5 +180,12 @@ public class CompanyServiceImpl implements CompanyService {
         return companyRepository.countSearchingCompanies(searchParam);
     }
 
+    @Override
+    public CompanyResponse getCompanyByCompanyId(int companyId) {
+        Optional<CompanyEntity> companyEntity = companyRepository.findById(companyId);
+        if (!companyEntity.isPresent())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY, ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY.getMessage());
 
+        return companyMapper.convertCompanyEntityToCompanyResponse(companyEntity.get());
+    }
 }

@@ -424,4 +424,31 @@ public class CompanyController {
                 response
         );
     }
+
+    @Operation(summary = "Get company by company ID", description = "[Admin, Manager] Get a specific company by company ID")
+    @Parameter(name = "company-id", description = "A specific company ID", in = ParameterIn.PATH, required = true, example = "1")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
+                    @ExampleObject(value = "")
+            })),
+            @ApiResponse(responseCode = "204", description = "No-content!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.MANAGER})
+    @GetMapping(value = "/{company-id}")
+    public ResponseEntity<BaseResponse<CompanyResponse>> getCompanyByCompanyId(@PathVariable("company-id") int companyId) {
+
+        CompanyResponse response = companyService.getCompanyByCompanyId(companyId);
+
+        return ResponseBuilder.generateResponse(
+                "Get company by company ID successfully!",
+                HttpStatus.OK,
+                response
+        );
+    }
 }
