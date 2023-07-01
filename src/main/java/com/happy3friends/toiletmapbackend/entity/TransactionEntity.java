@@ -3,6 +3,7 @@ package com.happy3friends.toiletmapbackend.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 @AllArgsConstructor
@@ -12,8 +13,25 @@ import javax.persistence.*;
 @EqualsAndHashCode
 @Table(name = "Transaction", schema = "dbo", catalog = "ToiletMap")
 public class TransactionEntity {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "Id", nullable = false)
-    private int id;
+    @Column(name = "TransactionNo", nullable = false)
+    private int transactionNo;
+    @Basic
+    @Column(name = "PaymentId", nullable = false)
+    private int paymentId;
+    @Basic
+    @Column(name = "BankCode", nullable = false, length = 20)
+    private String bankCode;
+    @Basic
+    @Column(name = "BankTranNo", nullable = false, length = 20)
+    private String bankTranNo;
+    @Basic
+    @Column(name = "CardType", nullable = false, length = 20)
+    private String cardType;
+    @Basic
+    @Column(name = "PayDate", nullable = false)
+    private Timestamp payDate;
+    @OneToOne
+    @JoinColumn(name = "PaymentId", referencedColumnName = "Id", insertable = false, updatable = false)
+    private PaymentEntity paymentByPaymentId;
 }

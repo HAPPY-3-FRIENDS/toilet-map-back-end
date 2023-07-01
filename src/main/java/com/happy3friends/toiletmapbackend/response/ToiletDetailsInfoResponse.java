@@ -4,7 +4,6 @@ import com.happy3friends.toiletmapbackend.dto.SuggestionDTO;
 import com.happy3friends.toiletmapbackend.dto.ToiletFacilityDTO;
 import lombok.*;
 
-import java.util.Date;
 import java.util.List;
 
 @AllArgsConstructor

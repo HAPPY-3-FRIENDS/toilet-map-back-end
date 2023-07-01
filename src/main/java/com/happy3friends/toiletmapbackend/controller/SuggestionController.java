@@ -5,7 +5,6 @@ import com.happy3friends.toiletmapbackend.config.OpenApiConfig;
 import com.happy3friends.toiletmapbackend.constant.RoleConstant;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.response.SuggestionAdminResponse;
-import com.happy3friends.toiletmapbackend.response.SuggestionResponse;
 import com.happy3friends.toiletmapbackend.service.SuggestionService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.security.RolesAllowed;
 import java.text.ParseException;
 import java.util.List;
-import java.util.Map;
 
 @Tag(name = "Suggestion", description = "Suggestion API")
 @RestController

@@ -7,4 +7,5 @@ public class DateTimeConstant {
     public static final String yyyy_MM_dd__HH_mm_ssssss = "yyyy-MM-dd HH:mm:ssssss";
     public static final String dd_MM_yyyy = "dd/MM/yyyy";
     public static final String HH_mm = "HH:mm";
+    public static final String yyyyMMddHHmmss = "yyyyMMddHHmmss";
 }

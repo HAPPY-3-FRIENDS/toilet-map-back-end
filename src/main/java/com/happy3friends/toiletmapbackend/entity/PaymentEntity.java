@@ -35,4 +35,6 @@ public class PaymentEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "AccountId", referencedColumnName = "Id", insertable = false, updatable = false)
     private AccountEntity accountByAccountId;
+    @OneToOne(mappedBy = "paymentByPaymentId")
+    private TransactionEntity transactionsById;
 }

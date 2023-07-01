@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -84,26 +85,33 @@ public class PaymentController {
         );
     }
 
-    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.USER})
+    @SecurityRequirements
     @GetMapping(value = "/VNPay-response")
-    public ResponseEntity<BaseResponse<String>> getVNPayResponse(
-            @RequestParam("vnp_Amount") int vnp_Amount,
-            @RequestParam("vnp_BankCode") int vnp_BankCode,
-            @RequestParam("vnp_BankTranNo") int vnp_BankTranNo,
-            @RequestParam("vnp_CardType") int vnp_CardType,
-            @RequestParam("vnp_OrderInfo") int vnp_OrderInfo,
-            @RequestParam("vnp_PayDate") int vnp_PayDate,
-            @RequestParam("vnp_ResponseCode") int vnp_ResponseCode,
-            @RequestParam("vnp_TransactionNo") int vnp_TransactionNo,
-            @RequestParam("vnp_TransactionStatus") int vnp_TransactionStatus,
-            @RequestParam("vnp_TxnRef") int vnp_TxnRef,
-            @RequestParam("vnp_SecureHash") int vnp_SecureHash) {
+    public ResponseEntity<BaseResponse<PaymentResponse>> VNPayResponse(
+            @RequestParam("vnp_Amount") String vnp_Amount,
+            @RequestParam("vnp_BankCode") String vnp_BankCode,
+            @RequestParam("vnp_BankTranNo") String vnp_BankTranNo,
+            @RequestParam("vnp_CardType") String vnp_CardType,
+            @RequestParam("vnp_OrderInfo") String vnp_OrderInfo,
+            @RequestParam("vnp_PayDate") String vnp_PayDate,
+            @RequestParam("vnp_ResponseCode") String vnp_ResponseCode,
+            @RequestParam("vnp_TransactionNo") int vnp_TransactionNo) throws Exception {
+
+        PaymentResponse response = paymentService.VNPayResponse(
+                vnp_Amount,
+                vnp_BankCode,
+                vnp_BankTranNo,
+                vnp_CardType,
+                vnp_OrderInfo,
+                vnp_PayDate,
+                vnp_ResponseCode,
+                vnp_TransactionNo
+        );
 
         return ResponseBuilder.generateResponse(
-                "Get VNPay response!",
+                "Pay with VNPay successfully!",
                 HttpStatus.OK,
-                "Hello"
+                response
         );
     }
 

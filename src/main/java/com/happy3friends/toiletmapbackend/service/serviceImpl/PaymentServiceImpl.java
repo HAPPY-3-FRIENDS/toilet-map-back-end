@@ -2,6 +2,7 @@ package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
 import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
 import com.happy3friends.toiletmapbackend.config.VNPayConfig;
+import com.happy3friends.toiletmapbackend.constant.DateTimeConstant;
 import com.happy3friends.toiletmapbackend.constant.DefaultSortPropertyConstant;
 import com.happy3friends.toiletmapbackend.dto.CustomAccountInfoDTO;
 import com.happy3friends.toiletmapbackend.entity.AccountEntity;
@@ -14,6 +15,7 @@ import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.PaymentMapper;
 import com.happy3friends.toiletmapbackend.repository.AccountRepository;
 import com.happy3friends.toiletmapbackend.repository.PaymentRepository;
+import com.happy3friends.toiletmapbackend.repository.TransactionRepository;
 import com.happy3friends.toiletmapbackend.repository.UserInfoRepository;
 import com.happy3friends.toiletmapbackend.request.PaymentRequest;
 import com.happy3friends.toiletmapbackend.response.PaymentResponse;
@@ -28,6 +30,7 @@ import org.springframework.stereotype.Service;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -45,39 +48,34 @@ public class PaymentServiceImpl implements PaymentService {
     private UserInfoRepository userInfoRepository;
 
     @Autowired
+    TransactionRepository transactionRepository;
+
+    @Autowired
     private PaymentMapper paymentMapper;
 
-    private PaymentResponse createPaymentForVNPay(PaymentRequest paymentRequest) throws UnsupportedEncodingException {
+    private PaymentResponse createPaymentUrlForVNPay(PaymentRequest paymentRequest) throws UnsupportedEncodingException {
 
-        // String orderType = req.getParameter("ordertype");
-        // long amount = Integer.parseInt(req.getParameter("amount")) * 100;
-        // String bankCode = req.getParameter("bankCode");
-
-        String vnp_TxnRef = VNPayConfig.getRandomNumber(8);
-        // String vnp_IpAddr = VNPayConfig.getIpAddress(req);
-        String vnp_TmnCode = VNPayConfig.vnp_TmnCode;
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
+        SimpleDateFormat formatter = new SimpleDateFormat(DateTimeConstant.yyyyMMddHHmmss);
+        String vnp_CreateDate = formatter.format(calendar.getTime());
+        calendar.add(Calendar.MINUTE, 15);
+        String vnp_ExpireDate = formatter.format(calendar.getTime());
+        String vnp_TxnRef = vnp_CreateDate;
 
         Map<String, String> vnp_Params = new HashMap<>();
         vnp_Params.put("vnp_Version", VNPayConfig.vnp_Version);
         vnp_Params.put("vnp_Command", VNPayConfig.vnp_Command);
-        vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
+        vnp_Params.put("vnp_TmnCode", VNPayConfig.vnp_TmnCode);
         vnp_Params.put("vnp_Amount", String.valueOf(paymentRequest.getTotal() * 100));
-        vnp_Params.put("vnp_CurrCode", "VND");
-        vnp_Params.put("vnp_BankCode", "NCB");
+        vnp_Params.put("vnp_CurrCode", VNPayConfig.vnp_CurrCode);
+        vnp_Params.put("vnp_BankCode", VNPayConfig.vnp_BankCode);
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-        vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang: " + vnp_TxnRef + " - accountId: " + paymentRequest.getAccountId());
-        vnp_Params.put("vnp_OrderType", VNPayConfig.orderType);
-        vnp_Params.put("vnp_Locale", "vn");
-        vnp_Params.put("vnp_ReturnUrl", VNPayConfig.vnp_ReturnUrl);
-        // vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
-
-        Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-        String vnp_CreateDate = formatter.format(cld.getTime());
+        vnp_Params.put("vnp_OrderInfo", String.valueOf(paymentRequest.getAccountId()));
+        vnp_Params.put("vnp_OrderType", VNPayConfig.vnp_OrderType);
+        vnp_Params.put("vnp_Locale", VNPayConfig.vnp_Locale);
+        vnp_Params.put("vnp_ReturnUrl", VNPayConfig.getVnpReturnUrl());
+        vnp_Params.put("vnp_IpAddr", VNPayConfig.getIpAddress());
         vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
-
-        cld.add(Calendar.MINUTE, 15);
-        String vnp_ExpireDate = formatter.format(cld.getTime());
         vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
 
         List fieldNames = new ArrayList(vnp_Params.keySet());
@@ -87,7 +85,7 @@ public class PaymentServiceImpl implements PaymentService {
         Iterator itr = fieldNames.iterator();
         while (itr.hasNext()) {
             String fieldName = (String) itr.next();
-            String fieldValue = (String) vnp_Params.get(fieldName);
+            String fieldValue = vnp_Params.get(fieldName);
             if ((fieldValue != null) && (fieldValue.length() > 0)) {
                 //Build hash data
                 hashData.append(fieldName);
@@ -107,12 +105,6 @@ public class PaymentServiceImpl implements PaymentService {
         String vnp_SecureHash = VNPayConfig.hmacSHA512(VNPayConfig.vnp_HashSecret, hashData.toString());
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
         String paymentUrl = VNPayConfig.vnp_PayUrl + "?" + queryUrl;
-//        com.google.gson.JsonObject job = new JsonObject();
-//        job.addProperty("code", "00");
-//        job.addProperty("message", "success");
-//        job.addProperty("data", paymentUrl);
-//        Gson gson = new Gson();
-//        resp.getWriter().write(gson.toJson(job));
 
         PaymentResponse paymentResponse = new PaymentResponse();
         paymentResponse.setPaymentUrl(paymentUrl);
@@ -122,8 +114,6 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public PaymentResponse createPaymentByAccountId(PaymentRequest paymentRequest) throws UnsupportedEncodingException {
-
-
 
         CustomAccountInfoDTO customAccountInfoDTO = accountRepository.getCustomAccountInfoByAccountId(paymentRequest.getAccountId());
         // Validate Account
@@ -140,10 +130,8 @@ public class PaymentServiceImpl implements PaymentService {
 
         // Create payment for VNPay payment method
         if (paymentRequest.getMethod().equals(PaymentTypeEnum.VN_PAY.getPaymentValue())) {
-            return createPaymentForVNPay(paymentRequest);
+            return createPaymentUrlForVNPay(paymentRequest);
         }
-
-        // TODO: check userToken with account from accountId
 
         // Save Payment Entity
         PaymentEntity paymentEntity = new PaymentEntity();
@@ -192,5 +180,71 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         return (int) paymentRepository.count();
+    }
+
+    @Override
+    public PaymentResponse VNPayResponse(
+            String vnp_Amount,
+            String vnp_BankCode,
+            String vnp_BankTranNo,
+            String vnp_CardType,
+            String vnp_OrderInfo,
+            String vnp_PayDate,
+            String vnp_ResponseCode,
+            int vnp_TransactionNo) throws Exception {
+
+        switch (vnp_ResponseCode) {
+            case "09":
+                throw new Exception(ToiletMapErrorCodeEnum.VNPAY_CARD_NOT_REGISTERED_INTERNETBANKING.getMessage());
+            case "10":
+                throw new Exception(ToiletMapErrorCodeEnum.VNPAY_VERIFY_CARD_NOT_CORRECT.getMessage());
+            case "11":
+                throw new Exception(ToiletMapErrorCodeEnum.VNPAY_PAYMENT_EXPIRED.getMessage());
+            case "12":
+                throw new Exception(ToiletMapErrorCodeEnum.VNPAY_LOCKED_CARD.getMessage());
+            case "13":
+                throw new Exception(ToiletMapErrorCodeEnum.VNPAY_WRONG_OTP.getMessage());
+            case "24":
+                throw new Exception(ToiletMapErrorCodeEnum.VNPAY_CUSTOMER_CANCEL_TRANSACTION.getMessage());
+            case "51":
+                throw new Exception(ToiletMapErrorCodeEnum.VNPAY_NOT_ENOUGH_BALANCE.getMessage());
+            case "65":
+                throw new Exception(ToiletMapErrorCodeEnum.VNPAY_EXCEEDED_DAILY_TRANSACTION_LIMIT.getMessage());
+            case "75":
+                throw new Exception(ToiletMapErrorCodeEnum.VNPAY_BANK_UNDER_MAINTENANCE.getMessage());
+            case "79":
+                throw new Exception(ToiletMapErrorCodeEnum.VNPAY_WRONG_PASSWORD.getMessage());
+            case "99":
+                throw new Exception(ToiletMapErrorCodeEnum.VNPAY_ERROR.getMessage());
+            default:
+                int total = Integer.parseInt(vnp_Amount) / 100;
+                int accountId = Integer.parseInt(vnp_OrderInfo);
+                Timestamp createdDate = DateTimeUtil.convertDateToTimestamp(DateTimeUtil.convertStringToDate(vnp_PayDate, DateTimeConstant.yyyyMMddHHmmss));
+
+                // Save Payment Entity
+                PaymentEntity paymentEntity = new PaymentEntity();
+                paymentEntity.setAccountId(accountId);
+                paymentEntity.setTotal(total);
+                paymentEntity.setMethod(PaymentTypeEnum.VN_PAY.getPaymentValue());
+                paymentEntity.setCreatedDate(createdDate);
+                paymentEntity = paymentRepository.save(paymentEntity);
+
+                // Add money to account balance by accountId
+                CustomAccountInfoDTO customAccountInfoDTO = accountRepository.getCustomAccountInfoByAccountId(accountId);
+                int newAccountBalance = customAccountInfoDTO.getAccountBalance() + total;
+                userInfoRepository.updateAccountBalance(accountId, newAccountBalance);
+
+                // Save Transaction Entity
+                transactionRepository.saveTransaction(
+                        vnp_TransactionNo,
+                        paymentEntity.getId(),
+                        vnp_BankCode,
+                        vnp_BankTranNo,
+                        vnp_CardType,
+                        createdDate
+                );
+
+                return paymentMapper.convertPaymentEntityToPaymentResponse(paymentEntity);
+        }
     }
 }

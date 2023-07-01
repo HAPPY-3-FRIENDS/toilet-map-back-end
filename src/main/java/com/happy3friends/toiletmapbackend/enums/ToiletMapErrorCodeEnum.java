@@ -55,7 +55,20 @@ public enum ToiletMapErrorCodeEnum {
     NOT_FOUND_RATING(HttpStatus.NOT_FOUND, 404010, "Không tìm thấy từ đánh giá"),
     NOT_FOUND_ANNOUNCEMENT(HttpStatus.NOT_FOUND, 404011, "Không tìm thấy thông báo"),
     NOT_FOUND_SUGGESTION(HttpStatus.NOT_FOUND, 404012, "Không tìm thấy gợi ý"),
-    NOT_FOUND_REPORT(HttpStatus.NOT_FOUND, 404013, "Không tìm báo cáo")
+    NOT_FOUND_REPORT(HttpStatus.NOT_FOUND, 404013, "Không tìm báo cáo"),
+
+    // VNPAY
+    VNPAY_CARD_NOT_REGISTERED_INTERNETBANKING(HttpStatus.INTERNAL_SERVER_ERROR, 500001, "Giao dịch không thành công do: Thẻ/Tài khoản của khách hàng chưa đăng ký dịch vụ InternetBanking tại ngân hàng."),
+    VNPAY_VERIFY_CARD_NOT_CORRECT(HttpStatus.INTERNAL_SERVER_ERROR, 500002, "Giao dịch không thành công do: Khách hàng xác thực thông tin thẻ/tài khoản không đúng quá 3 lần"),
+    VNPAY_PAYMENT_EXPIRED(HttpStatus.INTERNAL_SERVER_ERROR, 500003, "Giao dịch không thành công do: Đã hết hạn chờ thanh toán. Xin quý khách vui lòng thực hiện lại giao dịch."),
+    VNPAY_LOCKED_CARD(HttpStatus.INTERNAL_SERVER_ERROR, 500004, "Giao dịch không thành công do: Thẻ/Tài khoản của khách hàng bị khóa."),
+    VNPAY_WRONG_OTP(HttpStatus.INTERNAL_SERVER_ERROR, 500005, "Giao dịch không thành công do Quý khách nhập sai mật khẩu xác thực giao dịch (OTP). Xin quý khách vui lòng thực hiện lại giao dịch."),
+    VNPAY_CUSTOMER_CANCEL_TRANSACTION(HttpStatus.INTERNAL_SERVER_ERROR, 500006, "Giao dịch không thành công do: Khách hàng hủy giao dịch"),
+    VNPAY_NOT_ENOUGH_BALANCE(HttpStatus.INTERNAL_SERVER_ERROR, 500007, "Giao dịch không thành công do: Tài khoản của quý khách không đủ số dư để thực hiện giao dịch."),
+    VNPAY_EXCEEDED_DAILY_TRANSACTION_LIMIT(HttpStatus.INTERNAL_SERVER_ERROR, 500008, "Giao dịch không thành công do: Tài khoản của Quý khách đã vượt quá hạn mức giao dịch trong ngày."),
+    VNPAY_BANK_UNDER_MAINTENANCE(HttpStatus.INTERNAL_SERVER_ERROR, 500009, "Ngân hàng thanh toán đang bảo trì."),
+    VNPAY_WRONG_PASSWORD(HttpStatus.INTERNAL_SERVER_ERROR, 500010, "Giao dịch không thành công do: KH nhập sai mật khẩu thanh toán quá số lần quy định. Xin quý khách vui lòng thực hiện lại giao dịch"),
+    VNPAY_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, 500011, "Các lỗi khác (lỗi còn lại, không có trong danh sách mã lỗi đã liệt kê)")
     ;
 
     private final HttpStatus httpStatus;
