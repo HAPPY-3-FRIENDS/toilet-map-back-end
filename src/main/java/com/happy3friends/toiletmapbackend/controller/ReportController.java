@@ -8,6 +8,7 @@ import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.request.CreateReportRequest;
 import com.happy3friends.toiletmapbackend.response.CreateReportResponse;
 import com.happy3friends.toiletmapbackend.response.ReportResponse;
+import com.happy3friends.toiletmapbackend.response.ReportResponseForManager;
 import com.happy3friends.toiletmapbackend.service.ReportService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -113,6 +114,23 @@ public class ReportController {
 
         return ResponseBuilder.generateResponse(
                 "Update report successfully!",
+                HttpStatus.OK,
+                responses
+        );
+    }
+
+    @Operation(summary = "Get reports", description = "[Manager] get list reports by company id")
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.MANAGER})
+    @GetMapping(value = "/{company-id}")
+    public ResponseEntity<BaseResponse<List<ReportResponseForManager>>> getReportsForManager(
+            @PathVariable("company-id") int id,
+            @ModelAttribute BasePaginationRequest paginationRequest) {
+
+        List<ReportResponseForManager> responses = reportService.getReportsForManager(id ,paginationRequest);
+
+        return ResponseBuilder.generateResponse(
+                "Get list of all reports successfully!",
                 HttpStatus.OK,
                 responses
         );

@@ -1,6 +1,8 @@
 package com.happy3friends.toiletmapbackend.repository;
 
+import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
 import com.happy3friends.toiletmapbackend.dto.CustomReportDTO;
+import com.happy3friends.toiletmapbackend.dto.CustomReportForManagerDTO;
 import com.happy3friends.toiletmapbackend.entity.ReportEntity;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,4 +21,10 @@ public interface ReportRepository extends JpaRepository<ReportEntity, Integer> {
             "GROUP BY r.Message, r.ToiletId, t.Name, r.Status " +
             "ORDER BY count DESC", nativeQuery = true)
     List<CustomReportDTO> getReports(Pageable pageable);
+
+    @Query(value = "SELECT r.Id, t.Name, r.Message, r.Status\n" +
+            "FROM Report r\n" +
+            "LEFT JOIN Toilet t on t.Id = r.ToiletId\n" +
+            "WHERE t.CompanyId = :companyId", nativeQuery = true)
+    List<CustomReportForManagerDTO> getReportsForManager(int companyId, Pageable pageable);
 }

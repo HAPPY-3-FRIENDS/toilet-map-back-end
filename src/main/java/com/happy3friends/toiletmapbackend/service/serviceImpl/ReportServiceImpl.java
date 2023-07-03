@@ -4,14 +4,18 @@ import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
 import com.happy3friends.toiletmapbackend.constant.DefaultSortPropertyConstant;
 import com.happy3friends.toiletmapbackend.constant.ReportStatusConstant;
 import com.happy3friends.toiletmapbackend.dto.CustomReportDTO;
+import com.happy3friends.toiletmapbackend.dto.CustomReportForManagerDTO;
+import com.happy3friends.toiletmapbackend.entity.CompanyEntity;
 import com.happy3friends.toiletmapbackend.entity.ReportEntity;
 import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.ReportMapper;
+import com.happy3friends.toiletmapbackend.repository.CompanyRepository;
 import com.happy3friends.toiletmapbackend.repository.ReportRepository;
 import com.happy3friends.toiletmapbackend.request.CreateReportRequest;
 import com.happy3friends.toiletmapbackend.response.CreateReportResponse;
 import com.happy3friends.toiletmapbackend.response.ReportResponse;
+import com.happy3friends.toiletmapbackend.response.ReportResponseForManager;
 import com.happy3friends.toiletmapbackend.service.ReportService;
 import com.happy3friends.toiletmapbackend.utils.PaginationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ReportServiceImpl implements ReportService {
@@ -30,6 +35,9 @@ public class ReportServiceImpl implements ReportService {
 
     @Autowired
     private ReportMapper reportMapper;
+
+    @Autowired
+    private CompanyRepository companyRepository;
 
     @Override
     public List<ReportResponse> getReports(BasePaginationRequest paginationRequest) {
@@ -61,5 +69,20 @@ public class ReportServiceImpl implements ReportService {
         result.setStatus(message);
 
         return reportMapper.convertReportEntitytoCreateReportResponse(reportRepository.save(result));
+    }
+
+    @Override
+    public List<ReportResponseForManager> getReportsForManager(int companyId, BasePaginationRequest paginationRequest) {
+        Optional<CompanyEntity> companyEntity = companyRepository.findById(companyId);
+        if (!companyEntity.isPresent())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY, ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY.getMessage());
+
+        Sort.Order defaultSortOrder = new Sort.Order(Sort.Direction.ASC, DefaultSortPropertyConstant.TOILET_ID);
+        Pageable pageable = PaginationUtil.getPageable(paginationRequest, defaultSortOrder);
+
+        List<CustomReportForManagerDTO> listReport = reportRepository.getReportsForManager(companyId, pageable);
+        return listReport.stream()
+                .map(r -> reportMapper.convertCustomReportForManagerDTOToReportResponseForManager(r))
+                .collect(Collectors.toList());
     }
 }
