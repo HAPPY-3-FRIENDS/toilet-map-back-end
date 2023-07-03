@@ -2,6 +2,7 @@ package com.happy3friends.toiletmapbackend.service;
 
 import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
 import com.happy3friends.toiletmapbackend.request.CreateReportRequest;
+import com.happy3friends.toiletmapbackend.request.UpdateListReportRequest;
 import com.happy3friends.toiletmapbackend.response.CreateReportResponse;
 import com.happy3friends.toiletmapbackend.response.ReportResponse;
 import com.happy3friends.toiletmapbackend.response.ReportResponseForManager;
@@ -16,4 +17,8 @@ public interface ReportService {
     CreateReportResponse updateStatus(int id, String message);
 
     List<ReportResponseForManager> getReportsForManager(int companyId ,BasePaginationRequest paginationRequest);
+
+    int countReportsForManager(int id);
+
+    List<CreateReportResponse> updateListReports(UpdateListReportRequest request);
 }

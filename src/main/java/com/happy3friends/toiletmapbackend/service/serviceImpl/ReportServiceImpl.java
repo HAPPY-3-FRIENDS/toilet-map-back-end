@@ -13,6 +13,7 @@ import com.happy3friends.toiletmapbackend.mapper.ReportMapper;
 import com.happy3friends.toiletmapbackend.repository.CompanyRepository;
 import com.happy3friends.toiletmapbackend.repository.ReportRepository;
 import com.happy3friends.toiletmapbackend.request.CreateReportRequest;
+import com.happy3friends.toiletmapbackend.request.UpdateListReportRequest;
 import com.happy3friends.toiletmapbackend.response.CreateReportResponse;
 import com.happy3friends.toiletmapbackend.response.ReportResponse;
 import com.happy3friends.toiletmapbackend.response.ReportResponseForManager;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -84,5 +86,27 @@ public class ReportServiceImpl implements ReportService {
         return listReport.stream()
                 .map(r -> reportMapper.convertCustomReportForManagerDTOToReportResponseForManager(r))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public int countReportsForManager(int id) {
+        return reportRepository.countReportsForManager(id);
+    }
+
+    @Override
+    public List<CreateReportResponse> updateListReports(UpdateListReportRequest request) {
+        String status = request.getStatus();
+        List<Integer> listId = request.getListId();
+        List<CreateReportResponse> result = new ArrayList<>();
+        for (Integer id: listId) {
+            Optional<ReportEntity> entity = reportRepository.findById(id);
+            if (!entity.isPresent())
+                throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_REPORT, ToiletMapErrorCodeEnum.NOT_FOUND_REPORT.getMessage());
+
+            ReportEntity reportEntity = entity.get();
+            reportEntity.setStatus(status);
+            result.add(reportMapper.convertReportEntitytoCreateReportResponse(reportRepository.save(reportEntity)));
+        }
+        return result;
     }
 }

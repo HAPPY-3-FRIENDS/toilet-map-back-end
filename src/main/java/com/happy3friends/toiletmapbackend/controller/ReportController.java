@@ -6,6 +6,7 @@ import com.happy3friends.toiletmapbackend.config.OpenApiConfig;
 import com.happy3friends.toiletmapbackend.constant.RoleConstant;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.request.CreateReportRequest;
+import com.happy3friends.toiletmapbackend.request.UpdateListReportRequest;
 import com.happy3friends.toiletmapbackend.response.CreateReportResponse;
 import com.happy3friends.toiletmapbackend.response.ReportResponse;
 import com.happy3friends.toiletmapbackend.response.ReportResponseForManager;
@@ -131,6 +132,45 @@ public class ReportController {
 
         return ResponseBuilder.generateResponse(
                 "Get list of all reports successfully!",
+                HttpStatus.OK,
+                responses
+        );
+    }
+
+    @Operation(summary = "Count list of all reports", description = "[Manager] Count list of report")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {@ExampleObject(value = "10")})),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.MANAGER})
+    @GetMapping(value = "/{company-id}/count")
+    public ResponseEntity<BaseResponse<Integer>> countReportsForManager(
+            @PathVariable("company-id") int id) {
+
+        int response = reportService.countReportsForManager(id);
+
+        return ResponseBuilder.generateResponse(
+                "Count list of reports successfully!",
+                HttpStatus.OK,
+                response
+        );
+    }
+
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.MANAGER})
+    @PutMapping(value = "/update")
+    public ResponseEntity<BaseResponse<List<CreateReportResponse>>> updateListReports(
+           UpdateListReportRequest request) {
+
+        List<CreateReportResponse> responses = reportService.updateListReports(request);
+
+        return ResponseBuilder.generateResponse(
+                "Update report successfully!",
                 HttpStatus.OK,
                 responses
         );
