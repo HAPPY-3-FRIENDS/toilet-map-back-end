@@ -22,6 +22,7 @@ import com.happy3friends.toiletmapbackend.response.PaymentResponse;
 import com.happy3friends.toiletmapbackend.service.PaymentService;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
 import com.happy3friends.toiletmapbackend.utils.PaginationUtil;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -55,11 +56,10 @@ public class PaymentServiceImpl implements PaymentService {
 
     private PaymentResponse createPaymentUrlForVNPay(PaymentRequest paymentRequest) throws UnsupportedEncodingException {
 
-        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
         SimpleDateFormat formatter = new SimpleDateFormat(DateTimeConstant.yyyyMMddHHmmss);
-        String vnp_CreateDate = formatter.format(calendar.getTime());
-        calendar.add(Calendar.MINUTE, 15);
-        String vnp_ExpireDate = formatter.format(calendar.getTime());
+        Date dateNow = DateTimeUtil.getDateNow();
+        String vnp_CreateDate = formatter.format(dateNow);
+        String vnp_ExpireDate = formatter.format(DateUtils.addMinutes(dateNow, 15));
         String vnp_TxnRef = vnp_CreateDate;
 
         Map<String, String> vnp_Params = new HashMap<>();
