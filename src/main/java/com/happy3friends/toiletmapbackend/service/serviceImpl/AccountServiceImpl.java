@@ -25,7 +25,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
@@ -48,15 +47,12 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private CompanyRepository companyRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     @Override
     public AccountResponse registerEmployee(AccountRequest accountRequest) {
 
         // Validate password
         if (!accountRequest.getPassword().isEmpty()) {
-            accountRequest.setPassword(passwordEncoder.encode(accountRequest.getPassword()));
+            accountRequest.setPassword(accountRequest.getPassword());
         } else throw new BadRequestException(ToiletMapErrorCodeEnum.EMPTY_PASSWORD, ToiletMapErrorCodeEnum.EMPTY_PASSWORD.getMessage());
 
         // Validate Company

@@ -1,6 +1,8 @@
 package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
 import com.happy3friends.toiletmapbackend.dto.TokenDTO;
+import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
+import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.request.AuthenticateRequest;
 import com.happy3friends.toiletmapbackend.sercurity.CustomUserDetailsService;
 import com.happy3friends.toiletmapbackend.sercurity.TokenProvider;
@@ -26,6 +28,10 @@ public class AuthenticateServiceImpl implements AuthenticateService {
     @Override
     public TokenDTO authenticate(HttpServletRequest request, AuthenticateRequest authenticateRequest) {
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(authenticateRequest.getUsername());
+
+        if (!authenticateRequest.getPassword().equals(userDetails.getPassword())) {
+            throw new NotFoundException(ToiletMapErrorCodeEnum.INVALID_PASSWORD, ToiletMapErrorCodeEnum.INVALID_PASSWORD.getMessage());
+        }
 
         UsernamePasswordAuthenticationToken
                 authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
