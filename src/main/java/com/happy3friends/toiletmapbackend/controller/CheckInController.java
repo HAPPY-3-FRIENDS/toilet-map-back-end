@@ -284,6 +284,8 @@ public class CheckInController {
 
         List<CheckInResponse> response = checkInService.walkInGuestCheckIn(walkInGuestCheckInRequest);
 
+        template.convertAndSend("/topic/check-in-for-guest", response);
+
         return ResponseBuilder.generateResponse(
                 "Walk-in-guest check-in toilet successfully!",
                 HttpStatus.CREATED,
