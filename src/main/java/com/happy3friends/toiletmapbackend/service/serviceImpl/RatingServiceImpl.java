@@ -117,7 +117,6 @@ public class RatingServiceImpl implements RatingService {
 
         // Prepare pagination & sort
         List<Sort.Order> sortOrders = new ArrayList<>();
-        sortOrders.add(new Sort.Order(Sort.Direction.ASC, DefaultSortPropertyConstant.STAR));
         sortOrders.add(new Sort.Order(Sort.Direction.DESC, DefaultSortPropertyConstant.DATETIME));
         Pageable pageable = PaginationUtil.getPageable(paginationRequest, sortOrders);
         List<String> listSort = new ArrayList<>();

@@ -51,6 +51,7 @@ public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer>, 
             "                         ON r.ToiletId = t.Id " +
             "               LEFT JOIN ToiletImage ti " +
             "                         ON t.Id = ti.ToiletId " +
+            "      WHERE t.Status != N'Không hoạt động' " +
             "      GROUP BY t.Id, t.Name, t.Address, t.Ward, t.District, t.Province, t.Latitude, t.Longitude, t.NearBy, " +
             "               t.OpenTime, t.CloseTime, t.isFree, f.Id, f.Name, f.Type, tf.Quantity, " +
             "               CAST(tf.Description AS NVARCHAR(MAX)), CAST(ti.ImageSource AS NVARCHAR(MAX))) AS RS " +
@@ -104,7 +105,8 @@ public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer>, 
     List<CustomToiletDetailsInfoDTO> getCustomToiletInfoDTOByToiletId(@Param("toiletId") int toiletId);
 
     @Query(value = "SELECT Id, Latitude, Longitude " +
-            "FROM Toilet", nativeQuery = true)
+            "FROM Toilet " +
+            "WHERE Status != N'Không hoạt động'", nativeQuery = true)
     List<CustomToiletDTO> getAllToiletsIncludeIdLatitudeLongitude();
 
     @Query(value = "SELECT t.Id, " +
