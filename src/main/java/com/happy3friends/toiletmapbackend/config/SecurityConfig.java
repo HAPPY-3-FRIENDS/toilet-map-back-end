@@ -117,7 +117,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/swagger-ui.html",
                         "/swagger-ui/index.html",
                         "/v3/api-docs/**",
-                        "/webjars/**").permitAll() // Cho phép tất cả mọi người truy cập vào địa chỉ này
+                        "/webjars/**",
+                        "/ws-message/**").permitAll() // Cho phép tất cả mọi người truy cập vào địa chỉ này
                 .antMatchers("/api/auth/**",
                         "/api/accounts/user",
                         "/api/payments/VNPay-response",
