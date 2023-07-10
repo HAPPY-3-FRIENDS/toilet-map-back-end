@@ -29,9 +29,9 @@ public class AuthenticateServiceImpl implements AuthenticateService {
     public TokenDTO authenticate(HttpServletRequest request, AuthenticateRequest authenticateRequest) {
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(authenticateRequest.getUsername());
 
-        if (!authenticateRequest.getPassword().equals(userDetails.getPassword())) {
-            throw new NotFoundException(ToiletMapErrorCodeEnum.INVALID_PASSWORD, ToiletMapErrorCodeEnum.INVALID_PASSWORD.getMessage());
-        }
+//        if (!authenticateRequest.getPassword().equals(userDetails.getPassword())) {
+//            throw new NotFoundException(ToiletMapErrorCodeEnum.INVALID_PASSWORD, ToiletMapErrorCodeEnum.INVALID_PASSWORD.getMessage());
+//        }
 
         UsernamePasswordAuthenticationToken
                 authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
