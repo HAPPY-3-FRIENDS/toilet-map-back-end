@@ -24,6 +24,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
@@ -38,6 +39,9 @@ public class PaymentController {
 
     @Autowired
     private PaymentService paymentService;
+
+    @Autowired
+    SimpMessagingTemplate template;
 
     @Operation(summary = "Create payment", description = "[Staff, Toilet, User] Create payment with account ID")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Payment Request", required = true, content = @Content(
@@ -77,6 +81,8 @@ public class PaymentController {
     public ResponseEntity<BaseResponse<PaymentResponse>> createPaymentByAccountId(@RequestBody @Valid PaymentRequest paymentRequest) throws UnsupportedEncodingException {
 
         PaymentResponse response = paymentService.createPaymentByAccountId(paymentRequest);
+
+        template.convertAndSend("/topic/payment", response);
 
         return ResponseBuilder.generateResponse(
                 "Create payment with account-id successfully!",
