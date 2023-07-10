@@ -23,11 +23,11 @@ public interface ReportRepository extends JpaRepository<ReportEntity, Integer> {
             "ORDER BY count DESC", nativeQuery = true)
     List<CustomReportDTO> getReports(Pageable pageable);
 
-    @Query(value = "SELECT r.Id, t.Name, r.Message, r.Status\n" +
+    @Query(value = "SELECT r.Id, t.Name, r.Message, r.Status, r.CreateDate\n" +
             "FROM Report r\n" +
             "LEFT JOIN Toilet t on t.Id = r.ToiletId\n" +
-            "WHERE t.CompanyId = :companyId", nativeQuery = true)
-    List<CustomReportForManagerDTO> getReportsForManager(int companyId, Pageable pageable);
+            "WHERE r.ToiletId = :toiletId", nativeQuery = true)
+    List<CustomReportForManagerDTO> getReportsForManager(int toiletId, Pageable pageable);
 
     @Query(value = "SELECT COUNT(*)\n" +
             "FROM Report r\n" +

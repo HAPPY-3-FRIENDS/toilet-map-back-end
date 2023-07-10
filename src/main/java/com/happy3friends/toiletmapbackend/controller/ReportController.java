@@ -120,12 +120,12 @@ public class ReportController {
         );
     }
 
-    @Operation(summary = "Get reports", description = "[Manager] get list reports by company id")
+    @Operation(summary = "Get reports", description = "[Manager] get list reports by toilet id")
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.MANAGER})
-    @GetMapping(value = "/{company-id}")
+    @GetMapping(value = "/{toilet-id}")
     public ResponseEntity<BaseResponse<List<ReportResponseForManager>>> getReportsForManager(
-            @PathVariable("company-id") int id,
+            @PathVariable("toilet-id") int id,
             @ModelAttribute BasePaginationRequest paginationRequest) {
 
         List<ReportResponseForManager> responses = reportService.getReportsForManager(id ,paginationRequest);

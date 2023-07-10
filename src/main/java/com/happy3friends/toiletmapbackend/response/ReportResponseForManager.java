@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,8 +16,8 @@ import java.util.Date;
 public class ReportResponseForManager {
     private int id;
 
-//    @JsonFormat(pattern = DateTimeConstant.dd_MM_yyyy__HH_mm_ss)
-//    private Date createDate;
+    @JsonFormat(pattern = DateTimeConstant.dd_MM_yyyy__HH_mm_ss)
+    private Timestamp createDate;
     private String name;
     private String message;
     private String status;
