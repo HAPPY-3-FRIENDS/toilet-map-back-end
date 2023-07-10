@@ -3,6 +3,7 @@ package com.happy3friends.toiletmapbackend.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 @AllArgsConstructor
@@ -25,6 +26,9 @@ public class ReportEntity {
     @Basic
     @Column(name = "Status", nullable = true, length = 20)
     private String status;
+    @Basic
+    @Column(name = "CreateDate", nullable = false)
+    private Timestamp createDate;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ToiletId", referencedColumnName = "Id", insertable = false, updatable = false)
     private ToiletEntity toiletByToiletId;
