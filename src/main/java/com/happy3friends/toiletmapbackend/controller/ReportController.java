@@ -120,7 +120,7 @@ public class ReportController {
         );
     }
 
-    @Operation(summary = "Get reports", description = "[Manager] get list reports by toilet id")
+    @Operation(summary = "Get reports by toilet id", description = "[Manager] get list reports by toilet id")
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.MANAGER})
     @GetMapping(value = "/{toilet-id}")
@@ -128,7 +128,7 @@ public class ReportController {
             @PathVariable("toilet-id") int id,
             @ModelAttribute BasePaginationRequest paginationRequest) {
 
-        List<ReportResponseForManager> responses = reportService.getReportsForManager(id ,paginationRequest);
+        List<ReportResponseForManager> responses = reportService.getReportsByToiletIdForManager(id ,paginationRequest);
 
         return ResponseBuilder.generateResponse(
                 "Get list of all reports successfully!",
@@ -137,7 +137,48 @@ public class ReportController {
         );
     }
 
-    @Operation(summary = "Count list of all reports", description = "[Manager] Count list of report")
+    @Operation(summary = "Count list of all reports by toilet id", description = "[Manager] Count list of report by toilet id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {@ExampleObject(value = "10")})),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.MANAGER})
+    @GetMapping(value = "/{toilet-id}/count")
+    public ResponseEntity<BaseResponse<Integer>> countReportsByToiletIdForManager(
+            @PathVariable("toilet-id") int id) {
+
+        int response = reportService.countReportsByToiletIdForManager(id);
+
+        return ResponseBuilder.generateResponse(
+                "Count list of reports by toilet id successfully!",
+                HttpStatus.OK,
+                response
+        );
+    }
+
+    @Operation(summary = "Get reports by company id", description = "[Manager] get list reports by company id")
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.MANAGER})
+    @GetMapping(value = "/{company-id}")
+    public ResponseEntity<BaseResponse<List<ReportResponseForManager>>> getReportsByCompanyIdForManager(
+            @PathVariable("company-id") int id,
+            @ModelAttribute BasePaginationRequest paginationRequest) {
+
+        List<ReportResponseForManager> responses = reportService.getReportsByCompanyIdForManager(id ,paginationRequest);
+
+        return ResponseBuilder.generateResponse(
+                "Get list of all reports by company id successfully!",
+                HttpStatus.OK,
+                responses
+        );
+    }
+
+    @Operation(summary = "Count list of all reports by company id", description = "[Manager] Count list of report by company id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {@ExampleObject(value = "10")})),
             @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
@@ -149,13 +190,13 @@ public class ReportController {
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.MANAGER})
     @GetMapping(value = "/{company-id}/count")
-    public ResponseEntity<BaseResponse<Integer>> countReportsForManager(
+    public ResponseEntity<BaseResponse<Integer>> countReportsByCompanyIdForManager(
             @PathVariable("company-id") int id) {
 
-        int response = reportService.countReportsForManager(id);
+        int response = reportService.countReportsByCompanyIdForManager(id);
 
         return ResponseBuilder.generateResponse(
-                "Count list of reports successfully!",
+                "Count list of reports by company id successfully!",
                 HttpStatus.OK,
                 response
         );

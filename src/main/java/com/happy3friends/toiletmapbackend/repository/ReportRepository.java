@@ -27,11 +27,23 @@ public interface ReportRepository extends JpaRepository<ReportEntity, Integer> {
             "FROM Report r\n" +
             "LEFT JOIN Toilet t on t.Id = r.ToiletId\n" +
             "WHERE r.ToiletId = :toiletId", nativeQuery = true)
-    List<CustomReportForManagerDTO> getReportsForManager(int toiletId, Pageable pageable);
+    List<CustomReportForManagerDTO> getReportsByToiletIdForManager(int toiletId, Pageable pageable);
 
     @Query(value = "SELECT COUNT(*)\n" +
             "FROM Report r\n" +
             "LEFT JOIN Toilet t on t.Id = r.ToiletId\n" +
-            "WHERE t.CompanyId = :id", nativeQuery = true)
-    int countReportsForManager(int id);
+            "WHERE r.ToiletId = :toiletId", nativeQuery = true)
+    int countReportsByToiletIdForManager(int toiletId);
+
+    @Query(value = "SELECT r.Id, t.Name, r.Message, r.Status, r.CreateDate\n" +
+            "FROM Report r\n" +
+            "LEFT JOIN Toilet t on t.Id = r.ToiletId\n" +
+            "WHERE t.CompanyId = :companyId", nativeQuery = true)
+    List<CustomReportForManagerDTO> getReportsByCompanyIdForManager(int companyId, Pageable pageable);
+
+    @Query(value = "SELECT COUNT(*)\n" +
+            "FROM Report r\n" +
+            "LEFT JOIN Toilet t on t.Id = r.ToiletId\n" +
+            "WHERE t.CompanyId = :companyId", nativeQuery = true)
+    int countReportsByCompanyIdForManager(int companyId);
 }

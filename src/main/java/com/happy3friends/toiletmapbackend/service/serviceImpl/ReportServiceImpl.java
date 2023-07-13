@@ -5,11 +5,13 @@ import com.happy3friends.toiletmapbackend.constant.DefaultSortPropertyConstant;
 import com.happy3friends.toiletmapbackend.constant.ReportStatusConstant;
 import com.happy3friends.toiletmapbackend.dto.CustomReportDTO;
 import com.happy3friends.toiletmapbackend.dto.CustomReportForManagerDTO;
+import com.happy3friends.toiletmapbackend.entity.CompanyEntity;
 import com.happy3friends.toiletmapbackend.entity.ReportEntity;
 import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
 import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.ReportMapper;
+import com.happy3friends.toiletmapbackend.repository.CompanyRepository;
 import com.happy3friends.toiletmapbackend.repository.ReportRepository;
 import com.happy3friends.toiletmapbackend.repository.ToiletRepository;
 import com.happy3friends.toiletmapbackend.request.CreateReportRequest;
@@ -41,6 +43,9 @@ public class ReportServiceImpl implements ReportService {
 
     @Autowired
     private ToiletRepository toiletRepository;
+
+    @Autowired
+    private CompanyRepository companyRepository;
 
     @Override
     public List<ReportResponse> getReports(BasePaginationRequest paginationRequest) {
@@ -76,7 +81,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public List<ReportResponseForManager> getReportsForManager(int toiletId, BasePaginationRequest paginationRequest) {
+    public List<ReportResponseForManager> getReportsByToiletIdForManager(int toiletId, BasePaginationRequest paginationRequest) {
         Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
         if (!toiletEntity.isPresent())
             throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_TOILET, ToiletMapErrorCodeEnum.NOT_FOUND_TOILET.getMessage());
@@ -84,15 +89,15 @@ public class ReportServiceImpl implements ReportService {
         Sort.Order defaultSortOrder = new Sort.Order(Sort.Direction.ASC, DefaultSortPropertyConstant.TOILET_ID);
         Pageable pageable = PaginationUtil.getPageable(paginationRequest, defaultSortOrder);
 
-        List<CustomReportForManagerDTO> listReport = reportRepository.getReportsForManager(toiletId, pageable);
+        List<CustomReportForManagerDTO> listReport = reportRepository.getReportsByToiletIdForManager(toiletId, pageable);
         return listReport.stream()
                 .map(r -> reportMapper.convertCustomReportForManagerDTOToReportResponseForManager(r))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public int countReportsForManager(int id) {
-        return reportRepository.countReportsForManager(id);
+    public int countReportsByCompanyIdForManager(int id) {
+        return reportRepository.countReportsByCompanyIdForManager(id);
     }
 
     @Override
@@ -110,5 +115,25 @@ public class ReportServiceImpl implements ReportService {
             result.add(reportMapper.convertReportEntitytoCreateReportResponse(reportRepository.save(reportEntity)));
         }
         return result;
+    }
+
+    @Override
+    public int countReportsByToiletIdForManager(int id) {
+        return reportRepository.countReportsByToiletIdForManager(id);
+    }
+
+    @Override
+    public List<ReportResponseForManager> getReportsByCompanyIdForManager(int companyId, BasePaginationRequest paginationRequest) {
+        Optional<CompanyEntity> companyEntity = companyRepository.findById(companyId);
+        if (!companyEntity.isPresent())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY, ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY.getMessage());
+
+        Sort.Order defaultSortOrder = new Sort.Order(Sort.Direction.ASC, DefaultSortPropertyConstant.TOILET_ID);
+        Pageable pageable = PaginationUtil.getPageable(paginationRequest, defaultSortOrder);
+
+        List<CustomReportForManagerDTO> listReport = reportRepository.getReportsByCompanyIdForManager(companyId, pageable);
+        return listReport.stream()
+                .map(r -> reportMapper.convertCustomReportForManagerDTOToReportResponseForManager(r))
+                .collect(Collectors.toList());
     }
 }
