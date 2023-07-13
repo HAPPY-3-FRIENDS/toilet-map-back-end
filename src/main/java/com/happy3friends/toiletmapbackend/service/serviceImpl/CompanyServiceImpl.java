@@ -63,6 +63,10 @@ public class CompanyServiceImpl implements CompanyService {
     private CompanyHasStatusResponse getCompanyHasStatusResponseFromListCompanyHasStatusDTO(
             List<CompanyHasStatusDTO> customRatingDetailsDTOS) {
 
+        int numberOfReport = 0;
+        if (!Objects.isNull(customRatingDetailsDTOS.get(0).getNumberOfReport()))
+            numberOfReport = customRatingDetailsDTOS.get(0).getNumberOfReport();
+
         return new CompanyHasStatusResponse(
                 customRatingDetailsDTOS.get(0).getId(),
                 customRatingDetailsDTOS.get(0).getName(),
@@ -73,7 +77,7 @@ public class CompanyServiceImpl implements CompanyService {
                 customRatingDetailsDTOS.get(0).getProvince(),
                 customRatingDetailsDTOS.get(0).getPhone(),
                 customRatingDetailsDTOS.get(0).getStatus(),
-                customRatingDetailsDTOS.get(0).getNumberOfReport()
+                numberOfReport
         );
     }
 
