@@ -164,7 +164,7 @@ public class ReportController {
     @Operation(summary = "Get reports by company id", description = "[Manager] get list reports by company id")
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.MANAGER})
-    @GetMapping(value = "/{company-id}")
+    @GetMapping(value = "/company/{company-id}")
     public ResponseEntity<BaseResponse<List<ReportResponseForManager>>> getReportsByCompanyIdForManager(
             @PathVariable("company-id") int id,
             @ModelAttribute BasePaginationRequest paginationRequest) {
@@ -189,7 +189,7 @@ public class ReportController {
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.MANAGER})
-    @GetMapping(value = "/{company-id}/count")
+    @GetMapping(value = "/company/{company-id}/count")
     public ResponseEntity<BaseResponse<Integer>> countReportsByCompanyIdForManager(
             @PathVariable("company-id") int id) {
 
