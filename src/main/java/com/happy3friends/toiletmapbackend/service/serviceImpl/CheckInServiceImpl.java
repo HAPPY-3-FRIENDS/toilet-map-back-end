@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -206,6 +207,7 @@ public class CheckInServiceImpl implements CheckInService {
             int serviceTurnPrice = toiletServiceEntity.get().getServiceByServiceId().getTurnPrice();
 
             // Save Check-in Entity
+            Timestamp checkout = DateTimeUtil.getTimestampNow();
             CheckInEntity checkInEntity = new CheckInEntity();
             checkInEntity.setAccountId(checkInRequest.getAccountId());
             checkInEntity.setToiletServiceId(toiletServiceEntity.get().getId());
@@ -235,6 +237,13 @@ public class CheckInServiceImpl implements CheckInService {
                         checkInEntity.setTurn(0);
                     }
                     break;
+            }
+            if (serviceTurn == 3) {
+                checkout.setTime(datetime.getTime() + TimeUnit.MINUTES.toMillis(15));
+                checkInEntity.setCheckoutTime(checkout);
+            } else if (serviceTurn == 2) {
+                checkout.setTime(datetime.getTime() + TimeUnit.MINUTES.toMillis(10));
+                checkInEntity.setCheckoutTime(checkout);
             }
             CheckInEntity entity = checkInRepository.save(checkInEntity);
 
