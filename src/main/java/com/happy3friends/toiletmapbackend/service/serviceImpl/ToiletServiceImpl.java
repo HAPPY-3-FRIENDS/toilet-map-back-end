@@ -42,7 +42,10 @@ import reactor.core.publisher.Flux;
 import javax.transaction.Transactional;
 import java.lang.reflect.Field;
 import java.sql.Time;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -86,6 +89,9 @@ public class ToiletServiceImpl implements ToiletService {
 
     @Autowired
     private SuggestionMapper suggestionMapper;
+
+    @Autowired
+    private CheckInRepository checkInRepository;
 
     public LinkedHashMap<Integer, List<CustomToiletDetailsInfoDTO>> getMapIdListCustomToiletDetailsInfoDTO(
             List<CustomToiletDetailsInfoDTO> customToiletDetailsInfoDTOS) {
@@ -456,8 +462,10 @@ public class ToiletServiceImpl implements ToiletService {
             throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_TOILET_NEARBY, ToiletMapErrorCodeEnum.NOT_FOUND_TOILET_NEARBY.getMessage());
         }
 
+        List<ToiletDetailsInfoResponse> listAvailableToilet = getListAvailableToilet(list10ToiletNearByLatLng);
+
         List<String> listDestinations = new ArrayList<>();
-        for (ToiletDetailsInfoResponse toilet : list10ToiletNearByLatLng) {
+        for (ToiletDetailsInfoResponse toilet : listAvailableToilet) {
             listDestinations.add(toilet.getLatitude() + "," + toilet.getLongitude());
         }
         String destinations = String.join("|", listDestinations);
@@ -477,7 +485,7 @@ public class ToiletServiceImpl implements ToiletService {
 
         int index = listDistanceMatrixResponse.get(0).getRows().get(0).getElements().indexOf(element);
 
-        return list10ToiletNearByLatLng.get(index);
+        return listAvailableToilet.get(index);
     }
 
     @Override
@@ -570,5 +578,55 @@ public class ToiletServiceImpl implements ToiletService {
         return entities.stream()
                 .map(e -> toiletMapper.convertToiletFacilityEntityToToiletFacilityResponse(e))
                 .collect(Collectors.toList());
+    }
+
+    private List<ToiletDetailsInfoResponse> getListAvailableToilet(List<ToiletDetailsInfoResponse> listToilet){
+        List<ToiletDetailsInfoResponse> result = listToilet.stream()
+                .filter(toilet -> isAvailable(toilet.getId(), getNumberOfBathroom(toilet), getNumberOfRestroom(toilet)))
+                .collect(Collectors.toList());
+        //TODO: If all 10 toilets not available. Get toilet nearest
+//        if (result.isEmpty()) {
+//            result
+//        }
+        return result;
+    }
+
+    private int getNumberOfBathroom(ToiletDetailsInfoResponse toilet) {
+        AtomicInteger result = new AtomicInteger();
+        toilet.getToiletFacilities().forEach((facility) -> {
+            if (facility.getFacilityName().equals("Phòng tắm")) {
+                result.set(facility.getQuantity());
+            }
+        });
+        return result.get();
+    }
+
+    private int getNumberOfRestroom(ToiletDetailsInfoResponse toilet) {
+        AtomicInteger result = new AtomicInteger();
+        toilet.getToiletFacilities().forEach((facility) -> {
+            if (facility.getFacilityName().equals("Phòng vệ sinh") || facility.getFacilityName().equals("Phòng vệ sinh dành cho người khuyết tật")) {
+                result.addAndGet(facility.getQuantity());
+            }
+        });
+        return result.get();
+    }
+
+    private boolean isAvailable(int toiletId, int numberOfBathroom, int numberOfRestroom) {
+        Date date = DateTimeUtil.getDateNow();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String startDate = dateFormat.format(date) + " 00:00:00";
+        String endDate = dateFormat.format(date) + " 23:59:59";
+
+        String now = DateTimeUtil.getTimestampNow().toString();
+        int numNotAvailableBathroom = checkInRepository
+                .getNumberNotAvailableRoom(toiletId, 3, startDate, endDate, now);
+        int numNotAvailableRestroom = checkInRepository
+                .getNumberNotAvailableRoom(toiletId, 2, startDate, endDate, now);
+
+        if (numNotAvailableBathroom + numNotAvailableRestroom >= numberOfBathroom + numberOfRestroom) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }

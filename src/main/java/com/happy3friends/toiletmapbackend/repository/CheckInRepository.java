@@ -97,4 +97,16 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
             "WHERE c.status = N'Chưa đánh giá'", nativeQuery = true)
     int countCheckInNotRatingYetHistoriesByAccountId(@Param("accountId") int accountId,
                                          @Param("paymentMethod") String paymentMethod);
+
+    @Query(value = "SELECT COUNT(*)\n" +
+            "FROM CheckIn\n" +
+            "WHERE AccountId = :toiletId\n" +
+            "    AND ToiletServiceId = :toiletServiceId\n" +
+            "    AND (DateTime >= :startDate AND DateTime < :endDate)\n" +
+            "    AND (:now BETWEEN DateTime AND CheckoutTime)", nativeQuery = true)
+    int getNumberNotAvailableRoom(@Param("toiletId") int toiletId,
+                                      @Param("toiletServiceId") int toiletServiceId,
+                                      @Param("startDate") String startDate,
+                                      @Param("endDate") String endDate,
+                                      @Param("now") String now);
 }
