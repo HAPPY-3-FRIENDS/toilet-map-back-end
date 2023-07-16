@@ -46,4 +46,7 @@ public class CheckInEntity {
     private Integer turnPrice;
     @OneToOne(mappedBy = "checkInById")
     private RatingEntity ratingById;
+    @Basic
+    @Column(name = "CheckoutTime", nullable = false)
+    private Timestamp checkoutTime;
 }
