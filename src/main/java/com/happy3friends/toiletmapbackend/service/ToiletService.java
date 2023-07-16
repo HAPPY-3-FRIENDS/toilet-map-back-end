@@ -4,6 +4,7 @@ import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
 import com.happy3friends.toiletmapbackend.request.ToiletCreateRequest;
 import com.happy3friends.toiletmapbackend.response.ToiletDetailsInfoResponse;
 import com.happy3friends.toiletmapbackend.response.ToiletFacilityResponse;
+import com.happy3friends.toiletmapbackend.response.ToiletResponse;
 import com.happy3friends.toiletmapbackend.response.UpdateToiletInfoResponse;
 
 import java.util.List;
@@ -26,4 +27,6 @@ public interface ToiletService {
     List<Integer> getAllToiletId();
 
     List<ToiletFacilityResponse> getListToiletFacilityByToiletId(int toiletId);
+
+    List<ToiletResponse> getToiletsByDistrict(String district);
 }

@@ -2,6 +2,7 @@ package com.happy3friends.toiletmapbackend.repository;
 
 import com.happy3friends.toiletmapbackend.dto.CustomToiletDTO;
 import com.happy3friends.toiletmapbackend.dto.CustomToiletDetailsInfoDTO;
+import com.happy3friends.toiletmapbackend.dto.CustomToiletResponseDTO;
 import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -133,4 +134,22 @@ public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer>, 
             "SELECT Id " +
                     "FROM Toilet", nativeQuery = true)
     List<Integer> getAllToiletId();
+
+    @Query(value = "SELECT t.Id, t.Name, t1.NumberOfRestroom, t2.NumberOfBathroom\n" +
+            "FROM Toilet t\n" +
+            "INNER JOIN\n" +
+            "    (SELECT t.Id ,SUM(tf.Quantity) AS NumberOfRestroom\n" +
+            "    FROM Toilet t\n" +
+            "    INNER JOIN ToiletFacility tf on t.Id = tf.ToiletId\n" +
+            "    WHERE tf.FacilityId = 1 OR tf.FacilityId = 3\n" +
+            "    GROUP BY t.Id) t1 ON t.Id = t1.Id\n" +
+            "INNER JOIN\n" +
+            "    (SELECT t.Id ,SUM(tf.Quantity) AS NumberOfBathroom\n" +
+            "    FROM Toilet t\n" +
+            "    INNER JOIN ToiletFacility tf on t.Id = tf.ToiletId\n" +
+            "    WHERE tf.FacilityId = 2\n" +
+            "    GROUP BY t.Id) t2 ON t.Id = t2.Id\n" +
+            "WHERE t.District = :district\n" +
+            "    AND t.Status = N'Đang hoạt động';", nativeQuery = true)
+    List<CustomToiletResponseDTO> getToiletsByDistrict(@Param("district") String district);
 }

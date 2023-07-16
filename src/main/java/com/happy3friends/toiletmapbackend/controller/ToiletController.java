@@ -7,6 +7,7 @@ import com.happy3friends.toiletmapbackend.constant.RoleConstant;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.request.ToiletCreateRequest;
 import com.happy3friends.toiletmapbackend.response.ToiletDetailsInfoResponse;
+import com.happy3friends.toiletmapbackend.response.ToiletResponse;
 import com.happy3friends.toiletmapbackend.response.UpdateToiletInfoResponse;
 import com.happy3friends.toiletmapbackend.service.ToiletService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,6 +23,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -649,6 +651,21 @@ public class ToiletController {
 
         return ResponseBuilder.generateResponse(
                 "Update toilet info successfully!",
+                HttpStatus.OK,
+                response
+        );
+    }
+
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.ADMIN})
+    @GetMapping("/district")
+    public ResponseEntity<BaseResponse<List<ToiletResponse>>> getToiletsByDistrict(
+            @Param("district") String district) {
+
+        List<ToiletResponse> response = toiletService.getToiletsByDistrict(district);
+
+        return ResponseBuilder.generateResponse(
+                "Get toilets by district successfully!",
                 HttpStatus.OK,
                 response
         );

@@ -580,6 +580,13 @@ public class ToiletServiceImpl implements ToiletService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<ToiletResponse> getToiletsByDistrict(String district) {
+        return toiletRepository.getToiletsByDistrict(district).stream()
+                .map(t -> toiletMapper.convertCustomToiletResponseDTOToToiletResponse(t))
+                .collect(Collectors.toList());
+    }
+
     private List<ToiletDetailsInfoResponse> getListAvailableToilet(List<ToiletDetailsInfoResponse> listToilet){
         List<ToiletDetailsInfoResponse> result = listToilet.stream()
                 .filter(toilet -> isAvailable(toilet.getId(), getNumberOfBathroom(toilet), getNumberOfRestroom(toilet)))
@@ -623,7 +630,7 @@ public class ToiletServiceImpl implements ToiletService {
         int numNotAvailableRestroom = checkInRepository
                 .getNumberNotAvailableRoom(toiletId, 2, startDate, endDate, now);
 
-        if (numNotAvailableBathroom + numNotAvailableRestroom >= numberOfBathroom + numberOfRestroom) {
+        if (numNotAvailableBathroom >= numberOfBathroom && numNotAvailableRestroom >= numberOfRestroom) {
             return false;
         } else {
             return true;
