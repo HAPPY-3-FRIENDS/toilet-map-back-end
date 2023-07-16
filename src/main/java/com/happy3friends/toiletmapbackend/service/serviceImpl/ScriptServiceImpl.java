@@ -2,6 +2,7 @@ package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
 import com.happy3friends.toiletmapbackend.entity.UserInfoEntity;
 import com.happy3friends.toiletmapbackend.repository.UserInfoRepository;
+import com.happy3friends.toiletmapbackend.request.CheckInFullAToiletRequest;
 import com.happy3friends.toiletmapbackend.request.CheckInRequest;
 import com.happy3friends.toiletmapbackend.response.CheckInResponse;
 import com.happy3friends.toiletmapbackend.service.CheckInService;
@@ -92,6 +93,31 @@ public class ScriptServiceImpl implements ScriptService {
         }
         for (int i = 99; i < 100; i++) {
             String message = process(233, list100Users.get(i).getAccountId(), "Đi tắm");
+            result.add(message);
+        }
+
+        return result;
+    }
+
+    @Override
+    public List<String> checkInFullAToilet(CheckInFullAToiletRequest request) {
+        List<UserInfoEntity> listAllUsers = userInfoRepository.findAll();
+
+        List<UserInfoEntity> listUsers = new ArrayList<>();
+
+        for (int i = 0; i < request.getNumberOfBathroom() + request.getNumberOfRestroom(); i++) {
+            int index = (int)(Math.random() * listAllUsers.size());
+            listUsers.add(listAllUsers.get(index));
+            listAllUsers.remove(index);
+        }
+
+        List<String> result = new ArrayList<>();
+        for (int i = 0; i < listUsers.size() - request.getNumberOfRestroom(); i++) {
+            String message = process(request.getToiletId(), listUsers.get(i).getAccountId(), "Đi tắm");
+            result.add(message);
+        }
+        for (int i = listUsers.size() - request.getNumberOfRestroom(); i < listUsers.size(); i++) {
+            String message = process(request.getToiletId(), listUsers.get(i).getAccountId(), "Đi vệ sinh (đại tiện)");
             result.add(message);
         }
 
