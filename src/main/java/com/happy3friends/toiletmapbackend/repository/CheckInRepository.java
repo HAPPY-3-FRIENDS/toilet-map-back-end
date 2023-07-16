@@ -99,13 +99,14 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
                                          @Param("paymentMethod") String paymentMethod);
 
     @Query(value = "SELECT COUNT(*)\n" +
-            "FROM CheckIn\n" +
-            "WHERE AccountId = :toiletId\n" +
-            "    AND ToiletServiceId = :toiletServiceId\n" +
+            "FROM CheckIn c\n" +
+            "INNER JOIN ToiletService ts on c.ToiletServiceId = ts.Id\n" +
+            "WHERE ts.ToiletId = :toiletId\n" +
+            "    AND c.Turn = :turn\n" +
             "    AND (DateTime >= :startDate AND DateTime < :endDate)\n" +
             "    AND (:now BETWEEN DateTime AND CheckoutTime)", nativeQuery = true)
     int getNumberNotAvailableRoom(@Param("toiletId") int toiletId,
-                                      @Param("toiletServiceId") int toiletServiceId,
+                                      @Param("turn") int turn,
                                       @Param("startDate") String startDate,
                                       @Param("endDate") String endDate,
                                       @Param("now") String now);
