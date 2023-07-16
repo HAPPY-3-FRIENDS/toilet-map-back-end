@@ -318,13 +318,15 @@ public class CheckInServiceImpl implements CheckInService {
         List<CheckInEntity> checkInEntities = list.stream()
                 .map(obj -> {
                     CheckInEntity checkInEntity = new CheckInEntity();
+                    Timestamp now = DateTimeUtil.getTimestampNow();
+                    Timestamp checkout = DateTimeUtil.getTimestampNow();
                     checkInEntity.setAccountId(accountId);
                     checkInEntity.setToiletServiceId(
                             mapServiceNameAndToiletServiceEntity.get(
                                     obj.getServiceName()
                             ).getId()
                     );
-                    checkInEntity.setDateTime(DateTimeUtil.getTimestampNow());
+                    checkInEntity.setDateTime(now);
                     checkInEntity.setPaymentMethod(PaymentTypeEnum.CASH.getPaymentValue());
                     checkInEntity.setBalance(
                             mapServiceNameAndToiletServiceEntity.get(
@@ -337,6 +339,13 @@ public class CheckInServiceImpl implements CheckInService {
                                     obj.getServiceName()
                             )
                     );
+                    if (checkInEntity.getBalance() == 15000) {
+                        checkout.setTime(now.getTime() + TimeUnit.MINUTES.toMillis(15));
+                        checkInEntity.setCheckoutTime(checkout);
+                    } else if (checkInEntity.getBalance() == 10000) {
+                        checkout.setTime(now.getTime() + TimeUnit.MINUTES.toMillis(10));
+                        checkInEntity.setCheckoutTime(checkout);
+                    }
                     return checkInEntity;
                 })
                 .collect(Collectors.toList());
