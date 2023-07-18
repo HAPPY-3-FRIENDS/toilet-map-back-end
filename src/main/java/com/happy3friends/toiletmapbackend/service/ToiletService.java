@@ -2,10 +2,7 @@ package com.happy3friends.toiletmapbackend.service;
 
 import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
 import com.happy3friends.toiletmapbackend.request.ToiletCreateRequest;
-import com.happy3friends.toiletmapbackend.response.ToiletDetailsInfoResponse;
-import com.happy3friends.toiletmapbackend.response.ToiletFacilityResponse;
-import com.happy3friends.toiletmapbackend.response.ToiletResponse;
-import com.happy3friends.toiletmapbackend.response.UpdateToiletInfoResponse;
+import com.happy3friends.toiletmapbackend.response.*;
 
 import java.util.List;
 import java.util.Map;
@@ -31,4 +28,6 @@ public interface ToiletService {
     List<ToiletResponse> getToiletsByDistrict(String district);
 
     String checkToilet(int toiletId);
+
+    ToiletCapacityResponse getCapacityOfToilet(int toiletId);
 }

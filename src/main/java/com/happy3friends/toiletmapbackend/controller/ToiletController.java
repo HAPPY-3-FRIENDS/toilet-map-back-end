@@ -6,6 +6,7 @@ import com.happy3friends.toiletmapbackend.config.OpenApiConfig;
 import com.happy3friends.toiletmapbackend.constant.RoleConstant;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.request.ToiletCreateRequest;
+import com.happy3friends.toiletmapbackend.response.ToiletCapacityResponse;
 import com.happy3friends.toiletmapbackend.response.ToiletDetailsInfoResponse;
 import com.happy3friends.toiletmapbackend.response.ToiletResponse;
 import com.happy3friends.toiletmapbackend.response.UpdateToiletInfoResponse;
@@ -680,6 +681,20 @@ public class ToiletController {
 
         return ResponseBuilder.generateResponse(
                 "Check toilet successfully!",
+                HttpStatus.OK,
+                response
+        );
+    }
+
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.MANAGER, RoleConstant.TOILET, RoleConstant.USER})
+    @GetMapping(value = "/capacity/{toilet-id}")
+    public ResponseEntity<BaseResponse<ToiletCapacityResponse>> getCapacityOfToilet(@PathVariable("toilet-id") int toiletId) {
+
+        ToiletCapacityResponse response = toiletService.getCapacityOfToilet(toiletId);
+
+        return ResponseBuilder.generateResponse(
+                "Get capacity of toilet successfully!",
                 HttpStatus.OK,
                 response
         );

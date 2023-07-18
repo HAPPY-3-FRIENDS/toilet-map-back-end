@@ -401,6 +401,7 @@ public class ToiletServiceImpl implements ToiletService {
                     toiletFacilityEntity.setToiletId(toiletId);
                     toiletFacilityEntity.setFacilityId(dto.getFacilityId());
                     toiletFacilityEntity.setQuantity(dto.getQuantity());
+                    toiletFacilityEntity.setMaxQuantity(dto.getQuantity());
 
                     return toiletFacilityEntity;
                 }).collect(Collectors.toList());
@@ -603,6 +604,34 @@ public class ToiletServiceImpl implements ToiletService {
         if (isAvailable(toiletId, numberOfBathroom.get(), numberOfRestroom.get())) {
             result = "Available";
         }
+        return result;
+    }
+
+    @Override
+    public ToiletCapacityResponse getCapacityOfToilet(int toiletId) {
+        Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
+        if (!toiletEntity.isPresent())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_TOILET, ToiletMapErrorCodeEnum.NOT_FOUND_TOILET.getMessage());
+
+        ToiletEntity toilet = toiletEntity.get();
+
+        ToiletCapacityResponse result = new ToiletCapacityResponse();
+        result.setId(toiletId);
+        result.setName(toilet.getName());
+
+        toilet.getToiletFacilitiesById().forEach(facility -> {
+            if (facility.getFacilityId() == 1) {
+                result.setNumberOfRestroom(facility.getQuantity());
+                result.setMaxNumberOfRestroom(facility.getMaxQuantity());
+            } else if (facility.getFacilityId() == 2) {
+                result.setNumberOfBathroom(facility.getQuantity());
+                result.setMaxNumberOfBathroom(facility.getMaxQuantity());
+            } else if (facility.getFacilityId() == 3) {
+                result.setNumberOfDisabledRestroom(facility.getQuantity());
+                result.setMaxNumberOfDisabledRestroom(facility.getMaxQuantity());
+            }
+        });
+
         return result;
     }
 
