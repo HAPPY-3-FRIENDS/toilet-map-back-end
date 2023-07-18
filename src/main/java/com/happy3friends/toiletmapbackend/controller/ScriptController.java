@@ -9,6 +9,7 @@ import com.happy3friends.toiletmapbackend.service.ScriptService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,6 +51,20 @@ public class ScriptController {
 
         return ResponseBuilder.generateResponse(
                 "Check-in full a toilet successfully!",
+                HttpStatus.OK,
+                response
+        );
+    }
+
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.ADMIN})
+    @GetMapping("/checkout")
+    public ResponseEntity<BaseResponse<Integer>> checkout(@Param("toilet-id") int toiletId) {
+
+        int response = scriptService.checkout(toiletId);
+
+        return ResponseBuilder.generateResponse(
+                "Checkout all user successfully!",
                 HttpStatus.OK,
                 response
         );

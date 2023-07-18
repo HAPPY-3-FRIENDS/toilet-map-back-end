@@ -110,4 +110,19 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
                                       @Param("startDate") String startDate,
                                       @Param("endDate") String endDate,
                                       @Param("now") String now);
+
+    @Query(value = "UPDATE CheckIn\n" +
+            "SET CheckoutTime = :now\n" +
+            "WHERE Id IN\n" +
+            "(SELECT c.Id\n" +
+            "FROM CheckIn c\n" +
+            "INNER JOIN ToiletService ts on c.ToiletServiceId = ts.Id\n" +
+            "WHERE ts.ToiletId = :toiletId\n" +
+            "    AND (c.Turn = 2 OR c.Turn = 3)\n" +
+            "    AND (DateTime >= :startDate AND DateTime < :endDate)\n" +
+            "    AND (:now BETWEEN DateTime AND CheckoutTime))", nativeQuery = true)
+    void checkout(@Param("toiletId") int toiletId,
+                  @Param("startDate") String startDate,
+                  @Param("endDate") String endDate,
+                  @Param("now") String now);
 }

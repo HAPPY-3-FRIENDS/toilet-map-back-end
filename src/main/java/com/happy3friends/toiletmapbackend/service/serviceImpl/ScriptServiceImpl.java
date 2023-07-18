@@ -1,6 +1,7 @@
 package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
 import com.happy3friends.toiletmapbackend.entity.UserInfoEntity;
+import com.happy3friends.toiletmapbackend.repository.CheckInRepository;
 import com.happy3friends.toiletmapbackend.repository.UserInfoRepository;
 import com.happy3friends.toiletmapbackend.request.CheckInFullAToiletRequest;
 import com.happy3friends.toiletmapbackend.request.CheckInRequest;
@@ -25,6 +26,9 @@ public class ScriptServiceImpl implements ScriptService {
 
     @Autowired
     private CheckInService checkInService;
+
+    @Autowired
+    private CheckInRepository checkInRepository;
 
     @Override
     public List<String> random100UserCheckIn() {
@@ -122,6 +126,20 @@ public class ScriptServiceImpl implements ScriptService {
         }
 
         return result;
+    }
+
+    @Override
+    public Integer checkout(int toiletId) {
+        Date date = DateTimeUtil.getDateNow();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String startDate = dateFormat.format(date) + " 00:00:00";
+        String endDate = dateFormat.format(date) + " 23:59:59";
+
+        String now = DateTimeUtil.getTimestampNow().toString();
+
+        checkInRepository.checkout(toiletId, startDate, endDate, now);
+
+        return toiletId;
     }
 
     private String process(int toiletId, int accountId, String serviceName) {

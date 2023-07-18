@@ -8,4 +8,6 @@ public interface ScriptService {
     List<String> random100UserCheckIn();
 
     List<String> checkInFullAToilet(CheckInFullAToiletRequest request);
+
+    Integer checkout(int toiletId);
 }
