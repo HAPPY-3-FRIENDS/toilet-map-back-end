@@ -670,4 +670,18 @@ public class ToiletController {
                 response
         );
     }
+
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.MANAGER, RoleConstant.TOILET, RoleConstant.USER})
+    @GetMapping(value = "/check/{toilet-id}")
+    public ResponseEntity<BaseResponse<String>> checkToilet(@PathVariable("toilet-id") int toiletId) {
+
+        String response = toiletService.checkToilet(toiletId);
+
+        return ResponseBuilder.generateResponse(
+                "Check toilet successfully!",
+                HttpStatus.OK,
+                response
+        );
+    }
 }

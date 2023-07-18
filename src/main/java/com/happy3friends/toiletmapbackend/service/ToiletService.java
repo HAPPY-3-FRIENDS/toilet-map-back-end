@@ -29,4 +29,6 @@ public interface ToiletService {
     List<ToiletFacilityResponse> getListToiletFacilityByToiletId(int toiletId);
 
     List<ToiletResponse> getToiletsByDistrict(String district);
+
+    String checkToilet(int toiletId);
 }

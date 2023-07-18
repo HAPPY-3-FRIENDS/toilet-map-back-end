@@ -587,6 +587,25 @@ public class ToiletServiceImpl implements ToiletService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public String checkToilet(int toiletId) {
+        String result = "Not available";
+        ToiletDetailsInfoResponse toilet = getToiletByToiletId(toiletId);
+        AtomicInteger numberOfRestroom = new AtomicInteger();
+        AtomicInteger numberOfBathroom = new AtomicInteger();
+        toilet.getToiletFacilities().forEach(facility -> {
+            if (facility.getFacilityId() == 1 || facility.getFacilityId() == 3) {
+                numberOfRestroom.addAndGet(facility.getQuantity());
+            } else if (facility.getFacilityId() == 2) {
+                numberOfBathroom.set(facility.getQuantity());
+            }
+        });
+        if (isAvailable(toiletId, numberOfBathroom.get(), numberOfRestroom.get())) {
+            result = "Available";
+        }
+        return result;
+    }
+
     private List<ToiletDetailsInfoResponse> getListAvailableToilet(List<ToiletDetailsInfoResponse> listToilet){
         List<ToiletDetailsInfoResponse> result = listToilet.stream()
                 .filter(toilet -> isAvailable(toilet.getId(), getNumberOfBathroom(toilet), getNumberOfRestroom(toilet)))
