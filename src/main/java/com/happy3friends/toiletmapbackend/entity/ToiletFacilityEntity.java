@@ -26,6 +26,9 @@ public class ToiletFacilityEntity {
     @Column(name = "Quantity")
     private Integer quantity;
     @Basic
+    @Column(name = "MaxQuantity")
+    private Integer maxQuantity;
+    @Basic
     @Column(name = "Description", nullable = true, length = -1)
     private String description;
     @ManyToOne(fetch = FetchType.LAZY)
