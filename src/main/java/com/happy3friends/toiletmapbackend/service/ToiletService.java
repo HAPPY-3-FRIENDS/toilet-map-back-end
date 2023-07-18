@@ -2,6 +2,7 @@ package com.happy3friends.toiletmapbackend.service;
 
 import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
 import com.happy3friends.toiletmapbackend.request.ToiletCreateRequest;
+import com.happy3friends.toiletmapbackend.request.UpdateToiletCapacityRequest;
 import com.happy3friends.toiletmapbackend.response.*;
 
 import java.util.List;
@@ -30,4 +31,6 @@ public interface ToiletService {
     String checkToilet(int toiletId);
 
     ToiletCapacityResponse getCapacityOfToilet(int toiletId);
+
+    ToiletCapacityResponse updateCapacityOfToilet(UpdateToiletCapacityRequest request);
 }

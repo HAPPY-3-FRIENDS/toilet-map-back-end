@@ -21,6 +21,7 @@ import com.happy3friends.toiletmapbackend.mapper.SuggestionMapper;
 import com.happy3friends.toiletmapbackend.mapper.ToiletMapper;
 import com.happy3friends.toiletmapbackend.repository.*;
 import com.happy3friends.toiletmapbackend.request.ToiletCreateRequest;
+import com.happy3friends.toiletmapbackend.request.UpdateToiletCapacityRequest;
 import com.happy3friends.toiletmapbackend.response.*;
 import com.happy3friends.toiletmapbackend.service.ToiletService;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
@@ -628,6 +629,45 @@ public class ToiletServiceImpl implements ToiletService {
                 result.setMaxNumberOfBathroom(facility.getMaxQuantity());
             } else if (facility.getFacilityId() == 3) {
                 result.setNumberOfDisabledRestroom(facility.getQuantity());
+                result.setMaxNumberOfDisabledRestroom(facility.getMaxQuantity());
+            }
+        });
+
+        return result;
+    }
+
+    @Override
+    public ToiletCapacityResponse updateCapacityOfToilet(UpdateToiletCapacityRequest request) {
+        Optional<ToiletEntity> toiletEntity = toiletRepository.findById(request.getId());
+        if (!toiletEntity.isPresent())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_TOILET, ToiletMapErrorCodeEnum.NOT_FOUND_TOILET.getMessage());
+        ToiletEntity toilet = toiletEntity.get();
+
+        ToiletCapacityResponse result = new ToiletCapacityResponse();
+        result.setId(request.getId());
+        result.setName(toilet.getName());
+
+        toilet.getToiletFacilitiesById().forEach(facility -> {
+            if (facility.getFacilityId() == 1) {
+                Optional<ToiletFacilityEntity> facilityEntity = toiletFacilityRepository.findById(facility.getId());
+                facilityEntity.get().setQuantity(request.getNumberOfRestroom());
+                toiletFacilityRepository.save(facilityEntity.get());
+
+                result.setNumberOfRestroom(request.getNumberOfRestroom());
+                result.setMaxNumberOfRestroom(facility.getMaxQuantity());
+            } else if (facility.getFacilityId() == 2) {
+                Optional<ToiletFacilityEntity> facilityEntity = toiletFacilityRepository.findById(facility.getId());
+                facilityEntity.get().setQuantity(request.getNumberOfBathroom());
+                toiletFacilityRepository.save(facilityEntity.get());
+
+                result.setNumberOfBathroom(request.getNumberOfBathroom());
+                result.setMaxNumberOfBathroom(facility.getMaxQuantity());
+            } else if (facility.getFacilityId() == 3) {
+                Optional<ToiletFacilityEntity> facilityEntity = toiletFacilityRepository.findById(facility.getId());
+                facilityEntity.get().setQuantity(request.getNumberOfDisabledRestroom());
+                toiletFacilityRepository.save(facilityEntity.get());
+
+                result.setNumberOfDisabledRestroom(request.getNumberOfDisabledRestroom());
                 result.setMaxNumberOfDisabledRestroom(facility.getMaxQuantity());
             }
         });
