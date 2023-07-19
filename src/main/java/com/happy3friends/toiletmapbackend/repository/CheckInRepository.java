@@ -6,9 +6,11 @@ import com.happy3friends.toiletmapbackend.dto.CustomCheckInDTO;
 import com.happy3friends.toiletmapbackend.entity.CheckInEntity;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -111,6 +113,8 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
                                       @Param("endDate") String endDate,
                                       @Param("now") String now);
 
+    @Transactional
+    @Modifying
     @Query(value = "UPDATE CheckIn\n" +
             "SET CheckoutTime = :now\n" +
             "WHERE Id IN\n" +
@@ -125,4 +129,16 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
                   @Param("startDate") String startDate,
                   @Param("endDate") String endDate,
                   @Param("now") String now);
+
+    @Query(value = "SELECT c.Id\n" +
+            "FROM CheckIn c\n" +
+            "INNER JOIN ToiletService ts on c.ToiletServiceId = ts.Id\n" +
+            "WHERE ts.ToiletId = :toiletId\n" +
+            "    AND (c.Turn = 2 OR c.Turn = 3)\n" +
+            "    AND (DateTime >= :startDate AND DateTime < :endDate)\n" +
+            "    AND (:now BETWEEN DateTime AND CheckoutTime)", nativeQuery = true)
+    List<Integer> getListAvailableCheckIn(@Param("toiletId") int toiletId,
+                                          @Param("startDate") String startDate,
+                                          @Param("endDate") String endDate,
+                                          @Param("now") String now);
 }

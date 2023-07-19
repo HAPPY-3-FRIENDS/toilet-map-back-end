@@ -137,6 +137,11 @@ public class ScriptServiceImpl implements ScriptService {
 
         String now = DateTimeUtil.getTimestampNow().toString();
 
+        List<Integer> list = checkInRepository.getListAvailableCheckIn(toiletId, startDate, endDate, now);
+
+        if (list.isEmpty()) {
+            return toiletId;
+        }
         checkInRepository.checkout(toiletId, startDate, endDate, now);
 
         return toiletId;
