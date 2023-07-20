@@ -584,9 +584,35 @@ public class ToiletServiceImpl implements ToiletService {
 
     @Override
     public List<ToiletResponse> getToiletsByDistrict(String district) {
-        return toiletRepository.getToiletsByDistrict(district).stream()
-                .map(t -> toiletMapper.convertCustomToiletResponseDTOToToiletResponse(t))
-                .collect(Collectors.toList());
+        List<Integer> listToiletId = toiletRepository.getListToiletIdByDistrict(district);
+        List<ToiletResponse> result = new ArrayList<>();
+
+        listToiletId.forEach(t -> {
+            ToiletResponse toiletResponse = new ToiletResponse();
+            ToiletDetailsInfoResponse toiletDetail = getToiletByToiletId(t);
+
+            AtomicInteger numberOfBathRoom = new AtomicInteger();
+            AtomicInteger numberOfRestRoom = new AtomicInteger();
+
+            toiletDetail.getToiletFacilities().forEach(facility -> {
+                if (facility.getFacilityId() == 1) {
+                    numberOfRestRoom.addAndGet(facility.getQuantity());
+                } else if (facility.getFacilityId() == 2) {
+                    numberOfBathRoom.set(facility.getQuantity());
+                } else  if (facility.getFacilityId() == 3) {
+                    numberOfRestRoom.addAndGet(facility.getQuantity());
+                }
+            });
+
+            toiletResponse.setId(t);
+            toiletResponse.setName(toiletDetail.getToiletName());
+            toiletResponse.setNumberOfBathRoom(numberOfBathRoom.get());
+            toiletResponse.setNumberOfRestRoom(numberOfRestRoom.get());
+
+            result.add(toiletResponse);
+        });
+
+        return result;
     }
 
     @Override

@@ -152,4 +152,10 @@ public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer>, 
             "WHERE t.District = :district\n" +
             "    AND t.Status = N'Đang hoạt động'", nativeQuery = true)
     List<CustomToiletResponseDTO> getToiletsByDistrict(@Param("district") String district);
+
+    @Query(value = "SELECT t.Id\n" +
+            "FROM Toilet t\n" +
+            "WHERE t.District = :district\n" +
+            "    AND t.Status = N'Đang hoạt động'", nativeQuery = true)
+    List<Integer> getListToiletIdByDistrict(@Param("district") String district);
 }
