@@ -141,4 +141,11 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
                                           @Param("startDate") String startDate,
                                           @Param("endDate") String endDate,
                                           @Param("now") String now);
+
+    @Query(value = "SELECT ui.FullName\n" +
+            "FROM CheckIn c\n" +
+            "INNER JOIN Account a on a.Id = c.AccountId\n" +
+            "INNER JOIN UserInfo ui on a.Id = ui.AccountId\n" +
+            "WHERE c.Id IN :list", nativeQuery = true)
+    List<String> getListUserByListCheckInId(@Param("list") List<Integer> list);
 }

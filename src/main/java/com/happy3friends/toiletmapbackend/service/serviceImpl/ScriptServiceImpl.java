@@ -129,7 +129,7 @@ public class ScriptServiceImpl implements ScriptService {
     }
 
     @Override
-    public Integer checkout(int toiletId) {
+    public List<String> checkout(int toiletId) {
         Date date = DateTimeUtil.getDateNow();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String startDate = dateFormat.format(date) + " 00:00:00";
@@ -139,12 +139,19 @@ public class ScriptServiceImpl implements ScriptService {
 
         List<Integer> list = checkInRepository.getListAvailableCheckIn(toiletId, startDate, endDate, now);
 
+        List<String> result = new ArrayList<>();
+
         if (list.isEmpty()) {
-            return toiletId;
+            result.add("Nhà vệ sinh hiện tại không có người dùng nào để checkout");
+            return result;
         }
         checkInRepository.checkout(toiletId, startDate, endDate, now);
 
-        return toiletId;
+        checkInRepository.getListUserByListCheckInId(list).forEach(u -> {
+            result.add(u + " đã checkout");
+        });
+
+        return result;
     }
 
     private String process(int toiletId, int accountId, String serviceName) {

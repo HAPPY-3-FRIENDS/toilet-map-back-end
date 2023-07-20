@@ -59,9 +59,9 @@ public class ScriptController {
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.ADMIN})
     @GetMapping("/checkout")
-    public ResponseEntity<BaseResponse<Integer>> checkout(@Param("toilet-id") int toiletId) {
+    public ResponseEntity<BaseResponse<List<String>>> checkout(@Param("toilet-id") int toiletId) {
 
-        int response = scriptService.checkout(toiletId);
+        List<String> response = scriptService.checkout(toiletId);
 
         return ResponseBuilder.generateResponse(
                 "Checkout all user successfully!",

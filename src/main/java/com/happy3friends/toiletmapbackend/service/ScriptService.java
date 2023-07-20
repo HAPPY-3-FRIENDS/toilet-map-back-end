@@ -9,5 +9,5 @@ public interface ScriptService {
 
     List<String> checkInFullAToilet(CheckInFullAToiletRequest request);
 
-    Integer checkout(int toiletId);
+    List<String> checkout(int toiletId);
 }
