@@ -5,6 +5,7 @@ import com.happy3friends.toiletmapbackend.config.VNPayConfig;
 import com.happy3friends.toiletmapbackend.constant.DateTimeConstant;
 import com.happy3friends.toiletmapbackend.constant.DefaultSortPropertyConstant;
 import com.happy3friends.toiletmapbackend.dto.CustomAccountInfoDTO;
+import com.happy3friends.toiletmapbackend.dto.CustomPaymentDTO;
 import com.happy3friends.toiletmapbackend.entity.AccountEntity;
 import com.happy3friends.toiletmapbackend.entity.PaymentEntity;
 import com.happy3friends.toiletmapbackend.enums.PaymentTypeEnum;
@@ -160,10 +161,10 @@ public class PaymentServiceImpl implements PaymentService {
         if (!accountEntity.isPresent())
             throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT.getMessage());
 
-        List<PaymentEntity> paymentEntities = paymentRepository.findAllByAccountId(accountId, pageable);
+        List<CustomPaymentDTO> customPaymentDTOS = paymentRepository.findAllByAccountId(accountId, pageable);
 
-        return paymentEntities.stream()
-                .map(dto -> paymentMapper.convertPaymentEntityToPaymentResponse(dto))
+        return customPaymentDTOS.stream()
+                .map(dto -> paymentMapper.convertCustomPaymentDTOToPaymentResponse(dto))
                 .collect(Collectors.toList());
     }
 

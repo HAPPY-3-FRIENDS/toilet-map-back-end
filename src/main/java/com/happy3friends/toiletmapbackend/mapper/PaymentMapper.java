@@ -1,5 +1,6 @@
 package com.happy3friends.toiletmapbackend.mapper;
 
+import com.happy3friends.toiletmapbackend.dto.CustomPaymentDTO;
 import com.happy3friends.toiletmapbackend.entity.PaymentEntity;
 import com.happy3friends.toiletmapbackend.response.PaymentResponse;
 import org.modelmapper.ModelMapper;
@@ -22,5 +23,11 @@ public class PaymentMapper {
         return Objects.isNull(paymentEntity)
                 ? null
                 : modelMapper.map(paymentEntity, PaymentResponse.class);
+    }
+
+    public PaymentResponse convertCustomPaymentDTOToPaymentResponse(CustomPaymentDTO customPaymentDTO) {
+        return Objects.isNull(customPaymentDTO)
+                ? null
+                : modelMapper.map(customPaymentDTO, PaymentResponse.class);
     }
 }
