@@ -33,9 +33,11 @@ public class AuthenticateServiceImpl implements AuthenticateService {
     @Override
     public TokenDTO authenticate(HttpServletRequest request, AuthenticateRequest authenticateRequest) {
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(authenticateRequest.getUsername());
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        if (!bCryptPasswordEncoder.matches(authenticateRequest.getPassword(), userDetails.getPassword())) {
-            throw new NotFoundException(ToiletMapErrorCodeEnum.INVALID_PASSWORD, ToiletMapErrorCodeEnum.INVALID_PASSWORD.getMessage());
+        if (!userDetails.getAuthorities().toString().equals("[ROLE_User]")) {
+            BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+            if (!bCryptPasswordEncoder.matches(authenticateRequest.getPassword(), userDetails.getPassword())) {
+                throw new NotFoundException(ToiletMapErrorCodeEnum.INVALID_PASSWORD, ToiletMapErrorCodeEnum.INVALID_PASSWORD.getMessage());
+            }
         }
 
         UsernamePasswordAuthenticationToken
