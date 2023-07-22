@@ -56,14 +56,19 @@ public class StatisticServiceImpl implements StatisticService {
 
         // Prepare pagination & sort - Default sort by highest revenue
         Sort.Order defaultSortOrder = new Sort.Order(Sort.Direction.DESC, DefaultSortPropertyConstant.TOTAL_REVENUE);
-        Pageable pageable = PaginationUtil.getPageable(paginationRequest, defaultSortOrder);
 
         // Validate Company ID
         Optional<CompanyEntity> companyEntity = companyRepository.findById(companyId);
         if (!companyEntity.isPresent())
             throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY, ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY.getMessage());
 
-        List<CustomStatisticDTO> customStatisticDTOS = statisticRepository.getAllStatisticsByCompanyId(companyId, fromDate, toDate, pageable);
+        List<CustomStatisticDTO> customStatisticDTOS;
+        if (paginationRequest.getPageIndex() == null && paginationRequest.getPageSize() == null) {
+            customStatisticDTOS = statisticRepository.getAllStatisticsByCompanyId(companyId, fromDate, toDate, null);
+        } else {
+            Pageable pageable = PaginationUtil.getPageable(paginationRequest, defaultSortOrder);
+            customStatisticDTOS = statisticRepository.getAllStatisticsByCompanyId(companyId, fromDate, toDate, pageable);
+        }
 
         return customStatisticDTOS.stream()
                 .map(dto -> statisticMapper.convertCustomStatisticDTOToStatisticResponse(dto))
