@@ -38,12 +38,13 @@ public class ReportController {
     private ReportService reportService;
 
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.MANAGER})
+    @RolesAllowed({RoleConstant.ADMIN})
     @GetMapping
     public ResponseEntity<BaseResponse<List<ReportResponse>>> getReports(
+            @RequestParam(value = "company-id", required = false) Integer companyId,
             @ModelAttribute BasePaginationRequest paginationRequest) {
 
-        List<ReportResponse> responses = reportService.getReports(paginationRequest);
+        List<ReportResponse> responses = reportService.getReports(companyId, paginationRequest);
 
         return ResponseBuilder.generateResponse(
                 "Get list of all reports successfully!",

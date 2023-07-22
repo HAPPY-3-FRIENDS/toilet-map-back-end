@@ -5,15 +5,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 public class ReportResponse {
-    private int toiletId;
     private String toiletName;
-    private List<String> message;
-    private int count;
+    private Map<String, Map<String, Integer>> messageAndCount;
 }

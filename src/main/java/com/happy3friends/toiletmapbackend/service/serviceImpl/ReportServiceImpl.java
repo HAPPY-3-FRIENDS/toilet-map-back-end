@@ -27,9 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,13 +45,59 @@ public class ReportServiceImpl implements ReportService {
     @Autowired
     private CompanyRepository companyRepository;
 
+    private ReportResponse getReportResponseFromListCustomReportDTO(
+            List<CustomReportDTO> customReportDTOS
+    ) {
+        ReportResponse response = new ReportResponse();
+        response.setToiletName(customReportDTOS.get(0).getToiletName());
+
+        HashMap<String, List<CustomReportDTO>> map = customReportDTOS.stream()
+                .collect(Collectors.groupingBy(
+                        CustomReportDTO::getMessage,
+                        LinkedHashMap::new,
+                        Collectors.toCollection(ArrayList::new)));
+        Map<String, Map<String, Integer>> test = map.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        e -> {
+                            HashMap<String, List<CustomReportDTO>> map2 = e.getValue().stream()
+                                    .collect(Collectors.groupingBy(
+                                            CustomReportDTO::getStatus,
+                                            LinkedHashMap::new,
+                                            Collectors.toCollection(ArrayList::new)));
+                            Map<String, Integer> statusAndCount = map2.entrySet().stream()
+                                    .collect(Collectors.toMap(
+                                            Map.Entry::getKey,
+                                            o -> o.getValue().stream().mapToInt(CustomReportDTO::getTotalStatus).sum()
+                                    ));
+
+                            return statusAndCount;
+                        }
+                ));
+        response.setMessageAndCount(test);
+
+        return response;
+    }
+
     @Override
-    public List<ReportResponse> getReports(BasePaginationRequest paginationRequest) {
+    public List<ReportResponse> getReports(Integer companyId, BasePaginationRequest paginationRequest) {
         Sort.Order defaultSortOrder = new Sort.Order(Sort.Direction.ASC, DefaultSortPropertyConstant.TOILET_ID);
         Pageable pageable = PaginationUtil.getPageable(paginationRequest, defaultSortOrder);
 
-        List<CustomReportDTO> result = reportRepository.getReports(pageable);
-        return null;
+        if (companyId == null)
+            return null; //Chua ranh xu ly, hihi
+
+        List<CustomReportDTO> customReportDTOS = reportRepository.getReportsByCompanyId(companyId, pageable);
+
+        HashMap<String, List<CustomReportDTO>> map = customReportDTOS.stream()
+                .collect(Collectors.groupingBy(
+                        CustomReportDTO::getToiletName,
+                        LinkedHashMap::new,
+                        Collectors.toCollection(ArrayList::new)));
+
+        return map.values()
+                .stream().map(this::getReportResponseFromListCustomReportDTO)
+                .collect(Collectors.toList());
     }
 
     @Override

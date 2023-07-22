@@ -10,7 +10,7 @@ import com.happy3friends.toiletmapbackend.response.ReportResponseForManager;
 import java.util.List;
 
 public interface ReportService {
-    List<ReportResponse> getReports(BasePaginationRequest paginationRequest);
+    List<ReportResponse> getReports(Integer companyId, BasePaginationRequest paginationRequest);
 
     CreateReportResponse createReport(CreateReportRequest request);
 
