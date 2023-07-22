@@ -34,34 +34,35 @@ public interface RatingRepository extends JpaRepository<RatingEntity, Integer> {
 
     @Query(value = "SELECT * " +
             "FROM (SELECT r.Id, " +
-            "             ui.FullName, " +
-            "             r.Star, " +
-            "             CAST(r.Comment AS NVARCHAR(MAX))                     AS Comment, " +
-            "             r.DateTime, " +
-            "             CAST(ri.ImageSource AS VARCHAR(MAX))                 AS ImageSource, " +
-            "             ui.Avatar, " +
-            "             r.Status, " +
-            "             cc.Name                                              AS CommonComment, " +
-            "             DENSE_RANK() OVER (ORDER BY :strListSort) AS Rank " +
-            "      FROM Rating r " +
-            "               JOIN Account a " +
-            "                    ON r.AccountId = a.Id " +
-            "               JOIN UserInfo ui ON a.Id = ui.AccountId " +
-            "               LEFT JOIN RatingImage ri ON ri.RatingId = r.Id " +
-            "               JOIN Toilet t ON r.ToiletId = t.Id " +
-            "               LEFT JOIN RatingCommonComment rcc ON rcc.RatingId = r.Id " +
-            "               LEFT JOIN CommonComment cc ON rcc.CommonCommentId = cc.Id " +
-            "      WHERE t.Id = :toiletId) r " +
-            "WHERE Rank BETWEEN (:pageSize * :pageIndex - :pageSize + 1) AND (:pageSize * :pageIndex)", nativeQuery = true)
+            "       ui.FullName, " +
+            "       r.Star, " +
+            "       CAST(r.Comment AS NVARCHAR(MAX))          AS Comment, " +
+            "       r.DateTime, " +
+            "       ui.Avatar, " +
+            "       r.Status " +
+            "FROM Rating r " +
+            "         JOIN Account a " +
+            "              ON r.AccountId = a.Id " +
+            "         JOIN UserInfo ui ON a.Id = ui.AccountId " +
+            "         JOIN Toilet t ON r.ToiletId = t.Id " +
+            "WHERE t.Id = :toiletId) r", nativeQuery = true)
     List<CustomRatingDetailsDTO> getAllRatingsByToiletId(@Param("toiletId") int toiletId,
-                                                         @Param("pageSize") int pageSize,
-                                                         @Param("pageIndex") int pageIndex,
-                                                         @Param("strListSort") String strListSort);
+                                                         Pageable pageable);
 
     @Query(value = "SELECT COUNT(*) " +
             "FROM Rating " +
             "WHERE ToiletId = :toiletId", nativeQuery = true)
     long countByToiletId(int toiletId);
+
+    @Query(value = "SELECT r.Id, " +
+            "       CAST(ri.ImageSource AS VARCHAR(MAX)) AS ImageSource, " +
+            "       cc.Name                              AS CommonComment " +
+            "FROM Rating r " +
+            "         LEFT JOIN RatingImage ri ON ri.RatingId = r.Id " +
+            "         LEFT JOIN RatingCommonComment rcc ON rcc.RatingId = r.Id " +
+            "         LEFT JOIN CommonComment cc ON rcc.CommonCommentId = cc.Id " +
+            "WHERE r.Id IN :lstRatingIds", nativeQuery = true)
+    List<CustomRatingDetailsDTO> getAllRatingImageAndRatingCommonCommentByListRatingIds(@Param("lstRatingIds") List<Integer> lstRatingIds);
 
     Boolean existsByCheckInId(Integer checkInId);
 
@@ -100,32 +101,32 @@ public interface RatingRepository extends JpaRepository<RatingEntity, Integer> {
                           @Param("star") int star);
 
     @Query(value =
-            "SELECT *\n" +
-                    "FROM (SELECT r.Id,\n" +
-                    "        ui.FullName,\n" +
-                    "        r.Star,\n" +
-                    "        CAST(r.Comment AS NVARCHAR(MAX)) AS Comment,\n" +
-                    "        r.DateTime,\n" +
-                    "        CAST(ri.ImageSource AS VARCHAR(MAX)) AS ImageSource,\n" +
-                    "        ui.Avatar,\n" +
-                    "        r.Status,\n" +
-                    "        CASE\n" +
-                    "            WHEN cc.Name IS NULL THEN 'No common comment'\n" +
-                    "            ELSE cc.Name\n" +
-                    "        END AS CommonComment,\n" +
-                    "        DENSE_RANK() OVER (ORDER BY Star ASC, DateTime DESC) AS Rank\n" +
-                    "    FROM Rating r\n" +
-                    "    JOIN Account a ON r.AccountId = a.Id\n" +
-                    "    JOIN UserInfo ui ON a.Id = ui.AccountId\n" +
-                    "    LEFT JOIN RatingImage ri ON ri.RatingId = r.Id\n" +
-                    "    JOIN Toilet t ON r.ToiletId = t.Id\n" +
-                    "    LEFT JOIN RatingCommonComment rcc ON rcc.RatingId = r.Id\n" +
-                    "    LEFT JOIN CommonComment cc ON rcc.CommonCommentId = cc.Id\n" +
-                    "    WHERE t.Id = :toiletId\n" +
-                    "    ) r\n" +
-                    "WHERE Rank BETWEEN (:pageSize * :pageIndex - :pageSize + 1) AND (:pageSize * :pageIndex)\n" +
-                    "    AND r.CommonComment IN (:listCommonComment)\n" +
-                    "    AND r.Status IN (:listStatus)\n" +
+            "SELECT * " +
+                    "FROM (SELECT r.Id, " +
+                    "        ui.FullName, " +
+                    "        r.Star, " +
+                    "        CAST(r.Comment AS NVARCHAR(MAX)) AS Comment, " +
+                    "        r.DateTime, " +
+                    "        CAST(ri.ImageSource AS VARCHAR(MAX)) AS ImageSource, " +
+                    "        ui.Avatar, " +
+                    "        r.Status, " +
+                    "        CASE " +
+                    "            WHEN cc.Name IS NULL THEN 'No common comment' " +
+                    "            ELSE cc.Name " +
+                    "        END AS CommonComment, " +
+                    "        DENSE_RANK() OVER (ORDER BY Star ASC, DateTime DESC) AS Rank " +
+                    "    FROM Rating r " +
+                    "    JOIN Account a ON r.AccountId = a.Id " +
+                    "    JOIN UserInfo ui ON a.Id = ui.AccountId " +
+                    "    LEFT JOIN RatingImage ri ON ri.RatingId = r.Id " +
+                    "    JOIN Toilet t ON r.ToiletId = t.Id " +
+                    "    LEFT JOIN RatingCommonComment rcc ON rcc.RatingId = r.Id " +
+                    "    LEFT JOIN CommonComment cc ON rcc.CommonCommentId = cc.Id " +
+                    "    WHERE t.Id = :toiletId " +
+                    "    ) r " +
+                    "WHERE Rank BETWEEN (:pageSize * :pageIndex - :pageSize + 1) AND (:pageSize * :pageIndex) " +
+                    "    AND r.CommonComment IN (:listCommonComment) " +
+                    "    AND r.Status IN (:listStatus) " +
                     "    AND r.Star IN (:listStars)", nativeQuery = true)
     List<CustomRatingDetailsDTO> filterRating(@Param("toiletId") int toiletId,
                                               @Param("listCommonComment") List<String> listCommonComment,
@@ -135,30 +136,30 @@ public interface RatingRepository extends JpaRepository<RatingEntity, Integer> {
                                               @Param("pageIndex") int pageIndex);
 
     @Query(value =
-            "SELECT *\n" +
-                    "FROM (SELECT r.Id,\n" +
-                    "        ui.FullName,\n" +
-                    "        r.Star,\n" +
-                    "        CAST(r.Comment AS NVARCHAR(MAX)) AS Comment,\n" +
-                    "        r.DateTime,\n" +
-                    "        CAST(ri.ImageSource AS VARCHAR(MAX)) AS ImageSource,\n" +
-                    "        ui.Avatar,\n" +
-                    "        r.Status,\n" +
-                    "        CASE\n" +
-                    "            WHEN cc.Name IS NULL THEN 'No common comment'\n" +
-                    "            ELSE cc.Name\n" +
-                    "        END AS CommonComment\n" +
-                    "    FROM Rating r\n" +
-                    "    JOIN Account a ON r.AccountId = a.Id\n" +
-                    "    JOIN UserInfo ui ON a.Id = ui.AccountId\n" +
-                    "    LEFT JOIN RatingImage ri ON ri.RatingId = r.Id\n" +
-                    "    JOIN Toilet t ON r.ToiletId = t.Id\n" +
-                    "    LEFT JOIN RatingCommonComment rcc ON rcc.RatingId = r.Id\n" +
-                    "    LEFT JOIN CommonComment cc ON rcc.CommonCommentId = cc.Id\n" +
-                    "    WHERE t.Id = :toiletId\n" +
-                    "    ) r\n" +
-                    "WHERE r.CommonComment IN (:listCommonComment)\n" +
-                    "    AND r.Status IN (:listStatus)\n" +
+            "SELECT * " +
+                    "FROM (SELECT r.Id, " +
+                    "        ui.FullName, " +
+                    "        r.Star, " +
+                    "        CAST(r.Comment AS NVARCHAR(MAX)) AS Comment, " +
+                    "        r.DateTime, " +
+                    "        CAST(ri.ImageSource AS VARCHAR(MAX)) AS ImageSource, " +
+                    "        ui.Avatar, " +
+                    "        r.Status, " +
+                    "        CASE " +
+                    "            WHEN cc.Name IS NULL THEN 'No common comment' " +
+                    "            ELSE cc.Name " +
+                    "        END AS CommonComment " +
+                    "    FROM Rating r " +
+                    "    JOIN Account a ON r.AccountId = a.Id " +
+                    "    JOIN UserInfo ui ON a.Id = ui.AccountId " +
+                    "    LEFT JOIN RatingImage ri ON ri.RatingId = r.Id " +
+                    "    JOIN Toilet t ON r.ToiletId = t.Id " +
+                    "    LEFT JOIN RatingCommonComment rcc ON rcc.RatingId = r.Id " +
+                    "    LEFT JOIN CommonComment cc ON rcc.CommonCommentId = cc.Id " +
+                    "    WHERE t.Id = :toiletId " +
+                    "    ) r " +
+                    "WHERE r.CommonComment IN (:listCommonComment) " +
+                    "    AND r.Status IN (:listStatus) " +
                     "    AND r.Star IN (:listStars)", nativeQuery = true)
     List<CustomRatingDetailsDTO> filterRatingToCount(@Param("toiletId") int toiletId,
                                                      @Param("listCommonComment") List<String> listCommonComment,

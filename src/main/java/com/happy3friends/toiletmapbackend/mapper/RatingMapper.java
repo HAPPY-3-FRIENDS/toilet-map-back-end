@@ -1,5 +1,7 @@
 package com.happy3friends.toiletmapbackend.mapper;
 
+import com.happy3friends.toiletmapbackend.dto.CustomRatingDetailsDTO;
+import com.happy3friends.toiletmapbackend.dto.RatingDetailsDTO;
 import com.happy3friends.toiletmapbackend.entity.RatingEntity;
 import com.happy3friends.toiletmapbackend.request.RatingRequest;
 import com.happy3friends.toiletmapbackend.response.RatingResponse;
@@ -29,5 +31,17 @@ public class RatingMapper {
         return Objects.isNull(ratingEntity)
                 ? null
                 : modelMapper.map(ratingEntity, RatingResponse.class);
+    }
+
+    public RatingDetailsDTO convertCustomRatingDetailsDTOToRatingDetailsDTO(CustomRatingDetailsDTO customRatingDetailsDTO) {
+        return Objects.isNull(customRatingDetailsDTO)
+                ? null
+                : modelMapper.map(customRatingDetailsDTO, RatingDetailsDTO.class);
+    }
+
+    public RatingResponse convertRatingDetailsDTOToRatingResponse(RatingDetailsDTO ratingDetailsDTO) {
+        return Objects.isNull(ratingDetailsDTO)
+                ? null
+                : modelMapper.map(ratingDetailsDTO, RatingResponse.class);
     }
 }

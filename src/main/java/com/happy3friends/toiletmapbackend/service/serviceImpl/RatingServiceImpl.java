@@ -4,6 +4,7 @@ import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
 import com.happy3friends.toiletmapbackend.constant.DefaultSortPropertyConstant;
 import com.happy3friends.toiletmapbackend.dto.CustomAccountInfoDTO;
 import com.happy3friends.toiletmapbackend.dto.CustomRatingDetailsDTO;
+import com.happy3friends.toiletmapbackend.dto.RatingDetailsDTO;
 import com.happy3friends.toiletmapbackend.entity.*;
 import com.happy3friends.toiletmapbackend.enums.RoleEnum;
 import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
@@ -16,8 +17,8 @@ import com.happy3friends.toiletmapbackend.request.RatingRequest;
 import com.happy3friends.toiletmapbackend.response.RatingResponse;
 import com.happy3friends.toiletmapbackend.service.RatingService;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
+import com.happy3friends.toiletmapbackend.utils.FilterKeysUtil;
 import com.happy3friends.toiletmapbackend.utils.PaginationUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,20 +120,44 @@ public class RatingServiceImpl implements RatingService {
         List<Sort.Order> sortOrders = new ArrayList<>();
         sortOrders.add(new Sort.Order(Sort.Direction.DESC, DefaultSortPropertyConstant.DATETIME));
         Pageable pageable = PaginationUtil.getPageable(paginationRequest, sortOrders);
-        List<String> listSort = new ArrayList<>();
-        pageable.getSort().forEach(sort -> {
-            listSort.add(sort.getProperty() + " " + sort.getDirection());
-        });
-        String strListSort = StringUtils.join(listSort, ",");
 
+        // Get list rating by toilet Id without rating image and common comment
         List<CustomRatingDetailsDTO> customRatingDetailsDTOS
-                = ratingRepository.getAllRatingsByToiletId(
-                        toiletId,
-                        paginationRequest.getPageSize(),
-                        paginationRequest.getPageIndex(),
-                        strListSort);
+                = ratingRepository.getAllRatingsByToiletId(toiletId, pageable);
+        List<RatingDetailsDTO> ratingDetailsDTOS =
+                customRatingDetailsDTOS
+                        .stream()
+                        .map(o -> ratingMapper.convertCustomRatingDetailsDTOToRatingDetailsDTO(o))
+                        .collect(Collectors.toList());
 
-        return getListRatingResponseFromListCustomRatingDetailsDTO(customRatingDetailsDTOS);
+        // List rating add rating image and common comment
+        List<Integer> lstRatingIds = customRatingDetailsDTOS.stream().map(o -> o.getId()).collect(Collectors.toList());
+        List<CustomRatingDetailsDTO> listRatingImageAndRatingCommonComment
+                = ratingRepository.getAllRatingImageAndRatingCommonCommentByListRatingIds(lstRatingIds);
+        HashMap<Integer, List<CustomRatingDetailsDTO>> mapIdsListImageAndComment
+                = getMapIdListCustomRatingDetailsDTO(listRatingImageAndRatingCommonComment);
+
+        List<RatingDetailsDTO> ratingDetailsDTOList = ratingDetailsDTOS.stream()
+                .map(o -> {
+                    List<CustomRatingDetailsDTO> lstImageComment = mapIdsListImageAndComment.get(o.getId());
+                    List<String> imageSources = lstImageComment.stream()
+                            .filter(FilterKeysUtil.distinctByKeys(CustomRatingDetailsDTO::getImageSource))
+                            .map(CustomRatingDetailsDTO::getImageSource)
+                            .collect(Collectors.toList());
+                    List<String> comments = lstImageComment.stream()
+                            .filter(FilterKeysUtil.distinctByKeys(CustomRatingDetailsDTO::getCommonComment))
+                            .map(CustomRatingDetailsDTO::getCommonComment)
+                            .collect(Collectors.toList());
+                    o.setImageSources(imageSources);
+                    o.setCommonComments(comments);
+
+                    return o;
+                })
+                .collect(Collectors.toList());
+
+        return ratingDetailsDTOList.stream()
+                .map(dto -> ratingMapper.convertRatingDetailsDTOToRatingResponse(dto))
+                .collect(Collectors.toList());
     }
 
     @Override
