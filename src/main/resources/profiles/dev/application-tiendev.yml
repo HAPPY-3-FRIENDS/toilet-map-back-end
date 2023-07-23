@@ -4,6 +4,7 @@ spring:
     password: 1234567890
     url: jdbc:sqlserver://localhost:1433;databaseName=ToiletMap;instanceName=TIENHUYNHTN;encrypt=true;trustServerCertificate=true;
     username: sa
+
 logging:
   level:
     root: info

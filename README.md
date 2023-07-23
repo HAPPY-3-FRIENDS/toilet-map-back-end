@@ -1,25 +1,23 @@
 # TOILET MAP BACK-END
 
-- Swagger UI
+- Change profile in `/src/main/resources/profiles/default/application.yml` folder
 
-  `https://toilet-map.azurewebsites.net/swagger-ui/index.html`
-
-  `https://toiletmap.azurewebsites.net/swagger-ui/index.html`
-
-  `http://localhost:8081/swagger-ui/index.html`
+    - In line 29, change to `active: default,profileName` (ex: active: default,tiendev)
 
 - Run this command to run project local
 
-    `mvn spring-boot:run -D"spring-boot.run.profiles"=profileName`
+  `mvn spring-boot:run -D"spring-boot.run.profiles"=profileName`
 
-    Example:
+  Example:
 
-    `mvn spring-boot:run -D"spring-boot.run.profiles"=tiendev`
+  `mvn spring-boot:run -D"spring-boot.run.profiles"=tiendev`
 
-    `mvn spring-boot:run -D"spring-boot.run.profiles"=phuongdev`
+  `mvn spring-boot:run -D"spring-boot.run.profiles"=phuongdev`
 
-    `mvn spring-boot:run -D"spring-boot.run.profiles"=quandev`
+  `mvn spring-boot:run -D"spring-boot.run.profiles"=quandev`
 
-    `mvn spring-boot:run -D"spring-boot.run.profiles"=huydev`
+- Swagger UI
+
+  `http://localhost:8081/swagger-ui/index.html`
 
     

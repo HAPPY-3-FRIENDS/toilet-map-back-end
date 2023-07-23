@@ -26,7 +26,9 @@ spring:
     path match:
       matching-strategy: ANT_PATH_MATCHER
   profiles:
-    active: default,prod
+    active: default
+#    Thay đổi active profile như example dưới đây
+#    active: default,tiendev
 
 my:
   controller:

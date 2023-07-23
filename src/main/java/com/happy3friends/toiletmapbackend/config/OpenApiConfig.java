@@ -20,14 +20,6 @@ public class OpenApiConfig {
 
     @Bean
     public OpenAPI toiletMapOpenApi() {
-        Server productionServer1 = new Server();
-        productionServer1.setUrl("https://toilet-map.azurewebsites.net/");
-        productionServer1.setDescription("Server URL in Production environment 1");
-
-        Server productionServer2 = new Server();
-        productionServer2.setUrl("https://toiletmap.azurewebsites.net/");
-        productionServer2.setDescription("Server URL in Production environment 2");
-
         Server localServer = new Server();
         localServer.setUrl("http://localhost:8081");
         localServer.setDescription("Server URL in Local environment");
@@ -43,7 +35,7 @@ public class OpenApiConfig {
                                 .name("The GNU General Public License v3.0")
                                 .url("https://www.gnu.org/licenses/gpl-3.0.html"))
                         .version("1.0.0"))
-                .servers(List.of(productionServer1, productionServer2, localServer))
+                .servers(List.of(localServer))
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(
                         new Components().addSecuritySchemes(

@@ -182,20 +182,6 @@
             </properties>
         </profile>
         <profile>
-            <id>huydev</id>
-            <build>
-                <finalName>toilet-map-back-end-dev</finalName>
-                <resources>
-                    <resource>
-                        <directory>src/main/resources/profiles/dev</directory>
-                    </resource>
-                </resources>
-            </build>
-            <properties>
-                <spring.profiles.active>huydev</spring.profiles.active>
-            </properties>
-        </profile>
-        <profile>
             <id>prod</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
