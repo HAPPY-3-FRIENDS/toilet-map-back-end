@@ -26,11 +26,11 @@ public class DateTimeUtil {
     }
 
     public static Date getDateNow() {
-        return new Date(convertZoneDateTimeToDate(getZoneDateTimeNow()).getTime() + 7 * 60 * 60 * 1000);
+        return new Date(convertZoneDateTimeToDate(getZoneDateTimeNow()).getTime());
     }
 
     public static Timestamp getTimestampNow() {
-        return new Timestamp(convertZoneDateTimeToDate(getZoneDateTimeNow()).getTime() + 7 * 60 * 60 * 1000);
+        return new Timestamp(convertZoneDateTimeToDate(getZoneDateTimeNow()).getTime());
     }
 
     public static Date convertZoneDateTimeToDate(ZonedDateTime zonedDateTime) {
@@ -100,6 +100,6 @@ public class DateTimeUtil {
         Calendar c = Calendar.getInstance(TimeZone.getTimeZone(ZoneId.of(DateTimeConstant.ZONE_ID)));
         c.set(Calendar.DAY_OF_MONTH, 1);
 
-        return new Date(c.getTime().getTime() + 7 * 60 * 60 * 1000);
+        return new Date(c.getTime().getTime());
     }
 }

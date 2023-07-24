@@ -33,4 +33,6 @@ public interface ToiletService {
     ToiletCapacityResponse getCapacityOfToilet(int toiletId);
 
     ToiletCapacityResponse updateCapacityOfToilet(UpdateToiletCapacityRequest request);
+
+    Integer getWaitingTimeOfToilet(int toiletId);
 }

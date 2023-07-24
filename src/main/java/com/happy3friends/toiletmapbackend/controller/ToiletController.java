@@ -714,4 +714,18 @@ public class ToiletController {
                 response
         );
     }
+
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.MANAGER, RoleConstant.TOILET, RoleConstant.USER})
+    @GetMapping(value = "/wait/{toilet-id}")
+    public ResponseEntity<BaseResponse<Integer>> getWaitingTimeOfToilet(@PathVariable("toilet-id") int toiletId) {
+
+        int response = toiletService.getWaitingTimeOfToilet(toiletId);
+
+        return ResponseBuilder.generateResponse(
+                "Get capacity of toilet successfully!",
+                HttpStatus.OK,
+                response
+        );
+    }
 }

@@ -701,6 +701,24 @@ public class ToiletServiceImpl implements ToiletService {
         return result;
     }
 
+    @Override
+    public Integer getWaitingTimeOfToilet(int toiletId) {
+        Date date = DateTimeUtil.getDateNow();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String startDate = dateFormat.format(date) + " 00:00:00";
+        String endDate = dateFormat.format(date) + " 23:59:59";
+
+        String now = DateTimeUtil.getTimestampNow().toString();
+
+        List<Integer> list = checkInRepository.getListAvailableCheckIn(toiletId, startDate, endDate, now);
+
+        if (list.isEmpty()) {
+            return 0;
+        }
+
+        return checkInRepository.getWaitingTimeOfToilet(list, now);
+    }
+
     private List<ToiletDetailsInfoResponse> getListAvailableToilet(List<ToiletDetailsInfoResponse> listToilet){
         List<ToiletDetailsInfoResponse> result = listToilet.stream()
                 .filter(toilet -> isAvailable(toilet.getId(), getNumberOfBathroom(toilet), getNumberOfRestroom(toilet)))

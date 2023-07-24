@@ -148,4 +148,10 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
             "INNER JOIN UserInfo ui on a.Id = ui.AccountId\n" +
             "WHERE c.Id IN :list", nativeQuery = true)
     List<String> getListUserByListCheckInId(@Param("list") List<Integer> list);
+
+    @Query(value = "SELECT MIN(DATEDIFF(minute, :now, c.CheckoutTime))\n" +
+            "FROM CheckIn c\n" +
+            "WHERE c.Id IN :list", nativeQuery = true)
+    Integer getWaitingTimeOfToilet(@Param("list") List<Integer> list,
+                                   @Param("now") String now);
 }
