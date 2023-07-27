@@ -189,7 +189,7 @@ public class ReportController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.MANAGER})
+    @RolesAllowed({RoleConstant.MANAGER, RoleConstant.ADMIN})
     @GetMapping(value = "/company/{company-id}/count")
     public ResponseEntity<BaseResponse<Integer>> countReportsByCompanyIdForManager(
             @PathVariable("company-id") int id) {
