@@ -20,6 +20,7 @@ import com.happy3friends.toiletmapbackend.response.CheckInResponse;
 import com.happy3friends.toiletmapbackend.service.CheckInService;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
 import com.happy3friends.toiletmapbackend.utils.PaginationUtil;
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -258,7 +259,7 @@ public class CheckInServiceImpl implements CheckInService {
             checkInResponse.setToiletId(toiletServiceEntity.get().getToiletId());
             checkInResponse.setToiletName(toiletServiceEntity.get().getToiletByToiletId().getName());
             checkInResponse.setServiceName(toiletServiceEntity.get().getServiceByServiceId().getName());
-            checkInResponse.setDateTime(entity.getDateTime());
+            checkInResponse.setDateTime(DateUtils.addHours(entity.getDateTime(), 7));
             return checkInResponse;
         } else {
             LOGGER.error("Service '" + checkInRequest.getServiceName() + "' is not contained in Toilet with Id '" + checkInRequest.getToiletId() + "'!");
