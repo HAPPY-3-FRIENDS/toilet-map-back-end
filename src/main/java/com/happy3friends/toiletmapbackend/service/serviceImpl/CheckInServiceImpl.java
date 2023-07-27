@@ -89,9 +89,16 @@ public class CheckInServiceImpl implements CheckInService {
         List<CustomCheckInDTO> customCheckInDTOS
                 = checkInRepository.getCheckInHistoriesByAccountId(accountId, paymentMethod, pageable);
 
-        return customCheckInDTOS.stream()
+        // TODO: Bùa
+        List<CheckInResponse> result = customCheckInDTOS.stream()
                 .map(dto -> checkInMapper.convertCustomCheckInDTOToCheckInResponse(dto))
                 .collect(Collectors.toList());
+        result.forEach(r -> {
+            Date date = r.getDateTime();
+            r.setDateTime(DateUtils.addHours(date, 7));
+        });
+
+        return result;
     }
 
     public CheckInResponse userCheckInWithStaticQRCode(CheckInRequest checkInRequest) {
@@ -259,6 +266,7 @@ public class CheckInServiceImpl implements CheckInService {
             checkInResponse.setToiletId(toiletServiceEntity.get().getToiletId());
             checkInResponse.setToiletName(toiletServiceEntity.get().getToiletByToiletId().getName());
             checkInResponse.setServiceName(toiletServiceEntity.get().getServiceByServiceId().getName());
+            // TODO: Bùa
             checkInResponse.setDateTime(DateUtils.addHours(entity.getDateTime(), 7));
             return checkInResponse;
         } else {

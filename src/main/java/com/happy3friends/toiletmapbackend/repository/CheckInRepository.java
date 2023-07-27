@@ -46,7 +46,7 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
             "    c.Id,\n" +
             "    CASE\n" +
             "        WHEN r.CheckInId IS NOT NULL THEN N'Đã đánh giá'\n" +
-            "        WHEN DATEDIFF(second, CONVERT(DATETIME2, c.DateTime), DATEADD(hour , 7, sysdatetime())) > 3600 THEN N'Đã hết hạn'\n" +
+            "        WHEN DATEDIFF(second, CONVERT(DATETIME2, c.DateTime), sysdatetime()) > 3600 THEN N'Đã hết hạn'\n" +
             "        ELSE N'Chưa đánh giá'\n" +
             "    END AS status\n" +
             "FROM CheckIn c\n" +
