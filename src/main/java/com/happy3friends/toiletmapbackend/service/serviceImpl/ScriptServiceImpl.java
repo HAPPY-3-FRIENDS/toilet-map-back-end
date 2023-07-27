@@ -6,8 +6,10 @@ import com.happy3friends.toiletmapbackend.repository.UserInfoRepository;
 import com.happy3friends.toiletmapbackend.request.CheckInFullAToiletRequest;
 import com.happy3friends.toiletmapbackend.request.CheckInRequest;
 import com.happy3friends.toiletmapbackend.response.CheckInResponse;
+import com.happy3friends.toiletmapbackend.response.ToiletDetailsInfoResponse;
 import com.happy3friends.toiletmapbackend.service.CheckInService;
 import com.happy3friends.toiletmapbackend.service.ScriptService;
+import com.happy3friends.toiletmapbackend.service.ToiletService;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class ScriptServiceImpl implements ScriptService {
@@ -29,6 +32,9 @@ public class ScriptServiceImpl implements ScriptService {
 
     @Autowired
     private CheckInRepository checkInRepository;
+
+    @Autowired
+    private ToiletService toiletService;
 
     @Override
     public List<String> random100UserCheckIn() {
@@ -105,6 +111,33 @@ public class ScriptServiceImpl implements ScriptService {
 
     @Override
     public List<String> checkInFullAToilet(CheckInFullAToiletRequest request) {
+        Date date = DateTimeUtil.getDateNow();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String startDate = dateFormat.format(date) + " 00:00:00";
+        String endDate = dateFormat.format(date) + " 23:59:59";
+
+        String now = DateTimeUtil.getTimestampNow().toString();
+
+        ToiletDetailsInfoResponse toiletDetail = toiletService.getToiletByToiletId(request.getToiletId());
+
+        AtomicInteger numberOfBathRoom = new AtomicInteger();
+        AtomicInteger numberOfRestRoom = new AtomicInteger();
+
+        toiletDetail.getToiletFacilities().forEach(facility -> {
+            if (facility.getFacilityId() == 1) {
+                numberOfRestRoom.addAndGet(facility.getQuantity());
+            } else if (facility.getFacilityId() == 2) {
+                numberOfBathRoom.set(facility.getQuantity());
+            } else  if (facility.getFacilityId() == 3) {
+                numberOfRestRoom.addAndGet(facility.getQuantity());
+            }
+        });
+
+        int numberOfAvailableBathroom = numberOfBathRoom.get() - checkInRepository
+                .getNumberNotAvailableRoom(request.getToiletId(), 3, startDate, endDate, now);
+        int numberOfAvailableRestroom = numberOfRestRoom.get() - checkInRepository
+                .getNumberNotAvailableRoom(request.getToiletId(), 2, startDate, endDate, now);
+
         List<UserInfoEntity> listAllUsers = userInfoRepository.findAll();
 
         List<UserInfoEntity> listUsers = new ArrayList<>();
@@ -117,11 +150,22 @@ public class ScriptServiceImpl implements ScriptService {
 
         List<String> result = new ArrayList<>();
         for (int i = 0; i < listUsers.size() - request.getNumberOfRestroom(); i++) {
-            String message = process(request.getToiletId(), listUsers.get(i).getAccountId(), "Đi tắm");
+            String message;
+            if (i >= numberOfAvailableBathroom) {
+                message = listUsers.get(i).getFullName() + " không thể đi tắm vì hết phòng";
+            } else {
+                message = process(request.getToiletId(), listUsers.get(i).getAccountId(), "Đi tắm");
+            }
             result.add(message);
         }
         for (int i = listUsers.size() - request.getNumberOfRestroom(); i < listUsers.size(); i++) {
-            String message = process(request.getToiletId(), listUsers.get(i).getAccountId(), "Đi vệ sinh (đại tiện)");
+            String message;
+            if (i >= numberOfAvailableRestroom + listUsers.size() - request.getNumberOfRestroom()) {
+                message = listUsers.get(i).getFullName() + " không thể đại tiện vì hết phòng";
+            } else {
+                message = process(request.getToiletId(), listUsers.get(i).getAccountId(), "Đi vệ sinh (đại tiện)");
+            }
+
             result.add(message);
         }
 
