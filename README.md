@@ -20,4 +20,7 @@
 
   `http://localhost:8081/swagger-ui/index.html`
 
+
+- Tien's Note: `mvn clean install -DskipTests -Ptiendev `
+
     
