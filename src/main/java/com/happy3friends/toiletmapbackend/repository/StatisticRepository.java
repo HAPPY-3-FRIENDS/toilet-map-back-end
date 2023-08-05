@@ -76,9 +76,9 @@ public interface StatisticRepository extends JpaRepository<CheckInEntity, Intege
             "                    ON ts.ServiceId = s.Id " +
             "               JOIN Toilet t " +
             "                    ON ts.ToiletId = t.Id " +
-            "               JOIN Company cp " +
-            "                    ON t.CompanyId = cp.Id " +
-            "      WHERE c.DateTime IS NULL " +
+            "               RIGHT JOIN Company cp " +
+            "                          ON t.CompanyId = cp.Id " +
+            "      WHERE cp.Id != 1 AND c.DateTime IS NULL " +
             "         OR (c.DateTime BETWEEN :fromDate AND :toDate) " +
             "      GROUP BY cp.Id, cp.Name) r", nativeQuery = true)
     List<CustomStatisticDTO> getAllStatistics(@Param("fromDate") Date fromDate,
@@ -182,9 +182,9 @@ public interface StatisticRepository extends JpaRepository<CheckInEntity, Intege
             "                    ON ts.ServiceId = s.Id " +
             "               JOIN Toilet t " +
             "                    ON ts.ToiletId = t.Id " +
-            "               JOIN Company cp " +
-            "                    ON t.CompanyId = cp.Id " +
-            "      WHERE c.DateTime IS NULL " +
+            "               RIGHT JOIN Company cp " +
+            "                          ON t.CompanyId = cp.Id " +
+            "      WHERE cp.Id != 1 AND c.DateTime IS NULL " +
             "         OR (c.DateTime BETWEEN :fromDate AND :toDate) " +
             "      GROUP BY cp.Id, cp.Name) r", nativeQuery = true)
     int countAllStatistics(Date fromDate, Date toDate);
