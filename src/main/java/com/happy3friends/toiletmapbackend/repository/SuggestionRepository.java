@@ -1,5 +1,6 @@
 package com.happy3friends.toiletmapbackend.repository;
 
+import com.happy3friends.toiletmapbackend.dto.CustomSuggestionDTO;
 import com.happy3friends.toiletmapbackend.entity.SuggestionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -38,7 +39,36 @@ public interface SuggestionRepository extends JpaRepository<SuggestionEntity, In
             "ORDER BY t.Id ASC, sg.EndDate DESC, sg.Streak DESC", nativeQuery = true)
     List<SuggestionEntity> getListSuggestionByListToiletIds(@Param("companyId") int companyId, @Param("listToiletIds") List<Integer> listToiletIds);
 
-    @Query(value =
+    @Query(value = "SELECT sg.Id, " +
+            "       sg.ToiletId, " +
+            "       t.Name, " +
+            "       t.Address, " +
+            "       t.Ward, " +
+            "       t.District, " +
+            "       t.Province, " +
+            "       CAST(sg.Message AS NVARCHAR(MAX)) AS Message, " +
+            "       sg.IsAccepted, " +
+            "       sg.StartDate, " +
+            "       sg.EndDate, " +
+            "       sg.ExpectedCount, " +
+            "       sg.ActualCount, " +
+            "       sg.Streak, " +
+            "       sg.IsLow " +
+            "FROM Toilet t " +
+            "         JOIN Suggestion sg " +
+            "              ON t.Id = sg.ToiletId " +
+            "                  AND ((sg.StartDate = DATEADD(QUARTER, DATEDIFF(QUARTER, 0, GETDATE()) - 2, 0) AND " +
+            "                        sg.EndDate = DATEADD(QUARTER, DATEDIFF(QUARTER, 0, GETDATE()) - 1, -1)) " +
+            "                      OR " +
+            "                       (sg.StartDate = DATEADD(QUARTER, DATEDIFF(QUARTER, 0, GETDATE()) - 1, 0) AND " +
+            "                        sg.EndDate = DATEADD(QUARTER, DATEDIFF(QUARTER, 0, GETDATE()), -1)) " +
+            "                     ) " +
+            "WHERE sg.IsAccepted != 1 " +
+            "  AND sg.IsLow = 0 " +
+            "ORDER BY t.Id ASC, sg.EndDate DESC, sg.Streak DESC", nativeQuery = true)
+    List<CustomSuggestionDTO> getAllSuggestionsIn2LastQuarter();
+
+    /*@Query(value =
             "SELECT Id, " +
                     "       t1.ToiletId, " +
                     "       Message, " +
@@ -62,7 +92,7 @@ public interface SuggestionRepository extends JpaRepository<SuggestionEntity, In
                     "ON t1.ToiletId = t2.ToiletId " +
                     "WHERE t1.Times = 2", nativeQuery = true)
     List<SuggestionEntity> getAllSuggestionsIn2LastQuarter(Date startDate,
-                                                           Date endDate);
+                                                           Date endDate);*/
 
     @Query(value =
             "SELECT * " +

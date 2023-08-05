@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
-import java.text.ParseException;
 import java.util.List;
 
 @Tag(name = "Suggestion", description = "Suggestion API")
@@ -44,7 +43,7 @@ public class SuggestionController {
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.ADMIN})
     @GetMapping
-    public ResponseEntity<BaseResponse<List<SuggestionAdminResponse>>> getListOfSuggestions() throws ParseException {
+    public ResponseEntity<BaseResponse<List<SuggestionAdminResponse>>> getListOfSuggestions() {
 
         List<SuggestionAdminResponse> response = suggestionService.getListOfSuggestions();
 

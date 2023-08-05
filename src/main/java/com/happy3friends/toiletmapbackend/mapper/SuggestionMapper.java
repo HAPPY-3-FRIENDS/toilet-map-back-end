@@ -1,5 +1,6 @@
 package com.happy3friends.toiletmapbackend.mapper;
 
+import com.happy3friends.toiletmapbackend.dto.CustomSuggestionDTO;
 import com.happy3friends.toiletmapbackend.dto.SuggestionDTO;
 import com.happy3friends.toiletmapbackend.entity.SuggestionEntity;
 import com.happy3friends.toiletmapbackend.response.SuggestionResponse;
@@ -25,5 +26,11 @@ public class SuggestionMapper {
         return Objects.isNull(suggestionEntity)
                 ? null
                 : modelMapper.map(suggestionEntity, SuggestionDTO.class);
+    }
+
+    public SuggestionDTO convertCustomSuggestionDTOToSuggestionDTO(CustomSuggestionDTO customSuggestionDTO) {
+        return Objects.isNull(customSuggestionDTO)
+                ? null
+                : modelMapper.map(customSuggestionDTO, SuggestionDTO.class);
     }
 }

@@ -1,8 +1,8 @@
 package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
+import com.happy3friends.toiletmapbackend.dto.CustomSuggestionDTO;
 import com.happy3friends.toiletmapbackend.dto.SuggestionDTO;
 import com.happy3friends.toiletmapbackend.entity.SuggestionEntity;
-import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
 import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.SuggestionMapper;
@@ -10,22 +10,18 @@ import com.happy3friends.toiletmapbackend.repository.SuggestionRepository;
 import com.happy3friends.toiletmapbackend.repository.ToiletRepository;
 import com.happy3friends.toiletmapbackend.response.SuggestionAdminResponse;
 import com.happy3friends.toiletmapbackend.service.SuggestionService;
-import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
-import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class SuggestionServiceImpl implements SuggestionService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SuggestionServiceImpl.class);
+    static final Logger LOGGER = LoggerFactory.getLogger(SuggestionServiceImpl.class);
 
     @Autowired
     private SuggestionRepository suggestionRepository;
@@ -56,9 +52,55 @@ public class SuggestionServiceImpl implements SuggestionService {
         LOGGER.info("-- Update Suggestion - Finish update isAccepted field for suggestion! --");
     }
 
+    private LinkedHashMap<Integer, List<CustomSuggestionDTO>> getMapToiletIdListCustomSuggestionDTO(
+            List<CustomSuggestionDTO> customSuggestionDTOS) {
+
+        return customSuggestionDTOS.stream()
+                .collect(Collectors.groupingBy(
+                        CustomSuggestionDTO::getToiletId,
+                        LinkedHashMap::new,
+                        Collectors.toCollection(ArrayList::new)));
+    }
+
     @Override
-    public List<SuggestionAdminResponse> getListOfSuggestions() throws ParseException {
-        Date now = DateTimeUtil.getDateNow();
+    public List<SuggestionAdminResponse> getListOfSuggestions() {
+        List<CustomSuggestionDTO> listSuggestionsIn2LastQuarter = suggestionRepository.getAllSuggestionsIn2LastQuarter();
+        Map<Integer, List<CustomSuggestionDTO>> mapToiletIdListCustomSuggestionDTO
+                = getMapToiletIdListCustomSuggestionDTO(listSuggestionsIn2LastQuarter);
+
+        List<SuggestionAdminResponse> result = new ArrayList<>();
+        mapToiletIdListCustomSuggestionDTO.forEach((key, value) -> {
+            SuggestionAdminResponse suggestionAdminResponse = new SuggestionAdminResponse();
+
+            List<SuggestionDTO> suggestionDTOs = value.stream()
+                    .map(item -> suggestionMapper.convertCustomSuggestionDTOToSuggestionDTO(item))
+                    .collect(Collectors.toList());
+
+            suggestionAdminResponse.setToiletId(key);
+            suggestionAdminResponse.setName(value.get(0).getName());
+            suggestionAdminResponse.setAddress(value.get(0).getAddress());
+            suggestionAdminResponse.setWard(value.get(0).getWard());
+            suggestionAdminResponse.setDistrict(value.get(0).getDistrict());
+            suggestionAdminResponse.setProvince(value.get(0).getProvince());
+
+            if (suggestionDTOs != null) {
+                if (suggestionDTOs.get(0).getIsLow()) {
+                    suggestionAdminResponse.setSuggestionMessage("Quý gần nhất dưới ngưỡng");
+                    suggestionDTOs = suggestionDTOs.subList(0, 1);
+                    suggestionAdminResponse.setSuggestions(suggestionDTOs);
+                } else if (!suggestionDTOs.get(1).getIsLow()) {
+                    suggestionAdminResponse.setSuggestionMessage(suggestionDTOs.get(0).getStreak() + " quý liên tục");
+                    suggestionDTOs = suggestionDTOs.subList(0, 2);
+                    suggestionAdminResponse.setSuggestions(suggestionDTOs);
+                }
+            }
+
+            result.add(suggestionAdminResponse);
+        });
+
+        return result;
+
+        /*Date now = DateTimeUtil.getDateNow();
         int year = now.getYear() + 1900;
         int quarter = (now.getMonth() / 3) + 1;
 
@@ -110,7 +152,7 @@ public class SuggestionServiceImpl implements SuggestionService {
                     String message = Integer.toString(r.getSuggestions().get(1).getStreak());
                     r.setSuggestionMessage(message + " quý liên tục");
                 })
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());*/
     }
 
     @Override
