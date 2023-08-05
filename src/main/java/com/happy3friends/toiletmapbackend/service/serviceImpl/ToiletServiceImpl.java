@@ -477,7 +477,7 @@ public class ToiletServiceImpl implements ToiletService {
                 "origins=" + lat + "," + lng + "&" +
                 "destinations=" + destinations + "&" +
                 "vehicle=" + vehicle + "&" +
-                "api_key=AbbqpehNgoWQ49P9hjoVNBOGcMEsP9FeNa4i9kfv";
+                "api_key=" + GOONG_API_KEY;
         Flux<DistanceMatrixResponse> fluxDistanceMatrixResponse = webClient.get().uri(url).retrieve().bodyToFlux(DistanceMatrixResponse.class);
         List<DistanceMatrixResponse> listDistanceMatrixResponse = fluxDistanceMatrixResponse.collectList().block();
 
