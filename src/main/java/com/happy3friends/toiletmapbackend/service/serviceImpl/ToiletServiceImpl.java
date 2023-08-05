@@ -246,6 +246,8 @@ public class ToiletServiceImpl implements ToiletService {
         // Get all toilets of Company by Company ID
         List<CustomToiletDetailsInfoDTO> customToiletDetailsInfoDTOS
                 = toiletRepository.getAllToiletsByCompanyId(companyId, pageable);
+
+        // Get suggestions
         List<Integer> listToiletIds = customToiletDetailsInfoDTOS.stream()
                 .map(dto -> dto.getId())
                 .collect(Collectors.toList());
@@ -259,13 +261,44 @@ public class ToiletServiceImpl implements ToiletService {
                 customToiletDetailsInfoDTOS.stream()
                         .map(dto -> toiletMapper.convertCustomToiletDetailsInfoDTOToToiletDetailsInfoResponse(dto))
                         .collect(Collectors.toList());
+
         return toiletDetailsInfoResponses.stream()
                 .map(res -> {
                     int toiletId = res.getId();
                     List<SuggestionDTO> suggestionDTOs = mapToiletIdListSuggestionDTO.get(toiletId);
-                    if (suggestionDTOs != null && suggestionDTOs.size() >= 2) {
-                        res.setSuggestions(suggestionDTOs);
-                        res.setSuggestionMessage(suggestionDTOs.size() + " quý liên tục");
+
+                    /**
+                     * - 2 quý gần nhất: (một quý chỉ có thể vượt ngưỡng HOẶC dưới ngưỡng HOẶC bình thường)
+                     * 	+ quý gần nhất vượt ngưỡng - quý xém gần vượt ngưỡng
+                     * 		=> lấy streak của quý gần nhất (VƯỢT NGƯỠNG có data - DƯỚI NGƯỠNG null)
+                     * 	+ quý gần nhất vượt ngưỡng - quý xém gần dưới ngưỡng
+                     * 		=> (VƯỢT NGƯỠNG null - DƯỚI NGƯỠNG null)
+                     * 	+ quý gần nhất dưới ngưỡng - quý xém gần vượt ngưỡng
+                     * 		=> (VƯỢT NGƯỠNG null - DƯỚI NGƯỠNG có data)
+                     *
+                     * ========> Xét quý gần nhất trước | response thêm field: isLowSuggesion (boolean) nếu mọi người không sửa UI
+                     * 	- Có 2 trường hợp:
+                     * 		+ Trường hợp 1: quý gần nhất dưới ngưỡng
+                     * 			-> suggstionMessage: quý gần nhất dưới ngưỡng
+                     * 			-> suggestions: lấy dto của quý xém gần
+                     * 		+ Trường hợp 2: quý gần nhất vượt ngưỡng
+                     * 			. Nếu quý xém gần vượt ngưỡng
+                     * 				-> suggestionMessage: lấy streak của quý gần nhất
+                     * 				-> suggestions: lấy dto của cả 2 quý
+                     * 			. Nếu quý xém gần dưới ngưỡng
+                     * 				-> suggstionMessage: null
+                     * 				-> suggestions: null
+                     */
+                    if (suggestionDTOs != null) {
+                        if (suggestionDTOs.get(0).getIsLow()) {
+                            res.setSuggestionMessage("Quý gần nhất dưới ngưỡng");
+                            suggestionDTOs = suggestionDTOs.subList(0, 1);
+                            res.setSuggestions(suggestionDTOs);
+                        } else if (!suggestionDTOs.get(1).getIsLow()) {
+                            res.setSuggestionMessage(suggestionDTOs.get(0).getStreak() + " quý liên tục");
+                            suggestionDTOs = suggestionDTOs.subList(0, 2);
+                            res.setSuggestions(suggestionDTOs);
+                        }
                     }
                     return res;
                 })
