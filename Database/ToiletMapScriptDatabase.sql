@@ -439,14 +439,14 @@ VALUES (N'0921220406', NULL, N'Đang hoạt động', 5, NULL)
 
 INSERT Toilet (Id, Name, Address, Ward, District, Province, Latitude, Longitude, NearBy, isFree, OpenTime, CloseTime,
                CompanyId, Status)
-VALUES (4, N'Nhà vệ sinh lưu động số 1 - Dịch vụ vệ sinh quận 9', N'447 Lê Văn Việt', N'Tăng Nhơn Phú A', N'Thủ Đức',
-        N'Hồ Chí Minh', 10.84512499300007, 106.79253725500007,
-        N'Gần CircleK, gần Phúc Long, gần khu trung tâm mua sắm, gần chợ', 0, CAST(N'09:00:00' AS Time),
-        CAST(N'23:00:00' AS Time), 2, N'Đang hoạt động')
+VALUES (4, N'Nhà vệ sinh lưu động số 1', N'447 Lê Văn Việt', N'Tăng Nhơn Phú A', N'Thủ Đức',
+        N'Hồ Chí Minh', 10.845111568659927, 106.79249010613532,
+        N'Gần CircleK, gần Phúc Long, gần khu trung tâm mua sắm, gần chợ', 0, CAST(N'08:00:00' AS Time),
+        CAST(N'22:00:00' AS Time), 2, N'Đang hoạt động')
 INSERT Toilet (Id, Name, Address, Ward, District, Province, Latitude, Longitude, NearBy, isFree, OpenTime, CloseTime,
                CompanyId, Status)
-VALUES (5, N'Nhà vệ sinh lưu động số 2', N'79 Nguyễn Huệ', N'Bến Nghé', N'Quận 1', N'Thành phố Hồ Chí Minh',
-        10.8360458, 106.8084369, NULL, 0, CAST(N'09:00:00' AS Time), CAST(N'23:00:00' AS Time), 2, N'Đang hoạt động')
+VALUES (5, N'Nhà vệ sinh lưu động số 2', N'77 Nguyễn Huệ', N'Bến Nghé', N'Quận 1', N'Thành phố Hồ Chí Minh',
+        10.773215070315723, 106.70414522538253, N'Gần Circle K, gần Katinat', 0, CAST(N'08:00:00' AS Time), CAST(N'22:00:00' AS Time), 2, N'Đang hoạt động')
 
 INSERT UserInfo (AccountId, FullName, Gmail, Avatar, AccountBalance, AccountTurn, DefaultPayment)
 VALUES (6, N'Huỳnh Lê Thủy Tiên', NULL, NULL, 350000, 100, N'Số lượt')
