@@ -32,7 +32,7 @@ public class ServiceController {
     @Autowired
     private ServiceService serviceService;
 
-    @Operation(summary = "Get all services", description = "[User] Get the list of all services")
+    @Operation(summary = "Get all services", description = "[Admin, User] Get the list of all services")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
                     @ExampleObject(value = "[\n" +
@@ -65,7 +65,7 @@ public class ServiceController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.USER})
+    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.USER})
     @GetMapping
     public ResponseEntity<BaseResponse<List<ServiceResponse>>> getAllCombo() {
         List<ServiceResponse> responses = serviceService.getAllService();
