@@ -110,52 +110,79 @@ public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer>, 
             "WHERE Status != N'Không hoạt động'", nativeQuery = true)
     List<CustomToiletDTO> getAllToiletsIncludeIdLatitudeLongitude();
 
-    @Query(value = "SELECT t.Id, " +
-            "       t.Name     AS ToiletName, " +
-            "       a.Username AS Username, " +
-            "       t.Address, " +
-            "       t.Ward, " +
-            "       t.District, " +
-            "       t.Province, " +
-            "       t.Latitude, " +
-            "       t.Longitude, " +
-            "       t.Status " +
-            "FROM Toilet t " +
-            "         JOIN Company c " +
-            "              ON t.CompanyId = c.Id " +
-            "         JOIN Account a " +
-            "              ON t.Id = a.Id " +
-            "WHERE c.Id = :companyId", nativeQuery = true)
-    List<CustomToiletDetailsInfoDTO> getAllToiletsByCompanyId(@Param("companyId") int companyId, Pageable pageable);
+    @Query(value = "SELECT * " +
+            "FROM (SELECT t.Id, " +
+            "             t.Name                                                                        AS ToiletName, " +
+            "             a.Username                                                                    AS Username, " +
+            "             t.Address, " +
+            "             t.Ward, " +
+            "             t.District, " +
+            "             t.Province, " +
+            "             t.Latitude, " +
+            "             t.Longitude, " +
+            "             t.Status, " +
+            "             CONCAT(t.Name, ' ', t.Address, ' ', t.Ward, ' ', t.District, ' ', t.Province) AS keyword " +
+            "      FROM Toilet t " +
+            "               JOIN Company c " +
+            "                    ON t.CompanyId = c.Id " +
+            "               JOIN Account a " +
+            "                    ON t.Id = a.Id " +
+            "      WHERE c.Id = :companyId) t " +
+            "WHERE :keyword IS NULL " +
+            "   OR t.keyword LIKE '%' + CONVERT(VARCHAR(50), :keyword) + '%'", nativeQuery = true)
+    List<CustomToiletDetailsInfoDTO> getAllToiletsByCompanyId(@Param("companyId") int companyId,
+                                                              @Param("keyword") String keyword,
+                                                              Pageable pageable);
 
-    long countByCompanyId(int companyId);
+    @Query(value = "SELECT COUNT(*) " +
+            "FROM (SELECT t.Id, " +
+            "             t.Name                                                                        AS ToiletName, " +
+            "             a.Username                                                                    AS Username, " +
+            "             t.Address, " +
+            "             t.Ward, " +
+            "             t.District, " +
+            "             t.Province, " +
+            "             t.Latitude, " +
+            "             t.Longitude, " +
+            "             t.Status, " +
+            "             CONCAT(t.Name, ' ', t.Address, ' ', t.Ward, ' ', t.District, ' ', t.Province) AS keyword " +
+            "      FROM Toilet t " +
+            "               JOIN Company c " +
+            "                    ON t.CompanyId = c.Id " +
+            "               JOIN Account a " +
+            "                    ON t.Id = a.Id " +
+            "      WHERE c.Id = :companyId) t " +
+            "WHERE :keyword IS NULL " +
+            "   OR t.keyword LIKE '%' + CONVERT(VARCHAR(50), :keyword) + '%'", nativeQuery = true)
+    long countByCompanyId(@Param("companyId") int companyId,
+                          @Param("keyword") String keyword);
 
     @Query(value =
             "SELECT Id " +
                     "FROM Toilet", nativeQuery = true)
     List<Integer> getAllToiletId();
 
-    @Query(value = "SELECT t.Id, t.Name, t1.NumberOfRestroom, t2.NumberOfBathroom\n" +
-            "FROM Toilet t\n" +
-            "INNER JOIN\n" +
-            "    (SELECT t.Id ,SUM(tf.Quantity) AS NumberOfRestroom\n" +
-            "    FROM Toilet t\n" +
-            "    INNER JOIN ToiletFacility tf on t.Id = tf.ToiletId\n" +
-            "    WHERE tf.FacilityId = 1 OR tf.FacilityId = 3\n" +
-            "    GROUP BY t.Id) t1 ON t.Id = t1.Id\n" +
-            "INNER JOIN\n" +
-            "    (SELECT t.Id ,SUM(tf.Quantity) AS NumberOfBathroom\n" +
-            "    FROM Toilet t\n" +
-            "    INNER JOIN ToiletFacility tf on t.Id = tf.ToiletId\n" +
-            "    WHERE tf.FacilityId = 2\n" +
-            "    GROUP BY t.Id) t2 ON t.Id = t2.Id\n" +
-            "WHERE t.District = :district\n" +
+    @Query(value = "SELECT t.Id, t.Name, t1.NumberOfRestroom, t2.NumberOfBathroom " +
+            "FROM Toilet t " +
+            "INNER JOIN " +
+            "    (SELECT t.Id ,SUM(tf.Quantity) AS NumberOfRestroom " +
+            "    FROM Toilet t " +
+            "    INNER JOIN ToiletFacility tf on t.Id = tf.ToiletId " +
+            "    WHERE tf.FacilityId = 1 OR tf.FacilityId = 3 " +
+            "    GROUP BY t.Id) t1 ON t.Id = t1.Id " +
+            "INNER JOIN " +
+            "    (SELECT t.Id ,SUM(tf.Quantity) AS NumberOfBathroom " +
+            "    FROM Toilet t " +
+            "    INNER JOIN ToiletFacility tf on t.Id = tf.ToiletId " +
+            "    WHERE tf.FacilityId = 2 " +
+            "    GROUP BY t.Id) t2 ON t.Id = t2.Id " +
+            "WHERE t.District = :district " +
             "    AND t.Status = N'Đang hoạt động'", nativeQuery = true)
     List<CustomToiletResponseDTO> getToiletsByDistrict(@Param("district") String district);
 
-    @Query(value = "SELECT t.Id\n" +
-            "FROM Toilet t\n" +
-            "WHERE t.District = :district\n" +
+    @Query(value = "SELECT t.Id " +
+            "FROM Toilet t " +
+            "WHERE t.District = :district " +
             "    AND t.Status = N'Đang hoạt động'", nativeQuery = true)
     List<Integer> getListToiletIdByDistrict(@Param("district") String district);
 }

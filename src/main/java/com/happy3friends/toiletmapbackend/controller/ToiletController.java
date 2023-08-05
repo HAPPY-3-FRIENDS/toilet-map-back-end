@@ -316,12 +316,14 @@ public class ToiletController {
             @RequestParam(name = "company-id", required = false) Integer companyId,
             @RequestParam(name = "current-latitude", required = false) Double currentLatitude,
             @RequestParam(name = "current-longitude", required = false) Double currentLongitude,
+            @RequestParam(name = "keyword", required = false) String keyword,
             @ModelAttribute BasePaginationRequest paginationRequest) {
 
         List<ToiletDetailsInfoResponse> responses = toiletService.getAllToilets(
                 companyId,
                 currentLatitude,
                 currentLongitude,
+                keyword,
                 paginationRequest);
 
         return ResponseBuilder.generateResponse(
@@ -347,9 +349,10 @@ public class ToiletController {
     @RolesAllowed({RoleConstant.MANAGER})
     @GetMapping(value = "/count")
     public ResponseEntity<BaseResponse<Integer>> count(
-            @RequestParam(name = "company-id", required = false) Integer companyId) {
+            @RequestParam(name = "company-id", required = false) Integer companyId,
+            @RequestParam(name = "keyword", required = false) String keyword) {
 
-        int response = toiletService.count(companyId);
+        int response = toiletService.count(companyId, keyword);
 
         if (companyId != null) {
             return ResponseBuilder.generateResponse(

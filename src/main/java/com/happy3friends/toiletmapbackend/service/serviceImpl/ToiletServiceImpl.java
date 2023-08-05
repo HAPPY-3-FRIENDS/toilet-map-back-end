@@ -232,7 +232,7 @@ public class ToiletServiceImpl implements ToiletService {
         return mapDurationAndDistanceFromGoongAPI(currentLatitude, currentLongitude, toiletDetailsInfoResponses);
     }
 
-    public List<ToiletDetailsInfoResponse> getAllToiletsByCompanyId(Integer companyId, BasePaginationRequest paginationRequest) {
+    public List<ToiletDetailsInfoResponse> getAllToiletsByCompanyId(Integer companyId, String keyword, BasePaginationRequest paginationRequest) {
 
         // Prepare pagination & sort
         Sort.Order defaultSortOrder = new Sort.Order(Sort.Direction.ASC, DefaultSortPropertyConstant.ID);
@@ -245,11 +245,11 @@ public class ToiletServiceImpl implements ToiletService {
 
         // Get all toilets of Company by Company ID
         List<CustomToiletDetailsInfoDTO> customToiletDetailsInfoDTOS
-                = toiletRepository.getAllToiletsByCompanyId(companyId, pageable);
+                = toiletRepository.getAllToiletsByCompanyId(companyId, keyword, pageable);
 
         // Get suggestions
         List<Integer> listToiletIds = customToiletDetailsInfoDTOS.stream()
-                .map(dto -> dto.getId())
+                .map(CustomToiletDetailsInfoDTO::getId)
                 .collect(Collectors.toList());
         List<SuggestionEntity> suggestionEntities = suggestionRepository.getListSuggestionByListToiletIds(companyId, listToiletIds);
         List<SuggestionDTO> suggestionDTOS = suggestionEntities.stream()
@@ -320,12 +320,13 @@ public class ToiletServiceImpl implements ToiletService {
             Integer companyId,
             Double currentLatitude,
             Double currentLongitude,
+            String keyword,
             BasePaginationRequest paginationRequest) {
 
         List<ToiletDetailsInfoResponse> responses;
 
         if (companyId != null) {
-            responses = getAllToiletsByCompanyId(companyId, paginationRequest);
+            responses = getAllToiletsByCompanyId(companyId, keyword, paginationRequest);
         } else if (currentLatitude != null && currentLongitude != null) {
             responses = getTop10ToiletsNearByCurrentLocation(currentLatitude, currentLongitude);
         } else {
@@ -344,14 +345,14 @@ public class ToiletServiceImpl implements ToiletService {
     }
 
     @Override
-    public int count(Integer companyId) {
+    public int count(Integer companyId, String keyword) {
 
         if (companyId != null) {
             Optional<CompanyEntity> companyEntity = companyRepository.findById(companyId);
             if (!companyEntity.isPresent())
                 throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY, ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY.getMessage());
 
-            return (int) toiletRepository.countByCompanyId(companyId);
+            return (int) toiletRepository.countByCompanyId(companyId, keyword);
         }
 
         return (int) toiletRepository.count();

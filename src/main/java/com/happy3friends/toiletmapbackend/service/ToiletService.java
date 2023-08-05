@@ -13,9 +13,10 @@ public interface ToiletService {
             Integer companyId,
             Double currentLatitude,
             Double currentLongitude,
+            String keyword,
             BasePaginationRequest paginationRequest);
     ToiletDetailsInfoResponse getToiletByToiletId(int toiletId);
-    int count(Integer companyId);
+    int count(Integer companyId, String keyword);
     void createToilet(ToiletCreateRequest toiletCreateRequest) throws Exception;
 
     ToiletDetailsInfoResponse getNearestToilet(Double lat, Double lng, String vehicle);
