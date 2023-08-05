@@ -83,7 +83,7 @@ CREATE TABLE [ToiletFacility]
     FacilityId  INT                 NOT NULL,
     Quantity    INT                 NOT NULL,
     Description NTEXT               NULL,
-    MaxQuantity INT                 NULL,
+    TotalQuantity INT                 NULL,
 )
 GO
 

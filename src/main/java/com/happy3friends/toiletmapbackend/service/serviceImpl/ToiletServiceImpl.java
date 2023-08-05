@@ -402,7 +402,7 @@ public class ToiletServiceImpl implements ToiletService {
                     toiletFacilityEntity.setToiletId(toiletId);
                     toiletFacilityEntity.setFacilityId(dto.getFacilityId());
                     toiletFacilityEntity.setQuantity(dto.getQuantity());
-                    toiletFacilityEntity.setMaxQuantity(dto.getQuantity());
+                    toiletFacilityEntity.setTotalQuantity(dto.getQuantity());
 
                     return toiletFacilityEntity;
                 }).collect(Collectors.toList());
@@ -649,13 +649,13 @@ public class ToiletServiceImpl implements ToiletService {
         toilet.getToiletFacilitiesById().forEach(facility -> {
             if (facility.getFacilityId() == 1) {
                 result.setNumberOfRestroom(facility.getQuantity());
-                result.setMaxNumberOfRestroom(facility.getMaxQuantity());
+                result.setMaxNumberOfRestroom(facility.getTotalQuantity());
             } else if (facility.getFacilityId() == 2) {
                 result.setNumberOfBathroom(facility.getQuantity());
-                result.setMaxNumberOfBathroom(facility.getMaxQuantity());
+                result.setMaxNumberOfBathroom(facility.getTotalQuantity());
             } else if (facility.getFacilityId() == 3) {
                 result.setNumberOfDisabledRestroom(facility.getQuantity());
-                result.setMaxNumberOfDisabledRestroom(facility.getMaxQuantity());
+                result.setMaxNumberOfDisabledRestroom(facility.getTotalQuantity());
             }
         });
 
@@ -680,21 +680,21 @@ public class ToiletServiceImpl implements ToiletService {
                 toiletFacilityRepository.save(facilityEntity.get());
 
                 result.setNumberOfRestroom(request.getNumberOfRestroom());
-                result.setMaxNumberOfRestroom(facility.getMaxQuantity());
+                result.setMaxNumberOfRestroom(facility.getTotalQuantity());
             } else if (facility.getFacilityId() == 2) {
                 Optional<ToiletFacilityEntity> facilityEntity = toiletFacilityRepository.findById(facility.getId());
                 facilityEntity.get().setQuantity(request.getNumberOfBathroom());
                 toiletFacilityRepository.save(facilityEntity.get());
 
                 result.setNumberOfBathroom(request.getNumberOfBathroom());
-                result.setMaxNumberOfBathroom(facility.getMaxQuantity());
+                result.setMaxNumberOfBathroom(facility.getTotalQuantity());
             } else if (facility.getFacilityId() == 3) {
                 Optional<ToiletFacilityEntity> facilityEntity = toiletFacilityRepository.findById(facility.getId());
                 facilityEntity.get().setQuantity(request.getNumberOfDisabledRestroom());
                 toiletFacilityRepository.save(facilityEntity.get());
 
                 result.setNumberOfDisabledRestroom(request.getNumberOfDisabledRestroom());
-                result.setMaxNumberOfDisabledRestroom(facility.getMaxQuantity());
+                result.setMaxNumberOfDisabledRestroom(facility.getTotalQuantity());
             }
         });
 
