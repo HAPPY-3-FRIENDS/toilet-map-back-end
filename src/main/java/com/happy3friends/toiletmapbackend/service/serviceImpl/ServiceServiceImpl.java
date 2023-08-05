@@ -1,5 +1,6 @@
 package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
+import com.happy3friends.toiletmapbackend.dto.ServiceDTO;
 import com.happy3friends.toiletmapbackend.entity.ServiceEntity;
 import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
@@ -31,5 +32,18 @@ public class ServiceServiceImpl implements ServiceService {
         return serviceEntities.stream()
                 .map(entity -> serviceMapper.convertServiceEntityToServiceResponse(entity))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void updateBatchServices(List<ServiceDTO> serviceDTOS) {
+        List<ServiceEntity> oldServiceEntities
+                = serviceRepository.findAllById(serviceDTOS.stream().map(ServiceDTO::getId).collect(Collectors.toList()));
+        oldServiceEntities = oldServiceEntities.stream()
+                .map(oldEntity -> {
+                    oldEntity.setPrice(serviceDTOS.stream().filter(dto -> dto.getId() == oldEntity.getId()).findFirst().get().getPrice());
+                    return oldEntity;
+                })
+                .collect(Collectors.toList());
+        serviceRepository.saveAll(oldServiceEntities);
     }
 }

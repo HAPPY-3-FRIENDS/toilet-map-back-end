@@ -3,6 +3,7 @@ package com.happy3friends.toiletmapbackend.controller;
 import com.happy3friends.toiletmapbackend.base.models.BaseResponse;
 import com.happy3friends.toiletmapbackend.config.OpenApiConfig;
 import com.happy3friends.toiletmapbackend.constant.RoleConstant;
+import com.happy3friends.toiletmapbackend.dto.ServiceDTO;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.response.ServiceResponse;
 import com.happy3friends.toiletmapbackend.service.ServiceService;
@@ -17,9 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
 import java.util.List;
@@ -74,6 +73,40 @@ public class ServiceController {
                 "Get list of all services successfully!",
                 HttpStatus.OK,
                 responses
+        );
+    }
+
+    @Operation(summary = "Update batch services", description = "[Admin] Update batch services")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Batch Services Request", required = true, content = @Content(
+            examples = {
+                    @ExampleObject(value = "[\n" +
+                            "  {\n" +
+                            "    \"id\": 1,\n" +
+                            "    \"price\": 7000\n" +
+                            "  },\n" +
+                            "  {\n" +
+                            "    \"id\": 2,\n" +
+                            "    \"price\": 14000\n" +
+                            "  }\n" +
+                            "]")}))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.ADMIN})
+    @PostMapping(value = "/batch-update")
+    public ResponseEntity<BaseResponse<List<ServiceResponse>>> updateBatchServices(@RequestBody List<ServiceDTO> serviceDTOS) {
+        serviceService.updateBatchServices(serviceDTOS);
+
+        return ResponseBuilder.generateResponse(
+                "Update batch services successfully!",
+                HttpStatus.OK,
+                null
         );
     }
 }
