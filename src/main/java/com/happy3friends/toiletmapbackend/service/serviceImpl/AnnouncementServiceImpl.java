@@ -2,6 +2,7 @@ package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
 import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
 import com.happy3friends.toiletmapbackend.constant.AnnouncementTypeConstant;
+import com.happy3friends.toiletmapbackend.constant.DateTimeConstant;
 import com.happy3friends.toiletmapbackend.constant.DefaultSortPropertyConstant;
 import com.happy3friends.toiletmapbackend.entity.AnnouncementEntity;
 import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
@@ -80,10 +81,14 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         fields.forEach((key, value) -> {
             if (key.equals("startDate")) {
                 String value2String = value.toString();
-                entity.get().setStartDate(DateTimeUtil.convertStringToDate(value2String, "yyyy-MM-dd"));
+                if (value2String != null) {
+                    entity.get().setStartDate(DateTimeUtil.convertStringToDate(value2String, DateTimeConstant.dd__MM__yyyy));
+                }
             } else if (key.equals("endDate")) {
                 String value2String = value.toString();
-                entity.get().setEndDate(DateTimeUtil.convertStringToDate(value2String, "yyyy-MM-dd"));
+                if (value2String != null) {
+                    entity.get().setEndDate(DateTimeUtil.convertStringToDate(value2String, DateTimeConstant.dd__MM__yyyy));
+                }
             } else {
                 Field field = ReflectionUtils.findField(AnnouncementEntity.class, key);
                 field.setAccessible(true);
