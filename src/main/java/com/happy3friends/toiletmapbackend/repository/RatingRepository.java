@@ -165,4 +165,17 @@ public interface RatingRepository extends JpaRepository<RatingEntity, Integer> {
                                                      @Param("listCommonComment") List<String> listCommonComment,
                                                      @Param("listStars") List<Integer> listStars,
                                                      @Param("listStatus") List<String> listStatus);
+
+    @Query(value = "SELECT r.Id, " +
+            "       r.Star, " +
+            "       CAST(r.Comment AS NVARCHAR(MAX))     AS Comment, " +
+            "       r.DateTime, " +
+            "       CAST(ri.ImageSource AS VARCHAR(MAX)) AS ImageSource, " +
+            "       cc.Name                              AS CommonComment " +
+            "FROM Rating r " +
+            "         LEFT JOIN RatingImage ri ON ri.RatingId = r.Id " +
+            "         LEFT JOIN RatingCommonComment rcc ON rcc.RatingId = r.Id " +
+            "         LEFT JOIN CommonComment cc ON rcc.CommonCommentId = cc.Id " +
+            "WHERE r.Id = :ratingId", nativeQuery = true)
+    List<CustomRatingDetailsDTO> getRatingById(@Param("ratingId") int ratingId);
 }

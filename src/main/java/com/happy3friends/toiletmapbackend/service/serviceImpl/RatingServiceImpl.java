@@ -341,4 +341,25 @@ public class RatingServiceImpl implements RatingService {
                 request.getListStatus());
         return getListRatingResponseFromListCustomRatingDetailsDTO(customRatingDetailsDTOS).size();
     }
+
+    @Override
+    public RatingResponse getRatingByRatingId(int ratingId) {
+        Optional<RatingEntity> ratingEntity = ratingRepository.findById(ratingId);
+        if (!ratingEntity.isPresent()) {
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_RATING, ToiletMapErrorCodeEnum.NOT_FOUND_RATING.getMessage());
+        }
+
+        List<CustomRatingDetailsDTO> customRatingDetailsDTOS = ratingRepository.getRatingById(ratingId);
+        List<String> imageSources = customRatingDetailsDTOS.stream().map(CustomRatingDetailsDTO::getImageSource).collect(Collectors.toList());
+        List<String> commonComments = customRatingDetailsDTOS.stream().map(CustomRatingDetailsDTO::getCommonComment).collect(Collectors.toList());
+        RatingResponse ratingResponse = new RatingResponse();
+        ratingResponse.setId(customRatingDetailsDTOS.get(0).getId());
+        ratingResponse.setStar(customRatingDetailsDTOS.get(0).getStar());
+        ratingResponse.setComment(customRatingDetailsDTOS.get(0).getComment());
+        ratingResponse.setDateTime(customRatingDetailsDTOS.get(0).getDateTime());
+        ratingResponse.setImageSources(imageSources);
+        ratingResponse.setCommonComments(commonComments);
+
+        return ratingResponse;
+    }
 }

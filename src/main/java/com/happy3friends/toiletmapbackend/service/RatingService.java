@@ -24,4 +24,5 @@ public interface RatingService {
     List<RatingResponse> filterRating(FilterRatingRequest request, BasePaginationRequest paginationRequest);
 
     int countFilterRating(FilterRatingRequest request);
+    RatingResponse getRatingByRatingId(int ratingId);
 }

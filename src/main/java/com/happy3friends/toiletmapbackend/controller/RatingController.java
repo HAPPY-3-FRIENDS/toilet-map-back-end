@@ -448,4 +448,59 @@ public class RatingController {
                 response
         );
     }
+
+    @Operation(summary = "Get rating by rating ID", description = "[Manager] Get a specific rating by rating ID")
+    @Parameters(value = {
+            @Parameter(name = "rating-id", description = "A specific rating ID", in = ParameterIn.PATH, required = true, example = "1"),
+    })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
+                    @ExampleObject(value = "{\n" +
+                            "    \"id\": 20,\n" +
+                            "    \"fullName\": null,\n" +
+                            "    \"star\": 5,\n" +
+                            "    \"comment\": \"Nhà vệ sinh rất sạch, tớ sẽ ghé sử dụng thường xuyên\",\n" +
+                            "    \"dateTime\": \"27/05/2023 - 23:37:42\",\n" +
+                            "    \"imageSources\": [\n" +
+                            "      \"https://meovatchamsocgiadinh.com/ckfinder/userfiles/images/cau-chuyen-ve-chiec-bon-cau-ban-va-cach-xu-ly-ham-cau-bi-day/cau-chuyen-ve-chiec-bon-cau-ban.jpg\",\n" +
+                            "      \"https://meovatchamsocgiadinh.com/ckfinder/userfiles/images/cau-chuyen-ve-chiec-bon-cau-ban-va-cach-xu-ly-ham-cau-bi-day/cau-chuyen-ve-chiec-bon-cau-ban.jpg\",\n" +
+                            "      \"https://meovatchamsocgiadinh.com/ckfinder/userfiles/images/cau-chuyen-ve-chiec-bon-cau-ban-va-cach-xu-ly-ham-cau-bi-day/cau-chuyen-ve-chiec-bon-cau-ban.jpg\",\n" +
+                            "      \"https://meovatchamsocgiadinh.com/ckfinder/userfiles/images/cau-chuyen-ve-chiec-bon-cau-ban-va-cach-xu-ly-ham-cau-bi-day/cau-chuyen-ve-chiec-bon-cau-ban.jpg\",\n" +
+                            "      \"https://afamilycdn.com/k:thumb_w/600/h6ZUmntrbWseKUPJv6Yt1NY22jQBtc/Image/2014/12/6-8429e/tu-su-cua-chiec-bon-cau-ban-va-chuyen-di-ve-sinh-cua-be-o-truong.jpg\",\n" +
+                            "      \"https://afamilycdn.com/k:thumb_w/600/h6ZUmntrbWseKUPJv6Yt1NY22jQBtc/Image/2014/12/6-8429e/tu-su-cua-chiec-bon-cau-ban-va-chuyen-di-ve-sinh-cua-be-o-truong.jpg\",\n" +
+                            "      \"https://afamilycdn.com/k:thumb_w/600/h6ZUmntrbWseKUPJv6Yt1NY22jQBtc/Image/2014/12/6-8429e/tu-su-cua-chiec-bon-cau-ban-va-chuyen-di-ve-sinh-cua-be-o-truong.jpg\",\n" +
+                            "      \"https://afamilycdn.com/k:thumb_w/600/h6ZUmntrbWseKUPJv6Yt1NY22jQBtc/Image/2014/12/6-8429e/tu-su-cua-chiec-bon-cau-ban-va-chuyen-di-ve-sinh-cua-be-o-truong.jpg\"\n" +
+                            "    ],\n" +
+                            "    \"avatar\": null,\n" +
+                            "    \"status\": null,\n" +
+                            "    \"commonComments\": [\n" +
+                            "      \"Thái độ nhân viên kém\",\n" +
+                            "      \"Nhà vệ sinh bẩn, hôi\",\n" +
+                            "      \"Trang thiết bị hư hỏng\",\n" +
+                            "      \"Thiếu nước - giấy vệ sinh\",\n" +
+                            "      \"Thái độ nhân viên kém\",\n" +
+                            "      \"Nhà vệ sinh bẩn, hôi\",\n" +
+                            "      \"Trang thiết bị hư hỏng\",\n" +
+                            "      \"Thiếu nước - giấy vệ sinh\"\n" +
+                            "    ]\n" +
+                            "  }")})),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.MANAGER})
+    @GetMapping(value = "/{rating-id}")
+    public ResponseEntity<BaseResponse<RatingResponse>> getRatingByRatingId(@PathVariable("rating-id") int ratingId) {
+
+        RatingResponse response = ratingService.getRatingByRatingId(ratingId);
+
+        return ResponseBuilder.generateResponse(
+                "Get rating by rating ID successfully!",
+                HttpStatus.OK,
+                response
+        );
+    }
 }
