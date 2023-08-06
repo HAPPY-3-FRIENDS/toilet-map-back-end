@@ -27,6 +27,16 @@ public class DateTimeUtil {
         return new Date(convertZoneDateTimeToDate(getZoneDateTimeNow()).getTime());
     }
 
+    public static Date getDateNowWithInitialTime(int hour, int minus, int second, int milliSecond) {
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(ZoneId.of(DateTimeConstant.ZONE_ID)));
+        cal.set(Calendar.HOUR_OF_DAY, hour);
+        cal.set(Calendar.MINUTE, minus);
+        cal.set(Calendar.SECOND, second);
+        cal.set(Calendar.MILLISECOND, milliSecond);
+
+        return cal.getTime();
+    }
+
     public static Timestamp getTimestampNow() {
         return new Timestamp(convertZoneDateTimeToDate(getZoneDateTimeNow()).getTime());
     }
@@ -95,10 +105,14 @@ public class DateTimeUtil {
     }
 
     public static Date getFirstDateOfCurrentMonth() {
-        Calendar c = Calendar.getInstance(TimeZone.getTimeZone(ZoneId.of(DateTimeConstant.ZONE_ID)));
-        c.set(Calendar.DAY_OF_MONTH, 1);
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(ZoneId.of(DateTimeConstant.ZONE_ID)));
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
 
-        return new Date(c.getTime().getTime());
+        return new Date(cal.getTime().getTime());
     }
 
     public static Date getEndDateOfPreviousQuarter() {

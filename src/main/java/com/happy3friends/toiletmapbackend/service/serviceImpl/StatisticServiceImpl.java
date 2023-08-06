@@ -118,12 +118,11 @@ public class StatisticServiceImpl implements StatisticService {
 
         // If fromDate && toDate is null -> Default fromDate and toDate is currentMonth
         if (fromStrDate == null || toStrDate == null) {
-            toDate = DateTimeUtil.getDateNow();
             fromDate = DateTimeUtil.getFirstDateOfCurrentMonth();
+            toDate = DateTimeUtil.getDateNowWithInitialTime(23, 59, 59, 999);
         } else {  // Validate fromDate & toDate
             fromDate = DateTimeUtil.convertStringToDate(fromStrDate, DateTimeConstant.dd_MM_yyyy);
-            toDate = DateTimeUtil.convertStringToDate(toStrDate, DateTimeConstant.dd_MM_yyyy);
-            toDate = DateTimeUtil.addDays(toDate, 1);
+            toDate = DateTimeUtil.addDays(DateTimeUtil.convertStringToDate(toStrDate, DateTimeConstant.dd_MM_yyyy), 1);
             if (fromDate != null && fromDate.after(toDate))
                 throw new BadRequestException(ToiletMapErrorCodeEnum.FROM_DATE_AFTER_TO_DATE, ToiletMapErrorCodeEnum.FROM_DATE_AFTER_TO_DATE.getMessage());
         }
@@ -161,8 +160,8 @@ public class StatisticServiceImpl implements StatisticService {
 
     @Override
     public StatisticResponse getTotalStatisticOfMonth(Integer companyId, Integer toiletId) {
-        Date toDate = DateTimeUtil.getDateNow();
         Date fromDate = DateTimeUtil.getFirstDateOfCurrentMonth();
+        Date toDate = DateTimeUtil.getDateNowWithInitialTime(23, 59, 59, 999);
 
         if (companyId != null && toiletId == null) {
             return getTotalStatisticOfMonthByCompanyId(companyId, fromDate, toDate);
@@ -181,11 +180,11 @@ public class StatisticServiceImpl implements StatisticService {
 
         // If fromDate && toDate is null -> Default fromDate and toDate is currentMonth
         if (fromStrDate == null || toStrDate == null) {
-            toDate = DateTimeUtil.getDateNow();
             fromDate = DateTimeUtil.getFirstDateOfCurrentMonth();
+            toDate = DateTimeUtil.getDateNowWithInitialTime(0, 0, 0, 0);
         } else {  // Validate fromDate & toDate
             fromDate = DateTimeUtil.convertStringToDate(fromStrDate, DateTimeConstant.dd_MM_yyyy);
-            toDate = DateTimeUtil.convertStringToDate(toStrDate, DateTimeConstant.dd_MM_yyyy);
+            toDate = DateTimeUtil.addDays(DateTimeUtil.convertStringToDate(toStrDate, DateTimeConstant.dd_MM_yyyy), 1);
             if (fromDate != null && fromDate.after(toDate))
                 throw new BadRequestException(ToiletMapErrorCodeEnum.FROM_DATE_AFTER_TO_DATE, ToiletMapErrorCodeEnum.FROM_DATE_AFTER_TO_DATE.getMessage());
         }
