@@ -80,9 +80,9 @@ public class CheckInController {
         );
     }
 
-    @Operation(summary = "Get list of all check-in histories", description = "[User] List of check-in histories by Account ID")
+    @Operation(summary = "Get list of all check-in histories", description = "[Admin, User] List of check-in histories")
     @Parameters(value = {
-            @Parameter(name = "account-id", description = "A specific account ID", in = ParameterIn.QUERY, required = true, example = "6"),
+            @Parameter(name = "account-id", description = "A specific account ID", in = ParameterIn.QUERY, required = false, example = "6"),
             @Parameter(name = "payment-method", description = "A specific payment method", in = ParameterIn.QUERY, examples = {
                     @ExampleObject(name = "Payment method is BALANCE", value = "Số dư"),
                     @ExampleObject(name = "Payment method is TURN", value = "Số lượt"),
@@ -126,11 +126,11 @@ public class CheckInController {
     @RolesAllowed({RoleConstant.USER})
     @GetMapping
     public ResponseEntity<BaseResponse<List<CheckInResponse>>> getCheckInHistoriesByAccountId(
-            @RequestParam(name = "account-id") int accountId,
+            @RequestParam(name = "account-id", required = false) Integer accountId,
             @RequestParam(name = "payment-method", required = false) String paymentMethod,
             @ModelAttribute BasePaginationRequest paginationRequest) {
 
-        List<CheckInResponse> responses = checkInService.getCheckInHistoriesByAccountId(accountId, paymentMethod, paginationRequest);
+        List<CheckInResponse> responses = checkInService.getCheckInHistories(accountId, paymentMethod, paginationRequest);
 
         if (responses.isEmpty()) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 

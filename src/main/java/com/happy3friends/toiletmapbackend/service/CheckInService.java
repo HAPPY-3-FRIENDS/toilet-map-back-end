@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface CheckInService {
     List<CheckInResponse> getCheckInHistoriesByToiletId(int toiletId);
-    List<CheckInResponse> getCheckInHistoriesByAccountId(int accountId, String paymentMethod, BasePaginationRequest paginationRequest);
+    List<CheckInResponse> getCheckInHistories(Integer accountId, String paymentMethod, BasePaginationRequest paginationRequest);
     CheckInResponse userCheckIn(CheckInRequest checkInRequest);
     List<CheckInResponse> walkInGuestCheckIn(WalkInGuestCheckInRequest walkInGuestCheckInRequest);
     int count(Integer accountId, String paymentMethod);

@@ -37,30 +37,30 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
             "ORDER BY DateTime DESC ", nativeQuery = true)
     List<CustomCheckInDTO> getCheckInHistoriesByToiletId(@Param("toiletId") int toiletId);
 
-    @Query(value = "SELECT c.DateTime,\n" +
-            "    t.Name AS ToiletName,\n" +
-            "    t.Id AS ToiletId,\n" +
-            "    s.Name AS ServiceName,\n" +
-            "    c.Balance,\n" +
-            "    c.Turn,\n" +
-            "    c.Id,\n" +
-            "    CASE\n" +
-            "        WHEN r.CheckInId IS NOT NULL THEN N'Đã đánh giá'\n" +
-            "        WHEN DATEDIFF(second, CONVERT(DATETIME2, c.DateTime), sysdatetime()) > 3600 THEN N'Đã hết hạn'\n" +
-            "        ELSE N'Chưa đánh giá'\n" +
-            "    END AS status\n" +
-            "FROM CheckIn c\n" +
-            "INNER JOIN ToiletService ts\n" +
-            "    ON c.ToiletServiceId = ts.Id\n" +
-            "INNER JOIN Toilet t\n" +
-            "    ON ts.ToiletId = t.Id\n" +
-            "INNER JOIN Service s\n" +
-            "    ON ts.ServiceId = s.Id\n" +
-            "LEFT JOIN Rating r on c.Id = r.CheckInId\n" +
-            "WHERE c.AccountId = :accountId\n" +
-            "    AND (:paymentMethod IS NULL OR c.PaymentMethod = :paymentMethod)",
+    @Query(value = "SELECT c.DateTime, " +
+            "       t.Name  AS ToiletName, " +
+            "       t.Id    AS ToiletId, " +
+            "       s.Name  AS ServiceName, " +
+            "       c.Balance, " +
+            "       c.Turn, " +
+            "       c.Id, " +
+            "       CASE " +
+            "           WHEN r.CheckInId IS NOT NULL THEN N'Đã đánh giá' " +
+            "           WHEN DATEDIFF(second, CONVERT(DATETIME2, c.DateTime), sysdatetime()) > 3600 THEN N'Đã hết hạn' " +
+            "           ELSE N'Chưa đánh giá' " +
+            "           END AS status " +
+            "FROM CheckIn c " +
+            "         INNER JOIN ToiletService ts " +
+            "                    ON c.ToiletServiceId = ts.Id " +
+            "         INNER JOIN Toilet t " +
+            "                    ON ts.ToiletId = t.Id " +
+            "         INNER JOIN Service s " +
+            "                    ON ts.ServiceId = s.Id " +
+            "         LEFT JOIN Rating r on c.Id = r.CheckInId " +
+            "WHERE (:accountId IS NULL OR c.AccountId = :accountId) " +
+            "  AND (:paymentMethod IS NULL OR c.PaymentMethod = :paymentMethod)",
             nativeQuery = true)
-    List<CustomCheckInDTO> getCheckInHistoriesByAccountId(@Param("accountId") int accountId,
+    List<CustomCheckInDTO> getCheckInHistories(@Param("accountId") Integer accountId,
                                                           @Param("paymentMethod") String paymentMethod,
                                                           Pageable pageable);
 
@@ -77,35 +77,35 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
     int countCheckInHistoriesByAccountId(@Param("accountId") int accountId,
                                          @Param("paymentMethod") String paymentMethod);
 
-    @Query(value = "SELECT COUNT(*)\n" +
-            "FROM (\n" +
-            "    SELECT\n" +
-            "        CASE\n" +
-            "            WHEN r.CheckInId IS NOT NULL THEN N'Đã đánh giá'\n" +
-            "            WHEN DATEDIFF(second, CONVERT(DATETIME2, c.DateTime), DATEADD(hour , 7, sysdatetime())) > 3600 THEN N'Đã hết hạn'\n" +
-            "            ELSE N'Chưa đánh giá'\n" +
-            "        END AS status\n" +
-            "    FROM CheckIn c\n" +
-            "    INNER JOIN ToiletService ts\n" +
-            "        ON c.ToiletServiceId = ts.Id\n" +
-            "    INNER JOIN Toilet t\n" +
-            "        ON ts.ToiletId = t.Id\n" +
-            "    INNER JOIN Service s\n" +
-            "        ON ts.ServiceId = s.Id\n" +
-            "    LEFT JOIN Rating r\n" +
-            "        ON c.Id = r.CheckInId\n" +
-            "    WHERE c.AccountId = :accountId\n" +
-            "    AND (:paymentMethod IS NULL OR c.PaymentMethod = :paymentMethod)) c\n" +
+    @Query(value = "SELECT COUNT(*) " +
+            "FROM ( " +
+            "    SELECT " +
+            "        CASE " +
+            "            WHEN r.CheckInId IS NOT NULL THEN N'Đã đánh giá' " +
+            "            WHEN DATEDIFF(second, CONVERT(DATETIME2, c.DateTime), DATEADD(hour , 7, sysdatetime())) > 3600 THEN N'Đã hết hạn' " +
+            "            ELSE N'Chưa đánh giá' " +
+            "        END AS status " +
+            "    FROM CheckIn c " +
+            "    INNER JOIN ToiletService ts " +
+            "        ON c.ToiletServiceId = ts.Id " +
+            "    INNER JOIN Toilet t " +
+            "        ON ts.ToiletId = t.Id " +
+            "    INNER JOIN Service s " +
+            "        ON ts.ServiceId = s.Id " +
+            "    LEFT JOIN Rating r " +
+            "        ON c.Id = r.CheckInId " +
+            "    WHERE c.AccountId = :accountId " +
+            "    AND (:paymentMethod IS NULL OR c.PaymentMethod = :paymentMethod)) c " +
             "WHERE c.status = N'Chưa đánh giá'", nativeQuery = true)
     int countCheckInNotRatingYetHistoriesByAccountId(@Param("accountId") int accountId,
                                          @Param("paymentMethod") String paymentMethod);
 
-    @Query(value = "SELECT COUNT(*)\n" +
-            "FROM CheckIn c\n" +
-            "INNER JOIN ToiletService ts on c.ToiletServiceId = ts.Id\n" +
-            "WHERE ts.ToiletId = :toiletId\n" +
-            "    AND c.Turn = :turn\n" +
-            "    AND (DateTime >= :startDate AND DateTime < :endDate)\n" +
+    @Query(value = "SELECT COUNT(*) " +
+            "FROM CheckIn c " +
+            "INNER JOIN ToiletService ts on c.ToiletServiceId = ts.Id " +
+            "WHERE ts.ToiletId = :toiletId " +
+            "    AND c.Turn = :turn " +
+            "    AND (DateTime >= :startDate AND DateTime < :endDate) " +
             "    AND (:now BETWEEN DateTime AND CheckoutTime)", nativeQuery = true)
     int getNumberNotAvailableRoom(@Param("toiletId") int toiletId,
                                       @Param("turn") int turn,
@@ -115,42 +115,42 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
 
     @Transactional
     @Modifying
-    @Query(value = "UPDATE CheckIn\n" +
-            "SET CheckoutTime = :now\n" +
-            "WHERE Id IN\n" +
-            "(SELECT c.Id\n" +
-            "FROM CheckIn c\n" +
-            "INNER JOIN ToiletService ts on c.ToiletServiceId = ts.Id\n" +
-            "WHERE ts.ToiletId = :toiletId\n" +
-            "    AND (c.Turn = 2 OR c.Turn = 3)\n" +
-            "    AND (DateTime >= :startDate AND DateTime < :endDate)\n" +
+    @Query(value = "UPDATE CheckIn " +
+            "SET CheckoutTime = :now " +
+            "WHERE Id IN " +
+            "(SELECT c.Id " +
+            "FROM CheckIn c " +
+            "INNER JOIN ToiletService ts on c.ToiletServiceId = ts.Id " +
+            "WHERE ts.ToiletId = :toiletId " +
+            "    AND (c.Turn = 2 OR c.Turn = 3) " +
+            "    AND (DateTime >= :startDate AND DateTime < :endDate) " +
             "    AND (:now BETWEEN DateTime AND CheckoutTime))", nativeQuery = true)
     void checkout(@Param("toiletId") int toiletId,
                   @Param("startDate") String startDate,
                   @Param("endDate") String endDate,
                   @Param("now") String now);
 
-    @Query(value = "SELECT c.Id\n" +
-            "FROM CheckIn c\n" +
-            "INNER JOIN ToiletService ts on c.ToiletServiceId = ts.Id\n" +
-            "WHERE ts.ToiletId = :toiletId\n" +
-            "    AND (c.Turn = 2 OR c.Turn = 3)\n" +
-            "    AND (DateTime >= :startDate AND DateTime < :endDate)\n" +
+    @Query(value = "SELECT c.Id " +
+            "FROM CheckIn c " +
+            "INNER JOIN ToiletService ts on c.ToiletServiceId = ts.Id " +
+            "WHERE ts.ToiletId = :toiletId " +
+            "    AND (c.Turn = 2 OR c.Turn = 3) " +
+            "    AND (DateTime >= :startDate AND DateTime < :endDate) " +
             "    AND (:now BETWEEN DateTime AND CheckoutTime)", nativeQuery = true)
     List<Integer> getListAvailableCheckIn(@Param("toiletId") int toiletId,
                                           @Param("startDate") String startDate,
                                           @Param("endDate") String endDate,
                                           @Param("now") String now);
 
-    @Query(value = "SELECT ui.FullName\n" +
-            "FROM CheckIn c\n" +
-            "INNER JOIN Account a on a.Id = c.AccountId\n" +
-            "INNER JOIN UserInfo ui on a.Id = ui.AccountId\n" +
+    @Query(value = "SELECT ui.FullName " +
+            "FROM CheckIn c " +
+            "INNER JOIN Account a on a.Id = c.AccountId " +
+            "INNER JOIN UserInfo ui on a.Id = ui.AccountId " +
             "WHERE c.Id IN :list", nativeQuery = true)
     List<String> getListUserByListCheckInId(@Param("list") List<Integer> list);
 
-    @Query(value = "SELECT MIN(DATEDIFF(minute, :now, c.CheckoutTime))\n" +
-            "FROM CheckIn c\n" +
+    @Query(value = "SELECT MIN(DATEDIFF(minute, :now, c.CheckoutTime)) " +
+            "FROM CheckIn c " +
             "WHERE c.Id IN :list", nativeQuery = true)
     Integer getWaitingTimeOfToilet(@Param("list") List<Integer> list,
                                    @Param("now") String now);
