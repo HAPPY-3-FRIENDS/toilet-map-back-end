@@ -16,13 +16,13 @@ public interface ReportService {
 
     CreateReportResponse updateStatus(int id, String message);
 
-    List<ReportResponseForManager> getReportsByToiletIdForManager(int toiletId ,BasePaginationRequest paginationRequest);
+    List<ReportResponseForManager> getReportsByToiletIdForManager(int toiletId, List<String> listMessages, List<String> listStatus, BasePaginationRequest paginationRequest);
 
     int countReportsByCompanyIdForManager(int id);
 
     List<CreateReportResponse> updateListReports(UpdateListReportRequest request);
 
-    int countReportsByToiletIdForManager(int id);
+    int countReportsByToiletIdForManager(int id, List<String> listMessages, List<String> listStatus);
 
     List<ReportResponseForManager> getReportsByCompanyIdForManager(int companyId ,BasePaginationRequest paginationRequest);
 }

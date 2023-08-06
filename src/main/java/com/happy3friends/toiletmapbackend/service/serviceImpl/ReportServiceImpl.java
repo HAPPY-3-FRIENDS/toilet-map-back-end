@@ -125,15 +125,24 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public List<ReportResponseForManager> getReportsByToiletIdForManager(int toiletId, BasePaginationRequest paginationRequest) {
+    public List<ReportResponseForManager> getReportsByToiletIdForManager(int toiletId, List<String> listMessages, List<String> listStatus, BasePaginationRequest paginationRequest) {
         Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
         if (!toiletEntity.isPresent())
             throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_TOILET, ToiletMapErrorCodeEnum.NOT_FOUND_TOILET.getMessage());
 
         Sort.Order defaultSortOrder = new Sort.Order(Sort.Direction.ASC, DefaultSortPropertyConstant.TOILET_ID);
         Pageable pageable = PaginationUtil.getPageable(paginationRequest, defaultSortOrder);
+        List<CustomReportForManagerDTO> listReport;
+        if (listMessages != null && listStatus != null) {
+            listReport = reportRepository.getReportsByToiletIdForManagerHasMessageAndStatus(toiletId, listMessages, listStatus, pageable);
+        } else if (listMessages == null && listStatus != null) {
+            listReport = reportRepository.getReportsByToiletIdForManagerHasStatus(toiletId, listStatus, pageable);
+        } else if (listMessages != null) {
+            listReport = reportRepository.getReportsByToiletIdForManagerHasMessage(toiletId, listMessages, pageable);
+        } else {
+            listReport = reportRepository.getReportsByToiletIdForManager(toiletId, pageable);
+        }
 
-        List<CustomReportForManagerDTO> listReport = reportRepository.getReportsByToiletIdForManager(toiletId, pageable);
         return listReport.stream()
                 .map(r -> reportMapper.convertCustomReportForManagerDTOToReportResponseForManager(r))
                 .collect(Collectors.toList());
@@ -162,8 +171,18 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public int countReportsByToiletIdForManager(int id) {
-        return reportRepository.countReportsByToiletIdForManager(id);
+    public int countReportsByToiletIdForManager(int id, List<String> listMessages, List<String> listStatus) {
+        int result = 0;
+        if (listMessages != null && listStatus != null) {
+            result = reportRepository.countReportsByToiletIdForManagerHasMessageAndStatus(id, listMessages, listStatus);
+        } else if (listMessages == null && listStatus != null) {
+            result = reportRepository.countReportsByToiletIdForManagerHasStatus(id, listStatus);
+        } else if (listMessages != null) {
+            result = reportRepository.countReportsByToiletIdForManagerHasMessage(id, listMessages);
+        } else {
+            reportRepository.countReportsByToiletIdForManager(id);
+        }
+        return result;
     }
 
     @Override

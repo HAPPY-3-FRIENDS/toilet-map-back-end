@@ -31,11 +31,55 @@ public interface ReportRepository extends JpaRepository<ReportEntity, Integer> {
             "WHERE r.ToiletId = :toiletId", nativeQuery = true)
     List<CustomReportForManagerDTO> getReportsByToiletIdForManager(int toiletId, Pageable pageable);
 
+    @Query(value = "SELECT r.Id, t.Name, r.Message, r.Status, r.CreateDate " +
+            "FROM Report r " +
+            "LEFT JOIN Toilet t on t.Id = r.ToiletId " +
+            "WHERE r.ToiletId = :toiletId " +
+            "   AND r.Message IN :listMessages " +
+            "   AND r.Status IN :listStatus", nativeQuery = true)
+    List<CustomReportForManagerDTO> getReportsByToiletIdForManagerHasMessageAndStatus(int toiletId, List<String> listMessages, List<String> listStatus, Pageable pageable);
+
+    @Query(value = "SELECT r.Id, t.Name, r.Message, r.Status, r.CreateDate " +
+            "FROM Report r " +
+            "LEFT JOIN Toilet t on t.Id = r.ToiletId " +
+            "WHERE r.ToiletId = :toiletId " +
+            "   AND r.Message IN :listMessages ", nativeQuery = true)
+    List<CustomReportForManagerDTO> getReportsByToiletIdForManagerHasMessage(int toiletId, List<String> listMessages, Pageable pageable);
+
+    @Query(value = "SELECT r.Id, t.Name, r.Message, r.Status, r.CreateDate " +
+            "FROM Report r " +
+            "LEFT JOIN Toilet t on t.Id = r.ToiletId " +
+            "WHERE r.ToiletId = :toiletId " +
+            "   AND r.Status IN :listStatus", nativeQuery = true)
+    List<CustomReportForManagerDTO> getReportsByToiletIdForManagerHasStatus(int toiletId, List<String> listStatus, Pageable pageable);
+
     @Query(value = "SELECT COUNT(*) " +
             "FROM Report r " +
             "LEFT JOIN Toilet t on t.Id = r.ToiletId " +
             "WHERE r.ToiletId = :toiletId", nativeQuery = true)
     int countReportsByToiletIdForManager(int toiletId);
+
+    @Query(value = "SELECT COUNT(*) " +
+            "FROM Report r " +
+            "LEFT JOIN Toilet t on t.Id = r.ToiletId " +
+            "WHERE r.ToiletId = :toiletId " +
+            "   AND r.Message IN :listMessages " +
+            "   AND r.Status IN :listStatus", nativeQuery = true)
+    int countReportsByToiletIdForManagerHasMessageAndStatus(int toiletId, List<String> listMessages, List<String> listStatus);
+
+    @Query(value = "SELECT COUNT(*) " +
+            "FROM Report r " +
+            "LEFT JOIN Toilet t on t.Id = r.ToiletId " +
+            "WHERE r.ToiletId = :toiletId " +
+            "   AND r.Message IN :listMessages ", nativeQuery = true)
+    int countReportsByToiletIdForManagerHasMessage(int toiletId, List<String> listMessages);
+
+    @Query(value = "SELECT COUNT(*) " +
+            "FROM Report r " +
+            "LEFT JOIN Toilet t on t.Id = r.ToiletId " +
+            "WHERE r.ToiletId = :toiletId " +
+            "   AND r.Status IN :listStatus", nativeQuery = true)
+    int countReportsByToiletIdForManagerHasStatus(int toiletId, List<String> listStatus);
 
     @Query(value = "SELECT r.Id, t.Name, r.Message, r.Status, r.CreateDate " +
             "FROM Report r " +

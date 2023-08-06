@@ -127,9 +127,11 @@ public class ReportController {
     @GetMapping(value = "/{toilet-id}")
     public ResponseEntity<BaseResponse<List<ReportResponseForManager>>> getReportsForManager(
             @PathVariable("toilet-id") int id,
+            @RequestParam(name = "list-message", required = false) List<String> listMessages,
+            @RequestParam(name = "list-status", required = false) List<String> listStatus,
             @ModelAttribute BasePaginationRequest paginationRequest) {
 
-        List<ReportResponseForManager> responses = reportService.getReportsByToiletIdForManager(id ,paginationRequest);
+        List<ReportResponseForManager> responses = reportService.getReportsByToiletIdForManager(id, listMessages, listStatus,paginationRequest);
 
         return ResponseBuilder.generateResponse(
                 "Get list of all reports successfully!",
@@ -151,9 +153,11 @@ public class ReportController {
     @RolesAllowed({RoleConstant.MANAGER})
     @GetMapping(value = "/{toilet-id}/count")
     public ResponseEntity<BaseResponse<Integer>> countReportsByToiletIdForManager(
-            @PathVariable("toilet-id") int id) {
+            @PathVariable("toilet-id") int id,
+            @RequestParam(name = "list-message", required = false) List<String> listMessages,
+            @RequestParam(name = "list-status", required = false) List<String> listStatus) {
 
-        int response = reportService.countReportsByToiletIdForManager(id);
+        int response = reportService.countReportsByToiletIdForManager(id, listMessages, listStatus);
 
         return ResponseBuilder.generateResponse(
                 "Count list of reports by toilet id successfully!",
