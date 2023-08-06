@@ -262,6 +262,8 @@ public class ToiletServiceImpl implements ToiletService {
                         .map(dto -> toiletMapper.convertCustomToiletDetailsInfoDTOToToiletDetailsInfoResponse(dto))
                         .collect(Collectors.toList());
 
+
+
         return toiletDetailsInfoResponses.stream()
                 .map(res -> {
                     int toiletId = res.getId();
@@ -290,14 +292,18 @@ public class ToiletServiceImpl implements ToiletService {
                      * 				-> suggestions: null
                      */
                     if (suggestionDTOs != null) {
-                        if (suggestionDTOs.get(0).getIsLow()) {
-                            res.setSuggestionMessage("Quý gần nhất dưới ngưỡng");
-                            suggestionDTOs = suggestionDTOs.subList(0, 1);
-                            res.setSuggestions(suggestionDTOs);
-                        } else if (!suggestionDTOs.get(1).getIsLow()) {
-                            res.setSuggestionMessage(suggestionDTOs.get(0).getStreak() + " quý liên tục");
-                            suggestionDTOs = suggestionDTOs.subList(0, 2);
-                            res.setSuggestions(suggestionDTOs);
+                        if (suggestionDTOs.get(0).getEndDate().compareTo(DateTimeUtil.getEndDateOfPreviousQuarter()) == 0) {
+                            if (suggestionDTOs.get(0).getIsLow()) {
+                                res.setSuggestionMessage("Quý gần nhất dưới ngưỡng");
+                                suggestionDTOs = suggestionDTOs.subList(0, 1);
+                                res.setSuggestions(suggestionDTOs);
+                            } else if (!suggestionDTOs.get(1).getIsLow()) {
+                                if (suggestionDTOs.size() == 2) {
+                                    res.setSuggestionMessage(suggestionDTOs.get(0).getStreak() + " quý liên tục");
+                                    suggestionDTOs = suggestionDTOs.subList(0, 2);
+                                    res.setSuggestions(suggestionDTOs);
+                                }
+                            }
                         }
                     }
                     return res;

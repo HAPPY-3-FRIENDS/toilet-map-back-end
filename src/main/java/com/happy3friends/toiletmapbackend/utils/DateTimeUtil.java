@@ -9,11 +9,9 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.IsoFields;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -101,5 +99,18 @@ public class DateTimeUtil {
         c.set(Calendar.DAY_OF_MONTH, 1);
 
         return new Date(c.getTime().getTime());
+    }
+
+    public static Date getEndDateOfPreviousQuarter() {
+        // get today's date
+        LocalDate today = LocalDate.now();
+        // get previous quarter
+        LocalDate previousQuarter = today.minus(1, IsoFields.QUARTER_YEARS);
+        // get last day in previous quarter
+        long lastDayOfQuarter = IsoFields.DAY_OF_QUARTER.rangeRefinedBy(previousQuarter).getMaximum();
+        // get the date corresponding to the last day of quarter
+        LocalDate lastDayInPreviousQuarter = previousQuarter.with(IsoFields.DAY_OF_QUARTER, lastDayOfQuarter);
+
+        return Date.from(lastDayInPreviousQuarter.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 }

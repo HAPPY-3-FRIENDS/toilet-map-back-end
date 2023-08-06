@@ -10,6 +10,7 @@ import com.happy3friends.toiletmapbackend.repository.SuggestionRepository;
 import com.happy3friends.toiletmapbackend.repository.ToiletRepository;
 import com.happy3friends.toiletmapbackend.response.SuggestionAdminResponse;
 import com.happy3friends.toiletmapbackend.service.SuggestionService;
+import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,14 +85,18 @@ public class SuggestionServiceImpl implements SuggestionService {
             suggestionAdminResponse.setProvince(value.get(0).getProvince());
 
             if (suggestionDTOs != null) {
-                if (suggestionDTOs.get(0).getIsLow()) {
-                    suggestionAdminResponse.setSuggestionMessage("Quý gần nhất dưới ngưỡng");
-                    suggestionDTOs = suggestionDTOs.subList(0, 1);
-                    suggestionAdminResponse.setSuggestions(suggestionDTOs);
-                } else if (!suggestionDTOs.get(1).getIsLow()) {
-                    suggestionAdminResponse.setSuggestionMessage(suggestionDTOs.get(0).getStreak() + " quý liên tục");
-                    suggestionDTOs = suggestionDTOs.subList(0, 2);
-                    suggestionAdminResponse.setSuggestions(suggestionDTOs);
+                if (suggestionDTOs.get(0).getEndDate().compareTo(DateTimeUtil.getEndDateOfPreviousQuarter()) == 0) {
+                    if (suggestionDTOs.get(0).getIsLow()) {
+                        suggestionAdminResponse.setSuggestionMessage("Quý gần nhất dưới ngưỡng");
+                        suggestionDTOs = suggestionDTOs.subList(0, 1);
+                        suggestionAdminResponse.setSuggestions(suggestionDTOs);
+                    } else if (!suggestionDTOs.get(1).getIsLow()) {
+                        if (suggestionDTOs.size() == 2) {
+                            suggestionAdminResponse.setSuggestionMessage(suggestionDTOs.get(0).getStreak() + " quý liên tục");
+                            suggestionDTOs = suggestionDTOs.subList(0, 2);
+                            suggestionAdminResponse.setSuggestions(suggestionDTOs);
+                        }
+                    }
                 }
             }
 
