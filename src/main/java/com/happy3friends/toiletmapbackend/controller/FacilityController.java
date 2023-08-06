@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "Facility", description = "Facility API")
 @RestController
@@ -201,6 +202,42 @@ public class FacilityController {
                 "Delete facility successfully!",
                 HttpStatus.OK,
                 id
+        );
+    }
+
+    @Operation(summary = "Update facility", description = "[Admin] update facility")
+    @Parameter(name = "facility-id", description = "A specific facility ID", in = ParameterIn.PATH, required = true, example = "4")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Fields Request", required = true, content = @Content(
+            examples = {
+                    @ExampleObject(name = "Update facility", value = "{\n" +
+                            "  \"name\": \"Vòi xịt xịt\"\n" +
+                            "}")}))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
+                    @ExampleObject(value = "{\n" +
+                            "    \"id\": 4,\n" +
+                            "    \"name\": \"Vòi xịt xịt\",\n" +
+                            "    \"type\": \"Trang thiết bị\"\n" +
+                            "  }")})),
+            @ApiResponse(responseCode = "400", description = "Bad Request!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Resource Not Found!", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.ADMIN})
+    @PatchMapping("/{facility-id}")
+    public ResponseEntity<BaseResponse<FacilityResponse>> updateFacility(
+            @PathVariable("facility-id") int facilityId,
+            @RequestBody Map<String, Object> fields) {
+
+        FacilityResponse response = facilityService.updateFacility(facilityId, fields);
+
+        return ResponseBuilder.generateResponse(
+                "Update facility successfully!",
+                HttpStatus.OK,
+                response
         );
     }
 }

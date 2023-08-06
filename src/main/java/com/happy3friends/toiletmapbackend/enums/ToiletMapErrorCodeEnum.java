@@ -34,6 +34,7 @@ public enum ToiletMapErrorCodeEnum {
     EXISTED_FACILITY(HttpStatus.BAD_REQUEST, 400022, "Tên thiết bị đã tồn tại"),
     EXISTED_FACILITY_IN_USE(HttpStatus.BAD_REQUEST, 400023, "Thiết bị đang được sử dụng"),
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, 400024, "Mật khẩu không hợp lệ"),
+    INVALID_UPDATED_FACILITY(HttpStatus.BAD_REQUEST, 400025, "Trang thiết bị cần cập nhật không hợp lệ"),
 
     // 401 - UNAUTHENTICATED
     UNAUTHENTICATED(HttpStatus.UNAUTHORIZED, 401000, "Chưa xác thực người dùng"),
@@ -55,7 +56,8 @@ public enum ToiletMapErrorCodeEnum {
     NOT_FOUND_RATING(HttpStatus.NOT_FOUND, 404010, "Không tìm thấy từ đánh giá"),
     NOT_FOUND_ANNOUNCEMENT(HttpStatus.NOT_FOUND, 404011, "Không tìm thấy thông báo"),
     NOT_FOUND_SUGGESTION(HttpStatus.NOT_FOUND, 404012, "Không tìm thấy gợi ý"),
-    NOT_FOUND_REPORT(HttpStatus.NOT_FOUND, 404013, "Không tìm báo cáo"),
+    NOT_FOUND_REPORT(HttpStatus.NOT_FOUND, 404013, "Không tìm thấy báo cáo"),
+    NOT_FOUND_FACILITY(HttpStatus.NOT_FOUND, 404014, "Không tìm thấy trang thiết bị"),
 
     // VNPAY
     VNPAY_CARD_NOT_REGISTERED_INTERNETBANKING(HttpStatus.INTERNAL_SERVER_ERROR, 500001, "Giao dịch không thành công do: Thẻ/Tài khoản của khách hàng chưa đăng ký dịch vụ InternetBanking tại ngân hàng."),
