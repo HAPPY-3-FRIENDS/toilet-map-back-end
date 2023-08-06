@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -31,7 +32,7 @@ public class Scheduler {
 //    @Scheduled(cron = "15 * * * * ?")
     public void scheduleTaskWithCronExpression() throws ParseException {
         Date endDate = DateTimeUtil.getDateNow();
-//        String endDateStr = "01-01-2023";
+//        String endDateStr = "01-04-2024";
 //        Date endDate = new SimpleDateFormat("dd-MM-yyyy").parse(endDateStr);
         Date startDate = DateUtils.addMonths(endDate, -3);
 
@@ -59,49 +60,37 @@ public class Scheduler {
 
             int expectedCountMin = (result.getNumberOfBathroom() + result.getNumberOfRestroom()) * 90;
 
+            SuggestionEntity entity = new SuggestionEntity();
+            entity.setToiletId(toiletId);
+            entity.setStartDate(new java.sql.Date(startDate.getTime()));
+            Date endDateOfQuarter = DateUtils.addDays(endDate, -1);
+            entity.setEndDate(new java.sql.Date(endDateOfQuarter.getTime()));
+            entity.setActualCount(result.getActualCount());
+            entity.setIsAccepted(false);
+
+            Date endDatePrevious = DateUtils.addDays(startDate, -1);
+            SuggestionEntity previous = suggestionService.getPreviousQuarterSuggestion(toiletId, endDatePrevious);
+            int streak = 1;
+            if (previous != null && previous.getIsAccepted() != null && !Boolean.TRUE.equals(previous.getIsAccepted())) {
+                streak = previous.getStreak() + 1;
+            }
+            entity.setStreak(streak);
+
+            String message = "";
             if (result.getActualCount() >= expectedCountMax * 150 / 100) {
-                String message = "Số lượt đi thực tế vượt 150% so với sức chứa, gợi ý mở thêm nhà vệ sinh gần đây hoặc mở thêm phòng vệ sinh.";
-
-                SuggestionEntity entity = new SuggestionEntity();
-                entity.setToiletId(toiletId);
-                entity.setStartDate(new java.sql.Date(startDate.getTime()));
-                Date endDateOfQuarter = DateUtils.addDays(endDate, -1);
-                entity.setEndDate(new java.sql.Date(endDateOfQuarter.getTime()));
-                entity.setMessage(message);
-                entity.setActualCount(result.getActualCount());
-                entity.setExpectedCount(expectedCountMax);
-                entity.setIsAccepted(false);
-
-                Date endDatePrevious = DateUtils.addDays(startDate, -1);
-                SuggestionEntity previous = suggestionService.getPreviousQuarterSuggestion(toiletId, endDatePrevious);
-                int streak = 1;
-                if (previous != null && previous.getIsAccepted() != null && !Boolean.TRUE.equals(previous.getIsAccepted())) {
-                    streak = previous.getStreak() + 1;
-                }
-                entity.setStreak(streak);
+                message = "Số lượt đi thực tế vượt 150% so với sức chứa, gợi ý mở thêm nhà vệ sinh gần đây hoặc mở thêm phòng vệ sinh.";
                 entity.setIsLow(false);
-
-                suggestionService.save(entity);
+                entity.setExpectedCount(expectedCountMax);
             }
 
             if (result.getActualCount() < expectedCountMin) {
-                String message = "Số lượt đi thực tế dưới " + expectedCountMin + " lượt.";
-
-                SuggestionEntity entity = new SuggestionEntity();
-                entity.setToiletId(toiletId);
-                entity.setStartDate(new java.sql.Date(startDate.getTime()));
-                Date endDateOfQuarter = DateUtils.addDays(endDate, -1);
-                entity.setEndDate(new java.sql.Date(endDateOfQuarter.getTime()));
-                entity.setMessage(message);
-                entity.setActualCount(result.getActualCount());
-                entity.setExpectedCount((double) expectedCountMin);
-                entity.setIsAccepted(false);
+                message = "Số lượt đi thực tế dưới " + expectedCountMin + " lượt.";
                 entity.setIsLow(true);
-
-                suggestionService.save(entity);
+                entity.setExpectedCount((double) expectedCountMin);
             }
 
-
+            entity.setMessage(message);
+            suggestionService.save(entity);
         });
     }
 }

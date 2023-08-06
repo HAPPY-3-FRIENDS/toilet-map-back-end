@@ -98,7 +98,6 @@ public interface SuggestionRepository extends JpaRepository<SuggestionEntity, In
             "SELECT * " +
             "FROM Suggestion " +
             "WHERE ToiletId = :toiletId " +
-            "      AND EndDate = :endDate " +
-            "      AND IsLow = 'false'", nativeQuery = true)
+            "      AND EndDate = :endDate ", nativeQuery = true)
     SuggestionEntity getPreviousQuarterSuggestion(int toiletId, Date endDate);
 }
