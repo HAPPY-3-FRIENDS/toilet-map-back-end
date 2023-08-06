@@ -26,7 +26,7 @@ public enum ToiletMapErrorCodeEnum {
     FROM_DATE_AFTER_TO_DATE(HttpStatus.BAD_REQUEST, 400014, "Ngày bắt đầu đến sau ngày kết thúc"),
     INVALID_STATUS(HttpStatus.BAD_REQUEST, 400015, "Trạng thái không hợp lệ"),
     INVALID_FACILITY(HttpStatus.BAD_REQUEST, 400016, "Trang thiết bị không hợp lệ"),
-    INVALID_FACILITY_QUANTITY(HttpStatus.BAD_REQUEST, 400017, "Số lượng của trang thiết bị không hợp lệ"),
+    INVALID_ROOM_QUANTITY(HttpStatus.BAD_REQUEST, 400017, "Số lượng của phòng vệ sinh không hợp lệ"),
     INVALID_VALIDATION(HttpStatus.BAD_REQUEST, 400018, "Tham số không hợp lệ"),
     CREATE_COMPANY_ERROR(HttpStatus.BAD_REQUEST, 400019, "Tạo công ty thất bại"),
     EXISTED_RATING(HttpStatus.BAD_REQUEST, 400020, "Đánh giá đã tồn tại"),

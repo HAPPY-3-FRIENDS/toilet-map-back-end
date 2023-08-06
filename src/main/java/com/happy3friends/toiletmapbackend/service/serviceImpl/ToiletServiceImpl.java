@@ -235,7 +235,7 @@ public class ToiletServiceImpl implements ToiletService {
     public List<ToiletDetailsInfoResponse> getAllToiletsByCompanyId(Integer companyId, String keyword, BasePaginationRequest paginationRequest) {
 
         // Prepare pagination & sort
-        Sort.Order defaultSortOrder = new Sort.Order(Sort.Direction.ASC, DefaultSortPropertyConstant.ID);
+        Sort.Order defaultSortOrder = new Sort.Order(Sort.Direction.DESC, DefaultSortPropertyConstant.ID);
         Pageable pageable = PaginationUtil.getPageable(paginationRequest, defaultSortOrder);
 
         // Validate Company
@@ -403,8 +403,8 @@ public class ToiletServiceImpl implements ToiletService {
         List<Integer> listFacilityIds = facilityEntities.stream().map(FacilityEntity::getId).collect(Collectors.toList());
         if (!new HashSet<>(listFacilityIds).containsAll(toiletFacilityDTOS.stream().map(ToiletFacilityDTO::getFacilityId).collect(Collectors.toList())))
             throw new BadRequestException(ToiletMapErrorCodeEnum.INVALID_FACILITY, ToiletMapErrorCodeEnum.INVALID_FACILITY.getMessage());
-        if (toiletFacilityDTOS.stream().anyMatch(dto -> dto.getQuantity() < 1))
-            throw new BadRequestException(ToiletMapErrorCodeEnum.INVALID_FACILITY_QUANTITY, ToiletMapErrorCodeEnum.INVALID_FACILITY_QUANTITY.getMessage());
+        if (toiletFacilityDTOS.stream().anyMatch(dto -> dto.getFacilityId() == 1 && dto.getQuantity() < 1)) // Không có nvs nào
+            throw new BadRequestException(ToiletMapErrorCodeEnum.INVALID_ROOM_QUANTITY, ToiletMapErrorCodeEnum.INVALID_ROOM_QUANTITY.getMessage());
 
         LOGGER.info("-- Create Toilet - Start save Account Entity! --");
         AccountEntity accountEntity = new AccountEntity();
