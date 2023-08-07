@@ -123,9 +123,9 @@ public class CheckInController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.USER})
+    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.USER})
     @GetMapping
-    public ResponseEntity<BaseResponse<List<CheckInResponse>>> getCheckInHistoriesByAccountId(
+    public ResponseEntity<BaseResponse<List<CheckInResponse>>> getCheckInHistories(
             @RequestParam(name = "account-id", required = false) Integer accountId,
             @RequestParam(name = "payment-method", required = false) String paymentMethod,
             @ModelAttribute BasePaginationRequest paginationRequest) {
