@@ -28,9 +28,6 @@ public class ToiletFacilityEntity {
     @Basic
     @Column(name = "TotalQuantity")
     private Integer totalQuantity;
-    @Basic
-    @Column(name = "Description", nullable = true, length = -1)
-    private String description;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ToiletId", referencedColumnName = "Id", insertable = false, updatable = false)
     private ToiletEntity toiletByToiletId;
