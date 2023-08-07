@@ -19,6 +19,7 @@ import com.happy3friends.toiletmapbackend.service.RatingService;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
 import com.happy3friends.toiletmapbackend.utils.FilterKeysUtil;
 import com.happy3friends.toiletmapbackend.utils.PaginationUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,8 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,6 +58,9 @@ public class RatingServiceImpl implements RatingService {
 
     @Autowired
     private RatingCommonCommentRepository ratingCommonCommentRepository;
+
+    @Autowired
+    private SensitiveWordRepository sensitiveWordRepository;
 
     private LinkedHashMap<Integer, List<CustomRatingDetailsDTO>> getMapIdListCustomRatingDetailsDTO(
             List<CustomRatingDetailsDTO> customRatingDetailsDTOS) {
@@ -176,6 +182,21 @@ public class RatingServiceImpl implements RatingService {
         }
     }
 
+    private String replaceSensitiveContent(final String text, Map<String,String> tokens) {
+
+        String patternString = StringUtils.join(tokens.keySet(), "|");
+        Pattern pattern = Pattern.compile(patternString);
+        Matcher matcher = pattern.matcher(text);
+
+        StringBuilder sb = new StringBuilder();
+        while(matcher.find()) {
+            matcher.appendReplacement(sb, tokens.get(matcher.group(0)));
+        }
+        matcher.appendTail(sb);
+
+        return sb.toString();
+    }
+
     @Override
     public RatingResponse createRating(RatingRequest ratingRequest) {
 
@@ -203,6 +224,11 @@ public class RatingServiceImpl implements RatingService {
         }
 
         // Save Rating Entity
+        // Hide keywords which are sensitive in comment content
+        List<String> sensitiveWords = sensitiveWordRepository.getListSensitiveWordsFromContent(ratingRequest.getComment());
+        Map<String, String> map = new HashMap<>();
+        sensitiveWords.forEach(s -> map.put(s, "***"));
+        ratingRequest.setComment(replaceSensitiveContent(ratingRequest.getComment(), map));
         LOGGER.info("-- Create Rating - Start save Rating Entity! --");
         Timestamp timestampNow = DateTimeUtil.getTimestampNow();
         RatingEntity ratingEntity = ratingMapper.convertRatingRequestToRatingEntity(ratingRequest);

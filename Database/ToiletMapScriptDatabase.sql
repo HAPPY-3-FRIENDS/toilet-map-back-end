@@ -402,6 +402,17 @@ ALTER TABLE [Suggestion]
     ADD CONSTRAINT FK_Suggestion_Toilet
         FOREIGN KEY (ToiletId) REFERENCES Toilet (Id);
 
+------------------------------ FULL-TEXT SEARCH ------------------------------
+CREATE FULLTEXT CATALOG sensitive_words_ctl WITH ACCENT_SENSITIVITY = OFF
+
+CREATE FULLTEXT INDEX ON SensitiveWord
+    (
+     Word Language 1066
+        )
+    KEY INDEX UNIQUE_Word ON sensitive_words_ctl
+    WITH CHANGE_TRACKING AUTO;
+GO
+
 ------------------------------ INSERT VALUE ------------------------------
 INSERT INTO Company (Name, Logo, Address, Ward, District, Province, Phone)
 VALUES (N'Toilet Map', N'https://drive.google.com/file/d/1qmWrHPZ6e-XA8NZtaT9UVWXRXwpMXXA2/view?usp=sharing',
