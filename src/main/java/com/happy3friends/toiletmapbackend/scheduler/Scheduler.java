@@ -28,7 +28,7 @@ public class Scheduler {
     @Autowired
     private SuggestionService suggestionService;
 
-    @Scheduled(cron = "0 0 0 1 1,4,7,10 ?")
+    @Scheduled(cron = "30 01 0 1 JAN,APR,JUL,OCT ?")
 //    @Scheduled(cron = "15 * * * * ?")
     public void scheduleTaskWithCronExpression() throws ParseException {
         Date endDate = DateTimeUtil.getDateNow();
