@@ -141,7 +141,7 @@ public class CheckInController {
         );
     }
 
-    @Operation(summary = "Count list of all check-in histories", description = "[User] Count list of check-in histories by Account ID")
+    @Operation(summary = "Count list of all check-in histories", description = "[Admin, User] Count list of check-in histories")
     @Parameters(value = {
             @Parameter(name = "account-id", description = "A specific account ID", in = ParameterIn.QUERY, example = "6"),
             @Parameter(name = "payment-method", description = "A specific payment method", in = ParameterIn.QUERY, examples = {
@@ -159,7 +159,7 @@ public class CheckInController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.USER})
+    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.USER})
     @GetMapping(value = "/count")
     public ResponseEntity<BaseResponse<Integer>> count(
             @RequestParam(name = "account-id", required = false) Integer accountId,
