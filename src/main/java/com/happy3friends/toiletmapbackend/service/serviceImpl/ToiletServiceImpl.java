@@ -116,7 +116,6 @@ public class ToiletServiceImpl implements ToiletService {
                     toiletFacilityDTO.setFacilityName(dto.getFacilityName());
                     toiletFacilityDTO.setFacilityType(dto.getFacilityType());
                     toiletFacilityDTO.setQuantity(dto.getFacilityQuantity());
-                    toiletFacilityDTO.setDescription(dto.getFacilityDescription());
                     return toiletFacilityDTO;
                 })
                 .sorted((o1, o2) -> {

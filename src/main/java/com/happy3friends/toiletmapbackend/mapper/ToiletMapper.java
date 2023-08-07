@@ -71,8 +71,7 @@ public class ToiletMapper {
                         .map(s -> new ToiletFacilityDTO(s.getFacilityId(),
                                 facilityRepository.findById(s.getFacilityId()).get().getName(),
                                 facilityRepository.findById(s.getFacilityId()).get().getType(),
-                                s.getQuantity(),
-                                s.getDescription()
+                                s.getQuantity()
                         ))
                 .collect(Collectors.toList());
         result.setToiletFacilitiesById(toiletFacilityDTOS);
