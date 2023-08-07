@@ -261,8 +261,6 @@ public class ToiletServiceImpl implements ToiletService {
                         .map(dto -> toiletMapper.convertCustomToiletDetailsInfoDTOToToiletDetailsInfoResponse(dto))
                         .collect(Collectors.toList());
 
-
-
         return toiletDetailsInfoResponses.stream()
                 .map(res -> {
                     int toiletId = res.getId();
@@ -280,8 +278,12 @@ public class ToiletServiceImpl implements ToiletService {
                      * ========> Xét quý gần nhất trước | response thêm field: isLowSuggesion (boolean) nếu mọi người không sửa UI
                      * 	- Có 2 trường hợp:
                      * 		+ Trường hợp 1: quý gần nhất dưới ngưỡng
-                     * 			-> suggstionMessage: quý gần nhất dưới ngưỡng
-                     * 			-> suggestions: lấy dto của quý xém gần
+                     * 			. Nếu quý xém gần dưới ngưỡng
+                     * 				-> suggstionMessage: lấy streak của quý gần nhất
+                     * 				-> suggestions: lấy dto của cả 2 quý
+                     * 			. Nếu quý xém gần vượt ngưỡng
+                     * 				-> suggstionMessage: null
+                     * 				-> suggestions: null
                      * 		+ Trường hợp 2: quý gần nhất vượt ngưỡng
                      * 			. Nếu quý xém gần vượt ngưỡng
                      * 				-> suggestionMessage: lấy streak của quý gần nhất
@@ -291,17 +293,17 @@ public class ToiletServiceImpl implements ToiletService {
                      * 				-> suggestions: null
                      */
                     if (suggestionDTOs != null) {
-                        if (suggestionDTOs.get(0).getEndDate().compareTo(DateTimeUtil.getEndDateOfPreviousQuarter()) == 0) {
+                        if (suggestionDTOs.get(0).getEndDate().compareTo(DateTimeUtil.getEndDateOfPreviousQuarter()) == 0 && suggestionDTOs.size() == 2) {
                             if (suggestionDTOs.get(0).getIsLow()) {
-                                res.setSuggestionMessage("Quý gần nhất dưới ngưỡng");
-                                suggestionDTOs = suggestionDTOs.subList(0, 1);
-                                res.setSuggestions(suggestionDTOs);
-                            } else if (!suggestionDTOs.get(1).getIsLow()) {
-                                if (suggestionDTOs.size() == 2) {
-                                    res.setSuggestionMessage(suggestionDTOs.get(0).getStreak() + " quý liên tục");
-                                    suggestionDTOs = suggestionDTOs.subList(0, 2);
+                                if (suggestionDTOs.get(1).getIsLow()) {
+                                    res.setBelowThreshold(true);
+                                    res.setSuggestionMessage("Dưới ngưỡng " + suggestionDTOs.get(0).getStreak() + " quý liên tục");
                                     res.setSuggestions(suggestionDTOs);
                                 }
+                            } else if (!suggestionDTOs.get(1).getIsLow()) {
+                                res.setBelowThreshold(false);
+                                res.setSuggestionMessage("Vượt ngưỡng " + suggestionDTOs.get(0).getStreak() + " quý liên tục");
+                                res.setSuggestions(suggestionDTOs);
                             }
                         }
                     }

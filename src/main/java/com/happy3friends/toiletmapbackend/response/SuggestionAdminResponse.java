@@ -19,6 +19,7 @@ public class SuggestionAdminResponse {
     private String ward;
     private String district;
     private String province;
+    private boolean isBelowThreshold;
     private String suggestionMessage;
     private List<SuggestionDTO> suggestions;
 }

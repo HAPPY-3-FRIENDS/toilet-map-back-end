@@ -85,17 +85,17 @@ public class SuggestionServiceImpl implements SuggestionService {
             suggestionAdminResponse.setProvince(value.get(0).getProvince());
 
             if (suggestionDTOs != null) {
-                if (suggestionDTOs.get(0).getEndDate().compareTo(DateTimeUtil.getEndDateOfPreviousQuarter()) == 0) {
+                if (suggestionDTOs.get(0).getEndDate().compareTo(DateTimeUtil.getEndDateOfPreviousQuarter()) == 0 && suggestionDTOs.size() == 2) {
                     if (suggestionDTOs.get(0).getIsLow()) {
-                        suggestionAdminResponse.setSuggestionMessage("Quý gần nhất dưới ngưỡng");
-                        suggestionDTOs = suggestionDTOs.subList(0, 1);
-                        suggestionAdminResponse.setSuggestions(suggestionDTOs);
-                    } else if (!suggestionDTOs.get(1).getIsLow()) {
-                        if (suggestionDTOs.size() == 2) {
-                            suggestionAdminResponse.setSuggestionMessage(suggestionDTOs.get(0).getStreak() + " quý liên tục");
-                            suggestionDTOs = suggestionDTOs.subList(0, 2);
+                        if (suggestionDTOs.get(1).getIsLow()) {
+                            suggestionAdminResponse.setBelowThreshold(true);
+                            suggestionAdminResponse.setSuggestionMessage("Dưới ngưỡng " + suggestionDTOs.get(0).getStreak() + " quý liên tục");
                             suggestionAdminResponse.setSuggestions(suggestionDTOs);
                         }
+                    } else if (!suggestionDTOs.get(1).getIsLow()) {
+                        suggestionAdminResponse.setBelowThreshold(false);
+                        suggestionAdminResponse.setSuggestionMessage("Vượt ngưỡng " + suggestionDTOs.get(0).getStreak() + " quý liên tục");
+                        suggestionAdminResponse.setSuggestions(suggestionDTOs);
                     }
                 }
             }
