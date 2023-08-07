@@ -129,7 +129,7 @@ public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer>, 
             "                    ON t.Id = a.Id " +
             "      WHERE c.Id = :companyId) t " +
             "WHERE :keyword IS NULL " +
-            "   OR t.keyword LIKE '%' + CONVERT(VARCHAR(50), :keyword) + '%'", nativeQuery = true)
+            "   OR t.keyword LIKE '%' + CONVERT(NVARCHAR(50), :keyword) + '%'", nativeQuery = true)
     List<CustomToiletDetailsInfoDTO> getAllToiletsByCompanyId(@Param("companyId") int companyId,
                                                               @Param("keyword") String keyword,
                                                               Pageable pageable);
@@ -153,7 +153,7 @@ public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer>, 
             "                    ON t.Id = a.Id " +
             "      WHERE c.Id = :companyId) t " +
             "WHERE :keyword IS NULL " +
-            "   OR t.keyword LIKE '%' + CONVERT(VARCHAR(50), :keyword) + '%'", nativeQuery = true)
+            "   OR t.keyword LIKE '%' + CONVERT(NVARCHAR(50), :keyword) + '%'", nativeQuery = true)
     long countByCompanyId(@Param("companyId") int companyId,
                           @Param("keyword") String keyword);
 
