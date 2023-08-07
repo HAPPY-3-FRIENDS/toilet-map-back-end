@@ -310,7 +310,7 @@ public class ToiletController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.MANAGER, RoleConstant.USER})
+    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.MANAGER, RoleConstant.USER})
     @GetMapping
     public ResponseEntity<BaseResponse<List<ToiletDetailsInfoResponse>>> getAllToilets(
             @RequestParam(name = "company-id", required = false) Integer companyId,
