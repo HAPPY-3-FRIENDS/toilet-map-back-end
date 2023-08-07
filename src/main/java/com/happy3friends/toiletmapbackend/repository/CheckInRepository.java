@@ -154,4 +154,40 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
             "WHERE c.Id IN :list", nativeQuery = true)
     Integer getWaitingTimeOfToilet(@Param("list") List<Integer> list,
                                    @Param("now") String now);
+
+    @Query(value = "SELECT MIN(DATEDIFF(minute, :now, c.CheckoutTime)) " +
+            "FROM CheckIn c " +
+            "INNER JOIN ToiletService ts on c.ToiletServiceId = ts.Id " +
+            "WHERE ts.ToiletId = :toiletId " +
+            "    AND c.Turn = :turn " +
+            "    AND (DateTime >= :startDate AND DateTime < :endDate) " +
+            "    AND (:now BETWEEN DateTime AND CheckoutTime)", nativeQuery = true)
+    Integer getWaitingTime(@Param("toiletId") int toiletId,
+                      @Param("startDate") String startDate,
+                      @Param("endDate") String endDate,
+                      @Param("now") String now,
+                      @Param("turn") int turn);
+
+    @Query(value = "SELECT c.Id " +
+            "FROM CheckIn c " +
+            "INNER JOIN ToiletService ts on c.ToiletServiceId = ts.Id " +
+            "WHERE ts.ToiletId = :toiletId " +
+            "    AND c.Turn = :turn " +
+            "    AND (DateTime >= :startDate AND DateTime < :endDate) " +
+            "    AND (:now BETWEEN DateTime AND CheckoutTime) " +
+            "ORDER BY c.CheckoutTime DESC " +
+            "LIMIT :limit", nativeQuery = true)
+    List<Integer> getListIdNeedCheckout(@Param("toiletId") int toiletId,
+                                        @Param("startDate") String startDate,
+                                        @Param("endDate") String endDate,
+                                        @Param("now") String now,
+                                        @Param("turn") int turn,
+                                        @Param("limit") int limit);
+
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE CheckIn " +
+            "SET CheckoutTime = :now " +
+            "WHERE Id IN :listId", nativeQuery = true)
+    void checkoutByListId(@Param("listId") List<Integer> listId, @Param("now") String now);
 }

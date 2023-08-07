@@ -21,6 +21,7 @@ import com.happy3friends.toiletmapbackend.mapper.SuggestionMapper;
 import com.happy3friends.toiletmapbackend.mapper.ToiletMapper;
 import com.happy3friends.toiletmapbackend.repository.*;
 import com.happy3friends.toiletmapbackend.request.ToiletCreateRequest;
+import com.happy3friends.toiletmapbackend.request.UpdateAvailableRoomRequest;
 import com.happy3friends.toiletmapbackend.request.UpdateToiletCapacityRequest;
 import com.happy3friends.toiletmapbackend.response.*;
 import com.happy3friends.toiletmapbackend.service.ToiletService;
@@ -758,6 +759,71 @@ public class ToiletServiceImpl implements ToiletService {
         }
 
         return checkInRepository.getWaitingTimeOfToilet(list, now);
+    }
+
+    @Override
+    public NumberOfCurrentCheckInResponse getNumberOfCurrentCheckIn(int toiletId) {
+        Date date = DateTimeUtil.getDateNow();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String startDate = dateFormat.format(date) + " 00:00:00";
+        String endDate = dateFormat.format(date) + " 23:59:59";
+
+        String now = DateTimeUtil.getTimestampNow().toString();
+        int numNotAvailableBathroom = checkInRepository
+                .getNumberNotAvailableRoom(toiletId, 3, startDate, endDate, now);
+        int numNotAvailableRestroom = checkInRepository
+                .getNumberNotAvailableRoom(toiletId, 2, startDate, endDate, now);
+
+        ToiletDetailsInfoResponse toilet = getToiletByToiletId(toiletId);
+        AtomicInteger numberOfRestroom = new AtomicInteger();
+        AtomicInteger numberOfBathroom = new AtomicInteger();
+        toilet.getToiletFacilities().forEach(facility -> {
+            if (facility.getFacilityId() == 1 || facility.getFacilityId() == 3) {
+                numberOfRestroom.addAndGet(facility.getQuantity());
+            } else if (facility.getFacilityId() == 2) {
+                numberOfBathroom.set(facility.getQuantity());
+            }
+        });
+
+        int waitingRestroomTime = checkInRepository.getWaitingTime(toiletId, startDate, endDate, now, 2);
+        int waitingBathroomTime = checkInRepository.getWaitingTime(toiletId, startDate, endDate, now, 3);
+
+        NumberOfCurrentCheckInResponse result = new NumberOfCurrentCheckInResponse();
+        result.setNumNotAvailableRestroom(numNotAvailableRestroom);
+        result.setNumberOfRestroom(numberOfRestroom.get());
+        result.setNumNotAvailableBathroom(numNotAvailableBathroom);
+        result.setNumberOfBathroom(numberOfBathroom.get());
+        result.setWaitingRestroomTime(waitingRestroomTime);
+        result.setWaitingBathroomTime(waitingBathroomTime);
+
+        return result;
+    }
+
+    @Override
+    public String updateAvailableRoom(UpdateAvailableRoomRequest request) {
+        Optional<ToiletEntity> toiletEntity = toiletRepository.findById(request.getToiletId());
+        if (!toiletEntity.isPresent())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_TOILET, ToiletMapErrorCodeEnum.NOT_FOUND_TOILET.getMessage());
+
+        NumberOfCurrentCheckInResponse numberOfCurrentCheckInResponse = getNumberOfCurrentCheckIn(request.getToiletId());
+
+        int numberOfRestroomCheckout = numberOfCurrentCheckInResponse.getNumNotAvailableRestroom() - request.getNumberOfRestroom();
+        int numberOfBathroomCheckout = numberOfCurrentCheckInResponse.getNumNotAvailableBathroom() - request.getNumberOfBathroom();
+
+        Date date = DateTimeUtil.getDateNow();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String startDate = dateFormat.format(date) + " 00:00:00";
+        String endDate = dateFormat.format(date) + " 23:59:59";
+
+        String now = DateTimeUtil.getTimestampNow().toString();
+
+        List<Integer> listIdOfRestroomCheckout = checkInRepository.getListIdNeedCheckout(request.getToiletId(), startDate, endDate, now, 2, numberOfRestroomCheckout);
+        checkInRepository.checkoutByListId(listIdOfRestroomCheckout, now);
+
+        List<Integer> listIdOfBathroomCheckout = checkInRepository.getListIdNeedCheckout(request.getToiletId(), startDate, endDate, now, 3, numberOfBathroomCheckout);
+        checkInRepository.checkoutByListId(listIdOfBathroomCheckout, now);
+
+        return "Success";
     }
 
     private List<ToiletDetailsInfoResponse> getListAvailableToilet(List<ToiletDetailsInfoResponse> listToilet){

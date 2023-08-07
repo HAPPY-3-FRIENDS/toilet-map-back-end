@@ -6,11 +6,9 @@ import com.happy3friends.toiletmapbackend.config.OpenApiConfig;
 import com.happy3friends.toiletmapbackend.constant.RoleConstant;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.request.ToiletCreateRequest;
+import com.happy3friends.toiletmapbackend.request.UpdateAvailableRoomRequest;
 import com.happy3friends.toiletmapbackend.request.UpdateToiletCapacityRequest;
-import com.happy3friends.toiletmapbackend.response.ToiletCapacityResponse;
-import com.happy3friends.toiletmapbackend.response.ToiletDetailsInfoResponse;
-import com.happy3friends.toiletmapbackend.response.ToiletResponse;
-import com.happy3friends.toiletmapbackend.response.UpdateToiletInfoResponse;
+import com.happy3friends.toiletmapbackend.response.*;
 import com.happy3friends.toiletmapbackend.service.ToiletService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -727,6 +725,34 @@ public class ToiletController {
 
         return ResponseBuilder.generateResponse(
                 "Get capacity of toilet successfully!",
+                HttpStatus.OK,
+                response
+        );
+    }
+
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.TOILET})
+    @GetMapping(value = "/current-checkIn/{toilet-id}")
+    public ResponseEntity<BaseResponse<NumberOfCurrentCheckInResponse>> getNumberOfCurrentCheckIn(@PathVariable("toilet-id") int toiletId) {
+
+        NumberOfCurrentCheckInResponse response = toiletService.getNumberOfCurrentCheckIn(toiletId);
+
+        return ResponseBuilder.generateResponse(
+                "Get number of current check-in successfully!",
+                HttpStatus.OK,
+                response
+        );
+    }
+
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.TOILET})
+    @PutMapping(value = "/update-available-room")
+    public ResponseEntity<BaseResponse<String>> updateAvailableRoom(@RequestBody UpdateAvailableRoomRequest request) {
+
+        String response = toiletService.updateAvailableRoom(request);
+
+        return ResponseBuilder.generateResponse(
+                "Update available room successfully!",
                 HttpStatus.OK,
                 response
         );
