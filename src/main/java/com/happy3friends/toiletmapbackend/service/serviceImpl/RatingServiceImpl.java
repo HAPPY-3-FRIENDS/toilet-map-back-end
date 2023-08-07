@@ -359,6 +359,7 @@ public class RatingServiceImpl implements RatingService {
         ratingResponse.setDateTime(customRatingDetailsDTOS.get(0).getDateTime());
         ratingResponse.setImageSources(imageSources);
         ratingResponse.setCommonComments(commonComments);
+        ratingResponse.setStatus(customRatingDetailsDTOS.get(0).getStatus());
 
         return ratingResponse;
     }
