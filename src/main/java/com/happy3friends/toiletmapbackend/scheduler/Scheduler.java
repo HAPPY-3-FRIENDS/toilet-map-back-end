@@ -8,18 +8,22 @@ import com.happy3friends.toiletmapbackend.service.SuggestionService;
 import com.happy3friends.toiletmapbackend.service.ToiletService;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
 import org.apache.commons.lang3.time.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 public class Scheduler {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Scheduler.class);
+
     @Autowired
     private ToiletService toiletService;
     @Autowired
@@ -31,6 +35,8 @@ public class Scheduler {
     @Scheduled(cron = "30 01 0 1 JAN,APR,JUL,OCT ?")
 //    @Scheduled(cron = "15 * * * * ?")
     public void scheduleTaskWithCronExpression() throws ParseException {
+        LOGGER.info("---------- START SCHEDULE FOR SUGGESTION ---------");
+
         Date endDate = DateTimeUtil.getDateNow();
 //        String endDateStr = "01-04-2024";
 //        Date endDate = new SimpleDateFormat("dd-MM-yyyy").parse(endDateStr);
@@ -92,5 +98,7 @@ public class Scheduler {
             entity.setMessage(message);
             suggestionService.save(entity);
         });
+
+        LOGGER.info("---------- END SCHEDULE FOR SUGGESTION ---------");
     }
 }
