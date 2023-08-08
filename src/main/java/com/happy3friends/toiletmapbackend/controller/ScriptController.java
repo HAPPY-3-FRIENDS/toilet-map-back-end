@@ -5,6 +5,7 @@ import com.happy3friends.toiletmapbackend.config.OpenApiConfig;
 import com.happy3friends.toiletmapbackend.constant.RoleConstant;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.request.CheckInFullAToiletRequest;
+import com.happy3friends.toiletmapbackend.response.SuggestionSchedulerResponse;
 import com.happy3friends.toiletmapbackend.service.ScriptService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.security.RolesAllowed;
+import java.text.ParseException;
 import java.util.List;
 
 @Tag(name = "Script", description = "Script API")
@@ -65,6 +67,20 @@ public class ScriptController {
 
         return ResponseBuilder.generateResponse(
                 "Checkout all user successfully!",
+                HttpStatus.OK,
+                response
+        );
+    }
+
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.MANAGER})
+    @PostMapping("/manual-scheduler")
+    public ResponseEntity<BaseResponse<List<SuggestionSchedulerResponse>>> runScheduler(@Param("date") String date) throws ParseException {
+
+        List<SuggestionSchedulerResponse> response = scriptService.runScheduler(date);
+
+        return ResponseBuilder.generateResponse(
+                "Run scheduler successfully!",
                 HttpStatus.OK,
                 response
         );

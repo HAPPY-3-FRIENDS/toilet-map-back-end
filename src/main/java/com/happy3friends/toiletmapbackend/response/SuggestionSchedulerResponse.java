@@ -1,0 +1,25 @@
+package com.happy3friends.toiletmapbackend.response;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.sql.Date;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+public class SuggestionSchedulerResponse {
+    private int id;
+    private int toiletId;
+    private String message;
+    private Boolean isAccepted;
+    private Date startDate;
+    private Date endDate;
+    private Integer actualCount;
+    private Double expectedCount;
+    private int streak;
+    private Boolean isLow;
+}

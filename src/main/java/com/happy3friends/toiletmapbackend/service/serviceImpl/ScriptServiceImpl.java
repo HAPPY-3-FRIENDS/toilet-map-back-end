@@ -1,20 +1,21 @@
 package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
+import com.happy3friends.toiletmapbackend.entity.SuggestionEntity;
 import com.happy3friends.toiletmapbackend.entity.UserInfoEntity;
+import com.happy3friends.toiletmapbackend.mapper.SuggestionMapper;
 import com.happy3friends.toiletmapbackend.repository.CheckInRepository;
 import com.happy3friends.toiletmapbackend.repository.UserInfoRepository;
 import com.happy3friends.toiletmapbackend.request.CheckInFullAToiletRequest;
 import com.happy3friends.toiletmapbackend.request.CheckInRequest;
-import com.happy3friends.toiletmapbackend.response.CheckInResponse;
-import com.happy3friends.toiletmapbackend.response.ToiletDetailsInfoResponse;
-import com.happy3friends.toiletmapbackend.service.CheckInService;
-import com.happy3friends.toiletmapbackend.service.ScriptService;
-import com.happy3friends.toiletmapbackend.service.ToiletService;
+import com.happy3friends.toiletmapbackend.response.*;
+import com.happy3friends.toiletmapbackend.service.*;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,6 +36,15 @@ public class ScriptServiceImpl implements ScriptService {
 
     @Autowired
     private ToiletService toiletService;
+
+    @Autowired
+    private StatisticService statisticService;
+
+    @Autowired
+    private SuggestionService suggestionService;
+
+    @Autowired
+    private SuggestionMapper suggestionMapper;
 
     @Override
     public List<String> random100UserCheckIn() {
@@ -196,6 +206,73 @@ public class ScriptServiceImpl implements ScriptService {
         });
 
         return result;
+    }
+
+    @Override
+    public List<SuggestionSchedulerResponse> runScheduler(String date) throws ParseException {
+        List<SuggestionSchedulerResponse> responses = new ArrayList<>();
+        Date endDate = new SimpleDateFormat("dd-MM-yyyy").parse(date);
+        Date startDate = DateUtils.addMonths(endDate, -3);
+
+        List<Integer> listToiletId = toiletService.getAllToiletId();
+        listToiletId.forEach(toiletId -> {
+            List<StatisticForSuggestionResponse> listStatistics = statisticService.getStatisticsByToiletId(toiletId, startDate, endDate);
+            StatisticForSuggestionResponse result = listStatistics.get(0);
+
+            List<ToiletFacilityResponse> listToiletFacilities = toiletService.getListToiletFacilityByToiletId(toiletId);
+
+            AtomicInteger numberOfRestroom = new AtomicInteger();
+            AtomicInteger numberOfBathroom = new AtomicInteger();
+            listToiletFacilities.forEach(toiletFacilityResponse -> {
+
+                if (toiletFacilityResponse.getFacilityId() == 2) {
+                    numberOfBathroom.set(toiletFacilityResponse.getQuantity());
+                } else {
+                    numberOfRestroom.addAndGet(toiletFacilityResponse.getQuantity());
+                }
+            });
+            result.setNumberOfRestroom(numberOfRestroom.get());
+            result.setNumberOfBathroom(numberOfBathroom.get());
+
+            double expectedCountMax = result.getHours() * (result.getNumberOfBathroom() * 2 + result.getNumberOfRestroom() * 3) * 90;
+
+            int expectedCountMin = (result.getNumberOfBathroom() + result.getNumberOfRestroom()) * 90;
+
+            SuggestionEntity entity = new SuggestionEntity();
+            entity.setToiletId(toiletId);
+            entity.setStartDate(new java.sql.Date(startDate.getTime()));
+            Date endDateOfQuarter = DateUtils.addDays(endDate, -1);
+            entity.setEndDate(new java.sql.Date(endDateOfQuarter.getTime()));
+            entity.setActualCount(result.getActualCount());
+            entity.setIsAccepted(false);
+
+            Date endDatePrevious = DateUtils.addDays(startDate, -1);
+            SuggestionEntity previous = suggestionService.getPreviousQuarterSuggestion(toiletId, endDatePrevious);
+            int streak = 1;
+            if (previous != null && previous.getIsAccepted() != null && !Boolean.TRUE.equals(previous.getIsAccepted())) {
+                streak = previous.getStreak() + 1;
+            }
+            entity.setStreak(streak);
+
+            String message = "";
+            if (result.getActualCount() >= expectedCountMax * 150 / 100) {
+                message = "Số lượt đi thực tế vượt 150% so với sức chứa, gợi ý mở thêm nhà vệ sinh gần đây hoặc mở thêm phòng vệ sinh.";
+                entity.setIsLow(false);
+                entity.setExpectedCount(expectedCountMax);
+            }
+
+            if (result.getActualCount() < expectedCountMin) {
+                message = "Số lượt đi thực tế dưới " + expectedCountMin + " lượt.";
+                entity.setIsLow(true);
+                entity.setExpectedCount((double) expectedCountMin);
+            }
+
+            entity.setMessage(message);
+            suggestionService.save(entity);
+
+            responses.add(suggestionMapper.convertSuggestionEntityToSuggestionSchedulerResponse(entity));
+        });
+        return responses;
     }
 
     private String process(int toiletId, int accountId, String serviceName) {

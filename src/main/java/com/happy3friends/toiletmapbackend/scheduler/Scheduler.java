@@ -32,7 +32,7 @@ public class Scheduler {
     @Autowired
     private SuggestionService suggestionService;
 
-    @Scheduled(cron = "30 01 0 1 JAN,APR,JUL,OCT ?")
+    @Scheduled(cron = "0 0 0 1 JAN,APR,JUL,OCT ?")
 //    @Scheduled(cron = "15 * * * * ?")
     public void scheduleTaskWithCronExpression() throws ParseException {
         LOGGER.info("---------- START SCHEDULE FOR SUGGESTION ---------");
