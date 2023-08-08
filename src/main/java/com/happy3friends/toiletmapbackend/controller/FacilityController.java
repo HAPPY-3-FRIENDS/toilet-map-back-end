@@ -240,4 +240,18 @@ public class FacilityController {
                 response
         );
     }
+
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.ADMIN})
+    @GetMapping(value = "/{facility-id}")
+    public ResponseEntity<BaseResponse<FacilityResponse>> getFacilityByFacilityId(@PathVariable("facility-id") int facilityId) {
+
+        FacilityResponse response = facilityService.getFacilityByFacilityId(facilityId);
+
+        return ResponseBuilder.generateResponse(
+                "Get facility by facility ID successfully!",
+                HttpStatus.OK,
+                response
+        );
+    }
 }

@@ -88,4 +88,13 @@ public class FacilityServiceImpl implements FacilityService {
 
         return facilityMapper.convertFacilityEntityToFacilityResponse(result);
     }
+
+    @Override
+    public FacilityResponse getFacilityByFacilityId(int facilityId) {
+        Optional<FacilityEntity> facilityEntity = facilityRepository.findById(facilityId);
+        if (facilityEntity.isEmpty())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_FACILITY, ToiletMapErrorCodeEnum.NOT_FOUND_FACILITY.getMessage());
+
+        return facilityMapper.convertFacilityEntityToFacilityResponse(facilityEntity.get());
+    }
 }

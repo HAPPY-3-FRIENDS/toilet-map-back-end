@@ -15,4 +15,6 @@ public interface FacilityService {
 
     void deleteFacility(int id);
     FacilityResponse updateFacility(int facilityId, Map<String, Object> fields);
+
+    FacilityResponse getFacilityByFacilityId(int facilityId);
 }
