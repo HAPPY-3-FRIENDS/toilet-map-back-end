@@ -1,12 +1,15 @@
 package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
 import com.happy3friends.toiletmapbackend.entity.SuggestionEntity;
+import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
 import com.happy3friends.toiletmapbackend.entity.UserInfoEntity;
 import com.happy3friends.toiletmapbackend.mapper.SuggestionMapper;
 import com.happy3friends.toiletmapbackend.repository.CheckInRepository;
+import com.happy3friends.toiletmapbackend.repository.ToiletRepository;
 import com.happy3friends.toiletmapbackend.repository.UserInfoRepository;
 import com.happy3friends.toiletmapbackend.request.CheckInFullAToiletRequest;
 import com.happy3friends.toiletmapbackend.request.CheckInRequest;
+import com.happy3friends.toiletmapbackend.request.CheckInScriptRequest;
 import com.happy3friends.toiletmapbackend.response.*;
 import com.happy3friends.toiletmapbackend.service.*;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
@@ -17,9 +20,7 @@ import org.springframework.stereotype.Service;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
@@ -45,6 +46,9 @@ public class ScriptServiceImpl implements ScriptService {
 
     @Autowired
     private SuggestionMapper suggestionMapper;
+
+    @Autowired
+    private ToiletRepository toiletRepository;
 
     @Override
     public List<String> random100UserCheckIn() {
@@ -273,6 +277,73 @@ public class ScriptServiceImpl implements ScriptService {
             responses.add(suggestionMapper.convertSuggestionEntityToSuggestionSchedulerResponse(entity));
         });
         return responses;
+    }
+
+    @Override
+    public CheckInScriptResponse randomUserCheckIn(CheckInScriptRequest request) {
+        CheckInScriptResponse result = new CheckInScriptResponse();
+        List<String> listUserCheckIn = new ArrayList<>();
+
+        int numberOfUserPee = request.getNumberOfUserPee();
+        int numberOfUserPoop = request.getNumberOfUserPoop();
+        int numberOfUserTakeAShower = request.getNumberOfUserTakeAShower();
+        List<Integer> listToiletId = request.getListToiletId();
+
+        List<UserInfoEntity> listAllUsers = userInfoRepository.findAll();
+
+        Random random = new Random();
+
+        List<Integer> listToiletIdPee = new ArrayList<>();
+        for (int i = 0; i < numberOfUserPee; i++) {
+            int randomToiletId = listToiletId.get(random.nextInt(listToiletId.size()));
+            int index = (int)(Math.random() * listAllUsers.size());
+            String message = process(randomToiletId, listAllUsers.get(index).getAccountId(), "Đi vệ sinh (tiểu tiện)");
+            listUserCheckIn.add(message);
+            listToiletIdPee.add(randomToiletId);
+        }
+
+        List<Integer> listToiletIdPoop = new ArrayList<>();
+        for (int i = 0; i < numberOfUserPoop; i++) {
+            int randomToiletId = listToiletId.get(random.nextInt(listToiletId.size()));
+            int index = (int)(Math.random() * listAllUsers.size());
+            String message = process(randomToiletId, listAllUsers.get(index).getAccountId(), "Đi vệ sinh (đại tiện)");
+            listUserCheckIn.add(message);
+            listToiletIdPoop.add(randomToiletId);
+        }
+
+        List<Integer> listToiletIdTakeAShower = new ArrayList<>();
+        for (int i = 0; i < numberOfUserTakeAShower; i++) {
+            int randomToiletId = listToiletId.get(random.nextInt(listToiletId.size()));
+            int index = (int)(Math.random() * listAllUsers.size());
+            String message = process(randomToiletId, listAllUsers.get(index).getAccountId(), "Đi tắm");
+            listUserCheckIn.add(message);
+            listToiletIdTakeAShower.add(randomToiletId);
+        }
+
+        List<String> listTotal = new ArrayList<>();
+
+        Set<Integer> listDistinctToiletIdPee = new HashSet<>(listToiletIdPee);
+        for (Integer toiletId: listDistinctToiletIdPee) {
+            Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
+            listTotal.add(toiletEntity.get().getName() + " có: " + Collections.frequency(listToiletIdPee, toiletId) + " người đi tiểu tiện.");
+        }
+
+        Set<Integer> listDistinctToiletIdPoop = new HashSet<>(listToiletIdPoop);
+        for (Integer toiletId: listDistinctToiletIdPoop) {
+            Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
+            listTotal.add(toiletEntity.get().getName() + " có: " + Collections.frequency(listToiletIdPoop, toiletId) + " người đi đại tiện.");
+        }
+
+        Set<Integer> listDistinctToiletIdTakeAShower = new HashSet<>(listToiletIdTakeAShower);
+        for (Integer toiletId: listDistinctToiletIdTakeAShower) {
+            Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
+            listTotal.add(toiletEntity.get().getName() + " có: " + Collections.frequency(listToiletIdTakeAShower, toiletId) + " người đi tắm.");
+        }
+
+        result.setListUserCheckIn(listUserCheckIn);
+        result.setListTotal(listTotal);
+
+        return result;
     }
 
     private String process(int toiletId, int accountId, String serviceName) {

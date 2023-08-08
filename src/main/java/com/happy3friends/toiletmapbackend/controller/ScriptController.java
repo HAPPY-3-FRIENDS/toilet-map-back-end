@@ -5,6 +5,8 @@ import com.happy3friends.toiletmapbackend.config.OpenApiConfig;
 import com.happy3friends.toiletmapbackend.constant.RoleConstant;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.request.CheckInFullAToiletRequest;
+import com.happy3friends.toiletmapbackend.request.CheckInScriptRequest;
+import com.happy3friends.toiletmapbackend.response.CheckInScriptResponse;
 import com.happy3friends.toiletmapbackend.response.SuggestionSchedulerResponse;
 import com.happy3friends.toiletmapbackend.service.ScriptService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -13,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
 import java.text.ParseException;
@@ -32,13 +31,13 @@ public class ScriptController {
 
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.ADMIN, RoleConstant.MANAGER})
-    @GetMapping
-    public ResponseEntity<BaseResponse<List<String>>> randomUserCheckIn() {
+    @PostMapping("/check-in")
+    public ResponseEntity<BaseResponse<CheckInScriptResponse>> randomUserCheckIn(@RequestBody CheckInScriptRequest request) {
 
-        List<String> response = scriptService.random100UserCheckIn();
+        CheckInScriptResponse response = scriptService.randomUserCheckIn(request);
 
         return ResponseBuilder.generateResponse(
-                "Random 100 users check-in successfully!",
+                "Random user check-in successfully!",
                 HttpStatus.OK,
                 response
         );
