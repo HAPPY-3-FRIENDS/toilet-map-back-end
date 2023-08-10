@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,5 +32,14 @@ public class ComboServiceImpl implements ComboService {
         return comboEntities.stream()
                 .map(entity -> comboMapper.convertComboEntityToComboResponse(entity))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public ComboResponse getComboIdByComboId(int comboId) {
+        Optional<ComboEntity> comboEntity = comboRepository.findById(comboId);
+        if (comboEntity.isEmpty())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_COMBO, ToiletMapErrorCodeEnum.NOT_FOUND_COMBO.getMessage());
+
+        return comboMapper.convertComboEntityToComboResponse(comboEntity.get());
     }
 }

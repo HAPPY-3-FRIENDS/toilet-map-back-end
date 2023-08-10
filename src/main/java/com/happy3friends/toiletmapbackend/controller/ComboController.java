@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -63,6 +64,20 @@ public class ComboController {
                 "Get list of all combos successfully!",
                 HttpStatus.OK,
                 responses
+        );
+    }
+
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.ADMIN})
+    @GetMapping(value = "/{combo-id}")
+    public ResponseEntity<BaseResponse<ComboResponse>> getComboByComboId(@PathVariable("combo-id") int comboId) {
+
+        ComboResponse response = comboService.getComboIdByComboId(comboId);
+
+        return ResponseBuilder.generateResponse(
+                "Get combo by combo ID successfully!",
+                HttpStatus.OK,
+                response
         );
     }
 }
