@@ -91,16 +91,16 @@ public class SuggestionServiceImpl implements SuggestionService {
                             suggestionAdminResponse.setBelowThreshold(true);
                             suggestionAdminResponse.setSuggestionMessage("Dưới ngưỡng " + suggestionDTOs.get(0).getStreak() + " quý liên tục");
                             suggestionAdminResponse.setSuggestions(suggestionDTOs);
+                            result.add(suggestionAdminResponse);
                         }
                     } else if (!suggestionDTOs.get(1).getIsLow()) {
                         suggestionAdminResponse.setBelowThreshold(false);
                         suggestionAdminResponse.setSuggestionMessage("Vượt ngưỡng " + suggestionDTOs.get(0).getStreak() + " quý liên tục");
                         suggestionAdminResponse.setSuggestions(suggestionDTOs);
+                        result.add(suggestionAdminResponse);
                     }
                 }
             }
-
-            result.add(suggestionAdminResponse);
         });
 
         return result;

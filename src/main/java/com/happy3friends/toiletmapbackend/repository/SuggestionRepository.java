@@ -63,8 +63,6 @@ public interface SuggestionRepository extends JpaRepository<SuggestionEntity, In
             "                       (sg.StartDate = DATEADD(QUARTER, DATEDIFF(QUARTER, 0, GETDATE()) - 1, 0) AND " +
             "                        sg.EndDate = DATEADD(QUARTER, DATEDIFF(QUARTER, 0, GETDATE()), -1)) " +
             "                     ) " +
-            "WHERE sg.IsAccepted != 1 " +
-            "  AND sg.IsLow = 0 " +
             "ORDER BY t.Id ASC, sg.EndDate DESC, sg.Streak DESC", nativeQuery = true)
     List<CustomSuggestionDTO> getAllSuggestionsIn2LastQuarter();
 
