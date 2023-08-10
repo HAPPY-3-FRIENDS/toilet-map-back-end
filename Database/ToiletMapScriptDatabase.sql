@@ -1,3 +1,7 @@
+-- ALTER TABLE Service
+-- DROP COLUMN TurnPrice
+-- GO
+
 CREATE DATABASE ToiletMap
 GO
 

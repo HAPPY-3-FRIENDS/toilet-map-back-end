@@ -14,5 +14,4 @@ public class ServiceResponse {
     private String name;
     private int price;
     private int turn;
-    private int turnPrice;
 }

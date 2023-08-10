@@ -122,7 +122,7 @@ public class CheckInServiceImpl implements CheckInService {
                 defaultAccountPayment = PaymentTypeEnum.TURN.getPaymentValue();
             int accountTurn = customAccountInfoDTO.getAccountTurn();
             int serviceTurn = toiletServiceEntity.get().getServiceByServiceId().getTurn();
-            int serviceTurnPrice = toiletServiceEntity.get().getServiceByServiceId().getTurnPrice();
+            int serviceTurnPrice = toiletServiceEntity.get().getServiceByServiceId().getPrice();
 
             // Save Check-in Entity
             CheckInEntity checkInEntity = new CheckInEntity();
@@ -207,7 +207,7 @@ public class CheckInServiceImpl implements CheckInService {
             String serviceName = toiletServiceEntity.get().getServiceByServiceId().getName();
             int servicePrice = toiletServiceEntity.get().getServiceByServiceId().getPrice();
             int serviceTurn = toiletServiceEntity.get().getServiceByServiceId().getTurn();
-            int serviceTurnPrice = toiletServiceEntity.get().getServiceByServiceId().getTurnPrice();
+            int serviceTurnPrice = toiletServiceEntity.get().getServiceByServiceId().getPrice();
 
             // Save Check-in Entity
             Timestamp checkout = DateTimeUtil.getTimestampNow();

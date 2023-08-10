@@ -28,7 +28,4 @@ public class ServiceEntity {
     private int turn;
     @OneToMany(mappedBy = "serviceByServiceId")
     private Collection<ToiletServiceEntity> toiletServicesById;
-    @Basic
-    @Column(name = "TurnPrice", nullable = false)
-    private int turnPrice;
 }
