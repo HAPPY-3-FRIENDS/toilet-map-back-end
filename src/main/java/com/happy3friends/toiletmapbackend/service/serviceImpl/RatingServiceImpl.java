@@ -219,7 +219,7 @@ public class RatingServiceImpl implements RatingService {
 
         // Validate expired rating
         Optional<CheckInEntity> checkInEntity = checkInRepository.findById(ratingRequest.getCheckInId());
-        if (checkInEntity.get().getDateTime().compareTo(new Timestamp(DateTimeUtil.getTimestampNow().getTime() - 8 * 60 * 60 * 1000)) < 0) {
+        if (checkInEntity.get().getDateTime().compareTo(new Timestamp(DateTimeUtil.getTimestampNow().getTime() - 60 * 60 * 1000)) < 0) {
             throw new NotFoundException(ToiletMapErrorCodeEnum.EXPIRED_RATING, ToiletMapErrorCodeEnum.EXPIRED_RATING.getMessage());
         }
 
