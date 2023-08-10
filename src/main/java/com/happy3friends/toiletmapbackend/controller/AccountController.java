@@ -127,7 +127,6 @@ public class AccountController {
                     @ExampleObject(value = "{\n" +
                             "    \"accountId\": 4,\n" +
                             "    \"fullName\": \"Huỳnh Lê Thủy Tiên\",\n" +
-                            "    \"gmail\": \"tien.huynhlt.tn@gmail.com\",\n" +
                             "    \"avatar\": \"https://scontent.fsgn19-1.fna.fbcdn.net/v/t39.30808-6/272908202_3227262997503338_854943145488623253_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=174925&_nc_ohc=DsyBnrzVM54AX_UwxS-&_nc_ht=scontent.fsgn19-1.fna&oh=00_AfBWPT-ZIevQvgZ9zUBRhFcVeKZxBWFbyvYSh7QBDP36uQ&oe=641EEE84\",\n" +
                             "    \"defaultPayment\": \"Số lượt\",\n" +
                             "    \"accountBalance\": 25000,\n" +
@@ -162,7 +161,6 @@ public class AccountController {
                     @ExampleObject(value = "{\n" +
                             "    \"accountId\": 4,\n" +
                             "    \"fullName\": \"Huỳnh Lê Thủy Tiên\",\n" +
-                            "    \"gmail\": \"tien.huynhlt.tn@gmail.com\",\n" +
                             "    \"avatar\": \"https://scontent.fsgn19-1.fna.fbcdn.net/v/t39.30808-6/272908202_3227262997503338_854943145488623253_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=174925&_nc_ohc=DsyBnrzVM54AX_UwxS-&_nc_ht=scontent.fsgn19-1.fna&oh=00_AfBWPT-ZIevQvgZ9zUBRhFcVeKZxBWFbyvYSh7QBDP36uQ&oe=641EEE84\",\n" +
                             "    \"defaultPayment\": \"Số lượt\",\n" +
                             "    \"accountBalance\": 25000,\n" +
@@ -195,7 +193,6 @@ public class AccountController {
                     @ExampleObject(value = "{\n" +
                             "    \"accountId\": 4,\n" +
                             "    \"fullName\": \"Huỳnh Lê Thủy Tiên\",\n" +
-                            "    \"gmail\": \"tien.huynhlt.tn@gmail.com\",\n" +
                             "    \"avatar\": \"https://scontent.fsgn19-1.fna.fbcdn.net/v/t39.30808-6/272908202_3227262997503338_854943145488623253_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=174925&_nc_ohc=DsyBnrzVM54AX_UwxS-&_nc_ht=scontent.fsgn19-1.fna&oh=00_AfBWPT-ZIevQvgZ9zUBRhFcVeKZxBWFbyvYSh7QBDP36uQ&oe=641EEE84\",\n" +
                             "    \"defaultPayment\": \"Số lượt\",\n" +
                             "    \"accountBalance\": 25000,\n" +

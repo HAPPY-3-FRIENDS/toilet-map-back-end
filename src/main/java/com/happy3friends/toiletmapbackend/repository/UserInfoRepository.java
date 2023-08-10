@@ -13,17 +13,15 @@ public interface UserInfoRepository extends JpaRepository<UserInfoEntity, Intege
 
     @Modifying
     @Transactional
-    @Query(value = "INSERT INTO UserInfo (AccountId, FullName, Gmail, Avatar, AccountBalance, AccountTurn, DefaultPayment) " +
+    @Query(value = "INSERT INTO UserInfo (AccountId, FullName, Avatar, AccountBalance, AccountTurn, DefaultPayment) " +
             "VALUES ((SELECT Id FROM Account WHERE Username = :username), " +
             "        :fullName, " +
-            "        :gmail, " +
             "        :avatar, " +
             "        :accountBalance, " +
             "        :accountTurn, " +
             "        :defaultPayment)", nativeQuery = true)
     void createUserInfo(@Param("username") String username,
                         @Param("fullName") String fullName,
-                        @Param("gmail") String gmail,
                         @Param("avatar") String avatar,
                         @Param("accountBalance") Integer accountBalance,
                         @Param("accountTurn") Integer accountTurn,

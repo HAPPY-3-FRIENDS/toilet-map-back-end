@@ -121,7 +121,6 @@ public class AccountServiceImpl implements AccountService {
                 accountRequest.getUsername(),
                 accountRequest.getFullName(),
                 null,
-                null,
                 10000, // Init 10000đ for account balance and 5 turns for account turn
                 5,
                 PaymentTypeEnum.TURN.getPaymentValue()
