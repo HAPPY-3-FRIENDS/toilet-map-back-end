@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ComboRepository extends JpaRepository<ComboEntity, Integer> {
+
+    ComboEntity findByTotalTurn(int totalTurn);
 }

@@ -1,6 +1,7 @@
 package com.happy3friends.toiletmapbackend.mapper;
 
 import com.happy3friends.toiletmapbackend.entity.ComboEntity;
+import com.happy3friends.toiletmapbackend.request.ComboRequest;
 import com.happy3friends.toiletmapbackend.response.ComboResponse;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -22,5 +23,11 @@ public class ComboMapper {
         return Objects.isNull(comboEntity)
                 ? null
                 : modelMapper.map(comboEntity, ComboResponse.class);
+    }
+
+    public ComboEntity convertComboRequestToComboEntity(ComboRequest comboRequest) {
+        return Objects.isNull(comboRequest)
+                ? null
+                : modelMapper.map(comboRequest, ComboEntity.class);
     }
 }

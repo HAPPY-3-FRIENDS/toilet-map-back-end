@@ -94,4 +94,18 @@ public class ComboController {
                 response
         );
     }
+
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.ADMIN})
+    @PostMapping
+    public ResponseEntity<BaseResponse<ComboResponse>> createCombo(@RequestBody ComboRequest comboRequest) {
+
+        ComboResponse response = comboService.createCombo(comboRequest);
+
+        return ResponseBuilder.generateResponse(
+                "Creat combo successfully!",
+                HttpStatus.CREATED,
+                response
+        );
+    }
 }
