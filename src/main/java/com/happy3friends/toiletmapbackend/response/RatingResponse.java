@@ -19,7 +19,7 @@ public class RatingResponse {
     private String fullName;
     private int star;
     private String comment;
-    @JsonFormat(pattern = DateTimeConstant.dd_MM_yyyy__HH_mm_ss)
+    @JsonFormat(pattern = DateTimeConstant.dd_MM_yyyy__HH_mm_ss, timezone = DateTimeConstant.TIME_ZONE)
     private Date dateTime;
     private List<String> imageSources;
     private String avatar;

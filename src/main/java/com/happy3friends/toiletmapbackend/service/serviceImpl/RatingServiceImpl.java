@@ -185,12 +185,12 @@ public class RatingServiceImpl implements RatingService {
     private String replaceSensitiveContent(final String text, Map<String,String> tokens) {
 
         String patternString = StringUtils.join(tokens.keySet(), "|");
-        Pattern pattern = Pattern.compile(patternString);
+        Pattern pattern = Pattern.compile(patternString, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(text);
 
         StringBuilder sb = new StringBuilder();
         while(matcher.find()) {
-            matcher.appendReplacement(sb, tokens.get(matcher.group(0)));
+            matcher.appendReplacement(sb, tokens.get(matcher.group(0).toLowerCase()));
         }
         matcher.appendTail(sb);
 
@@ -227,7 +227,7 @@ public class RatingServiceImpl implements RatingService {
         // Hide keywords which are sensitive in comment content
         List<String> sensitiveWords = sensitiveWordRepository.getListSensitiveWordsFromContent(ratingRequest.getComment());
         Map<String, String> map = new HashMap<>();
-        sensitiveWords.forEach(s -> map.put(s, "***"));
+        sensitiveWords.forEach(s -> map.put(s.toLowerCase(), "***"));
         ratingRequest.setComment(replaceSensitiveContent(ratingRequest.getComment(), map));
         LOGGER.info("-- Create Rating - Start save Rating Entity! --");
         Timestamp timestampNow = DateTimeUtil.getTimestampNow();

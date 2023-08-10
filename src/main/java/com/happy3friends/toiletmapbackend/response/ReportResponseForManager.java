@@ -16,7 +16,7 @@ import java.sql.Timestamp;
 public class ReportResponseForManager {
     private int id;
 
-    @JsonFormat(pattern = DateTimeConstant.dd_MM_yyyy__HH_mm_ss)
+    @JsonFormat(pattern = DateTimeConstant.dd_MM_yyyy__HH_mm_ss, timezone = DateTimeConstant.TIME_ZONE)
     private Timestamp createDate;
     private String name;
     private String message;
