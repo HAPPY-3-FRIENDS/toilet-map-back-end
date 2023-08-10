@@ -381,6 +381,7 @@ public class ToiletController {
                             "  \"province\": \"Tây Ninh\",\n" +
                             "  \"latitude\": 123,\n" +
                             "  \"longitude\": 456,\n" +
+                            "  \"nearBy\": \"Near By HLTT with love\",\n" +
                             "  \"openTime\": \"08:00\",\n" +
                             "  \"closeTime\": \"20:00\",\n" +
                             "  \"status\": \"Đang hoạt động\",\n" +
