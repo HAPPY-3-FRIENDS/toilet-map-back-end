@@ -18,6 +18,6 @@ public class OrderResponse {
     private int totalTurn;
     private int totalPrice;
     private String paymentMethod;
-    @JsonFormat(pattern = DateTimeConstant.dd_MM_yyyy__HH_mm_ss)
+    @JsonFormat(pattern = DateTimeConstant.dd_MM_yyyy__HH_mm_ss, timezone = DateTimeConstant.TIME_ZONE)
     private Date dateTime;
 }

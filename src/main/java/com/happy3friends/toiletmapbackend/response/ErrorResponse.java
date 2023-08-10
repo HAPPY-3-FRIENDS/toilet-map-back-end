@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ErrorResponse {
-    @JsonFormat(pattern = DateTimeConstant.dd_MM_yyyy__HH_mm_ss)
+    @JsonFormat(pattern = DateTimeConstant.dd_MM_yyyy__HH_mm_ss, timezone = DateTimeConstant.TIME_ZONE)
     private ZonedDateTime timestamp;
     private int status;
     private String message;
