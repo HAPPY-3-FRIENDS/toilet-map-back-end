@@ -123,4 +123,18 @@ public class ComboController {
                 null
         );
     }
+
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.ADMIN})
+    @GetMapping(value = "/count")
+    public ResponseEntity<BaseResponse<Integer>> count() {
+
+        int response = comboService.count();
+
+        return ResponseBuilder.generateResponse(
+                "Count list of all combo successfully!",
+                HttpStatus.OK,
+                response
+        );
+    }
 }

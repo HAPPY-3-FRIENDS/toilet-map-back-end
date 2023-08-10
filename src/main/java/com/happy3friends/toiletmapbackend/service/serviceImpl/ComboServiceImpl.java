@@ -90,4 +90,9 @@ public class ComboServiceImpl implements ComboService {
 
         comboRepository.delete(comboEntity.get());
     }
+
+    @Override
+    public int count() {
+        return (int) comboRepository.count();
+    }
 }
