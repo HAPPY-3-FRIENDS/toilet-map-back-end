@@ -15,4 +15,6 @@ public interface ComboService {
     ComboResponse createCombo(ComboRequest comboRequest);
 
     void deleteComboByComboId(int comboId);
+
+    int count();
 }
