@@ -11,4 +11,6 @@ public interface ComboService {
     ComboResponse getComboIdByComboId(int comboId);
 
     ComboResponse updateComboByComboId(int comboId, ComboRequest comboRequest);
+
+    ComboResponse createCombo(ComboRequest comboRequest);
 }

@@ -63,4 +63,22 @@ public class ComboServiceImpl implements ComboService {
 
         return comboMapper.convertComboEntityToComboResponse(comboEntity.get());
     }
+
+    @Override
+    public ComboResponse createCombo(ComboRequest comboRequest) {
+        if (comboRequest.getTotalTurn() == 0)
+            throw new BadRequestException(ToiletMapErrorCodeEnum.INVALID_COMBO_TOTALTURN_QUANTITY, ToiletMapErrorCodeEnum.INVALID_COMBO_TOTALTURN_QUANTITY.getMessage());
+
+        if (comboRequest.getPrice() <= 0)
+            throw new BadRequestException(ToiletMapErrorCodeEnum.INVALID_PRICE, ToiletMapErrorCodeEnum.INVALID_PRICE.getMessage());
+
+        ComboEntity comboEntity = comboRepository.findByTotalTurn(comboRequest.getTotalTurn());
+        if (comboEntity != null)
+            throw new BadRequestException(ToiletMapErrorCodeEnum.INVALID_COMBO_TOTALTURN_QUANTITY, ToiletMapErrorCodeEnum.INVALID_COMBO_TOTALTURN_QUANTITY.getMessage());
+
+        ComboEntity savingComboEntity = comboMapper.convertComboRequestToComboEntity(comboRequest);
+        ComboEntity savedComboEntity = comboRepository.save(savingComboEntity);
+
+        return comboMapper.convertComboEntityToComboResponse(savedComboEntity);
+    }
 }
