@@ -20,9 +20,6 @@ public class UserInfoEntity {
     @Column(name = "FullName", nullable = false, length = 100)
     private String fullName;
     @Basic
-    @Column(name = "Gmail", nullable = true, length = 255)
-    private String gmail;
-    @Basic
     @Column(name = "Avatar", nullable = true, length = 2147483647)
     private String avatar;
     @Column(name = "AccountBalance", nullable = false)

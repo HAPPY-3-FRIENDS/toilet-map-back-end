@@ -137,7 +137,6 @@ public class CheckInServiceImpl implements CheckInService {
                 UserInfoEntity userInfoEntity = new UserInfoEntity();
                 userInfoEntity.setAccountId(customAccountInfoDTO.getAccountId());
                 userInfoEntity.setFullName(customAccountInfoDTO.getFullName());
-                userInfoEntity.setGmail(customAccountInfoDTO.getGmail());
                 userInfoEntity.setAvatar(customAccountInfoDTO.getAvatar());
                 userInfoEntity.setAccountBalance(customAccountInfoDTO.getAccountBalance());
                 userInfoEntity.setAccountTurn(accountTurn);

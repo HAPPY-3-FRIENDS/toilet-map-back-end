@@ -12,7 +12,6 @@ import lombok.Setter;
 public class UserInfoResponse {
     private Integer accountId;
     private String fullName;
-    private String gmail;
     private String avatar;
     private String defaultPayment;
     private Integer accountBalance;
