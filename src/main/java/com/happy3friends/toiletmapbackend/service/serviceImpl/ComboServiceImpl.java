@@ -2,9 +2,11 @@ package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
 import com.happy3friends.toiletmapbackend.entity.ComboEntity;
 import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
+import com.happy3friends.toiletmapbackend.exception.BadRequestException;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.mapper.ComboMapper;
 import com.happy3friends.toiletmapbackend.repository.ComboRepository;
+import com.happy3friends.toiletmapbackend.request.ComboRequest;
 import com.happy3friends.toiletmapbackend.response.ComboResponse;
 import com.happy3friends.toiletmapbackend.service.ComboService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,25 @@ public class ComboServiceImpl implements ComboService {
         Optional<ComboEntity> comboEntity = comboRepository.findById(comboId);
         if (comboEntity.isEmpty())
             throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_COMBO, ToiletMapErrorCodeEnum.NOT_FOUND_COMBO.getMessage());
+
+        return comboMapper.convertComboEntityToComboResponse(comboEntity.get());
+    }
+
+    @Override
+    public ComboResponse updateComboByComboId(int comboId, ComboRequest comboRequest) {
+        Optional<ComboEntity> comboEntity = comboRepository.findById(comboId);
+        if (comboEntity.isEmpty())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_COMBO, ToiletMapErrorCodeEnum.NOT_FOUND_COMBO.getMessage());
+
+        if (comboRequest.getTotalTurn() == 0)
+            throw new BadRequestException(ToiletMapErrorCodeEnum.INVALID_COMBO_TOTALTURN_QUANTITY, ToiletMapErrorCodeEnum.INVALID_COMBO_TOTALTURN_QUANTITY.getMessage());
+
+        if (comboRequest.getPrice() <= 0)
+            throw new BadRequestException(ToiletMapErrorCodeEnum.INVALID_PRICE, ToiletMapErrorCodeEnum.INVALID_PRICE.getMessage());
+
+        comboEntity.get().setTotalTurn(comboRequest.getTotalTurn());
+        comboEntity.get().setPrice(comboRequest.getPrice());
+        comboRepository.save(comboEntity.get());
 
         return comboMapper.convertComboEntityToComboResponse(comboEntity.get());
     }

@@ -2,6 +2,9 @@
 -- DROP COLUMN TurnPrice
 -- GO
 
+-- ALTER TABLE [Combo]
+--     ADD CONSTRAINT UNIQUE_TotalTurn UNIQUE (TotalTurn);
+
 CREATE DATABASE ToiletMap
 GO
 
@@ -312,6 +315,8 @@ ALTER TABLE [SensitiveWord]
     ADD CONSTRAINT UNIQUE_Word UNIQUE (Word);
 ALTER TABLE [Transaction]
     ADD CONSTRAINT UNIQUE_PaymentId UNIQUE (PaymentId);
+ALTER TABLE [Combo]
+    ADD CONSTRAINT UNIQUE_TotalTurn UNIQUE (TotalTurn);
 
 -- FOREIGN KEY ---
 ALTER TABLE [Account]

@@ -4,6 +4,7 @@ import com.happy3friends.toiletmapbackend.base.models.BaseResponse;
 import com.happy3friends.toiletmapbackend.config.OpenApiConfig;
 import com.happy3friends.toiletmapbackend.constant.RoleConstant;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
+import com.happy3friends.toiletmapbackend.request.ComboRequest;
 import com.happy3friends.toiletmapbackend.response.ComboResponse;
 import com.happy3friends.toiletmapbackend.service.ComboService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,10 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
 import java.util.List;
@@ -76,6 +74,22 @@ public class ComboController {
 
         return ResponseBuilder.generateResponse(
                 "Get combo by combo ID successfully!",
+                HttpStatus.OK,
+                response
+        );
+    }
+
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.ADMIN})
+    @PutMapping(value = "/{combo-id}")
+    public ResponseEntity<BaseResponse<ComboResponse>> updateComboByComboId(
+            @PathVariable("combo-id") int comboId,
+            @RequestBody ComboRequest comboRequest) {
+
+        ComboResponse response = comboService.updateComboByComboId(comboId, comboRequest);
+
+        return ResponseBuilder.generateResponse(
+                "Update combo by comboId successfully!",
                 HttpStatus.OK,
                 response
         );
