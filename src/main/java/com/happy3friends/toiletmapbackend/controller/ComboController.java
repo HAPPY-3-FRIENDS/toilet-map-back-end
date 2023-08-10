@@ -108,4 +108,19 @@ public class ComboController {
                 response
         );
     }
+
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.ADMIN})
+    @DeleteMapping(value = "/{combo-id}")
+    public ResponseEntity<BaseResponse<ComboResponse>> deleteComboByComboId(
+            @PathVariable("combo-id") int comboId) {
+
+        comboService.deleteComboByComboId(comboId);
+
+        return ResponseBuilder.generateResponse(
+                "Delete combo successfully!",
+                HttpStatus.OK,
+                null
+        );
+    }
 }

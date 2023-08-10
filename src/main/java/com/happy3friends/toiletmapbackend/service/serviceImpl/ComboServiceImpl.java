@@ -81,4 +81,13 @@ public class ComboServiceImpl implements ComboService {
 
         return comboMapper.convertComboEntityToComboResponse(savedComboEntity);
     }
+
+    @Override
+    public void deleteComboByComboId(int comboId) {
+        Optional<ComboEntity> comboEntity = comboRepository.findById(comboId);
+        if (comboEntity.isEmpty())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_COMBO, ToiletMapErrorCodeEnum.NOT_FOUND_COMBO.getMessage());
+
+        comboRepository.delete(comboEntity.get());
+    }
 }
