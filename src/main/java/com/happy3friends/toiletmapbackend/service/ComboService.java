@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface ComboService {
     List<ComboResponse> getAllCombo();
+
+    ComboResponse getComboIdByComboId(int comboId);
 }
