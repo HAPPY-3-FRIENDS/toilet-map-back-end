@@ -24,6 +24,7 @@ public class ToiletCreateRequest {
     private String ward;
     private String district;
     private String province;
+    private String nearBy;
     private double latitude;
     private double longitude;
     private boolean isFree;
