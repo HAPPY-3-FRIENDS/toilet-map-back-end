@@ -5,7 +5,6 @@ public interface CustomAccountInfoDTO {
     String getUsername();
     String getPassword();
     String getFullName();
-    String getGmail();
     String getAvatar();
     String getRole();
     String getDefaultPayment();

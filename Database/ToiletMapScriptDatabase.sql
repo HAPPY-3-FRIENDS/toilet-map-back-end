@@ -5,6 +5,10 @@
 -- ALTER TABLE [Combo]
 --     ADD CONSTRAINT UNIQUE_TotalTurn UNIQUE (TotalTurn);
 
+-- ALTER TABLE UserInfo
+-- DROP COLUMN Gmail
+-- GO
+
 CREATE DATABASE ToiletMap
 GO
 
@@ -48,7 +52,6 @@ CREATE TABLE [UserInfo]
 (
     AccountId      INT           NOT NULL,
     FullName       NVARCHAR(100) NOT NULL,
-    Gmail          VARCHAR(255)  NULL,
     Avatar         VARCHAR(MAX)  NULL,
     AccountBalance INT           NOT NULL,
     AccountTurn    INT           NOT NULL,
@@ -98,8 +101,7 @@ CREATE TABLE [Service]
     Id        INT IDENTITY (1, 1) NOT NULL,
     Name      NVARCHAR(50)        NOT NULL,
     Price     INT                 NOT NULL,
-    Turn      INT                 NOT NULL,
-    TurnPrice INT                 NOT NULL
+    Turn      INT                 NOT NULL
 )
 GO
 
@@ -467,12 +469,12 @@ INSERT Toilet (Id, Name, Address, Ward, District, Province, Latitude, Longitude,
 VALUES (5, N'Nhà vệ sinh lưu động số 2', N'77 Nguyễn Huệ', N'Bến Nghé', N'Quận 1', N'Thành phố Hồ Chí Minh',
         10.773215070315723, 106.70414522538253, N'Gần Circle K, gần Katinat', 0, CAST(N'08:00:00' AS Time), CAST(N'22:00:00' AS Time), 2, N'Đang hoạt động')
 
-INSERT UserInfo (AccountId, FullName, Gmail, Avatar, AccountBalance, AccountTurn, DefaultPayment)
-VALUES (6, N'Huỳnh Lê Thủy Tiên', NULL, NULL, 350000, 100, N'Số lượt')
-INSERT UserInfo (AccountId, FullName, Gmail, Avatar, AccountBalance, AccountTurn, DefaultPayment)
-VALUES (7, N'Nguyễn Đào Đức Quân', NULL, NULL, 350000, 100, N'Số lượt')
-INSERT UserInfo (AccountId, FullName, Gmail, Avatar, AccountBalance, AccountTurn, DefaultPayment)
-VALUES (8, N'Nguyễn Lâm Thúy Phượng', NULL, NULL, 350000, 100, N'Số lượt')
+INSERT UserInfo (AccountId, FullName, Avatar, AccountBalance, AccountTurn, DefaultPayment)
+VALUES (6, N'Huỳnh Lê Thủy Tiên', NULL, 350000, 100, N'Số lượt')
+INSERT UserInfo (AccountId, FullName, Avatar, AccountBalance, AccountTurn, DefaultPayment)
+VALUES (7, N'Nguyễn Đào Đức Quân', NULL, 350000, 100, N'Số lượt')
+INSERT UserInfo (AccountId, FullName, Avatar, AccountBalance, AccountTurn, DefaultPayment)
+VALUES (8, N'Nguyễn Lâm Thúy Phượng', NULL, 350000, 100, N'Số lượt')
 
 INSERT INTO Facility (Name, Type)
 VALUES (N'Phòng vệ sinh', N'Phòng'),
@@ -484,21 +486,21 @@ VALUES (N'Phòng vệ sinh', N'Phòng'),
        (N'Nước rửa tay', N'Trang thiết bị')
 GO
 
-INSERT INTO ToiletFacility (ToiletId, FacilityId, Quantity, Description)
-VALUES (4, 1, 8, NULL),
-       (4, 3, 1, NULL),
-       (4, 4, 1, NULL)
-INSERT INTO ToiletFacility (ToiletId, FacilityId, Quantity, Description)
-VALUES (5, 1, 4, NULL)
-INSERT INTO ToiletFacility (ToiletId, FacilityId, Quantity, Description)
-VALUES (5, 2, 4, NULL)
-INSERT INTO ToiletFacility (ToiletId, FacilityId, Quantity, Description)
-VALUES (5, 3, 4, NULL)
+INSERT INTO ToiletFacility (ToiletId, FacilityId, Quantity)
+VALUES (4, 1, 8),
+       (4, 3, 1),
+       (4, 4, 1)
+INSERT INTO ToiletFacility (ToiletId, FacilityId, Quantity)
+VALUES (5, 1, 4)
+INSERT INTO ToiletFacility (ToiletId, FacilityId, Quantity)
+VALUES (5, 2, 4)
+INSERT INTO ToiletFacility (ToiletId, FacilityId, Quantity)
+VALUES (5, 3, 4)
 
-INSERT INTO Service (Name, Price, Turn, TurnPrice)
-VALUES (N'Đi vệ sinh (tiểu tiện)', 5000, 1, 3000),
-       (N'Đi vệ sinh (đại tiện)', 10000, 2, 6000),
-       (N'Đi tắm', 15000, 3, 9000)
+INSERT INTO Service (Name, Price, Turn)
+VALUES (N'Đi vệ sinh (tiểu tiện)', 5000, 1),
+       (N'Đi vệ sinh (đại tiện)', 10000, 2),
+       (N'Đi tắm', 15000, 3)
 GO
 
 INSERT ToiletService (ToiletId, ServiceId)
