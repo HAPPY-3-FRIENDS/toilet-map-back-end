@@ -3,6 +3,8 @@ package com.happy3friends.toiletmapbackend.service.serviceImpl;
 import com.happy3friends.toiletmapbackend.entity.SuggestionEntity;
 import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
 import com.happy3friends.toiletmapbackend.entity.UserInfoEntity;
+import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
+import com.happy3friends.toiletmapbackend.exception.BadRequestException;
 import com.happy3friends.toiletmapbackend.mapper.SuggestionMapper;
 import com.happy3friends.toiletmapbackend.repository.CheckInRepository;
 import com.happy3friends.toiletmapbackend.repository.ToiletRepository;
@@ -10,6 +12,7 @@ import com.happy3friends.toiletmapbackend.repository.UserInfoRepository;
 import com.happy3friends.toiletmapbackend.request.CheckInFullAToiletRequest;
 import com.happy3friends.toiletmapbackend.request.CheckInRequest;
 import com.happy3friends.toiletmapbackend.request.CheckInScriptRequest;
+import com.happy3friends.toiletmapbackend.request.WalkInGuestCheckInRequest;
 import com.happy3friends.toiletmapbackend.response.*;
 import com.happy3friends.toiletmapbackend.service.*;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
@@ -284,20 +287,45 @@ public class ScriptServiceImpl implements ScriptService {
         CheckInScriptResponse result = new CheckInScriptResponse();
         List<String> listUserCheckIn = new ArrayList<>();
 
-        int numberOfUserPee = request.getNumberOfUserPee();
-        int numberOfUserPoop = request.getNumberOfUserPoop();
-        int numberOfUserTakeAShower = request.getNumberOfUserTakeAShower();
         List<Integer> listToiletId = request.getListToiletId();
 
         List<UserInfoEntity> listAllUsers = userInfoRepository.findAll();
 
+        if (request.getNumberOfUser() > listAllUsers.size()) {
+            throw new BadRequestException(ToiletMapErrorCodeEnum.NOT_ENOUGH_USER, ToiletMapErrorCodeEnum.NOT_ENOUGH_USER.getMessage());
+        }
+
         Random random = new Random();
+
+        List<Integer> listRandomUser = randomList(3, request.getNumberOfUser());
+        List<Integer> listRandomGuest = randomList(3, request.getNumberOfGuest());
+
+        int numberOfUserPee = listRandomUser.get(0);
+        int numberOfUserPoop = listRandomUser.get(1);
+        int numberOfUserTakeAShower = listRandomUser.get(2);
+        int numberOfGuestPee = listRandomGuest.get(0);
+        int numberOfGuestPoop = listRandomGuest.get(1);
+        int numberOfGuestTakeAShower = listRandomGuest.get(2);
+
 
         List<Integer> listToiletIdPee = new ArrayList<>();
         for (int i = 0; i < numberOfUserPee; i++) {
             int randomToiletId = listToiletId.get(random.nextInt(listToiletId.size()));
             int index = (int)(Math.random() * listAllUsers.size());
-            String message = process(randomToiletId, listAllUsers.get(index).getAccountId(), "Đi vệ sinh (tiểu tiện)");
+            String message;
+            if (listAllUsers.get(index).getAccountBalance() == 0 && listAllUsers.get(index).getAccountTurn() == 0) {
+                message = listAllUsers.get(index).getFullName() + " đã hết số dư và số lươt.";
+            } else {
+                message = process(randomToiletId, listAllUsers.get(index).getAccountId(), "Đi vệ sinh (tiểu tiện)");
+            }
+            listUserCheckIn.add(message);
+            listToiletIdPee.add(randomToiletId);
+            listAllUsers.remove(index);
+        }
+
+        for (int i = 0; i < numberOfGuestPee; i++) {
+            int randomToiletId = listToiletId.get(random.nextInt(listToiletId.size()));
+            String message = checkInGuest(randomToiletId, "Đi vệ sinh (tiểu tiện)");
             listUserCheckIn.add(message);
             listToiletIdPee.add(randomToiletId);
         }
@@ -306,7 +334,20 @@ public class ScriptServiceImpl implements ScriptService {
         for (int i = 0; i < numberOfUserPoop; i++) {
             int randomToiletId = listToiletId.get(random.nextInt(listToiletId.size()));
             int index = (int)(Math.random() * listAllUsers.size());
-            String message = process(randomToiletId, listAllUsers.get(index).getAccountId(), "Đi vệ sinh (đại tiện)");
+            String message;
+            if (listAllUsers.get(index).getAccountBalance() == 0 && listAllUsers.get(index).getAccountTurn() == 0) {
+                message = listAllUsers.get(index).getFullName() + " đã hết số dư và số lươt.";
+            } else {
+                message = process(randomToiletId, listAllUsers.get(index).getAccountId(), "Đi vệ sinh (đại tiện)");
+            }
+            listUserCheckIn.add(message);
+            listToiletIdPoop.add(randomToiletId);
+            listAllUsers.remove(index);
+        }
+
+        for (int i = 0; i < numberOfGuestPoop; i++) {
+            int randomToiletId = listToiletId.get(random.nextInt(listToiletId.size()));
+            String message = checkInGuest(randomToiletId, "Đi vệ sinh (đại tiện)");
             listUserCheckIn.add(message);
             listToiletIdPoop.add(randomToiletId);
         }
@@ -315,7 +356,20 @@ public class ScriptServiceImpl implements ScriptService {
         for (int i = 0; i < numberOfUserTakeAShower; i++) {
             int randomToiletId = listToiletId.get(random.nextInt(listToiletId.size()));
             int index = (int)(Math.random() * listAllUsers.size());
-            String message = process(randomToiletId, listAllUsers.get(index).getAccountId(), "Đi tắm");
+            String message;
+            if (listAllUsers.get(index).getAccountBalance() == 0 && listAllUsers.get(index).getAccountTurn() == 0) {
+                message = listAllUsers.get(index).getFullName() + " đã hết số dư và số lươt.";
+            } else {
+                message = process(randomToiletId, listAllUsers.get(index).getAccountId(), "Đi tắm");
+            }
+            listUserCheckIn.add(message);
+            listToiletIdTakeAShower.add(randomToiletId);
+            listAllUsers.remove(index);
+        }
+
+        for (int i = 0; i < numberOfGuestTakeAShower; i++) {
+            int randomToiletId = listToiletId.get(random.nextInt(listToiletId.size()));
+            String message = checkInGuest(randomToiletId, "Đi tắm");
             listUserCheckIn.add(message);
             listToiletIdTakeAShower.add(randomToiletId);
         }
@@ -360,9 +414,52 @@ public class ScriptServiceImpl implements ScriptService {
                 + response.getServiceName();
     }
 
+    private String checkInGuest(int toiletId, String serviceName) {
+
+        WalkInGuestCheckInRequest walkInGuestCheckInRequest = new WalkInGuestCheckInRequest();
+        walkInGuestCheckInRequest.setToiletId(toiletId);
+        walkInGuestCheckInRequest.setAccountId(toiletId);
+
+        List<CheckInRequest> listCheckInRequest = new ArrayList<>();
+        CheckInRequest checkInRequest = new CheckInRequest();
+        checkInRequest.setToiletId(toiletId);
+        checkInRequest.setAccountId(toiletId);
+        checkInRequest.setServiceName(serviceName);
+        checkInRequest.setQuantity(1);
+        checkInRequest.setDatetime(initDate());
+        listCheckInRequest.add(checkInRequest);
+
+        walkInGuestCheckInRequest.setCheckInRequests(listCheckInRequest);
+
+        List<CheckInResponse> response = checkInService.walkInGuestCheckIn(walkInGuestCheckInRequest);
+
+        Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
+
+        return "Khách vãng lai đã check-in tại "
+                + toiletEntity.get().getName()
+                + " với "
+                + response.get(0).getServiceName();
+    }
+
     private String initDate() {
         Date now = DateTimeUtil.getDateNow();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return dateFormat.format(now);
+    }
+
+    private List<Integer> randomList(int m, int n) {
+        List<Integer> result = new ArrayList<>();
+
+        int arr[] = new int[m];
+
+        for (int i = 0; i < n; i++) {
+            arr[(int)(Math.random() * m)]++;
+        }
+
+        for (int i = 0; i < m; i++) {
+            result.add(arr[i]);
+        }
+
+        return result;
     }
 }

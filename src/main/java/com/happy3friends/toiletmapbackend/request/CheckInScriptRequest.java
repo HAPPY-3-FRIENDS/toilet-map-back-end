@@ -12,8 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CheckInScriptRequest {
-    private int numberOfUserPee;
-    private int numberOfUserPoop;
-    private int numberOfUserTakeAShower;
+    private int numberOfUser;
+    private int numberOfGuest;
     private List<Integer> listToiletId;
 }
