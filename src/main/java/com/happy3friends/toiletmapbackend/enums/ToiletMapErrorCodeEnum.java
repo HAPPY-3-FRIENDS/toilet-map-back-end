@@ -37,6 +37,7 @@ public enum ToiletMapErrorCodeEnum {
     INVALID_UPDATED_FACILITY(HttpStatus.BAD_REQUEST, 400025, "Trang thiết bị cần cập nhật không hợp lệ"),
     INVALID_COMBO_TOTALTURN_QUANTITY(HttpStatus.BAD_REQUEST, 400026, "Số lượng của tổng lượt của gói lượt không hợp lệ"),
     INVALID_PRICE(HttpStatus.BAD_REQUEST, 400027, "Giá không hợp lệ"),
+    NOT_ENOUGH_USER(HttpStatus.BAD_REQUEST, 400028, "Hệ thống không đủ user"),
 
     // 401 - UNAUTHENTICATED
     UNAUTHENTICATED(HttpStatus.UNAUTHORIZED, 401000, "Chưa xác thực người dùng"),
