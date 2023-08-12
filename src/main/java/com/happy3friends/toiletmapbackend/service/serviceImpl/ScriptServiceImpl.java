@@ -1,5 +1,6 @@
 package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
+import com.happy3friends.toiletmapbackend.dto.CheckInScriptTotal;
 import com.happy3friends.toiletmapbackend.entity.SuggestionEntity;
 import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
 import com.happy3friends.toiletmapbackend.entity.UserInfoEntity;
@@ -24,6 +25,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
@@ -374,24 +376,59 @@ public class ScriptServiceImpl implements ScriptService {
             listToiletIdTakeAShower.add(randomToiletId);
         }
 
-        List<String> listTotal = new ArrayList<>();
+        List<CheckInScriptTotal> listTotal = new ArrayList<>();
 
         Set<Integer> listDistinctToiletIdPee = new HashSet<>(listToiletIdPee);
         for (Integer toiletId: listDistinctToiletIdPee) {
             Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
-            listTotal.add(toiletEntity.get().getName() + " có: " + Collections.frequency(listToiletIdPee, toiletId) + " người đi tiểu tiện.");
+
+            CheckInScriptTotal checkInScriptTotal = new CheckInScriptTotal();
+            checkInScriptTotal.setToiletId(toiletId);
+            checkInScriptTotal.setToiletName(toiletEntity.get().getName());
+            checkInScriptTotal.setPee(Collections.frequency(listToiletIdPee, toiletId));
+            listTotal.add(checkInScriptTotal);
         }
 
         Set<Integer> listDistinctToiletIdPoop = new HashSet<>(listToiletIdPoop);
         for (Integer toiletId: listDistinctToiletIdPoop) {
             Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
-            listTotal.add(toiletEntity.get().getName() + " có: " + Collections.frequency(listToiletIdPoop, toiletId) + " người đi đại tiện.");
+
+            AtomicBoolean check = new AtomicBoolean(false);
+            listTotal.forEach(checkInScriptTotal -> {
+                if (checkInScriptTotal.getToiletId() == toiletId) {
+                    check.set(true);
+                    checkInScriptTotal.setPoop(Collections.frequency(listToiletIdPoop, toiletId));
+                }
+            });
+
+            if (!check.get()) {
+                CheckInScriptTotal checkInScriptTotal = new CheckInScriptTotal();
+                checkInScriptTotal.setToiletId(toiletEntity.get().getId());
+                checkInScriptTotal.setToiletName(toiletEntity.get().getName());
+                checkInScriptTotal.setPee(Collections.frequency(listToiletIdPoop, toiletId));
+                listTotal.add(checkInScriptTotal);
+            }
         }
 
         Set<Integer> listDistinctToiletIdTakeAShower = new HashSet<>(listToiletIdTakeAShower);
         for (Integer toiletId: listDistinctToiletIdTakeAShower) {
             Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
-            listTotal.add(toiletEntity.get().getName() + " có: " + Collections.frequency(listToiletIdTakeAShower, toiletId) + " người đi tắm.");
+
+            AtomicBoolean check = new AtomicBoolean(false);
+            listTotal.forEach(checkInScriptTotal -> {
+                if (checkInScriptTotal.getToiletId() == toiletId) {
+                    check.set(true);
+                    checkInScriptTotal.setBath(Collections.frequency(listToiletIdTakeAShower, toiletId));
+                }
+            });
+
+            if (!check.get()) {
+                CheckInScriptTotal checkInScriptTotal = new CheckInScriptTotal();
+                checkInScriptTotal.setToiletId(toiletEntity.get().getId());
+                checkInScriptTotal.setToiletName(toiletEntity.get().getName());
+                checkInScriptTotal.setBath(Collections.frequency(listToiletIdTakeAShower, toiletId));
+                listTotal.add(checkInScriptTotal);
+            }
         }
 
         result.setListUserCheckIn(listUserCheckIn);
