@@ -54,6 +54,9 @@ public class CheckInServiceImpl implements CheckInService {
     private UserInfoRepository userInfoRepository;
 
     @Autowired
+    private CompanyRepository companyRepository;
+
+    @Autowired
     private CheckInMapper checkInMapper;
 
     @Override
@@ -72,11 +75,18 @@ public class CheckInServiceImpl implements CheckInService {
     }
 
     @Override
-    public List<CheckInResponse> getCheckInHistories(Integer accountId, String paymentMethod, BasePaginationRequest paginationRequest) {
+    public List<CheckInResponse> getCheckInHistories(Integer companyId, Integer accountId, String paymentMethod, BasePaginationRequest paginationRequest) {
 
         // Prepare pagination & sort
         Sort.Order defaultSortOrder = new Sort.Order(Sort.Direction.DESC, DefaultSortPropertyConstant.DATETIME);
         Pageable pageable = PaginationUtil.getPageable(paginationRequest, defaultSortOrder);
+
+        if (companyId != null) {
+            // Validate Company
+            Optional<CompanyEntity> companyEntity = companyRepository.findById(companyId);
+            if (!companyEntity.isPresent())
+                throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY, ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY.getMessage());
+        }
 
         if (accountId != null) {
             // Validate Account
@@ -87,7 +97,7 @@ public class CheckInServiceImpl implements CheckInService {
 
         // Get Check-in histories
         List<CustomCheckInDTO> customCheckInDTOS
-                = checkInRepository.getCheckInHistories(accountId, paymentMethod, pageable);
+                = checkInRepository.getCheckInHistories(companyId, accountId, paymentMethod, pageable);
 
         List<CheckInResponse> result = customCheckInDTOS.stream()
                 .map(dto -> checkInMapper.convertCustomCheckInDTOToCheckInResponse(dto))
@@ -362,20 +372,23 @@ public class CheckInServiceImpl implements CheckInService {
     }
 
     @Override
-    public int count(Integer accountId, String paymentMethod) {
+    public int count(Integer companyId, Integer accountId, String paymentMethod) {
+
+        if (companyId != null) {
+            // Validate Company
+            Optional<CompanyEntity> companyEntity = companyRepository.findById(companyId);
+            if (!companyEntity.isPresent())
+                throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY, ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY.getMessage());
+        }
 
         if (accountId != null) {
             // Validate Account
             Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
             if (!accountEntity.isPresent())
                 throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT.getMessage());
-
-            // TODO: check paymentMethod valid
-
-            return checkInRepository.countCheckInHistoriesByAccountId(accountId, paymentMethod);
         }
 
-        return (int) checkInRepository.count();
+        return checkInRepository.countCheckInHistories(companyId, accountId, paymentMethod);
     }
 
     @Override

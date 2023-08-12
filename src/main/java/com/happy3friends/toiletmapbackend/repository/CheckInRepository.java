@@ -57,12 +57,15 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
             "         INNER JOIN Service s " +
             "                    ON ts.ServiceId = s.Id " +
             "         LEFT JOIN Rating r on c.Id = r.CheckInId " +
-            "WHERE (:accountId IS NULL OR c.AccountId = :accountId) " +
-            "  AND (:paymentMethod IS NULL OR c.PaymentMethod = :paymentMethod)",
-            nativeQuery = true)
-    List<CustomCheckInDTO> getCheckInHistories(@Param("accountId") Integer accountId,
-                                                          @Param("paymentMethod") String paymentMethod,
-                                                          Pageable pageable);
+            "         INNER JOIN Company cp " +
+            "                    ON t.CompanyId = cp.Id " +
+            "WHERE (:companyId IS NULL OR cp.Id = :companyId) " +
+            "  AND (:accountId IS NULL OR c.AccountId = :accountId) " +
+            "  AND (:paymentMethod IS NULL OR c.PaymentMethod = :paymentMethod)", nativeQuery = true)
+    List<CustomCheckInDTO> getCheckInHistories(@Param("companyId") Integer companyId,
+                                               @Param("accountId") Integer accountId,
+                                               @Param("paymentMethod") String paymentMethod,
+                                               Pageable pageable);
 
     @Query(value = "SELECT COUNT(*) " +
             "FROM CheckIn c " +
@@ -72,10 +75,15 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
             "                    ON ts.ToiletId = t.Id " +
             "         INNER JOIN Service s " +
             "                    ON ts.ServiceId = s.Id " +
-            "WHERE c.AccountId = :accountId " +
-            "  AND (:paymentMethod IS NULL OR c.PaymentMethod = :paymentMethod) ", nativeQuery = true)
-    int countCheckInHistoriesByAccountId(@Param("accountId") int accountId,
-                                         @Param("paymentMethod") String paymentMethod);
+            "         LEFT JOIN Rating r on c.Id = r.CheckInId " +
+            "         INNER JOIN Company cp " +
+            "                    ON t.CompanyId = cp.Id " +
+            "WHERE (:companyId IS NULL OR cp.Id = :companyId) " +
+            "  AND (:accountId IS NULL OR c.AccountId = :accountId) " +
+            "  AND (:paymentMethod IS NULL OR c.PaymentMethod = :paymentMethod)", nativeQuery = true)
+    int countCheckInHistories(@Param("companyId") Integer companyId,
+                              @Param("accountId") Integer accountId,
+                              @Param("paymentMethod") String paymentMethod);
 
     @Query(value = "SELECT COUNT(*) " +
             "FROM ( " +
