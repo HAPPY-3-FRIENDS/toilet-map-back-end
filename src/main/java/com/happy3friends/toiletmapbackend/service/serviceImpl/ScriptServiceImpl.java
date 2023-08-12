@@ -330,11 +330,13 @@ public class ScriptServiceImpl implements ScriptService {
             listAllUsers.remove(index);
         }
 
+        List<Integer> listToiletIdGuestPee = new ArrayList<>();
         for (int i = 0; i < numberOfGuestPee; i++) {
             int randomToiletId = listToiletId.get(random.nextInt(listToiletId.size()));
             String message = checkInGuest(randomToiletId, "Đi vệ sinh (tiểu tiện)");
             listUserCheckIn.add(message);
             listToiletIdPee.add(randomToiletId);
+            listToiletIdGuestPee.add(randomToiletId);
         }
 
         List<Integer> listToiletIdPoop = new ArrayList<>();
@@ -352,11 +354,13 @@ public class ScriptServiceImpl implements ScriptService {
             listAllUsers.remove(index);
         }
 
+        List<Integer> listToiletIdGuestPoop = new ArrayList<>();
         for (int i = 0; i < numberOfGuestPoop; i++) {
             int randomToiletId = listToiletId.get(random.nextInt(listToiletId.size()));
             String message = checkInGuest(randomToiletId, "Đi vệ sinh (đại tiện)");
             listUserCheckIn.add(message);
             listToiletIdPoop.add(randomToiletId);
+            listToiletIdGuestPoop.add(randomToiletId);
         }
 
         List<Integer> listToiletIdTakeAShower = new ArrayList<>();
@@ -374,14 +378,34 @@ public class ScriptServiceImpl implements ScriptService {
             listAllUsers.remove(index);
         }
 
+        List<Integer> listToiletIdGuestTakeAShower = new ArrayList<>();
         for (int i = 0; i < numberOfGuestTakeAShower; i++) {
             int randomToiletId = listToiletId.get(random.nextInt(listToiletId.size()));
             String message = checkInGuest(randomToiletId, "Đi tắm");
             listUserCheckIn.add(message);
             listToiletIdTakeAShower.add(randomToiletId);
+            listToiletIdGuestTakeAShower.add(randomToiletId);
         }
 
         List<CheckInScriptTotal> listTotal = new ArrayList<>();
+
+        Set<Integer> listDistinctToiletIdGuestPee = new HashSet<>(listToiletIdGuestPee);
+        Map<Integer, Integer> mapToiletIdGuestPee = new HashMap<>();
+        for (Integer toiletId: listDistinctToiletIdGuestPee) {
+            mapToiletIdGuestPee.put(toiletId, Collections.frequency(listToiletIdGuestPee, toiletId));
+        }
+
+        Set<Integer> listDistinctToiletIdGuestPoop = new HashSet<>(listToiletIdGuestPoop);
+        Map<Integer, Integer> mapToiletIdGuestPoop = new HashMap<>();
+        for (Integer toiletId: listDistinctToiletIdGuestPoop) {
+            mapToiletIdGuestPoop.put(toiletId, Collections.frequency(listToiletIdGuestPoop, toiletId));
+        }
+
+        Set<Integer> listDistinctToiletIdGuestTakeAShower = new HashSet<>(listToiletIdGuestTakeAShower);
+        Map<Integer, Integer> mapToiletIdGuestTakeAShower = new HashMap<>();
+        for (Integer toiletId: listDistinctToiletIdGuestTakeAShower) {
+            mapToiletIdGuestTakeAShower.put(toiletId, Collections.frequency(listToiletIdGuestTakeAShower, toiletId));
+        }
 
         Set<Integer> listDistinctToiletIdPee = new HashSet<>(listToiletIdPee);
         for (Integer toiletId: listDistinctToiletIdPee) {
@@ -435,6 +459,29 @@ public class ScriptServiceImpl implements ScriptService {
                 listTotal.add(checkInScriptTotal);
             }
         }
+
+        listTotal.forEach(checkInScriptTotal -> {
+            int guestPee = 0;
+            if (mapToiletIdGuestPee.get(checkInScriptTotal.getToiletId()) != null) {
+                guestPee = mapToiletIdGuestPee.get(checkInScriptTotal.getToiletId());
+            }
+
+            int guestPoop = 0;
+            if (mapToiletIdGuestPoop.get(checkInScriptTotal.getToiletId()) != null) {
+                guestPoop = mapToiletIdGuestPoop.get(checkInScriptTotal.getToiletId());
+            }
+
+            int guestBath = 0;
+            if (mapToiletIdGuestTakeAShower.get(checkInScriptTotal.getToiletId()) != null) {
+                guestBath = mapToiletIdGuestTakeAShower.get(checkInScriptTotal.getToiletId());
+            }
+
+            checkInScriptTotal.setNumberOfGuest(guestPee + guestPoop + guestBath);
+            checkInScriptTotal.setNumberOfUser(checkInScriptTotal.getPee()
+                    + checkInScriptTotal.getPoop()
+                    + checkInScriptTotal.getBath()
+                    - checkInScriptTotal.getNumberOfGuest());
+        });
 
         result.setListUserCheckIn(listUserCheckIn);
         result.setListTotal(listTotal);

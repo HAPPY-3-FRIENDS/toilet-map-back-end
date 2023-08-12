@@ -15,4 +15,6 @@ public class CheckInScriptTotal {
     private int pee;
     private int poop;
     private int bath;
+    private int numberOfUser;
+    private int numberOfGuest;
 }
