@@ -86,7 +86,9 @@ public interface StatisticRepository extends JpaRepository<CheckInEntity, Intege
                                            Pageable pageable);
 
     @Query(value = "SELECT (COALESCE(SUM(c.Balance), 0) + COALESCE(SUM(c.TurnPrice), 0)) AS TotalRevenue, " +
-            "       COUNT(c.Balance) + COUNT(c.TurnPrice)                         AS TotalTurn " +
+            "       COUNT(c.Balance) + COUNT(c.TurnPrice)                         AS TotalTurn, " +
+            "       COUNT(c.Balance)                                              AS walkInGuestCount, " +
+            "       COUNT(c.TurnPrice)                                            AS usingTurnCount " +
             "FROM CheckIn c " +
             "         RIGHT JOIN ToiletService ts " +
             "                    ON c.ToiletServiceId = ts.Id AND " +
@@ -95,32 +97,12 @@ public interface StatisticRepository extends JpaRepository<CheckInEntity, Intege
             "              ON ts.ToiletId = t.Id " +
             "         JOIN Company cp " +
             "              ON t.CompanyId = cp.Id " +
-            "WHERE cp.Id = :companyId", nativeQuery = true)
-    CustomStatisticDTO getTotalStatisticOfMonthByCompanyId(@Param("companyId") int companyId,
-                                                        @Param("fromDate") Date fromDate,
-                                                        @Param("toDate") Date toDate);
-
-    @Query(value = "SELECT COALESCE(SUM(c.Balance), 0) + COALESCE(SUM(c.TurnPrice), 0) AS TotalRevenue, " +
-            "       COUNT(c.Balance) + COUNT(c.TurnPrice)                       AS TotalTurn " +
-            "FROM CheckIn c " +
-            "         RIGHT JOIN ToiletService ts " +
-            "                    ON c.ToiletServiceId = ts.Id AND (c.DateTime IS NULL OR c.DateTime BETWEEN :fromDate AND :toDate) " +
-            "         JOIN Toilet t " +
-            "              ON ts.ToiletId = t.Id " +
-            "WHERE t.Id = :toiletId", nativeQuery = true)
-    CustomStatisticDTO getTotalStatisticOfMonthByToiletId(@Param("toiletId") int toiletId,
-                                                       @Param("fromDate") Date fromDate,
-                                                       @Param("toDate") Date toDate);
-
-    @Query(value = "SELECT COALESCE(SUM(c.Balance), 0) + COALESCE(SUM(c.TurnPrice), 0) AS TotalRevenue, " +
-            "       COUNT(c.Balance) + COUNT(c.TurnPrice)                       AS TotalTurn " +
-            "FROM CheckIn c " +
-            "         RIGHT JOIN ToiletService ts " +
-            "                    ON c.ToiletServiceId = ts.Id " +
-            "WHERE c.DateTime IS NULL " +
-            "   OR (c.DateTime BETWEEN :fromDate AND :toDate)", nativeQuery = true)
-    CustomStatisticDTO getTotalStatisticOfMonth(@Param("fromDate") Date fromDate,
-                                             @Param("toDate") Date toDate);
+            "WHERE (:toiletId IS NULL OR t.Id = :toiletId) " +
+            "  AND (:companyId IS NULL OR cp.Id = :companyId)", nativeQuery = true)
+    CustomStatisticDTO getTotalStatisticOfMonth(@Param("companyId") Integer companyId,
+                                                @Param("toiletId") Integer toiletId,
+                                                @Param("fromDate") Date fromDate,
+                                                @Param("toDate") Date toDate);
 
     @Query(value = "SELECT COUNT(*) " +
             "FROM (SELECT t.Id                                                          AS ToiletId, " +

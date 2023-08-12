@@ -136,41 +136,13 @@ public class StatisticServiceImpl implements StatisticService {
         }
     }
 
-    private StatisticResponse getTotalStatisticOfMonthByCompanyId(Integer companyId, Date fromDate, Date toDate) {
-        // Validate Company ID
-        Optional<CompanyEntity> companyEntity = companyRepository.findById(companyId);
-        if (!companyEntity.isPresent())
-            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY, ToiletMapErrorCodeEnum.NOT_FOUND_COMPANY.getMessage());
-
-        CustomStatisticDTO customStatisticDTO = statisticRepository.getTotalStatisticOfMonthByCompanyId(companyId, fromDate, toDate);
-
-        return statisticMapper.convertCustomStatisticDTOToStatisticResponse(customStatisticDTO);
-    }
-
-    private StatisticResponse getTotalStatisticOfMonthByToiletId(Integer toiletId, Date fromDate, Date toDate) {
-        // Validate Toilet ID
-        Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
-        if (!toiletEntity.isPresent())
-            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_TOILET, ToiletMapErrorCodeEnum.NOT_FOUND_TOILET.getMessage());
-
-        CustomStatisticDTO customStatisticDTO = statisticRepository.getTotalStatisticOfMonthByToiletId(toiletId, fromDate, toDate);
-
-        return statisticMapper.convertCustomStatisticDTOToStatisticResponse(customStatisticDTO);
-    }
-
     @Override
     public StatisticResponse getTotalStatisticOfMonth(Integer companyId, Integer toiletId) {
         Date fromDate = DateTimeUtil.getFirstDateOfCurrentMonth();
         Date toDate = DateTimeUtil.getDateNowWithInitialTime(23, 59, 59, 999);
 
-        if (companyId != null && toiletId == null) {
-            return getTotalStatisticOfMonthByCompanyId(companyId, fromDate, toDate);
-        } else if (companyId == null && toiletId != null) {
-            return getTotalStatisticOfMonthByToiletId(toiletId, fromDate, toDate);
-        } else {
-            CustomStatisticDTO customStatisticDTO = statisticRepository.getTotalStatisticOfMonth(fromDate, toDate);
-            return statisticMapper.convertCustomStatisticDTOToStatisticResponse(customStatisticDTO);
-        }
+        CustomStatisticDTO customStatisticDTO = statisticRepository.getTotalStatisticOfMonth(companyId, toiletId, fromDate, toDate);
+        return statisticMapper.convertCustomStatisticDTOToStatisticResponse(customStatisticDTO);
     }
 
     @Override
