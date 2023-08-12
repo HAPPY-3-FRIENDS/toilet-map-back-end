@@ -1,5 +1,6 @@
 package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
+import com.happy3friends.toiletmapbackend.dto.CheckInFullAToiletTotal;
 import com.happy3friends.toiletmapbackend.dto.CheckInScriptTotal;
 import com.happy3friends.toiletmapbackend.entity.SuggestionEntity;
 import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
@@ -130,7 +131,12 @@ public class ScriptServiceImpl implements ScriptService {
     }
 
     @Override
-    public List<String> checkInFullAToilet(CheckInFullAToiletRequest request) {
+    public CheckInFullAToiletResponse checkInFullAToilet(CheckInFullAToiletRequest request) {
+        CheckInFullAToiletResponse response = new CheckInFullAToiletResponse();
+        CheckInFullAToiletTotal checkInFullAToiletTotal = new CheckInFullAToiletTotal();
+        int checkInSuccess = 0;
+        int checkInFail = 0;
+
         Date date = DateTimeUtil.getDateNow();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String startDate = dateFormat.format(date) + " 00:00:00";
@@ -177,8 +183,10 @@ public class ScriptServiceImpl implements ScriptService {
             String message;
             if (i >= numberOfAvailableBathroom) {
                 message = listUsers.get(i).getFullName() + " không thể đi tắm vì hết phòng";
+                checkInFail++;
             } else {
                 message = process(request.getToiletId(), listUsers.get(i).getAccountId(), "Đi tắm");
+                checkInSuccess++;
             }
             result.add(message);
         }
@@ -186,14 +194,26 @@ public class ScriptServiceImpl implements ScriptService {
             String message;
             if (i >= numberOfAvailableRestroom + listUsers.size() - request.getNumberOfRestroom()) {
                 message = listUsers.get(i).getFullName() + " không thể đại tiện vì hết phòng";
+                checkInFail++;
             } else {
                 message = process(request.getToiletId(), listUsers.get(i).getAccountId(), "Đi vệ sinh (đại tiện)");
+                checkInSuccess++;
             }
 
             result.add(message);
         }
 
-        return result;
+        NumberOfCurrentCheckInResponse numberOfCurrentCheckInResponse = toiletService.getNumberOfCurrentCheckIn(request.getToiletId());
+
+        checkInFullAToiletTotal.setCheckInSuccess(checkInSuccess);
+        checkInFullAToiletTotal.setCheckInFail(checkInFail);
+        checkInFullAToiletTotal.setToiletRoomEmpty(numberOfCurrentCheckInResponse.getNumberOfRestroom() - numberOfCurrentCheckInResponse.getNumNotAvailableRestroom());
+        checkInFullAToiletTotal.setBathRoomEmpty(numberOfCurrentCheckInResponse.getNumberOfBathroom() - numberOfCurrentCheckInResponse.getNumNotAvailableBathroom());
+
+        response.setListUserCheckIn(result);
+        response.setTotal(checkInFullAToiletTotal);
+
+        return response;
     }
 
     @Override
