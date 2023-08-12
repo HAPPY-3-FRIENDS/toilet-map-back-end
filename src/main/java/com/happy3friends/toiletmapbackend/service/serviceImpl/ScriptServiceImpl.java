@@ -27,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Service
 public class ScriptServiceImpl implements ScriptService {
@@ -157,7 +158,11 @@ public class ScriptServiceImpl implements ScriptService {
         int numberOfAvailableRestroom = numberOfRestRoom.get() - checkInRepository
                 .getNumberNotAvailableRoom(request.getToiletId(), 2, startDate, endDate, now);
 
-        List<UserInfoEntity> listAllUsers = userInfoRepository.findAll();
+        List<UserInfoEntity> listAll = userInfoRepository.findAll();
+
+        List<UserInfoEntity> listAllUsers = listAll.stream()
+                .filter(user -> user.getAccountTurn() > 0 && user.getAccountBalance() > 0)
+                .collect(Collectors.toList());
 
         List<UserInfoEntity> listUsers = new ArrayList<>();
 
