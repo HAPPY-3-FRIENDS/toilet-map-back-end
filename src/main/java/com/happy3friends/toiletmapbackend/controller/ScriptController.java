@@ -6,6 +6,7 @@ import com.happy3friends.toiletmapbackend.constant.RoleConstant;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.request.CheckInFullAToiletRequest;
 import com.happy3friends.toiletmapbackend.request.CheckInScriptRequest;
+import com.happy3friends.toiletmapbackend.response.CheckInFullAToiletResponse;
 import com.happy3friends.toiletmapbackend.response.CheckInScriptResponse;
 import com.happy3friends.toiletmapbackend.response.SuggestionSchedulerResponse;
 import com.happy3friends.toiletmapbackend.service.ScriptService;
@@ -46,9 +47,9 @@ public class ScriptController {
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.ADMIN, RoleConstant.MANAGER})
     @PostMapping
-    public ResponseEntity<BaseResponse<List<String>>> checkInFullAToiletRequest(CheckInFullAToiletRequest request) {
+    public ResponseEntity<BaseResponse<CheckInFullAToiletResponse>> checkInFullAToiletRequest(CheckInFullAToiletRequest request) {
 
-        List<String> response = scriptService.checkInFullAToilet(request);
+        CheckInFullAToiletResponse response = scriptService.checkInFullAToilet(request);
 
         return ResponseBuilder.generateResponse(
                 "Check-in full a toilet successfully!",

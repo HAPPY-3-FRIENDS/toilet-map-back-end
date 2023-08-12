@@ -78,7 +78,6 @@ public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer>, 
             "       f.Name                                          AS FacilityName, " +
             "       f.Type                                          AS FacilityType, " +
             "       COALESCE(tf.Quantity, 0)                        AS FacilityQuantity, " +
-            "       CAST(tf.Description AS NVARCHAR(MAX))           AS FacilityDescription, " +
             "       COALESCE(ROUND(AVG(CAST(Star AS FLOAT)), 1), 0) AS RatingStar, " +
             "       CAST(ti.ImageSource AS NVARCHAR(MAX))           AS ToiletImage, " +
             "       a.Username, " +
@@ -100,7 +99,7 @@ public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer>, 
             "WHERE t.Id = :toiletId " +
             "GROUP BY t.Id, t.Name, t.Address, t.Ward, t.District, t.Province, t.Longitude, t.Latitude, t.NearBy, " +
             "         t.OpenTime, t.CloseTime, t.isFree, " +
-            "         f.Id, f.Name, f.Type, tf.Quantity, CAST(tf.Description AS NVARCHAR(MAX)), " +
+            "         f.Id, f.Name, f.Type, tf.Quantity, " +
             "         CAST(ti.ImageSource AS NVARCHAR(MAX)), " +
             "         a.Username, t.Status", nativeQuery = true)
     List<CustomToiletDetailsInfoDTO> getCustomToiletInfoDTOByToiletId(@Param("toiletId") int toiletId);
