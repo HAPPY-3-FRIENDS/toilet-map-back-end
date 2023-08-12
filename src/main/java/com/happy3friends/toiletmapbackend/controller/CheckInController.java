@@ -80,7 +80,7 @@ public class CheckInController {
         );
     }
 
-    @Operation(summary = "Get list of all check-in histories", description = "[Admin, User] List of check-in histories")
+    @Operation(summary = "Get list of all check-in histories", description = "[Admin, Manager, User] List of check-in histories")
     @Parameters(value = {
             @Parameter(name = "account-id", description = "A specific account ID", in = ParameterIn.QUERY, required = false, example = "6"),
             @Parameter(name = "payment-method", description = "A specific payment method", in = ParameterIn.QUERY, examples = {
@@ -123,14 +123,15 @@ public class CheckInController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.USER})
+    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.MANAGER, RoleConstant.USER})
     @GetMapping
     public ResponseEntity<BaseResponse<List<CheckInResponse>>> getCheckInHistories(
+            @RequestParam(name = "company-id", required = false) Integer companyId,
             @RequestParam(name = "account-id", required = false) Integer accountId,
             @RequestParam(name = "payment-method", required = false) String paymentMethod,
             @ModelAttribute BasePaginationRequest paginationRequest) {
 
-        List<CheckInResponse> responses = checkInService.getCheckInHistories(accountId, paymentMethod, paginationRequest);
+        List<CheckInResponse> responses = checkInService.getCheckInHistories(companyId, accountId, paymentMethod, paginationRequest);
 
         if (responses.isEmpty()) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
@@ -141,7 +142,7 @@ public class CheckInController {
         );
     }
 
-    @Operation(summary = "Count list of all check-in histories", description = "[Admin, User] Count list of check-in histories")
+    @Operation(summary = "Count list of all check-in histories", description = "[Admin, Manager, User] Count list of check-in histories")
     @Parameters(value = {
             @Parameter(name = "account-id", description = "A specific account ID", in = ParameterIn.QUERY, example = "6"),
             @Parameter(name = "payment-method", description = "A specific payment method", in = ParameterIn.QUERY, examples = {
@@ -159,13 +160,14 @@ public class CheckInController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.USER})
+    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.MANAGER, RoleConstant.USER})
     @GetMapping(value = "/count")
     public ResponseEntity<BaseResponse<Integer>> count(
+            @RequestParam(name = "company-id", required = false) Integer companyId,
             @RequestParam(name = "account-id", required = false) Integer accountId,
             @RequestParam(name = "payment-method", required = false) String paymentMethod) {
 
-        int response = checkInService.count(accountId, paymentMethod);
+        int response = checkInService.count(companyId, accountId, paymentMethod);
 
         if (accountId != null ) {
             return ResponseBuilder.generateResponse(
