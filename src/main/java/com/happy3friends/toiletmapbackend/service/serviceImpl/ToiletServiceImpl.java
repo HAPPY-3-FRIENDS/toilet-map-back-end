@@ -785,8 +785,14 @@ public class ToiletServiceImpl implements ToiletService {
             }
         });
 
-        int waitingRestroomTime = checkInRepository.getWaitingTime(toiletId, startDate, endDate, now, 2);
-        int waitingBathroomTime = checkInRepository.getWaitingTime(toiletId, startDate, endDate, now, 3);
+        int waitingRestroomTime = 0;
+        if (checkInRepository.getWaitingTime(toiletId, startDate, endDate, now, 2) != null) {
+            waitingRestroomTime = checkInRepository.getWaitingTime(toiletId, startDate, endDate, now, 2);
+        }
+        int waitingBathroomTime = 0;
+        if (checkInRepository.getWaitingTime(toiletId, startDate, endDate, now, 3) != null) {
+            waitingBathroomTime = checkInRepository.getWaitingTime(toiletId, startDate, endDate, now, 3);
+        }
 
         NumberOfCurrentCheckInResponse result = new NumberOfCurrentCheckInResponse();
         result.setNumNotAvailableRestroom(numNotAvailableRestroom);

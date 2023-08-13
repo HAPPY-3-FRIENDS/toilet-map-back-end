@@ -157,6 +157,11 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
             "WHERE c.Id IN :list", nativeQuery = true)
     List<String> getListUserByListCheckInId(@Param("list") List<Integer> list);
 
+    @Query(value = "SELECT * " +
+            "FROM CheckIn c " +
+            "WHERE c.Id IN :list", nativeQuery = true)
+    List<CheckInEntity> getCheckInByListCheckInId(@Param("list") List<Integer> list);
+
     @Query(value = "SELECT MIN(DATEDIFF(minute, :now, c.CheckoutTime)) " +
             "FROM CheckIn c " +
             "WHERE c.Id IN :list", nativeQuery = true)
