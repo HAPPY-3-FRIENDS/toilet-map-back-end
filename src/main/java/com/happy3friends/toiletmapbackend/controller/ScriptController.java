@@ -8,6 +8,7 @@ import com.happy3friends.toiletmapbackend.request.CheckInFullAToiletRequest;
 import com.happy3friends.toiletmapbackend.request.CheckInScriptRequest;
 import com.happy3friends.toiletmapbackend.response.CheckInFullAToiletResponse;
 import com.happy3friends.toiletmapbackend.response.CheckInScriptResponse;
+import com.happy3friends.toiletmapbackend.response.CheckoutResponse;
 import com.happy3friends.toiletmapbackend.response.SuggestionSchedulerResponse;
 import com.happy3friends.toiletmapbackend.service.ScriptService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -61,9 +62,9 @@ public class ScriptController {
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.ADMIN})
     @GetMapping("/checkout")
-    public ResponseEntity<BaseResponse<List<String>>> checkout(@Param("toilet-id") int toiletId) {
+    public ResponseEntity<BaseResponse<CheckoutResponse>> checkout(@Param("toilet-id") int toiletId) {
 
-        List<String> response = scriptService.checkout(toiletId);
+        CheckoutResponse response = scriptService.checkout(toiletId);
 
         return ResponseBuilder.generateResponse(
                 "Checkout all user successfully!",

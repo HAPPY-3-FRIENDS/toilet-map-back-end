@@ -2,6 +2,7 @@ package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
 import com.happy3friends.toiletmapbackend.dto.CheckInFullAToiletTotal;
 import com.happy3friends.toiletmapbackend.dto.CheckInScriptTotal;
+import com.happy3friends.toiletmapbackend.entity.CheckInEntity;
 import com.happy3friends.toiletmapbackend.entity.SuggestionEntity;
 import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
 import com.happy3friends.toiletmapbackend.entity.UserInfoEntity;
@@ -217,7 +218,8 @@ public class ScriptServiceImpl implements ScriptService {
     }
 
     @Override
-    public List<String> checkout(int toiletId) {
+    public CheckoutResponse checkout(int toiletId) {
+        CheckoutResponse response = new CheckoutResponse();
         Date date = DateTimeUtil.getDateNow();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String startDate = dateFormat.format(date) + " 00:00:00";
@@ -231,7 +233,10 @@ public class ScriptServiceImpl implements ScriptService {
 
         if (list.isEmpty()) {
             result.add("Nhà vệ sinh hiện tại không có người dùng nào để checkout");
-            return result;
+            response.setListUserCheckout(result);
+            response.setNumberOfUserBath(0);
+            response.setNumberOfUserBath(0);
+            return response;
         }
         checkInRepository.checkout(toiletId, startDate, endDate, now);
 
@@ -239,7 +244,36 @@ public class ScriptServiceImpl implements ScriptService {
             result.add(u + " đã checkout");
         });
 
-        return result;
+        List<CheckInEntity> listCheckInEntity = checkInRepository.getCheckInByListCheckInId(list);
+
+        AtomicInteger numberOfUserPoop = new AtomicInteger();
+        AtomicInteger numberOfUserBath = new AtomicInteger();
+        listCheckInEntity.forEach(checkInEntity -> {
+            if (checkInEntity.getTurn() != null) {
+                if (checkInEntity.getTurn() == 2) {
+                    numberOfUserPoop.getAndIncrement();
+                }
+
+                if (checkInEntity.getTurn() == 3) {
+                    numberOfUserBath.getAndIncrement();
+                }
+            } else {
+                if (checkInEntity.getBalance() == 10000) {
+                    numberOfUserPoop.getAndIncrement();
+                }
+
+                if (checkInEntity.getBalance() == 15000) {
+                    numberOfUserBath.getAndIncrement();
+                }
+            }
+
+        });
+
+        response.setListUserCheckout(result);
+        response.setNumberOfUserPoop(numberOfUserPoop.get());
+        response.setNumberOfUserBath(numberOfUserBath.get());
+
+        return response;
     }
 
     @Override

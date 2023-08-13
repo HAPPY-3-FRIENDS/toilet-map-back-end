@@ -4,6 +4,7 @@ import com.happy3friends.toiletmapbackend.request.CheckInFullAToiletRequest;
 import com.happy3friends.toiletmapbackend.request.CheckInScriptRequest;
 import com.happy3friends.toiletmapbackend.response.CheckInFullAToiletResponse;
 import com.happy3friends.toiletmapbackend.response.CheckInScriptResponse;
+import com.happy3friends.toiletmapbackend.response.CheckoutResponse;
 import com.happy3friends.toiletmapbackend.response.SuggestionSchedulerResponse;
 
 import java.text.ParseException;
@@ -14,7 +15,7 @@ public interface ScriptService {
 
     CheckInFullAToiletResponse checkInFullAToilet(CheckInFullAToiletRequest request);
 
-    List<String> checkout(int toiletId);
+    CheckoutResponse checkout(int toiletId);
 
     List<SuggestionSchedulerResponse> runScheduler(String date) throws ParseException;
     CheckInScriptResponse randomUserCheckIn(CheckInScriptRequest request);
