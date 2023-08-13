@@ -74,8 +74,8 @@ public class ScriptController {
 
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.ADMIN, RoleConstant.MANAGER})
-    @PostMapping("/manual-scheduler")
-    public ResponseEntity<BaseResponse<List<SuggestionSchedulerResponse>>> runScheduler(@Param("date") String date) throws ParseException {
+    @PostMapping("/manual-scheduler/{date}")
+    public ResponseEntity<BaseResponse<List<SuggestionSchedulerResponse>>> runScheduler(@PathVariable("date") String date) throws ParseException {
 
         List<SuggestionSchedulerResponse> response = scriptService.runScheduler(date);
 
