@@ -770,9 +770,9 @@ public class ToiletServiceImpl implements ToiletService {
 
         String now = DateTimeUtil.getTimestampNow().toString();
         int numNotAvailableBathroom = checkInRepository
-                .getNumberNotAvailableRoom(toiletId, 3, startDate, endDate, now);
+                .getNumberNotAvailableRoom(toiletId, 3, 15000, startDate, endDate, now);
         int numNotAvailableRestroom = checkInRepository
-                .getNumberNotAvailableRoom(toiletId, 2, startDate, endDate, now);
+                .getNumberNotAvailableRoom(toiletId, 2, 10000, startDate, endDate, now);
 
         ToiletDetailsInfoResponse toilet = getToiletByToiletId(toiletId);
         AtomicInteger numberOfRestroom = new AtomicInteger();
@@ -786,12 +786,12 @@ public class ToiletServiceImpl implements ToiletService {
         });
 
         int waitingRestroomTime = 0;
-        if (checkInRepository.getWaitingTime(toiletId, startDate, endDate, now, 2) != null) {
-            waitingRestroomTime = checkInRepository.getWaitingTime(toiletId, startDate, endDate, now, 2);
+        if (checkInRepository.getWaitingTime(toiletId, startDate, endDate, now, 2, 10000) != null) {
+            waitingRestroomTime = checkInRepository.getWaitingTime(toiletId, startDate, endDate, now, 2, 10000);
         }
         int waitingBathroomTime = 0;
-        if (checkInRepository.getWaitingTime(toiletId, startDate, endDate, now, 3) != null) {
-            waitingBathroomTime = checkInRepository.getWaitingTime(toiletId, startDate, endDate, now, 3);
+        if (checkInRepository.getWaitingTime(toiletId, startDate, endDate, now, 3, 15000) != null) {
+            waitingBathroomTime = checkInRepository.getWaitingTime(toiletId, startDate, endDate, now, 3, 15000);
         }
 
         if (numNotAvailableRestroom > numberOfRestroom.get()) {
@@ -819,11 +819,6 @@ public class ToiletServiceImpl implements ToiletService {
         if (!toiletEntity.isPresent())
             throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_TOILET, ToiletMapErrorCodeEnum.NOT_FOUND_TOILET.getMessage());
 
-        NumberOfCurrentCheckInResponse numberOfCurrentCheckInResponse = getNumberOfCurrentCheckIn(request.getToiletId());
-
-        int numberOfRestroomCheckout = numberOfCurrentCheckInResponse.getNumNotAvailableRestroom() - request.getNumberOfRestroom();
-        int numberOfBathroomCheckout = numberOfCurrentCheckInResponse.getNumNotAvailableBathroom() - request.getNumberOfBathroom();
-
         Date date = DateTimeUtil.getDateNow();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String startDate = dateFormat.format(date) + " 00:00:00";
@@ -831,11 +826,19 @@ public class ToiletServiceImpl implements ToiletService {
 
         String now = DateTimeUtil.getTimestampNow().toString();
 
-        List<Integer> listIdOfRestroomCheckout = checkInRepository.getListIdNeedCheckout(request.getToiletId(), startDate, endDate, now, 2, numberOfRestroomCheckout);
-        checkInRepository.checkoutByListId(listIdOfRestroomCheckout, now);
+        int numberOfCurrentCheckInBathroom = checkInRepository
+                .getNumberNotAvailableRoom(request.getToiletId(), 3, 15000, startDate, endDate, now);
+        int numberOfCurrentCheckInRestroom = checkInRepository
+                .getNumberNotAvailableRoom(request.getToiletId(), 2, 10000, startDate, endDate, now);
 
-        List<Integer> listIdOfBathroomCheckout = checkInRepository.getListIdNeedCheckout(request.getToiletId(), startDate, endDate, now, 3, numberOfBathroomCheckout);
-        checkInRepository.checkoutByListId(listIdOfBathroomCheckout, now);
+        int numberOfRestroomCheckout = numberOfCurrentCheckInRestroom - request.getNumberOfRestroom();
+        int numberOfBathroomCheckout = numberOfCurrentCheckInBathroom - request.getNumberOfBathroom();
+
+        List<Integer> listIdOfRestroomCheckout = checkInRepository.getListIdNeedCheckout(request.getToiletId(), startDate, endDate, now, 2, 10000);
+        checkInRepository.checkoutByListId(listIdOfRestroomCheckout.stream().limit(numberOfRestroomCheckout).collect(Collectors.toList()), now);
+
+        List<Integer> listIdOfBathroomCheckout = checkInRepository.getListIdNeedCheckout(request.getToiletId(), startDate, endDate, now, 3, 15000);
+        checkInRepository.checkoutByListId(listIdOfBathroomCheckout.stream().limit(numberOfBathroomCheckout).collect(Collectors.toList()), now);
 
         return "Success";
     }
@@ -879,9 +882,9 @@ public class ToiletServiceImpl implements ToiletService {
 
         String now = DateTimeUtil.getTimestampNow().toString();
         int numNotAvailableBathroom = checkInRepository
-                .getNumberNotAvailableRoom(toiletId, 3, startDate, endDate, now);
+                .getNumberNotAvailableRoom(toiletId, 3, 15000, startDate, endDate, now);
         int numNotAvailableRestroom = checkInRepository
-                .getNumberNotAvailableRoom(toiletId, 2, startDate, endDate, now);
+                .getNumberNotAvailableRoom(toiletId, 2, 10000, startDate, endDate, now);
 
         if (numNotAvailableBathroom >= numberOfBathroom && numNotAvailableRestroom >= numberOfRestroom) {
             return false;

@@ -161,9 +161,9 @@ public class ScriptServiceImpl implements ScriptService {
         });
 
         int numberOfAvailableBathroom = numberOfBathRoom.get() - checkInRepository
-                .getNumberNotAvailableRoom(request.getToiletId(), 3, startDate, endDate, now);
+                .getNumberNotAvailableRoom(request.getToiletId(), 3, 15000, startDate, endDate, now);
         int numberOfAvailableRestroom = numberOfRestRoom.get() - checkInRepository
-                .getNumberNotAvailableRoom(request.getToiletId(), 2, startDate, endDate, now);
+                .getNumberNotAvailableRoom(request.getToiletId(), 2, 10000, startDate, endDate, now);
 
         List<UserInfoEntity> listAll = userInfoRepository.findAll();
 
