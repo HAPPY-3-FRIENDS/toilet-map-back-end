@@ -28,9 +28,9 @@ public class ToiletCreateRequest {
     private double latitude;
     private double longitude;
     private boolean isFree;
-    @JsonFormat(pattern = DateTimeConstant.HH_mm)
+    @JsonFormat(pattern = DateTimeConstant.HH_mm, timezone = DateTimeConstant.TIME_ZONE)
     private Timestamp openTime;
-    @JsonFormat(pattern = DateTimeConstant.HH_mm)
+    @JsonFormat(pattern = DateTimeConstant.HH_mm, timezone = DateTimeConstant.TIME_ZONE)
     private Timestamp closeTime;
     private String status;
     private List<String> toiletImages;
