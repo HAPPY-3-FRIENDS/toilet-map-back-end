@@ -508,7 +508,7 @@ public class ToiletServiceImpl implements ToiletService {
 
         List<ToiletDetailsInfoResponse> listAvailableToilet = getListAvailableToilet(list10ToiletNearByLatLng);
 
-        List<String> listDestinations = new ArrayList<>();
+        /*List<String> listDestinations = new ArrayList<>();
         for (ToiletDetailsInfoResponse toilet : listAvailableToilet) {
             listDestinations.add(toilet.getLatitude() + "," + toilet.getLongitude());
         }
@@ -527,9 +527,9 @@ public class ToiletServiceImpl implements ToiletService {
                 .min((x, y) -> x.getDuration().getValue() - y.getDuration().getValue())
                 .get();
 
-        int index = listDistanceMatrixResponse.get(0).getRows().get(0).getElements().indexOf(element);
+        int index = listDistanceMatrixResponse.get(0).getRows().get(0).getElements().indexOf(element);*/
 
-        return listAvailableToilet.get(index);
+        return listAvailableToilet.get(0);
     }
 
     @Override

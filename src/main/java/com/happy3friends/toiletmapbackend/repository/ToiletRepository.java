@@ -35,7 +35,6 @@ public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer>, 
             "             f.Name                                                                                AS FacilityName, " +
             "             f.Type                                                                                AS FacilityType, " +
             "             COALESCE(tf.Quantity, 0)                                                              AS FacilityQuantity, " +
-            "             CAST(tf.Description AS NVARCHAR(MAX))                                                 AS FacilityDescription, " +
             "             COALESCE(ROUND(AVG(CAST(Star AS FLOAT)), 1), 0)                                       AS RatingStar, " +
             "             CAST(ti.ImageSource AS NVARCHAR(MAX))                                                 AS ToiletImage, " +
             "             DENSE_RANK() OVER (ORDER BY SQRT(SQUARE(:currentLatitude - t.Latitude) + " +
@@ -55,7 +54,7 @@ public interface ToiletRepository extends JpaRepository<ToiletEntity, Integer>, 
             "      WHERE t.Status != N'Không hoạt động' " +
             "      GROUP BY t.Id, t.Name, t.Address, t.Ward, t.District, t.Province, t.Latitude, t.Longitude, t.NearBy, " +
             "               t.OpenTime, t.CloseTime, t.isFree, f.Id, f.Name, f.Type, tf.Quantity, " +
-            "               CAST(tf.Description AS NVARCHAR(MAX)), CAST(ti.ImageSource AS NVARCHAR(MAX))) AS RS " +
+            "               CAST(ti.ImageSource AS NVARCHAR(MAX))) AS RS " +
             "WHERE Rank <= 10", nativeQuery = true)
     List<CustomToiletDetailsInfoDTO> getTop10ToiletsNearByCurrentLocation(@Param("currentLatitude") Double currentLatitude,
                                                                           @Param("currentLongitude") Double currentLongitude);

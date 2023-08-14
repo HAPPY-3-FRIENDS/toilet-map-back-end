@@ -9,6 +9,10 @@
 -- DROP COLUMN Gmail
 -- GO
 
+--ALTER TABLE ToiletFacility
+--    DROP COLUMN Description
+--GO
+
 CREATE DATABASE ToiletMap
 GO
 
