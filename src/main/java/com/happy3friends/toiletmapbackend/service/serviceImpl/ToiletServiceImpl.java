@@ -235,7 +235,7 @@ public class ToiletServiceImpl implements ToiletService {
     public List<ToiletDetailsInfoResponse> getAllToiletsByCompanyId(Integer companyId, String keyword, BasePaginationRequest paginationRequest) {
 
         // Prepare pagination & sort
-        Sort.Order defaultSortOrder = new Sort.Order(Sort.Direction.DESC, DefaultSortPropertyConstant.ID);
+        Sort.Order defaultSortOrder = new Sort.Order(Sort.Direction.ASC, DefaultSortPropertyConstant.ID);
         Pageable pageable = PaginationUtil.getPageable(paginationRequest, defaultSortOrder);
 
         // Validate Company
