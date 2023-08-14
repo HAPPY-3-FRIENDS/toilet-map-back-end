@@ -512,7 +512,7 @@ public class ToiletController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error!", content = @Content(schema = @Schema(hidden = true)))
     })
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.USER})
+    @RolesAllowed({RoleConstant.USER, RoleConstant.TOILET, RoleConstant.STAFF})
     @GetMapping("/nearest-toilet")
     public ResponseEntity<BaseResponse<ToiletDetailsInfoResponse>> getNearestToilet(
             @RequestParam(name = "current-latitude", required = false) Double currentLatitude,
