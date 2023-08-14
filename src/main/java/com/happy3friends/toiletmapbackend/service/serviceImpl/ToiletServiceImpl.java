@@ -847,10 +847,9 @@ public class ToiletServiceImpl implements ToiletService {
         List<ToiletDetailsInfoResponse> result = listToilet.stream()
                 .filter(toilet -> isAvailable(toilet.getId(), getNumberOfBathroom(toilet), getNumberOfRestroom(toilet)))
                 .collect(Collectors.toList());
-        //TODO: If all 10 toilets not available. Get toilet nearest
-//        if (result.isEmpty()) {
-//            result
-//        }
+        if (result.isEmpty()) {
+            result.add(listToilet.get(0));
+        }
         return result;
     }
 
