@@ -112,12 +112,11 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
             "FROM CheckIn c " +
             "INNER JOIN ToiletService ts on c.ToiletServiceId = ts.Id " +
             "WHERE ts.ToiletId = :toiletId " +
-            "    AND (c.Turn = :turn OR c.Balance = :balance) " +
+            "    AND ts.ServiceId = :serviceId " +
             "    AND (DateTime >= :startDate AND DateTime < :endDate) " +
             "    AND (:now BETWEEN DateTime AND CheckoutTime)", nativeQuery = true)
     int getNumberNotAvailableRoom(@Param("toiletId") int toiletId,
-                                      @Param("turn") int turn,
-                                      @Param("balance") int balance,
+                                      @Param("serviceId") int serviceId,
                                       @Param("startDate") String startDate,
                                       @Param("endDate") String endDate,
                                       @Param("now") String now);
@@ -173,21 +172,20 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
             "FROM CheckIn c " +
             "INNER JOIN ToiletService ts on c.ToiletServiceId = ts.Id " +
             "WHERE ts.ToiletId = :toiletId " +
-            "    AND (c.Turn = :turn OR c.Balance = :balance)" +
+            "    ts.ServiceId = :serviceId " +
             "    AND (DateTime >= :startDate AND DateTime < :endDate) " +
             "    AND (:now BETWEEN DateTime AND CheckoutTime)", nativeQuery = true)
     Integer getWaitingTime(@Param("toiletId") int toiletId,
                       @Param("startDate") String startDate,
                       @Param("endDate") String endDate,
                       @Param("now") String now,
-                      @Param("turn") int turn,
-                      @Param("balance") int balance);
+                      @Param("serviceId") int serviceId);
 
     @Query(value = "SELECT c.Id " +
             "FROM CheckIn c " +
             "INNER JOIN ToiletService ts on c.ToiletServiceId = ts.Id " +
             "WHERE ts.ToiletId = :toiletId " +
-            "    AND (c.Turn = :turn OR c.Balance = :balance) " +
+            "    AND ts.ServiceId = :serviceId " +
             "    AND (DateTime >= :startDate AND DateTime < :endDate) " +
             "    AND (:now BETWEEN DateTime AND CheckoutTime) " +
             "ORDER BY c.CheckoutTime DESC ", nativeQuery = true)
@@ -195,8 +193,7 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
                                         @Param("startDate") String startDate,
                                         @Param("endDate") String endDate,
                                         @Param("now") String now,
-                                        @Param("turn") int turn,
-                                        @Param("balance") int balance);
+                                        @Param("serviceId") int serviceId);
 
     @Transactional
     @Modifying
