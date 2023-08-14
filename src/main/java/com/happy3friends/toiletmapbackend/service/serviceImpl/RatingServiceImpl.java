@@ -190,7 +190,9 @@ public class RatingServiceImpl implements RatingService {
 
         StringBuilder sb = new StringBuilder();
         while(matcher.find()) {
-            matcher.appendReplacement(sb, tokens.get(matcher.group(0).toLowerCase()));
+            if (!tokens.isEmpty()) {
+                matcher.appendReplacement(sb, tokens.get(matcher.group(0).toLowerCase()));
+            }
         }
         matcher.appendTail(sb);
 
