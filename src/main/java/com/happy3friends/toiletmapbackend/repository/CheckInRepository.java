@@ -172,7 +172,7 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
             "FROM CheckIn c " +
             "INNER JOIN ToiletService ts on c.ToiletServiceId = ts.Id " +
             "WHERE ts.ToiletId = :toiletId " +
-            "    ts.ServiceId = :serviceId " +
+            "    AND ts.ServiceId = :serviceId " +
             "    AND (DateTime >= :startDate AND DateTime < :endDate) " +
             "    AND (:now BETWEEN DateTime AND CheckoutTime)", nativeQuery = true)
     Integer getWaitingTime(@Param("toiletId") int toiletId,
