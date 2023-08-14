@@ -794,6 +794,14 @@ public class ToiletServiceImpl implements ToiletService {
             waitingBathroomTime = checkInRepository.getWaitingTime(toiletId, startDate, endDate, now, 3);
         }
 
+        if (numNotAvailableRestroom > numberOfRestroom.get()) {
+            numNotAvailableRestroom = numberOfRestroom.get();
+        }
+
+        if (numNotAvailableBathroom > numberOfBathroom.get()) {
+            numNotAvailableBathroom = numberOfBathroom.get();
+        }
+
         NumberOfCurrentCheckInResponse result = new NumberOfCurrentCheckInResponse();
         result.setNumNotAvailableRestroom(numNotAvailableRestroom);
         result.setNumberOfRestroom(numberOfRestroom.get());
