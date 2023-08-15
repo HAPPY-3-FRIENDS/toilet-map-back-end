@@ -317,22 +317,26 @@ public class ScriptServiceImpl implements ScriptService {
             Date endDatePrevious = DateUtils.addDays(startDate, -1);
             SuggestionEntity previous = suggestionService.getPreviousQuarterSuggestion(toiletId, endDatePrevious);
             int streak = 1;
-            if (previous != null && previous.getIsAccepted() != null && !Boolean.TRUE.equals(previous.getIsAccepted())) {
-                streak = previous.getStreak() + 1;
-            }
-            entity.setStreak(streak);
 
             String message = "";
             if (result.getActualCount() >= expectedCountMax * 150 / 100) {
                 message = "Số lượt đi thực tế vượt 150% so với sức chứa, gợi ý mở thêm nhà vệ sinh gần đây hoặc mở thêm phòng vệ sinh.";
                 entity.setIsLow(false);
                 entity.setExpectedCount(expectedCountMax);
+                if (previous != null && !previous.getIsLow() && previous.getIsAccepted() != null && !Boolean.TRUE.equals(previous.getIsAccepted())) {
+                        streak = previous.getStreak() + 1;
+                }
+                entity.setStreak(streak);
             }
 
             if (result.getActualCount() < expectedCountMin) {
                 message = "Số lượt đi thực tế dưới " + expectedCountMin + " lượt.";
                 entity.setIsLow(true);
                 entity.setExpectedCount((double) expectedCountMin);
+                if (previous != null && previous.getIsLow()) {
+                    streak = previous.getStreak() + 1;
+                }
+                entity.setStreak(streak);
             }
 
             entity.setMessage(message);
