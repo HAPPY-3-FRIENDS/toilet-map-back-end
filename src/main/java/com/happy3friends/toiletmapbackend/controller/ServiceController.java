@@ -129,7 +129,7 @@ public class ServiceController {
     @PutMapping
     public ResponseEntity<BaseResponse<Integer>> updateTurnPrice(@RequestParam int turnPrice) {
 
-
+        serviceService.updateTurnPrice(turnPrice);
 
         return ResponseBuilder.generateResponse(
                 "Update turn price successfully!",
