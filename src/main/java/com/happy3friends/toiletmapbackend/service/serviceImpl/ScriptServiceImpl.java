@@ -327,6 +327,8 @@ public class ScriptServiceImpl implements ScriptService {
                         streak = previous.getStreak() + 1;
                 }
                 entity.setStreak(streak);
+                entity.setMessage(message);
+                suggestionService.save(entity);
             }
 
             if (result.getActualCount() < expectedCountMin) {
@@ -337,10 +339,9 @@ public class ScriptServiceImpl implements ScriptService {
                     streak = previous.getStreak() + 1;
                 }
                 entity.setStreak(streak);
+                entity.setMessage(message);
+                suggestionService.save(entity);
             }
-
-            entity.setMessage(message);
-            suggestionService.save(entity);
 
             responses.add(suggestionMapper.convertSuggestionEntityToSuggestionSchedulerResponse(entity));
         });
