@@ -62,7 +62,22 @@ public class ServiceServiceImpl implements ServiceService {
         Optional<ServiceEntity> entity = serviceRepository.findById(1);
         if (!entity.isPresent())
             throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_SERVICE, ToiletMapErrorCodeEnum.NOT_FOUND_SERVICE.getMessage());
+
+        Optional<ServiceEntity> entity2 = serviceRepository.findById(2);
+        if (!entity.isPresent())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_SERVICE, ToiletMapErrorCodeEnum.NOT_FOUND_SERVICE.getMessage());
+
+        Optional<ServiceEntity> entity3 = serviceRepository.findById(3);
+        if (!entity.isPresent())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_SERVICE, ToiletMapErrorCodeEnum.NOT_FOUND_SERVICE.getMessage());
+
         entity.get().setTurnPrice(turnPrice);
         serviceRepository.save(entity.get());
+
+        entity2.get().setTurnPrice(turnPrice * 2);
+        serviceRepository.save(entity2.get());
+
+        entity3.get().setTurnPrice(turnPrice * 3);
+        serviceRepository.save(entity3.get());
     }
 }
