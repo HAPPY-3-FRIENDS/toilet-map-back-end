@@ -8,4 +8,8 @@ import java.util.List;
 public interface ServiceService {
     List<ServiceResponse> getAllService();
     void updateBatchServices(List<ServiceDTO> serviceDTOS);
+
+    Integer getTurnPrice();
+
+    void updateTurnPrice(int turnPrice);
 }

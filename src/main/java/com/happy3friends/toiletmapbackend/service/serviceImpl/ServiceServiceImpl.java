@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,5 +46,23 @@ public class ServiceServiceImpl implements ServiceService {
                 })
                 .collect(Collectors.toList());
         serviceRepository.saveAll(oldServiceEntities);
+    }
+
+    @Override
+    public Integer getTurnPrice() {
+        Optional<ServiceEntity> entity = serviceRepository.findById(1);
+        if (!entity.isPresent())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_SERVICE, ToiletMapErrorCodeEnum.NOT_FOUND_SERVICE.getMessage());
+
+        return entity.get().getTurnPrice();
+    }
+
+    @Override
+    public void updateTurnPrice(int turnPrice) {
+        Optional<ServiceEntity> entity = serviceRepository.findById(1);
+        if (!entity.isPresent())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_SERVICE, ToiletMapErrorCodeEnum.NOT_FOUND_SERVICE.getMessage());
+        entity.get().setTurnPrice(turnPrice);
+        serviceRepository.save(entity.get());
     }
 }

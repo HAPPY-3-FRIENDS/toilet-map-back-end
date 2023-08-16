@@ -109,4 +109,32 @@ public class ServiceController {
                 null
         );
     }
+
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.ADMIN})
+    @GetMapping("/turn-price")
+    public ResponseEntity<BaseResponse<Integer>> getTurnPrice() {
+
+        int turnPrice = serviceService.getTurnPrice();
+
+        return ResponseBuilder.generateResponse(
+                "Get turn price successfully!",
+                HttpStatus.OK,
+                turnPrice
+        );
+    }
+
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.ADMIN})
+    @PutMapping
+    public ResponseEntity<BaseResponse<Integer>> updateTurnPrice(@RequestParam int turnPrice) {
+
+
+
+        return ResponseBuilder.generateResponse(
+                "Update turn price successfully!",
+                HttpStatus.OK,
+                null
+        );
+    }
 }
