@@ -3,6 +3,7 @@ package com.happy3friends.toiletmapbackend.service.serviceImpl;
 import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
 import com.happy3friends.toiletmapbackend.constant.DefaultSortPropertyConstant;
 import com.happy3friends.toiletmapbackend.constant.PaymentTypeConstant;
+import com.happy3friends.toiletmapbackend.dto.CheckInTopicData;
 import com.happy3friends.toiletmapbackend.dto.CustomAccountInfoDTO;
 import com.happy3friends.toiletmapbackend.dto.CustomCheckInDTO;
 import com.happy3friends.toiletmapbackend.entity.*;
@@ -26,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -58,6 +60,9 @@ public class CheckInServiceImpl implements CheckInService {
 
     @Autowired
     private CheckInMapper checkInMapper;
+
+    @Autowired
+    SimpMessagingTemplate template;
 
     @Override
     public List<CheckInResponse> getCheckInHistoriesByToiletId(int toiletId) {
@@ -227,6 +232,12 @@ public class CheckInServiceImpl implements CheckInService {
             checkInEntity.setPaymentMethod(defaultAccountPayment);
             switch (defaultAccountPayment) {
                 case PaymentTypeConstant.BALANCE:
+                    if (accountBalance < servicePrice) {
+                        CheckInTopicData data = new CheckInTopicData();
+                        data.setAccountId(checkInRequest.getAccountId());
+                        data.setAccountTurnNotEnough(false);
+                        template.convertAndSend("/topic/check-in", data);
+                    }
                     if (accountBalance < servicePrice)
                         throw new BadRequestException(ToiletMapErrorCodeEnum.ACCOUNT_BALANCE_NOT_ENOUGH, ToiletMapErrorCodeEnum.ACCOUNT_BALANCE_NOT_ENOUGH.getMessage());
                     if (!toiletEntity.get().isFree()) {
@@ -238,6 +249,12 @@ public class CheckInServiceImpl implements CheckInService {
                     }
                     break;
                 default:
+                    if (accountTurn < serviceTurn) {
+                        CheckInTopicData data = new CheckInTopicData();
+                        data.setAccountId(checkInRequest.getAccountId());
+                        data.setAccountTurnNotEnough(true);
+                        template.convertAndSend("/topic/check-in", data);
+                    }
                     if (accountTurn < serviceTurn)
                         throw new BadRequestException(ToiletMapErrorCodeEnum.ACCOUNT_TURN_NOT_ENOUGH, ToiletMapErrorCodeEnum.ACCOUNT_BALANCE_NOT_ENOUGH.getMessage());
                     if (!toiletEntity.get().isFree()) {
