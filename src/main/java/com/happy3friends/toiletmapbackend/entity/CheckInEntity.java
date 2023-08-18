@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 @EqualsAndHashCode
-@Table(name = "CheckIn", schema = "dbo", catalog = "ToiletMap")
+@Table(name = "CheckIn", schema = "dbo", catalog = "ToiletMap_DEMO")
 public class CheckInEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

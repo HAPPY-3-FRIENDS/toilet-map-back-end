@@ -12,7 +12,7 @@ import java.util.Collection;
 @Getter
 @Setter
 @EqualsAndHashCode
-@Table(name = "Toilet", schema = "dbo", catalog = "ToiletMap")
+@Table(name = "Toilet", schema = "dbo", catalog = "ToiletMap_DEMO")
 public class ToiletEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

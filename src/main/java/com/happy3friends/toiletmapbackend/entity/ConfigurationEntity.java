@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @EqualsAndHashCode
-@Table(name = "Configuration", schema = "dbo", catalog = "ToiletMap")
+@Table(name = "Configuration", schema = "dbo", catalog = "ToiletMap_DEMO")
 public class ConfigurationEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

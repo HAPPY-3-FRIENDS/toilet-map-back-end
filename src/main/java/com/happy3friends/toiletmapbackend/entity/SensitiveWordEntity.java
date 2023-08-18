@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @EqualsAndHashCode
-@Table(name = "SensitiveWord", schema = "dbo", catalog = "ToiletMap")
+@Table(name = "SensitiveWord", schema = "dbo", catalog = "ToiletMap_DEMO")
 public class SensitiveWordEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

@@ -11,7 +11,7 @@ import java.util.Collection;
 @Getter
 @Setter
 @EqualsAndHashCode
-@Table(name = "Service", schema = "dbo", catalog = "ToiletMap")
+@Table(name = "Service", schema = "dbo", catalog = "ToiletMap_DEMO")
 public class ServiceEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
