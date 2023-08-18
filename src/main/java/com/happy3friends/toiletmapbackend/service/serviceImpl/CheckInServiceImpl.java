@@ -235,7 +235,7 @@ public class CheckInServiceImpl implements CheckInService {
                     if (accountBalance < servicePrice) {
                         CheckInTopicData data = new CheckInTopicData();
                         data.setAccountId(checkInRequest.getAccountId());
-                        data.setAccountTurnNotEnough(false);
+                        data.setIsAccountTurnNotEnough("false");
                         template.convertAndSend("/topic/check-in", data);
                     }
                     if (accountBalance < servicePrice)
@@ -252,7 +252,7 @@ public class CheckInServiceImpl implements CheckInService {
                     if (accountTurn < serviceTurn) {
                         CheckInTopicData data = new CheckInTopicData();
                         data.setAccountId(checkInRequest.getAccountId());
-                        data.setAccountTurnNotEnough(true);
+                        data.setIsAccountTurnNotEnough("true");
                         template.convertAndSend("/topic/check-in", data);
                     }
                     if (accountTurn < serviceTurn)

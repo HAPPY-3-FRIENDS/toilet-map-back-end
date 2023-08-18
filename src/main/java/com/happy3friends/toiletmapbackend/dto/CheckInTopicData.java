@@ -11,5 +11,5 @@ import lombok.Setter;
 @Setter
 public class CheckInTopicData {
     private int accountId;
-    private boolean isAccountTurnNotEnough;
+    private String isAccountTurnNotEnough;
 }
