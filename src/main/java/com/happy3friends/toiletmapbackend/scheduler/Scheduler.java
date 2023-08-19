@@ -72,12 +72,11 @@ public class Scheduler {
             Date endDateOfQuarter = DateUtils.addDays(endDate, -1);
             entity.setEndDate(new java.sql.Date(endDateOfQuarter.getTime()));
             entity.setActualCount(result.getActualCount());
-            entity.setIsAccepted(false);
 
             Date endDatePrevious = DateUtils.addDays(startDate, -1);
             SuggestionEntity previous = suggestionService.getPreviousQuarterSuggestion(toiletId, endDatePrevious);
             int streak = 1;
-            if (previous != null && previous.getIsAccepted() != null && !Boolean.TRUE.equals(previous.getIsAccepted())) {
+            if (previous != null && !previous.getIsLow() && (previous.getIsAccepted() == null || !Boolean.TRUE.equals(previous.getIsAccepted()))) {
                 streak = previous.getStreak() + 1;
             }
             entity.setStreak(streak);

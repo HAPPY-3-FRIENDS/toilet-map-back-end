@@ -312,7 +312,6 @@ public class ScriptServiceImpl implements ScriptService {
             Date endDateOfQuarter = DateUtils.addDays(endDate, -1);
             entity.setEndDate(new java.sql.Date(endDateOfQuarter.getTime()));
             entity.setActualCount(result.getActualCount());
-            entity.setIsAccepted(false);
 
             Date endDatePrevious = DateUtils.addDays(startDate, -1);
             SuggestionEntity previous = suggestionService.getPreviousQuarterSuggestion(toiletId, endDatePrevious);
@@ -323,7 +322,7 @@ public class ScriptServiceImpl implements ScriptService {
                 message = "Số lượt đi thực tế vượt 150% so với sức chứa, gợi ý mở thêm nhà vệ sinh gần đây hoặc mở thêm phòng vệ sinh.";
                 entity.setIsLow(false);
                 entity.setExpectedCount(expectedCountMax);
-                if (previous != null && !previous.getIsLow() && previous.getIsAccepted() != null && !Boolean.TRUE.equals(previous.getIsAccepted())) {
+                if (previous != null && !previous.getIsLow() && (previous.getIsAccepted() == null || !Boolean.TRUE.equals(previous.getIsAccepted()))) {
                         streak = previous.getStreak() + 1;
                 }
                 entity.setStreak(streak);
