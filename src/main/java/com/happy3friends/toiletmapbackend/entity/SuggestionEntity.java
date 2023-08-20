@@ -11,7 +11,7 @@ import java.sql.Date;
 @Getter
 @Setter
 @EqualsAndHashCode
-@Table(name = "Suggestion", schema = "dbo", catalog = "ToiletMap")
+@Table(name = "Suggestion", schema = "dbo", catalog = "ToiletMap_Final_Final")
 public class SuggestionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

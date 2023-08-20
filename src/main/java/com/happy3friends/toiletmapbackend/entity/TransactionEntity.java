@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 @EqualsAndHashCode
-@Table(name = "Transaction", schema = "dbo", catalog = "ToiletMap")
+@Table(name = "Transaction", schema = "dbo", catalog = "ToiletMap_Final_Final")
 public class TransactionEntity {
     @Id
     @Column(name = "TransactionNo", nullable = false)

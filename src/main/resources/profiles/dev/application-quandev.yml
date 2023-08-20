@@ -2,7 +2,7 @@ spring:
   datasource:
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     password: Quan3741717
-    url: jdbc:sqlserver://localhost:1433;databaseName=ToiletMap;instanceName=QUANNDD;encrypt=true;trustServerCertificate=true;
+    url: jdbc:sqlserver://localhost:1433;databaseName=ToiletMap_Final_Final;instanceName=QUANNDD;encrypt=true;trustServerCertificate=true;
     username: sa
 
 logging:

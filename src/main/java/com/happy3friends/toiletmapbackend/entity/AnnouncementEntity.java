@@ -11,7 +11,7 @@ import java.util.Date;
 @Getter
 @Setter
 @EqualsAndHashCode
-@Table(name = "Announcement", schema = "dbo", catalog = "ToiletMap")
+@Table(name = "Announcement", schema = "dbo", catalog = "ToiletMap_Final_Final")
 public class AnnouncementEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
