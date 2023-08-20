@@ -9,6 +9,7 @@
   `mvn spring-boot:run -D"spring-boot.run.profiles"=profileName`
 
   Example:
+  `mvn spring-boot:run -D"spring-boot.run.profiles"=default`
 
   `mvn spring-boot:run -D"spring-boot.run.profiles"=tiendev`
 
