@@ -400,7 +400,9 @@ public class ToiletServiceImpl implements ToiletService {
                 .findFirst().orElseThrow(() -> new Exception("Can not find Toilet Role in database!")).getId();
 
         // Validate Facility
-        List<ToiletFacilityDTO> toiletFacilityDTOS = toiletCreateRequest.getToiletFacilities();
+        List<ToiletFacilityDTO> toiletFacilityDTOS = toiletCreateRequest.getToiletFacilities().stream()
+                .filter(dto -> dto.getQuantity() != 0)
+                .collect(Collectors.toList());
         List<FacilityEntity> facilityEntities = facilityRepository.findAll();
         List<Integer> listFacilityIds = facilityEntities.stream().map(FacilityEntity::getId).collect(Collectors.toList());
         if (!new HashSet<>(listFacilityIds).containsAll(toiletFacilityDTOS.stream().map(ToiletFacilityDTO::getFacilityId).collect(Collectors.toList())))
@@ -438,7 +440,6 @@ public class ToiletServiceImpl implements ToiletService {
 
         // Toilet Facility
         List<ToiletFacilityEntity> toiletFacilityEntities = toiletFacilityDTOS.stream()
-                .filter(FilterKeysUtil.distinctByKeys(ToiletFacilityDTO::getFacilityId))
                 .map(dto -> {
                     ToiletFacilityEntity toiletFacilityEntity = new ToiletFacilityEntity();
                     toiletFacilityEntity.setToiletId(toiletId);
@@ -452,14 +453,15 @@ public class ToiletServiceImpl implements ToiletService {
 
         // Toilet Service
         List<ServiceEntity> serviceEntities = serviceRepository.findAll();
-        List<Integer> listFacilityIdRequest = toiletFacilityDTOS.stream().filter(FilterKeysUtil.distinctByKeys(ToiletFacilityDTO::getFacilityId)).map(ToiletFacilityDTO::getFacilityId).collect(Collectors.toList());
+        List<Integer> listFacilityIdRequest = toiletFacilityDTOS.stream()
+                .map(ToiletFacilityDTO::getFacilityId)
+                .collect(Collectors.toList());
         Map<Integer, FacilityEntity> mapIdFacilityEntities = facilityEntities.stream()
                 .filter(entity -> listFacilityIdRequest.contains(entity.getId()))
                 .collect(Collectors.toMap(FacilityEntity::getId, facilityEntity -> facilityEntity));
 
         ToiletServiceEntity addingDoubleToiletServiceEntity = new ToiletServiceEntity();
         List<ToiletServiceEntity> toiletServiceEntities = toiletFacilityDTOS.stream()
-                .filter(FilterKeysUtil.distinctByKeys(ToiletFacilityDTO::getFacilityId))
                 .map(dto -> {
                     ToiletServiceEntity toiletServiceEntity = new ToiletServiceEntity();
                     toiletServiceEntity.setToiletId(toiletId);
