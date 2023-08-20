@@ -130,7 +130,7 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
             "FROM CheckIn c " +
             "INNER JOIN ToiletService ts on c.ToiletServiceId = ts.Id " +
             "WHERE ts.ToiletId = :toiletId " +
-            "    AND (c.Turn = 2 OR c.Turn = 3) " +
+            "    AND ts.ServiceId !=  1 " +
             "    AND (DateTime >= :startDate AND DateTime < :endDate) " +
             "    AND (:now BETWEEN DateTime AND CheckoutTime))", nativeQuery = true)
     void checkout(@Param("toiletId") int toiletId,
@@ -142,7 +142,7 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
             "FROM CheckIn c " +
             "INNER JOIN ToiletService ts on c.ToiletServiceId = ts.Id " +
             "WHERE ts.ToiletId = :toiletId " +
-            "    AND (c.Turn = 2 OR c.Turn = 3) " +
+            "    AND ts.ServiceId !=  1 " +
             "    AND (DateTime >= :startDate AND DateTime < :endDate) " +
             "    AND (:now BETWEEN DateTime AND CheckoutTime)", nativeQuery = true)
     List<Integer> getListAvailableCheckIn(@Param("toiletId") int toiletId,
