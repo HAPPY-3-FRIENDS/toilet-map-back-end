@@ -1,8 +1,10 @@
 package com.happy3friends.toiletmapbackend.scheduler;
 
 import com.happy3friends.toiletmapbackend.entity.SuggestionEntity;
+import com.happy3friends.toiletmapbackend.response.ConfigurationResponse;
 import com.happy3friends.toiletmapbackend.response.StatisticForSuggestionResponse;
 import com.happy3friends.toiletmapbackend.response.ToiletFacilityResponse;
+import com.happy3friends.toiletmapbackend.service.ConfigurationService;
 import com.happy3friends.toiletmapbackend.service.StatisticService;
 import com.happy3friends.toiletmapbackend.service.SuggestionService;
 import com.happy3friends.toiletmapbackend.service.ToiletService;
@@ -32,6 +34,9 @@ public class Scheduler {
     @Autowired
     private SuggestionService suggestionService;
 
+    @Autowired
+    private ConfigurationService configurationService;
+
     @Scheduled(cron = "0 0 0 1 JAN,APR,JUL,OCT ?")
 //    @Scheduled(cron = "15 * * * * ?")
     public void scheduleTaskWithCronExpression() throws ParseException {
@@ -41,6 +46,27 @@ public class Scheduler {
 //        String endDateStr = "01-04-2024";
 //        Date endDate = new SimpleDateFormat("dd-MM-yyyy").parse(endDateStr);
         Date startDate = DateUtils.addMonths(endDate, -3);
+
+        List<ConfigurationResponse> configurationResponses = configurationService.getAllConfiguration();
+        AtomicInteger bathTime = new AtomicInteger();
+        AtomicInteger poopTime = new AtomicInteger();
+        AtomicInteger belowThreshold = new AtomicInteger();
+        AtomicInteger overThreshold = new AtomicInteger();
+
+        configurationResponses.forEach(configuration -> {
+            if (configuration.getId().equals("BATH_TIME")) {
+                bathTime.set(configuration.getValue());
+            }
+            if (configuration.getId().equals("BELOW_THRESHOLD")) {
+                belowThreshold.set(configuration.getValue());
+            }
+            if (configuration.getId().equals("OVER_THRESHOLD")) {
+                overThreshold.set(configuration.getValue());
+            }
+            if (configuration.getId().equals("POOP_TIME")) {
+                poopTime.set(configuration.getValue());
+            }
+        });
 
         List<Integer> listToiletId = toiletService.getAllToiletId();
         listToiletId.forEach(toiletId -> {
@@ -62,9 +88,9 @@ public class Scheduler {
             result.setNumberOfRestroom(numberOfRestroom.get());
             result.setNumberOfBathroom(numberOfBathroom.get());
 
-            double expectedCountMax = result.getHours() * (result.getNumberOfBathroom() * 2 + result.getNumberOfRestroom() * 3) * 90;
+            double expectedCountMax = result.getHours() * (result.getNumberOfBathroom() * 60 / bathTime.get() + result.getNumberOfRestroom() * 60 / poopTime.get()) * 90;
 
-            int expectedCountMin = (result.getNumberOfBathroom() + result.getNumberOfRestroom()) * 90;
+            int expectedCountMin = (result.getNumberOfBathroom() + result.getNumberOfRestroom()) * belowThreshold.get() * 90;
 
             SuggestionEntity entity = new SuggestionEntity();
             entity.setToiletId(toiletId);
@@ -82,7 +108,7 @@ public class Scheduler {
             entity.setStreak(streak);
 
             String message = "";
-            if (result.getActualCount() >= expectedCountMax * 150 / 100) {
+            if (result.getActualCount() >= expectedCountMax * overThreshold.get() / 100) {
                 message = "Số lượt đi thực tế vượt 150% so với sức chứa, gợi ý mở thêm nhà vệ sinh gần đây hoặc mở thêm phòng vệ sinh.";
                 entity.setIsLow(false);
                 entity.setExpectedCount(expectedCountMax);
