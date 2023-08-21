@@ -58,6 +58,9 @@ public class ScriptServiceImpl implements ScriptService {
     @Autowired
     private ToiletRepository toiletRepository;
 
+    @Autowired
+    private ConfigurationService configurationService;
+
     @Override
     public List<String> random100UserCheckIn() {
         List<UserInfoEntity> listAllUsers = userInfoRepository.findAll();
@@ -282,6 +285,27 @@ public class ScriptServiceImpl implements ScriptService {
         Date endDate = new SimpleDateFormat("dd-MM-yyyy").parse(date);
         Date startDate = DateUtils.addMonths(endDate, -3);
 
+        List<ConfigurationResponse> configurationResponses = configurationService.getAllConfiguration();
+        AtomicInteger bathTime = new AtomicInteger();
+        AtomicInteger poopTime = new AtomicInteger();
+        AtomicInteger belowThreshold = new AtomicInteger();
+        AtomicInteger overThreshold = new AtomicInteger();
+
+        configurationResponses.forEach(configuration -> {
+            if (configuration.getId().equals("BATH_TIME")) {
+                bathTime.set(configuration.getValue());
+            }
+            if (configuration.getId().equals("BELOW_THRESHOLD")) {
+                belowThreshold.set(configuration.getValue());
+            }
+            if (configuration.getId().equals("OVER_THRESHOLD")) {
+                overThreshold.set(configuration.getValue());
+            }
+            if (configuration.getId().equals("POOP_TIME")) {
+                poopTime.set(configuration.getValue());
+            }
+        });
+
         List<Integer> listToiletId = toiletService.getAllToiletId();
         listToiletId.forEach(toiletId -> {
             List<StatisticForSuggestionResponse> listStatistics = statisticService.getStatisticsByToiletId(toiletId, startDate, endDate);
@@ -302,9 +326,9 @@ public class ScriptServiceImpl implements ScriptService {
             result.setNumberOfRestroom(numberOfRestroom.get());
             result.setNumberOfBathroom(numberOfBathroom.get());
 
-            double expectedCountMax = result.getHours() * (result.getNumberOfBathroom() * 2 + result.getNumberOfRestroom() * 3) * 90;
+            double expectedCountMax = result.getHours() * (result.getNumberOfBathroom() * 60 / bathTime.get() + result.getNumberOfRestroom() * 60 / poopTime.get()) * 90;
 
-            int expectedCountMin = (result.getNumberOfBathroom() + result.getNumberOfRestroom()) * 90;
+            int expectedCountMin = (result.getNumberOfBathroom() + result.getNumberOfRestroom()) * belowThreshold.get() * 90;
 
             SuggestionEntity entity = new SuggestionEntity();
             entity.setToiletId(toiletId);
@@ -318,7 +342,7 @@ public class ScriptServiceImpl implements ScriptService {
             int streak = 1;
 
             String message = "";
-            if (result.getActualCount() >= expectedCountMax * 150 / 100) {
+            if (result.getActualCount() >= expectedCountMax * overThreshold.get() / 100) {
                 message = "Số lượt đi thực tế vượt 150% so với sức chứa, gợi ý mở thêm nhà vệ sinh gần đây hoặc mở thêm phòng vệ sinh.";
                 entity.setIsLow(false);
                 entity.setExpectedCount(expectedCountMax);
