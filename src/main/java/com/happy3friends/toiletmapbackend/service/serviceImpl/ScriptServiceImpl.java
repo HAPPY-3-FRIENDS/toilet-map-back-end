@@ -452,9 +452,14 @@ public class ScriptServiceImpl implements ScriptService {
         List<Integer> listToiletIdTakeAShower = new ArrayList<>();
         for (int i = 0; i < numberOfUserTakeAShower; i++) {
             int randomToiletId = listToiletId.get(random.nextInt(listToiletId.size()));
+
+            ToiletCapacityResponse toilet = toiletService.getCapacityOfToilet(randomToiletId);
+
             int index = (int)(Math.random() * listAllUsers.size());
             String message;
-            if (listAllUsers.get(index).getAccountBalance() == 0 && listAllUsers.get(index).getAccountTurn() == 0) {
+            if (toilet.getNumberOfBathroom() == 0) {
+                message = processNoBathroom(randomToiletId, listAllUsers.get(index).getFullName());
+            } else if (listAllUsers.get(index).getAccountBalance() == 0 && listAllUsers.get(index).getAccountTurn() == 0) {
                 message = listAllUsers.get(index).getFullName() + " đã hết số dư và số lươt.";
             } else {
                 message = process(randomToiletId, listAllUsers.get(index).getAccountId(), "Đi tắm");
@@ -467,7 +472,14 @@ public class ScriptServiceImpl implements ScriptService {
         List<Integer> listToiletIdGuestTakeAShower = new ArrayList<>();
         for (int i = 0; i < numberOfGuestTakeAShower; i++) {
             int randomToiletId = listToiletId.get(random.nextInt(listToiletId.size()));
-            String message = checkInGuest(randomToiletId, "Đi tắm");
+            String message;
+            ToiletCapacityResponse toilet = toiletService.getCapacityOfToilet(randomToiletId);
+            if (toilet.getNumberOfBathroom() == 0) {
+                message = processNoBathroomGuest(randomToiletId);
+            } else {
+                message = checkInGuest(randomToiletId, "Đi tắm");
+            }
+
             listUserCheckIn.add(message);
             listToiletIdTakeAShower.add(randomToiletId);
             listToiletIdGuestTakeAShower.add(randomToiletId);
@@ -636,5 +648,19 @@ public class ScriptServiceImpl implements ScriptService {
         }
 
         return result;
+    }
+
+    private String processNoBathroom(int toiletId, String name) {
+        Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
+        return name + " không thể đi tắm vì "
+                + toiletEntity.get().getName()
+                + " không có phòng tắm.";
+    }
+
+    private String processNoBathroomGuest(int toiletId) {
+        Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
+        return "Khách vãng lai không thể đi tắm vì "
+                + toiletEntity.get().getName()
+                + " không có phòng tắm.";
     }
 }
