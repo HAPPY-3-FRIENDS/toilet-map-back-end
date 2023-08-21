@@ -14,8 +14,8 @@ import java.util.Objects;
 @Table(name = "Configuration", schema = "dbo", catalog = "ToiletMap_Final_Final")
 public class ConfigurationEntity {
     @Id
-    @Column(name = "Key", nullable = false)
-    private String key;
+    @Column(name = "Id", nullable = false)
+    private String id;
     @Basic
     @Column(name = "Value", nullable = false, length = 50)
     private int value;

@@ -61,6 +61,7 @@ public enum ToiletMapErrorCodeEnum {
     NOT_FOUND_SUGGESTION(HttpStatus.NOT_FOUND, 404012, "Không tìm thấy gợi ý"),
     NOT_FOUND_REPORT(HttpStatus.NOT_FOUND, 404013, "Không tìm thấy báo cáo"),
     NOT_FOUND_FACILITY(HttpStatus.NOT_FOUND, 404014, "Không tìm thấy trang thiết bị"),
+    NOT_FOUND_CONFIGURATION(HttpStatus.NOT_FOUND, 404015, "Không tìm thấy thiết lập"),
 
     // VNPAY
     VNPAY_CARD_NOT_REGISTERED_INTERNETBANKING(HttpStatus.INTERNAL_SERVER_ERROR, 500001, "Giao dịch không thành công do: Thẻ/Tài khoản của khách hàng chưa đăng ký dịch vụ InternetBanking tại ngân hàng."),
