@@ -171,7 +171,7 @@ public class ScriptServiceImpl implements ScriptService {
         List<UserInfoEntity> listAll = userInfoRepository.findAll();
 
         List<UserInfoEntity> listAllUsers = listAll.stream()
-                .filter(user -> user.getAccountTurn() > 0 && user.getAccountBalance() > 0)
+                .filter(user -> user.getAccountTurn() > 3 && user.getAccountBalance() > 15000)
                 .collect(Collectors.toList());
 
         List<UserInfoEntity> listUsers = new ArrayList<>();
@@ -378,11 +378,15 @@ public class ScriptServiceImpl implements ScriptService {
 
         List<Integer> listToiletId = request.getListToiletId();
 
-        List<UserInfoEntity> listAllUsers = userInfoRepository.findAll();
+        List<UserInfoEntity> listAll = userInfoRepository.findAll();
 
-        if (request.getNumberOfUser() > listAllUsers.size()) {
+        if (request.getNumberOfUser() > listAll.size()) {
             throw new BadRequestException(ToiletMapErrorCodeEnum.NOT_ENOUGH_USER, ToiletMapErrorCodeEnum.NOT_ENOUGH_USER.getMessage());
         }
+
+        List<UserInfoEntity> listAllUsers = listAll.stream()
+                .filter(user -> user.getAccountTurn() > 3 && user.getAccountBalance() > 15000)
+                .collect(Collectors.toList());
 
         Random random = new Random();
 
