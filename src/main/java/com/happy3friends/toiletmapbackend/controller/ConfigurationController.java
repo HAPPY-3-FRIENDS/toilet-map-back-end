@@ -48,4 +48,17 @@ public class ConfigurationController {
                 responses
         );
     }
+
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.ADMIN})
+    @GetMapping("/{config-id}")
+    public ResponseEntity<BaseResponse<ConfigurationResponse>> getConfigById(@PathVariable("{config-id}") String configId) {
+        ConfigurationResponse responses = configurationService.getConfigById(configId);
+
+        return ResponseBuilder.generateResponse(
+                "Get configuration by id successfully!",
+                HttpStatus.OK,
+                responses
+        );
+    }
 }
