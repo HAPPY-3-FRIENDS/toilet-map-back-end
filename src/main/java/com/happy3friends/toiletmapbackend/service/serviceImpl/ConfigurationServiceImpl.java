@@ -46,4 +46,13 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
         return configurationMapper.convertConfigurationEntityToConfigurationResponse(entity);
     }
+
+    @Override
+    public ConfigurationResponse getConfigById(String configId) {
+        ConfigurationEntity entity = configurationRepository.getConfigById(configId);
+        if (Objects.isNull(entity)) {
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_CONFIGURATION, ToiletMapErrorCodeEnum.NOT_FOUND_CONFIGURATION.getMessage());
+        }
+        return configurationMapper.convertConfigurationEntityToConfigurationResponse(entity);
+    }
 }

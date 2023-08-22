@@ -8,4 +8,6 @@ public interface ConfigurationService {
     List<ConfigurationResponse> getAllConfiguration();
 
     ConfigurationResponse updateConfiguration(ConfigurationResponse request);
+
+    ConfigurationResponse getConfigById(String configId);
 }
