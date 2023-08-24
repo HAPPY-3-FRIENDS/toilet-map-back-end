@@ -85,4 +85,12 @@ public class CommonCommentServiceImpl implements CommonCommentService {
 
         return result;
     }
+
+    @Override
+    public CommonCommentResponse getCommonCommentById(int id) {
+        Optional<CommonCommentEntity> commonCommentEntity = commonCommentRepository.findById(id);
+        if (!commonCommentEntity.isPresent())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_COMMON_COMMENT, ToiletMapErrorCodeEnum.NOT_FOUND_COMMON_COMMENT.getMessage());
+        return commonCommentMapper.convertCommonCommentEntityToCommonCommentResponse(commonCommentEntity.get());
+    }
 }
