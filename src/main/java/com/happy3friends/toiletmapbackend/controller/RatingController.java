@@ -9,6 +9,7 @@ import com.happy3friends.toiletmapbackend.request.FilterRatingRequest;
 import com.happy3friends.toiletmapbackend.request.RatingRequest;
 import com.happy3friends.toiletmapbackend.response.RatingResponse;
 import com.happy3friends.toiletmapbackend.service.RatingService;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -22,6 +23,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -359,6 +361,8 @@ public class RatingController {
     }
 
 
+    @Hidden
+    @ConditionalOnExpression("${my.controller.enabled:false}")
     @Operation(summary = "Filter rating", description = "[Manager, User] Filter rating")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {
@@ -427,6 +431,8 @@ public class RatingController {
         }
     }
 
+    @Hidden
+    @ConditionalOnExpression("${my.controller.enabled:false}")
     @Operation(summary = "Count list of all ratings when filter", description = "[Manager, User] Count list of rating of a specific Toilet by Toilet ID when filter")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully!", content = @Content(examples = {@ExampleObject(value = "10")})),
