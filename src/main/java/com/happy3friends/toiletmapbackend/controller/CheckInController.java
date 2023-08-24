@@ -83,6 +83,8 @@ public class CheckInController {
     @Operation(summary = "Get list of all check-in histories", description = "[Admin, Manager, User] List of check-in histories")
     @Parameters(value = {
             @Parameter(name = "account-id", description = "A specific account ID", in = ParameterIn.QUERY, required = false, example = "6"),
+            @Parameter(name = "from-date", description = "Start of the period (dd/MM/yyyy)", in = ParameterIn.QUERY, allowReserved = true),
+            @Parameter(name = "to-date", description = "End of the period (dd/MM/yyyy)", in = ParameterIn.QUERY, allowReserved = true),
             @Parameter(name = "payment-method", description = "A specific payment method", in = ParameterIn.QUERY, examples = {
                     @ExampleObject(name = "Payment method is BALANCE", value = "Số dư"),
                     @ExampleObject(name = "Payment method is TURN", value = "Số lượt"),
@@ -128,10 +130,20 @@ public class CheckInController {
     public ResponseEntity<BaseResponse<List<CheckInResponse>>> getCheckInHistories(
             @RequestParam(name = "company-id", required = false) Integer companyId,
             @RequestParam(name = "account-id", required = false) Integer accountId,
+            @RequestParam(value = "from-date", required = false) String fromStrDate,
+            @RequestParam(value = "to-date", required = false) String toStrDate,
+            @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(name = "payment-method", required = false) String paymentMethod,
             @ModelAttribute BasePaginationRequest paginationRequest) {
 
-        List<CheckInResponse> responses = checkInService.getCheckInHistories(companyId, accountId, paymentMethod, paginationRequest);
+        List<CheckInResponse> responses = checkInService.getCheckInHistories(
+                companyId,
+                accountId,
+                fromStrDate,
+                toStrDate,
+                keyword,
+                paymentMethod,
+                paginationRequest);
 
         if (responses.isEmpty()) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
@@ -165,9 +177,18 @@ public class CheckInController {
     public ResponseEntity<BaseResponse<Integer>> count(
             @RequestParam(name = "company-id", required = false) Integer companyId,
             @RequestParam(name = "account-id", required = false) Integer accountId,
+            @RequestParam(value = "from-date", required = false) String fromStrDate,
+            @RequestParam(value = "to-date", required = false) String toStrDate,
+            @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(name = "payment-method", required = false) String paymentMethod) {
 
-        int response = checkInService.count(companyId, accountId, paymentMethod);
+        int response = checkInService.count(
+                companyId,
+                accountId,
+                fromStrDate,
+                toStrDate,
+                keyword,
+                paymentMethod);
 
         if (accountId != null ) {
             return ResponseBuilder.generateResponse(

@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -51,7 +52,8 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
             "           END AS status " +
             "FROM CheckIn c " +
             "         INNER JOIN ToiletService ts " +
-            "                    ON c.ToiletServiceId = ts.Id " +
+            "                    ON c.ToiletServiceId = ts.Id AND " +
+            "                       (c.DateTime IS NULL OR c.DateTime BETWEEN :fromDate AND :toDate) " +
             "         INNER JOIN Toilet t " +
             "                    ON ts.ToiletId = t.Id " +
             "         INNER JOIN Service s " +
@@ -61,16 +63,21 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
             "                    ON t.CompanyId = cp.Id " +
             "WHERE (:companyId IS NULL OR cp.Id = :companyId) " +
             "  AND (:accountId IS NULL OR c.AccountId = :accountId) " +
+            "  AND (:keyword IS NULL OR t.Name LIKE '%' + CONVERT(NVARCHAR(50), :keyword) + '%') " +
             "  AND (:paymentMethod IS NULL OR c.PaymentMethod = :paymentMethod)", nativeQuery = true)
     List<CustomCheckInDTO> getCheckInHistories(@Param("companyId") Integer companyId,
                                                @Param("accountId") Integer accountId,
+                                               @Param("fromDate") Date fromDate,
+                                               @Param("toDate") Date toDate,
+                                               @Param("keyword") String keyword,
                                                @Param("paymentMethod") String paymentMethod,
                                                Pageable pageable);
 
     @Query(value = "SELECT COUNT(*) " +
             "FROM CheckIn c " +
             "         INNER JOIN ToiletService ts " +
-            "                    ON c.ToiletServiceId = ts.Id " +
+            "                    ON c.ToiletServiceId = ts.Id AND " +
+            "                       (c.DateTime IS NULL OR c.DateTime BETWEEN :fromDate AND :toDate) " +
             "         INNER JOIN Toilet t " +
             "                    ON ts.ToiletId = t.Id " +
             "         INNER JOIN Service s " +
@@ -80,9 +87,13 @@ public interface CheckInRepository extends JpaRepository<CheckInEntity, Integer>
             "                    ON t.CompanyId = cp.Id " +
             "WHERE (:companyId IS NULL OR cp.Id = :companyId) " +
             "  AND (:accountId IS NULL OR c.AccountId = :accountId) " +
+            "  AND (:keyword IS NULL OR t.Name LIKE '%' + CONVERT(NVARCHAR(50), :keyword) + '%') " +
             "  AND (:paymentMethod IS NULL OR c.PaymentMethod = :paymentMethod)", nativeQuery = true)
     int countCheckInHistories(@Param("companyId") Integer companyId,
                               @Param("accountId") Integer accountId,
+                              @Param("fromDate") Date fromDate,
+                              @Param("toDate") Date toDate,
+                              @Param("keyword") String keyword,
                               @Param("paymentMethod") String paymentMethod);
 
     @Query(value = "SELECT COUNT(*) " +
