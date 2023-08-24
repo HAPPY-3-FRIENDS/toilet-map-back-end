@@ -166,7 +166,7 @@ public class CommonCommentController {
         if (!isRemoved) {
             return ResponseBuilder.generateResponse(
                     "Delete common comment failed!",
-                    HttpStatus.NOT_FOUND,
+                    HttpStatus.BAD_REQUEST,
                     id
             );
         }
