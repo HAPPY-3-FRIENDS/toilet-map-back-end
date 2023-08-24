@@ -96,9 +96,14 @@ public class StatisticServiceImpl implements StatisticService {
 
         // Prepare pagination & sort
         Sort.Order defaultSortOrder = new Sort.Order(Sort.Direction.DESC, DefaultSortPropertyConstant.TOTAL_REVENUE);
-        Pageable pageable = PaginationUtil.getPageable(paginationRequest, defaultSortOrder);
 
-        List<CustomStatisticDTO> customStatisticDTOS = statisticRepository.getAllStatistics(fromDate, toDate, pageable);
+        List<CustomStatisticDTO> customStatisticDTOS;
+        if (paginationRequest.getPageIndex() == null && paginationRequest.getPageSize() == null) {
+            customStatisticDTOS = statisticRepository.getAllStatistics(fromDate, toDate, null);
+        } else {
+            Pageable pageable = PaginationUtil.getPageable(paginationRequest, defaultSortOrder);
+            customStatisticDTOS = statisticRepository.getAllStatistics(fromDate, toDate, pageable);
+        }
 
         return customStatisticDTOS.stream()
                 .map(dto -> statisticMapper.convertCustomStatisticDTOToStatisticResponse(dto))
