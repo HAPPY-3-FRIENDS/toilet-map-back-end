@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 public interface RatingService {
-    List<RatingResponse> getAllRatings(Integer toiletId, BasePaginationRequest paginationRequest);
+    List<RatingResponse> getAllRatings(Integer toiletId, FilterRatingRequest filterRatingRequest, BasePaginationRequest paginationRequest);
 
     RatingResponse createRating(RatingRequest ratingRequest);
 
-    int count(Integer toiletId);
+    int count(Integer toiletId, FilterRatingRequest filterRatingRequest);
 
     RatingResponse update(int id, Map<String, Object> fields);
 
