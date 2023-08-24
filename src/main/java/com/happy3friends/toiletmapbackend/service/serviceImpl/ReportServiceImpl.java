@@ -180,7 +180,7 @@ public class ReportServiceImpl implements ReportService {
         } else if (listMessages != null) {
             result = reportRepository.countReportsByToiletIdForManagerHasMessage(id, listMessages);
         } else {
-            reportRepository.countReportsByToiletIdForManager(id);
+            result = reportRepository.countReportsByToiletIdForManager(id);
         }
         return result;
     }
