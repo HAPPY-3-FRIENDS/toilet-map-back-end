@@ -9,10 +9,23 @@ import java.util.List;
 
 public interface CheckInService {
     List<CheckInResponse> getCheckInHistoriesByToiletId(int toiletId);
-    List<CheckInResponse> getCheckInHistories(Integer companyId, Integer accountId, String paymentMethod, BasePaginationRequest paginationRequest);
+    List<CheckInResponse> getCheckInHistories(
+            Integer companyId,
+            Integer accountId,
+            String fromStrDate,
+            String toStrDate,
+            String keyword,
+            String paymentMethod,
+            BasePaginationRequest paginationRequest);
     CheckInResponse userCheckIn(CheckInRequest checkInRequest);
     List<CheckInResponse> walkInGuestCheckIn(WalkInGuestCheckInRequest walkInGuestCheckInRequest);
-    int count(Integer companyId, Integer accountId, String paymentMethod);
+    int count(
+            Integer companyId,
+            Integer accountId,
+            String fromStrDate,
+            String toStrDate,
+            String keyword,
+            String paymentMethod);
 
     int countCheckInNotRatingYet(Integer accountId, String paymentMethod);
 }

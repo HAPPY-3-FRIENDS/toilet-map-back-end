@@ -158,7 +158,7 @@ public class StatisticServiceImpl implements StatisticService {
         // If fromDate && toDate is null -> Default fromDate and toDate is currentMonth
         if (fromStrDate == null || toStrDate == null) {
             fromDate = DateTimeUtil.getFirstDateOfCurrentMonth();
-            toDate = DateTimeUtil.getDateNowWithInitialTime(0, 0, 0, 0);
+            toDate = DateTimeUtil.getDateNowWithInitialTime(23, 59, 59, 999);
         } else {  // Validate fromDate & toDate
             fromDate = DateTimeUtil.convertStringToDate(fromStrDate, DateTimeConstant.dd_MM_yyyy);
             toDate = DateTimeUtil.addDays(DateTimeUtil.convertStringToDate(toStrDate, DateTimeConstant.dd_MM_yyyy), 1);

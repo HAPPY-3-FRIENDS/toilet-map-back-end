@@ -1,6 +1,7 @@
 package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
 import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
+import com.happy3friends.toiletmapbackend.constant.DateTimeConstant;
 import com.happy3friends.toiletmapbackend.constant.DefaultSortPropertyConstant;
 import com.happy3friends.toiletmapbackend.constant.PaymentTypeConstant;
 import com.happy3friends.toiletmapbackend.dto.CheckInTopicData;
@@ -80,7 +81,14 @@ public class CheckInServiceImpl implements CheckInService {
     }
 
     @Override
-    public List<CheckInResponse> getCheckInHistories(Integer companyId, Integer accountId, String paymentMethod, BasePaginationRequest paginationRequest) {
+    public List<CheckInResponse> getCheckInHistories(
+            Integer companyId,
+            Integer accountId,
+            String fromStrDate,
+            String toStrDate,
+            String keyword,
+            String paymentMethod,
+            BasePaginationRequest paginationRequest) {
 
         // Prepare pagination & sort
         Sort.Order defaultSortOrder = new Sort.Order(Sort.Direction.DESC, DefaultSortPropertyConstant.DATETIME);
@@ -100,9 +108,30 @@ public class CheckInServiceImpl implements CheckInService {
                 throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT.getMessage());
         }
 
+        Date fromDate = null;
+        Date toDate = null;
+
+        // If fromDate && toDate is null -> Default fromDate and toDate is currentMonth
+        if (fromStrDate == null || toStrDate == null) {
+            fromDate = DateTimeUtil.getFirstDateOfCurrentMonth();
+            toDate = DateTimeUtil.getDateNowWithInitialTime(23, 59, 59, 999);
+        } else {  // Validate fromDate & toDate
+            fromDate = DateTimeUtil.convertStringToDate(fromStrDate, DateTimeConstant.dd_MM_yyyy);
+            toDate = DateTimeUtil.addDays(DateTimeUtil.convertStringToDate(toStrDate, DateTimeConstant.dd_MM_yyyy), 1);
+            if (fromDate != null && fromDate.after(toDate))
+                throw new BadRequestException(ToiletMapErrorCodeEnum.FROM_DATE_AFTER_TO_DATE, ToiletMapErrorCodeEnum.FROM_DATE_AFTER_TO_DATE.getMessage());
+        }
+
         // Get Check-in histories
         List<CustomCheckInDTO> customCheckInDTOS
-                = checkInRepository.getCheckInHistories(companyId, accountId, paymentMethod, pageable);
+                = checkInRepository.getCheckInHistories(
+                        companyId,
+                        accountId,
+                        fromDate,
+                        toDate,
+                        keyword,
+                        paymentMethod,
+                        pageable);
 
         List<CheckInResponse> result = customCheckInDTOS.stream()
                 .map(dto -> checkInMapper.convertCustomCheckInDTOToCheckInResponse(dto))
@@ -389,7 +418,13 @@ public class CheckInServiceImpl implements CheckInService {
     }
 
     @Override
-    public int count(Integer companyId, Integer accountId, String paymentMethod) {
+    public int count(
+            Integer companyId,
+            Integer accountId,
+            String fromStrDate,
+            String toStrDate,
+            String keyword,
+            String paymentMethod) {
 
         if (companyId != null) {
             // Validate Company
@@ -405,7 +440,21 @@ public class CheckInServiceImpl implements CheckInService {
                 throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT.getMessage());
         }
 
-        return checkInRepository.countCheckInHistories(companyId, accountId, paymentMethod);
+        Date fromDate = null;
+        Date toDate = null;
+
+        // If fromDate && toDate is null -> Default fromDate and toDate is currentMonth
+        if (fromStrDate == null || toStrDate == null) {
+            fromDate = DateTimeUtil.getFirstDateOfCurrentMonth();
+            toDate = DateTimeUtil.getDateNowWithInitialTime(23, 59, 59, 999);
+        } else {  // Validate fromDate & toDate
+            fromDate = DateTimeUtil.convertStringToDate(fromStrDate, DateTimeConstant.dd_MM_yyyy);
+            toDate = DateTimeUtil.addDays(DateTimeUtil.convertStringToDate(toStrDate, DateTimeConstant.dd_MM_yyyy), 1);
+            if (fromDate != null && fromDate.after(toDate))
+                throw new BadRequestException(ToiletMapErrorCodeEnum.FROM_DATE_AFTER_TO_DATE, ToiletMapErrorCodeEnum.FROM_DATE_AFTER_TO_DATE.getMessage());
+        }
+
+        return checkInRepository.countCheckInHistories(companyId, accountId, fromDate, toDate, keyword, paymentMethod);
     }
 
     @Override
