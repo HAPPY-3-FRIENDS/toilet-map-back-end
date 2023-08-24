@@ -116,7 +116,7 @@ public class RatingServiceImpl implements RatingService {
                 .collect(Collectors.toList());
     }
 
-    private List<RatingResponse> getAllRatingsByToiletId(Integer toiletId, BasePaginationRequest paginationRequest) {
+    private List<RatingResponse> getAllRatingsByToiletId(Integer toiletId, FilterRatingRequest filterRatingRequest, BasePaginationRequest paginationRequest) {
         // Validate Toilet
         Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
         if (!toiletEntity.isPresent())
@@ -127,9 +127,33 @@ public class RatingServiceImpl implements RatingService {
         sortOrders.add(new Sort.Order(Sort.Direction.DESC, DefaultSortPropertyConstant.DATETIME));
         Pageable pageable = PaginationUtil.getPageable(paginationRequest, sortOrders);
 
+        String strListIdCommonComment = null;
+        String strListStars = null;
+        String strListStatus = null;
+        if (null != filterRatingRequest.getListIdCommonComment()) {
+            List<String> listIdCommonComment = filterRatingRequest.getListCommonComment().stream()
+                    .map(Object::toString)
+                    .collect(Collectors.toList());
+            strListIdCommonComment = String.join(",", listIdCommonComment);
+        }
+        if (null != filterRatingRequest.getListStars()) {
+            List<String> listStars = filterRatingRequest.getListStars().stream()
+                    .map(Object::toString)
+                    .collect(Collectors.toList());
+            strListStars = String.join(",", listStars);
+        }
+        if (null != filterRatingRequest.getListStatus()) {
+            strListStatus = String.join(",", filterRatingRequest.getListStatus());
+        }
+
         // Get list rating by toilet Id without rating image and common comment
         List<CustomRatingDetailsDTO> customRatingDetailsDTOS
-                = ratingRepository.getAllRatingsByToiletId(toiletId, pageable);
+                = ratingRepository.getAllRatingsByToiletId(
+                        toiletId,
+                        strListIdCommonComment,
+                        strListStars,
+                        strListStatus,
+                        pageable);
         List<RatingDetailsDTO> ratingDetailsDTOS =
                 customRatingDetailsDTOS
                         .stream()
@@ -167,10 +191,10 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public List<RatingResponse> getAllRatings(Integer toiletId, BasePaginationRequest paginationRequest) {
+    public List<RatingResponse> getAllRatings(Integer toiletId, FilterRatingRequest filterRatingRequest, BasePaginationRequest paginationRequest) {
 
         if (toiletId != null) {
-            return getAllRatingsByToiletId(toiletId, paginationRequest);
+            return getAllRatingsByToiletId(toiletId, filterRatingRequest, paginationRequest);
         } else { // If toiletId == null --> find all Ratings with pagination and default sort by datetime
             // Prepare pagination & sort
             Sort.Order defaultSortOrder = new Sort.Order(Sort.Direction.DESC, DefaultSortPropertyConstant.DATETIME);
@@ -285,7 +309,7 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public int count(Integer toiletId) {
+    public int count(Integer toiletId, FilterRatingRequest filterRatingRequest) {
 
         if (toiletId != null) {
             Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
@@ -293,7 +317,30 @@ public class RatingServiceImpl implements RatingService {
                 throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_TOILET, ToiletMapErrorCodeEnum.NOT_FOUND_TOILET.getMessage());
             }
 
-            return (int) ratingRepository.countByToiletId(toiletId);
+            String strListIdCommonComment = null;
+            String strListStars = null;
+            String strListStatus = null;
+            if (null != filterRatingRequest.getListIdCommonComment()) {
+                List<String> listIdCommonComment = filterRatingRequest.getListCommonComment().stream()
+                        .map(Object::toString)
+                        .collect(Collectors.toList());
+                strListIdCommonComment = String.join(",", listIdCommonComment);
+            }
+            if (null != filterRatingRequest.getListStars()) {
+                List<String> listStars = filterRatingRequest.getListStars().stream()
+                        .map(Object::toString)
+                        .collect(Collectors.toList());
+                strListStars = String.join(",", listStars);
+            }
+            if (null != filterRatingRequest.getListStatus()) {
+                strListStatus = String.join(",", filterRatingRequest.getListStatus());
+            }
+
+            return (int) ratingRepository.countByToiletId(
+                    toiletId,
+                    strListIdCommonComment,
+                    strListStars,
+                    strListStatus);
         }
 
         return (int) ratingRepository.count();

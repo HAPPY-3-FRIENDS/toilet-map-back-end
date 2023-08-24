@@ -171,9 +171,10 @@ public class RatingController {
     @GetMapping
     public ResponseEntity<BaseResponse<List<RatingResponse>>> getAllRatings(
             @RequestParam(value = "toilet-id", required = false) Integer toiletId,
+            @ModelAttribute FilterRatingRequest filterRatingRequest,
             @ModelAttribute BasePaginationRequest paginationRequest) {
 
-        List<RatingResponse> responses = ratingService.getAllRatings(toiletId, paginationRequest);
+        List<RatingResponse> responses = ratingService.getAllRatings(toiletId, filterRatingRequest, paginationRequest);
 
         return ResponseBuilder.generateResponse(
                 "Get list of all ratings successfully!",
@@ -199,9 +200,10 @@ public class RatingController {
     @RolesAllowed({RoleConstant.MANAGER, RoleConstant.USER})
     @GetMapping(value = "/count")
     public ResponseEntity<BaseResponse<Integer>> count(
-            @RequestParam(name = "toilet-id", required = false) Integer toiletId) {
+            @RequestParam(name = "toilet-id", required = false) Integer toiletId,
+            @ModelAttribute FilterRatingRequest filterRatingRequest) {
 
-        int response = ratingService.count(toiletId);
+        int response = ratingService.count(toiletId, filterRatingRequest);
 
         if (toiletId != null) {
             return ResponseBuilder.generateResponse(

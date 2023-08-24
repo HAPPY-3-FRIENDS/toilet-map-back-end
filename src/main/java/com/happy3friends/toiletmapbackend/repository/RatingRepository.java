@@ -34,25 +34,45 @@ public interface RatingRepository extends JpaRepository<RatingEntity, Integer> {
 
     @Query(value = "SELECT * " +
             "FROM (SELECT r.Id, " +
-            "       ui.FullName, " +
-            "       r.Star, " +
-            "       CAST(r.Comment AS NVARCHAR(MAX))          AS Comment, " +
-            "       r.DateTime, " +
-            "       ui.Avatar, " +
-            "       r.Status " +
+            "             ui.FullName, " +
+            "             r.Star, " +
+            "             CAST(r.Comment AS NVARCHAR(MAX)) AS Comment, " +
+            "             r.DateTime, " +
+            "             ui.Avatar, " +
+            "             r.Status " +
+            "      FROM Rating r " +
+            "               JOIN Account a " +
+            "                    ON r.AccountId = a.Id " +
+            "               JOIN UserInfo ui ON a.Id = ui.AccountId " +
+            "               JOIN Toilet t ON r.ToiletId = t.Id " +
+            "               LEFT JOIN RatingCommonComment rcc ON r.Id = rcc.RatingId " +
+            "      WHERE t.Id = :toiletId " +
+            "        AND ((:strListIdCommonComment) IS NULL OR " +
+            "             rcc.CommonCommentId IN (SELECT value FROM STRING_SPLIT((:strListIdCommonComment), ','))) " +
+            "        AND ((:strListStars) IS NULL OR r.Star IN (SELECT value FROM STRING_SPLIT((:strListStars), ','))) " +
+            "        AND ((:strListStatus) IS NULL OR r.Status IN (SELECT value FROM STRING_SPLIT((:strListStatus), ',')))) r", nativeQuery = true)
+    List<CustomRatingDetailsDTO> getAllRatingsByToiletId(@Param("toiletId") int toiletId,
+                                                         @Param("strListIdCommonComment") String strListIdCommonComment,
+                                                         @Param("strListStars") String strListStars,
+                                                         @Param("strListStatus") String strListStatus,
+                                                         Pageable pageable);
+
+    @Query(value = "SELECT COUNT(*) " +
             "FROM Rating r " +
             "         JOIN Account a " +
             "              ON r.AccountId = a.Id " +
             "         JOIN UserInfo ui ON a.Id = ui.AccountId " +
             "         JOIN Toilet t ON r.ToiletId = t.Id " +
-            "WHERE t.Id = :toiletId) r", nativeQuery = true)
-    List<CustomRatingDetailsDTO> getAllRatingsByToiletId(@Param("toiletId") int toiletId,
-                                                         Pageable pageable);
-
-    @Query(value = "SELECT COUNT(*) " +
-            "FROM Rating " +
-            "WHERE ToiletId = :toiletId", nativeQuery = true)
-    long countByToiletId(int toiletId);
+            "         LEFT JOIN RatingCommonComment rcc ON r.Id = rcc.RatingId " +
+            "WHERE t.Id = :toiletId " +
+            "  AND ((:strListIdCommonComment) IS NULL OR " +
+            "       rcc.CommonCommentId IN (SELECT value FROM STRING_SPLIT((:strListIdCommonComment), ','))) " +
+            "  AND ((:strListStars) IS NULL OR r.Star IN (SELECT value FROM STRING_SPLIT((:strListStars), ','))) " +
+            "  AND ((:strListStatus) IS NULL OR r.Status IN (SELECT value FROM STRING_SPLIT((:strListStatus), ',')))", nativeQuery = true)
+    long countByToiletId(int toiletId,
+                         @Param("strListIdCommonComment") String strListIdCommonComment,
+                         @Param("strListStars") String strListStars,
+                         @Param("strListStatus") String strListStatus);
 
     @Query(value = "SELECT r.Id, " +
             "       CAST(ri.ImageSource AS VARCHAR(MAX)) AS ImageSource, " +
