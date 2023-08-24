@@ -14,4 +14,6 @@ public interface CommonCommentService {
     CommonCommentResponse updateCommonComment(Integer id, Map<String, Object> fields);
 
     boolean delete(Integer id);
+
+    CommonCommentResponse getCommonCommentById(int id);
 }

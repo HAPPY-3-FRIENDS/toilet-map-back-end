@@ -177,4 +177,18 @@ public class CommonCommentController {
                 id
         );
     }
+
+    @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
+    @RolesAllowed({RoleConstant.ADMIN})
+    @GetMapping("/{common-comment-id}")
+    public ResponseEntity<BaseResponse<CommonCommentResponse>> getCommonCommentById(@PathVariable("common-comment-id") int id) {
+
+        CommonCommentResponse responses = commonCommentService.getCommonCommentById(id);
+
+        return ResponseBuilder.generateResponse(
+                "Get common comment by id successfully!",
+                HttpStatus.OK,
+                responses
+        );
+    }
 }
