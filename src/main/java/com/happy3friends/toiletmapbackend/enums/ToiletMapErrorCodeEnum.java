@@ -38,6 +38,7 @@ public enum ToiletMapErrorCodeEnum {
     INVALID_COMBO_TOTALTURN_QUANTITY(HttpStatus.BAD_REQUEST, 400026, "Số lượng của tổng lượt của gói lượt không hợp lệ"),
     INVALID_PRICE(HttpStatus.BAD_REQUEST, 400027, "Giá không hợp lệ"),
     NOT_ENOUGH_USER(HttpStatus.BAD_REQUEST, 400028, "Hệ thống không đủ user"),
+    TOILET_FULL(HttpStatus.BAD_REQUEST, 400029, "Nhà vệ sinh đầy"),
 
     // 401 - UNAUTHENTICATED
     UNAUTHENTICATED(HttpStatus.UNAUTHORIZED, 401000, "Chưa xác thực người dùng"),
@@ -74,7 +75,7 @@ public enum ToiletMapErrorCodeEnum {
     VNPAY_EXCEEDED_DAILY_TRANSACTION_LIMIT(HttpStatus.INTERNAL_SERVER_ERROR, 500008, "Giao dịch không thành công do: Tài khoản của Quý khách đã vượt quá hạn mức giao dịch trong ngày."),
     VNPAY_BANK_UNDER_MAINTENANCE(HttpStatus.INTERNAL_SERVER_ERROR, 500009, "Ngân hàng thanh toán đang bảo trì."),
     VNPAY_WRONG_PASSWORD(HttpStatus.INTERNAL_SERVER_ERROR, 500010, "Giao dịch không thành công do: KH nhập sai mật khẩu thanh toán quá số lần quy định. Xin quý khách vui lòng thực hiện lại giao dịch"),
-    VNPAY_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, 500011, "Các lỗi khác (lỗi còn lại, không có trong danh sách mã lỗi đã liệt kê)")
+    VNPAY_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, 500011, "Các lỗi khác (lỗi còn lại, không có trong danh sách mã lỗi đã liệt kê)"),
     ;
 
     private final HttpStatus httpStatus;

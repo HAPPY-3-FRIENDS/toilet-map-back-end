@@ -19,6 +19,7 @@ import com.happy3friends.toiletmapbackend.request.CheckInRequest;
 import com.happy3friends.toiletmapbackend.request.WalkInGuestCheckInRequest;
 import com.happy3friends.toiletmapbackend.response.CheckInResponse;
 import com.happy3friends.toiletmapbackend.service.CheckInService;
+import com.happy3friends.toiletmapbackend.service.ToiletService;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
 import com.happy3friends.toiletmapbackend.utils.PaginationUtil;
 import org.apache.commons.lang3.time.DateUtils;
@@ -59,6 +60,9 @@ public class CheckInServiceImpl implements CheckInService {
 
     @Autowired
     private CheckInMapper checkInMapper;
+
+    @Autowired
+    private ToiletService toiletService;
 
     @Override
     public List<CheckInResponse> getCheckInHistoriesByToiletId(int toiletId) {
@@ -216,6 +220,12 @@ public class CheckInServiceImpl implements CheckInService {
         Optional<AccountEntity> accountEntity = accountRepository.findById(checkInRequest.getAccountId());
         if (!accountEntity.isPresent())
             throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT.getMessage());
+
+        // Validate available
+        String checkToilet = toiletService.checkToilet(checkInRequest.getToiletId());
+        if (checkToilet.equals("Not available")) {
+            throw new BadRequestException(ToiletMapErrorCodeEnum.TOILET_FULL, ToiletMapErrorCodeEnum.TOILET_FULL.getMessage());
+        }
 
         // Validate Datetime - 3 * 60s | 1 second = 1000 milliseconds
         Timestamp datetime = DateTimeUtil.convertStringToTimestamp(checkInRequest.getDatetime());
