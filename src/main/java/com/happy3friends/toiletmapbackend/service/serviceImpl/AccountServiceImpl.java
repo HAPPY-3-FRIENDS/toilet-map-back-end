@@ -25,6 +25,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
@@ -167,11 +168,12 @@ public class AccountServiceImpl implements AccountService {
         if (!accountEntity.isPresent())
             throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT.getMessage());
 
-        if (!request.getOldPassword().equals(accountEntity.get().getPassword())) {
-            throw new BadRequestException(ToiletMapErrorCodeEnum.INVALID_PASSWORD, ToiletMapErrorCodeEnum.INVALID_PASSWORD.getMessage());
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        if (!bCryptPasswordEncoder.matches(request.getOldPassword(), accountEntity.get().getPassword())) {
+            throw new NotFoundException(ToiletMapErrorCodeEnum.INVALID_PASSWORD, ToiletMapErrorCodeEnum.INVALID_PASSWORD.getMessage());
         }
 
-        accountEntity.get().setPassword(request.getNewPassword());
+        accountEntity.get().setPassword(passwordEncoder.encode(request.getNewPassword()));
         AccountEntity entity = accountRepository.save(accountEntity.get());
 
         return new UpdateAccountResponse(
