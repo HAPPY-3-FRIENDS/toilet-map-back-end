@@ -410,6 +410,8 @@ public class ScriptServiceImpl implements ScriptService {
             String message;
             if (listAllUsers.get(index).getAccountBalance() == 0 && listAllUsers.get(index).getAccountTurn() == 0) {
                 message = listAllUsers.get(index).getFullName() + " đã hết số dư và số lươt.";
+            } else if (toiletService.checkToilet(randomToiletId).equals("Not available")) {
+                message = processFullToilet(randomToiletId, listAllUsers.get(index).getFullName());
             } else {
                 message = process(randomToiletId, listAllUsers.get(index).getAccountId(), "Đi vệ sinh (tiểu tiện)");
             }
@@ -422,6 +424,10 @@ public class ScriptServiceImpl implements ScriptService {
         for (int i = 0; i < numberOfGuestPee; i++) {
             int randomToiletId = listToiletId.get(random.nextInt(listToiletId.size()));
             String message = checkInGuest(randomToiletId, "Đi vệ sinh (tiểu tiện)");
+            if (toiletService.checkToilet(randomToiletId).equals("Not available")) {
+                message = processFullToiletGuest(randomToiletId);
+            }
+
             listUserCheckIn.add(message);
             listToiletIdPee.add(randomToiletId);
             listToiletIdGuestPee.add(randomToiletId);
@@ -434,6 +440,8 @@ public class ScriptServiceImpl implements ScriptService {
             String message;
             if (listAllUsers.get(index).getAccountBalance() == 0 && listAllUsers.get(index).getAccountTurn() == 0) {
                 message = listAllUsers.get(index).getFullName() + " đã hết số dư và số lươt.";
+            } else if (toiletService.checkToilet(randomToiletId).equals("Not available")) {
+                message = processFullToilet(randomToiletId, listAllUsers.get(index).getFullName());
             } else {
                 message = process(randomToiletId, listAllUsers.get(index).getAccountId(), "Đi vệ sinh (đại tiện)");
             }
@@ -446,6 +454,9 @@ public class ScriptServiceImpl implements ScriptService {
         for (int i = 0; i < numberOfGuestPoop; i++) {
             int randomToiletId = listToiletId.get(random.nextInt(listToiletId.size()));
             String message = checkInGuest(randomToiletId, "Đi vệ sinh (đại tiện)");
+            if (toiletService.checkToilet(randomToiletId).equals("Not available")) {
+                message = processFullToiletGuest(randomToiletId);
+            }
             listUserCheckIn.add(message);
             listToiletIdPoop.add(randomToiletId);
             listToiletIdGuestPoop.add(randomToiletId);
@@ -463,6 +474,8 @@ public class ScriptServiceImpl implements ScriptService {
                 message = processNoBathroom(randomToiletId, listAllUsers.get(index).getFullName());
             } else if (listAllUsers.get(index).getAccountBalance() == 0 && listAllUsers.get(index).getAccountTurn() == 0) {
                 message = listAllUsers.get(index).getFullName() + " đã hết số dư và số lươt.";
+            } else if (toiletService.checkToilet(randomToiletId).equals("Not available")) {
+                message = processFullToilet(randomToiletId, listAllUsers.get(index).getFullName());
             } else {
                 message = process(randomToiletId, listAllUsers.get(index).getAccountId(), "Đi tắm");
             }
@@ -478,6 +491,8 @@ public class ScriptServiceImpl implements ScriptService {
             ToiletCapacityResponse toilet = toiletService.getCapacityOfToilet(randomToiletId);
             if (toilet.getNumberOfBathroom() == 0) {
                 message = processNoBathroomGuest(randomToiletId);
+            } else if (toiletService.checkToilet(randomToiletId).equals("Not available")) {
+                message = processFullToiletGuest(randomToiletId);
             } else {
                 message = checkInGuest(randomToiletId, "Đi tắm");
             }
@@ -664,5 +679,19 @@ public class ScriptServiceImpl implements ScriptService {
         return "Khách vãng lai không thể đi tắm vì "
                 + toiletEntity.get().getName()
                 + " không có phòng tắm.";
+    }
+
+    private String processFullToilet(int toiletId, String name) {
+        Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
+        return name + " không thể check-in vì "
+                + toiletEntity.get().getName()
+                + " đang đầy.";
+    }
+
+    private String processFullToiletGuest(int toiletId) {
+        Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
+        return "Khách vãng lai không thể check-in vì "
+                + toiletEntity.get().getName()
+                + " đang đầy.";
     }
 }
