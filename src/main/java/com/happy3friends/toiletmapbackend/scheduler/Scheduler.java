@@ -109,7 +109,9 @@ public class Scheduler {
 
             String message = "";
             if (result.getActualCount() >= expectedCountMax * overThreshold.get() / 100) {
-                message = "Số lượt đi thực tế vượt 150% so với sức chứa, gợi ý mở thêm nhà vệ sinh gần đây hoặc mở thêm phòng vệ sinh.";
+                message = "Số lượt đi thực tế vượt " +
+                        overThreshold.get() +
+                        "% so với sức chứa, gợi ý mở thêm nhà vệ sinh gần đây hoặc mở thêm phòng vệ sinh.";
                 entity.setIsLow(false);
                 entity.setExpectedCount(expectedCountMax);
             }
