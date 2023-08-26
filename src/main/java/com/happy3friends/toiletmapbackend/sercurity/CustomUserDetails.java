@@ -1,5 +1,6 @@
 package com.happy3friends.toiletmapbackend.sercurity;
 
+import com.happy3friends.toiletmapbackend.constant.StatusConstant;
 import com.happy3friends.toiletmapbackend.dto.CustomAccountInfoDTO;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,14 +20,16 @@ public class CustomUserDetails implements UserDetails {
     private String username;
     private String password;
     private String role;
+    private String status;
     private Collection<? extends GrantedAuthority> authorities;
     private Map<String, Object> attributes;
 
-    public CustomUserDetails(int id, String username, String password, String role, Collection<? extends GrantedAuthority> authorities) {
+    public CustomUserDetails(int id, String username, String password, String role, String status, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.role = role;
+        this.status = status;
         this.authorities = authorities;
     }
 
@@ -39,6 +42,7 @@ public class CustomUserDetails implements UserDetails {
                 customAccountInfoDTO.getUsername(),
                 customAccountInfoDTO.getPassword(),
                 customAccountInfoDTO.getRole(),
+                customAccountInfoDTO.getStatus(),
                 authorities
         );
     }
@@ -70,7 +74,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return status.equals(StatusConstant.ACTIVE);
     }
 
     @Override

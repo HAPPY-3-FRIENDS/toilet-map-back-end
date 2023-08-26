@@ -10,4 +10,5 @@ public interface CustomAccountInfoDTO {
     String getDefaultPayment();
     int getAccountBalance();
     int getAccountTurn();
+    String getStatus();
 }

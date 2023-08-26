@@ -2,6 +2,7 @@ package com.happy3friends.toiletmapbackend.handler;
 
 import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
 import com.happy3friends.toiletmapbackend.exception.BadRequestException;
+import com.happy3friends.toiletmapbackend.exception.ForbiddenException;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.response.ErrorResponse;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
@@ -87,6 +88,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseBuilder.generateErrorResponse(
                 "Bad Request!",
                 HttpStatus.BAD_REQUEST,
+                ex.getToiletMapErrorCodeEnum().getCode(),
+                details);
+    }
+
+    @ExceptionHandler(value = ForbiddenException.class)
+    public ResponseEntity<ErrorResponse> handleForbiddenException(ForbiddenException ex) {
+        List<String> details = new ArrayList<>();
+        details.add(ex.getMessage());
+        LOGGER.warn("Forbidden: " + details);
+        return ResponseBuilder.generateErrorResponse(
+                "Forbidden!",
+                HttpStatus.FORBIDDEN,
                 ex.getToiletMapErrorCodeEnum().getCode(),
                 details);
     }

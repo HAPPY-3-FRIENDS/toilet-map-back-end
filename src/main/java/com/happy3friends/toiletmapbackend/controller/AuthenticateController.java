@@ -36,20 +36,20 @@ public class AuthenticateController {
     @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Authenticated Request", required = true, content = @Content(
             examples = {
                     @ExampleObject(name = "Admin Authenticate Request", value = "{\n" +
-                            "  \"username\": \"Admin\",\n" +
-                            "  \"password\": \"Admin\"" +
+                            "  \"username\": \"admin-toilet-map\",\n" +
+                            "  \"password\": \"Admin@toiletmap123\"" +
                             "}"),
                     @ExampleObject(name = "Manager Authenticate Request", value = "{\n" +
-                            "  \"username\": \"Manager\",\n" +
-                            "  \"password\": \"Manager\"" +
+                            "  \"username\": \"dvvsq9\",\n" +
+                            "  \"password\": \"123456\"" +
                             "}"),
                     @ExampleObject(name = "Staff Authenticate Request", value = "{\n" +
-                            "  \"username\": \"Staff\",\n" +
-                            "  \"password\": \"Staff\"" +
+                            "  \"username\": \"staff-toilet-map\",\n" +
+                            "  \"password\": \"Staff@toiletmap123\"" +
                             "}"),
                     @ExampleObject(name = "Staff-Toilet Authenticate Request", value = "{\n" +
-                            "  \"username\": \"Toilet\",\n" +
-                            "  \"password\": \"Toilet\"" +
+                            "  \"username\": \"nvstgg\",\n" +
+                            "  \"password\": \"123456\"" +
                             "}"),
                     @ExampleObject(name = "User Authenticate Request", value = "{\n" +
                             "  \"username\": \"0849666957\",\n" +
