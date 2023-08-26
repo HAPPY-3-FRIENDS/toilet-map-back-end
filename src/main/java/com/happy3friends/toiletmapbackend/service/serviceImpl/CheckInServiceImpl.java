@@ -4,6 +4,7 @@ import com.happy3friends.toiletmapbackend.base.models.BasePaginationRequest;
 import com.happy3friends.toiletmapbackend.constant.DateTimeConstant;
 import com.happy3friends.toiletmapbackend.constant.DefaultSortPropertyConstant;
 import com.happy3friends.toiletmapbackend.constant.PaymentTypeConstant;
+import com.happy3friends.toiletmapbackend.constant.ServiceConstant;
 import com.happy3friends.toiletmapbackend.dto.CheckInTopicData;
 import com.happy3friends.toiletmapbackend.dto.CustomAccountInfoDTO;
 import com.happy3friends.toiletmapbackend.dto.CustomCheckInDTO;
@@ -20,6 +21,7 @@ import com.happy3friends.toiletmapbackend.request.CheckInRequest;
 import com.happy3friends.toiletmapbackend.request.WalkInGuestCheckInRequest;
 import com.happy3friends.toiletmapbackend.response.CheckInResponse;
 import com.happy3friends.toiletmapbackend.response.ConfigurationResponse;
+import com.happy3friends.toiletmapbackend.response.NumberOfCurrentCheckInResponse;
 import com.happy3friends.toiletmapbackend.service.CheckInService;
 import com.happy3friends.toiletmapbackend.service.ConfigurationService;
 import com.happy3friends.toiletmapbackend.service.ToiletService;
@@ -232,10 +234,29 @@ public class CheckInServiceImpl implements CheckInService {
         if (!accountEntity.isPresent())
             throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT, ToiletMapErrorCodeEnum.NOT_FOUND_ACCOUNT.getMessage());
 
+        // Validate Service Name
+        if (!checkInRequest.getServiceName().equals(ServiceEnum.getByValue(checkInRequest.getServiceName()).getServiceName()))
+            throw new BadRequestException(ToiletMapErrorCodeEnum.INVALID_SERVICE, ToiletMapErrorCodeEnum.INVALID_SERVICE.getMessage());
+
         // Validate available
-        String checkToilet = toiletService.checkToilet(checkInRequest.getToiletId());
-        if (checkToilet.equals("Not available")) {
-            throw new BadRequestException(ToiletMapErrorCodeEnum.TOILET_FULL, ToiletMapErrorCodeEnum.TOILET_FULL.getMessage());
+        NumberOfCurrentCheckInResponse numberOfCurrentCheckInResponse = toiletService.getNumberOfCurrentCheckIn(checkInRequest.getToiletId());
+        int numNotAvailableRestroom = numberOfCurrentCheckInResponse.getNumNotAvailableRestroom();
+        int numberOfRestroom = numberOfCurrentCheckInResponse.getNumberOfRestroom();
+        int numNotAvailableBathroom = numberOfCurrentCheckInResponse.getNumNotAvailableBathroom();
+        int numberOfBathroom = numberOfCurrentCheckInResponse.getNumberOfBathroom();
+        boolean isFullRestroom = false;
+        boolean isFullBathroom = false;
+        if (numNotAvailableRestroom >= numberOfRestroom) {
+            isFullRestroom = true;
+        }
+        if (numNotAvailableBathroom >= numberOfBathroom) {
+            isFullBathroom = true;
+        }
+        if (isFullRestroom && checkInRequest.getServiceName().equals(ServiceConstant.POOP)) {
+            throw new BadRequestException(ToiletMapErrorCodeEnum.TOILET_FULL_RESTROOM, ToiletMapErrorCodeEnum.TOILET_FULL_RESTROOM.getMessage());
+        }
+        if (isFullBathroom && checkInRequest.getServiceName().equals(ServiceConstant.SHOWER)) {
+            throw new BadRequestException(ToiletMapErrorCodeEnum.TOILET_FULL_BATHROOM, ToiletMapErrorCodeEnum.TOILET_FULL_BATHROOM.getMessage());
         }
 
         // Validate Datetime - 3 * 60s | 1 second = 1000 milliseconds
@@ -243,10 +264,6 @@ public class CheckInServiceImpl implements CheckInService {
         Timestamp currentDatetime = DateTimeUtil.getTimestampNow();
         if ((currentDatetime.getTime() - datetime.getTime()) > 1000 * 3 * 60)
             throw new BadRequestException(ToiletMapErrorCodeEnum.EXPIRED_QR_CODE, ToiletMapErrorCodeEnum.EXPIRED_QR_CODE.getMessage());
-
-        // Validate Service Name
-        if (!checkInRequest.getServiceName().equals(ServiceEnum.getByValue(checkInRequest.getServiceName()).getServiceName()))
-            throw new BadRequestException(ToiletMapErrorCodeEnum.INVALID_SERVICE, ToiletMapErrorCodeEnum.INVALID_SERVICE.getMessage());
 
         //Check if service chosen is contained in toilet (ToiletService)
         List<ToiletServiceEntity> toiletServiceEntities

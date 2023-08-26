@@ -38,7 +38,8 @@ public enum ToiletMapErrorCodeEnum {
     INVALID_COMBO_TOTALTURN_QUANTITY(HttpStatus.BAD_REQUEST, 400026, "Số lượng của tổng lượt của gói lượt không hợp lệ"),
     INVALID_PRICE(HttpStatus.BAD_REQUEST, 400027, "Giá không hợp lệ"),
     NOT_ENOUGH_USER(HttpStatus.BAD_REQUEST, 400028, "Hệ thống không đủ user"),
-    TOILET_FULL(HttpStatus.BAD_REQUEST, 400029, "Nhà vệ sinh đầy"),
+    TOILET_FULL_RESTROOM(HttpStatus.BAD_REQUEST, 400029, "Nhà vệ sinh không còn phòng đại tiện "),
+    TOILET_FULL_BATHROOM(HttpStatus.BAD_REQUEST, 400030, "Nhà vệ sinh không còn phòng tắm"),
 
     // 401 - UNAUTHENTICATED
     UNAUTHENTICATED(HttpStatus.UNAUTHORIZED, 401000, "Chưa xác thực người dùng"),
