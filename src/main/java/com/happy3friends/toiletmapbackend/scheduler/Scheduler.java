@@ -54,16 +54,16 @@ public class Scheduler {
         AtomicInteger overThreshold = new AtomicInteger();
 
         configurationResponses.forEach(configuration -> {
-            if (configuration.getId().equals("BATH_TIME")) {
+            if (configuration.getId().equals("AVG_TIME_HAVING_BATH")) {
                 bathTime.set(configuration.getValue());
             }
-            if (configuration.getId().equals("BELOW_THRESHOLD")) {
+            if (configuration.getId().equals("THRESHOLD_BELOW")) {
                 belowThreshold.set(configuration.getValue());
             }
-            if (configuration.getId().equals("OVER_THRESHOLD")) {
+            if (configuration.getId().equals("THRESHOLD_OVER")) {
                 overThreshold.set(configuration.getValue());
             }
-            if (configuration.getId().equals("POOP_TIME")) {
+            if (configuration.getId().equals("AVG_TIME_HAVING_POOP")) {
                 poopTime.set(configuration.getValue());
             }
         });

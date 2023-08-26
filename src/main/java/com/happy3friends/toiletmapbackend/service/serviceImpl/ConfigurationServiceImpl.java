@@ -10,6 +10,8 @@ import com.happy3friends.toiletmapbackend.service.ConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -32,6 +34,31 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         return configurationEntities.stream()
                 .map(entity -> configurationMapper.convertConfigurationEntityToConfigurationResponse(entity))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public HashMap<String, List<ConfigurationEntity>> getAllConfigurationWithType() {
+        List<ConfigurationEntity> configurationEntities = configurationRepository.findAll();
+        if (configurationEntities.isEmpty())
+            throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_CONFIGURATION, ToiletMapErrorCodeEnum.NOT_FOUND_CONFIGURATION.getMessage());
+
+        HashMap<String, List<ConfigurationEntity>> mapConfigTypeAndConfigValue = new HashMap<>();
+        configurationEntities.stream()
+                .map(entity -> {
+                    String name = entity.getId();
+                    String configurationTypeName = name.substring(0, name.lastIndexOf('_'));
+                    if (mapConfigTypeAndConfigValue.containsKey(configurationTypeName)) {
+                        mapConfigTypeAndConfigValue.get(configurationTypeName).add(entity);
+                    } else {
+                        List<ConfigurationEntity> listValue = new ArrayList<>();
+                        listValue.add(entity);
+                        mapConfigTypeAndConfigValue.put(configurationTypeName, listValue);
+                    }
+                    return null;
+                })
+                .collect(Collectors.toList());
+
+        return mapConfigTypeAndConfigValue;
     }
 
     @Override
