@@ -2,6 +2,7 @@ package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
 import com.happy3friends.toiletmapbackend.dto.TokenDTO;
 import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
+import com.happy3friends.toiletmapbackend.exception.ForbiddenException;
 import com.happy3friends.toiletmapbackend.exception.NotFoundException;
 import com.happy3friends.toiletmapbackend.request.AuthenticateRequest;
 import com.happy3friends.toiletmapbackend.sercurity.CustomUserDetailsService;
@@ -12,7 +13,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 
@@ -27,9 +27,6 @@ public class AuthenticateServiceImpl implements AuthenticateService {
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     @Override
     public TokenDTO authenticate(HttpServletRequest request, AuthenticateRequest authenticateRequest) {
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(authenticateRequest.getUsername());
@@ -38,6 +35,10 @@ public class AuthenticateServiceImpl implements AuthenticateService {
             if (!bCryptPasswordEncoder.matches(authenticateRequest.getPassword(), userDetails.getPassword())) {
                 throw new NotFoundException(ToiletMapErrorCodeEnum.INVALID_PASSWORD, ToiletMapErrorCodeEnum.INVALID_PASSWORD.getMessage());
             }
+        }
+
+        if (!userDetails.isAccountNonLocked()) {
+            throw new ForbiddenException(ToiletMapErrorCodeEnum.UNAUTHORIZED, ToiletMapErrorCodeEnum.UNAUTHORIZED.getMessage());
         }
 
         UsernamePasswordAuthenticationToken
