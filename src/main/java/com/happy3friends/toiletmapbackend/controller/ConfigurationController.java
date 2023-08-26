@@ -3,6 +3,7 @@ package com.happy3friends.toiletmapbackend.controller;
 import com.happy3friends.toiletmapbackend.base.models.BaseResponse;
 import com.happy3friends.toiletmapbackend.config.OpenApiConfig;
 import com.happy3friends.toiletmapbackend.constant.RoleConstant;
+import com.happy3friends.toiletmapbackend.entity.ConfigurationEntity;
 import com.happy3friends.toiletmapbackend.handler.ResponseBuilder;
 import com.happy3friends.toiletmapbackend.response.ConfigurationResponse;
 import com.happy3friends.toiletmapbackend.service.ConfigurationService;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
+import java.util.HashMap;
 import java.util.List;
 
 @Tag(name = "Configuration", description = "Configuration API")
@@ -26,8 +28,8 @@ public class ConfigurationController {
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
     @RolesAllowed({RoleConstant.ADMIN})
     @GetMapping
-    public ResponseEntity<BaseResponse<List<ConfigurationResponse>>> getAllConfiguration() {
-        List<ConfigurationResponse> responses = configurationService.getAllConfiguration();
+    public ResponseEntity<BaseResponse<HashMap<String, List<ConfigurationEntity>>>> getAllConfiguration() {
+        HashMap<String, List<ConfigurationEntity>> responses = configurationService.getAllConfigurationWithType();
 
         return ResponseBuilder.generateResponse(
                 "Get list of configurations successfully!",
