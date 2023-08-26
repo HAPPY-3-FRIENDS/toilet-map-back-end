@@ -19,7 +19,9 @@ import com.happy3friends.toiletmapbackend.repository.*;
 import com.happy3friends.toiletmapbackend.request.CheckInRequest;
 import com.happy3friends.toiletmapbackend.request.WalkInGuestCheckInRequest;
 import com.happy3friends.toiletmapbackend.response.CheckInResponse;
+import com.happy3friends.toiletmapbackend.response.ConfigurationResponse;
 import com.happy3friends.toiletmapbackend.service.CheckInService;
+import com.happy3friends.toiletmapbackend.service.ConfigurationService;
 import com.happy3friends.toiletmapbackend.service.ToiletService;
 import com.happy3friends.toiletmapbackend.utils.DateTimeUtil;
 import com.happy3friends.toiletmapbackend.utils.PaginationUtil;
@@ -35,6 +37,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -68,6 +71,9 @@ public class CheckInServiceImpl implements CheckInService {
 
     @Autowired
     private ToiletService toiletService;
+
+    @Autowired
+    private ConfigurationService configurationService;
 
     @Override
     public List<CheckInResponse> getCheckInHistoriesByToiletId(int toiletId) {
@@ -306,11 +312,23 @@ public class CheckInServiceImpl implements CheckInService {
                     }
                     break;
             }
+            List<ConfigurationResponse> configurations = configurationService.getAllConfiguration();
+            AtomicInteger AVG_TIME_USING_BATH = new AtomicInteger();
+            AtomicInteger AVG_TIME_USING_POOP = new AtomicInteger();
+            configurations.forEach(configuration -> {
+                if (configuration.getId().equals("AVG_TIME_USING_BATH")) {
+                    AVG_TIME_USING_BATH.set(configuration.getValue());
+                }
+                if (configuration.getId().equals("AVG_TIME_USING_POOP")) {
+                    AVG_TIME_USING_POOP.set(configuration.getValue());
+                }
+            });
+
             if (serviceTurn == 3) {
-                checkout.setTime(datetime.getTime() + TimeUnit.MINUTES.toMillis(15));
+                checkout.setTime(datetime.getTime() + TimeUnit.MINUTES.toMillis(AVG_TIME_USING_BATH.get()));
                 checkInEntity.setCheckoutTime(checkout);
             } else if (serviceTurn == 2) {
-                checkout.setTime(datetime.getTime() + TimeUnit.MINUTES.toMillis(10));
+                checkout.setTime(datetime.getTime() + TimeUnit.MINUTES.toMillis(AVG_TIME_USING_POOP.get()));
                 checkInEntity.setCheckoutTime(checkout);
             }
             CheckInEntity entity = checkInRepository.save(checkInEntity);
@@ -408,11 +426,24 @@ public class CheckInServiceImpl implements CheckInService {
                                     obj.getServiceName()
                             )
                     );
+
+                    List<ConfigurationResponse> configurations = configurationService.getAllConfiguration();
+                    AtomicInteger AVG_TIME_USING_BATH = new AtomicInteger();
+                    AtomicInteger AVG_TIME_USING_POOP = new AtomicInteger();
+                    configurations.forEach(configuration -> {
+                        if (configuration.getId().equals("AVG_TIME_USING_BATH")) {
+                            AVG_TIME_USING_BATH.set(configuration.getValue());
+                        }
+                        if (configuration.getId().equals("AVG_TIME_USING_POOP")) {
+                            AVG_TIME_USING_POOP.set(configuration.getValue());
+                        }
+                    });
+
                     if (checkInEntity.getBalance() == 15000) {
-                        checkout.setTime(now.getTime() + TimeUnit.MINUTES.toMillis(15));
+                        checkout.setTime(now.getTime() + TimeUnit.MINUTES.toMillis(AVG_TIME_USING_BATH.get()));
                         checkInEntity.setCheckoutTime(checkout);
                     } else if (checkInEntity.getBalance() == 10000) {
-                        checkout.setTime(now.getTime() + TimeUnit.MINUTES.toMillis(10));
+                        checkout.setTime(now.getTime() + TimeUnit.MINUTES.toMillis(AVG_TIME_USING_POOP.get()));
                         checkInEntity.setCheckoutTime(checkout);
                     }
                     return checkInEntity;
