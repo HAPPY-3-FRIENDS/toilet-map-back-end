@@ -406,6 +406,26 @@ public class CheckInServiceImpl implements CheckInService {
         if (!accountEntity.get().getRoleByRoleId().getName().equals(RoleEnum.TOILET.getRoleName()))
             throw new BadRequestException(ToiletMapErrorCodeEnum.INVALID_ROLE, ToiletMapErrorCodeEnum.INVALID_ROLE.getMessage());
 
+        // Validate available
+        NumberOfCurrentCheckInResponse numberOfCurrentCheckInResponse = toiletService.getNumberOfCurrentCheckIn(toiletId);
+        int numNotAvailableRestroom = numberOfCurrentCheckInResponse.getNumNotAvailableRestroom();
+        int numberOfRestroom = numberOfCurrentCheckInResponse.getNumberOfRestroom();
+        int numNotAvailableBathroom = numberOfCurrentCheckInResponse.getNumNotAvailableBathroom();
+        int numberOfBathroom = numberOfCurrentCheckInResponse.getNumberOfBathroom();
+
+        int numberEmptyRestroom = numberOfRestroom - numNotAvailableRestroom;
+        int numberEmptyBathroom = numberOfBathroom - numNotAvailableBathroom;
+
+        walkInGuestCheckInRequest.getCheckInRequests().forEach(checkInRequest -> {
+            if (checkInRequest.getServiceName().equals(ServiceConstant.POOP) && checkInRequest.getQuantity() > numberEmptyRestroom) {
+                throw new BadRequestException(ToiletMapErrorCodeEnum.RESTROOM_NOT_ENOUGH, ToiletMapErrorCodeEnum.RESTROOM_NOT_ENOUGH.getMessage());
+            }
+            if (checkInRequest.getServiceName().equals(ServiceConstant.SHOWER) && checkInRequest.getQuantity() > numberEmptyBathroom) {
+                throw new BadRequestException(ToiletMapErrorCodeEnum.BATHROOM_NOT_ENOUGH, ToiletMapErrorCodeEnum.BATHROOM_NOT_ENOUGH.getMessage());
+            }
+        });
+
+
         // Duplicate Walk-in-guest Check-in by Quantity
         List<CheckInRequest> list = new ArrayList<>();
         walkInGuestCheckInRequest.getCheckInRequests().stream()
