@@ -321,7 +321,7 @@ public class RatingServiceImpl implements RatingService {
             String strListStars = null;
             String strListStatus = null;
             if (null != filterRatingRequest.getListIdCommonComment()) {
-                List<String> listIdCommonComment = filterRatingRequest.getListCommonComment().stream()
+                List<String> listIdCommonComment = filterRatingRequest.getListIdCommonComment().stream()
                         .map(Object::toString)
                         .collect(Collectors.toList());
                 strListIdCommonComment = String.join(",", listIdCommonComment);
