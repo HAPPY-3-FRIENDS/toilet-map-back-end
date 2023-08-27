@@ -51,21 +51,23 @@ public class ReportServiceImpl implements ReportService {
         ReportResponse response = new ReportResponse();
         response.setToiletName(customReportDTOS.get(0).getToiletName());
 
-        HashMap<String, List<CustomReportDTO>> map = customReportDTOS.stream()
+        HashMap<String, List<CustomReportDTO>> mapMessageAndListCustomReportDTO = customReportDTOS.stream()
                 .collect(Collectors.groupingBy(
                         CustomReportDTO::getMessage,
                         LinkedHashMap::new,
                         Collectors.toCollection(ArrayList::new)));
-        Map<String, Map<String, Integer>> test = map.entrySet().stream()
+
+        Map<String, Map<String, Integer>> mapMessageAndMapOfStatusAndCount = mapMessageAndListCustomReportDTO.entrySet().stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         e -> {
-                            HashMap<String, List<CustomReportDTO>> map2 = e.getValue().stream()
+                            HashMap<String, List<CustomReportDTO>> mapStatusAndListCustomReportDTO = e.getValue().stream()
                                     .collect(Collectors.groupingBy(
                                             CustomReportDTO::getStatus,
                                             LinkedHashMap::new,
                                             Collectors.toCollection(ArrayList::new)));
-                            Map<String, Integer> statusAndCount = map2.entrySet().stream()
+
+                            Map<String, Integer> statusAndCount = mapStatusAndListCustomReportDTO.entrySet().stream()
                                     .collect(Collectors.toMap(
                                             Map.Entry::getKey,
                                             o -> o.getValue().stream().mapToInt(CustomReportDTO::getTotalStatus).sum()
@@ -74,7 +76,17 @@ public class ReportServiceImpl implements ReportService {
                             return statusAndCount;
                         }
                 ));
-        response.setMessageAndCount(test);
+
+        List<Map<String, Map<String, Integer>>> messageAndCount = new ArrayList<>();
+        messageAndCount = mapMessageAndMapOfStatusAndCount.entrySet().stream()
+                .map(o -> {
+                    Map<String, Map<String, Integer>> result = new HashMap<>();
+                    result.put(o.getKey(), o.getValue());
+
+                    return  result;
+                })
+                .collect(Collectors.toList());
+        response.setMessageAndCount(messageAndCount);
 
         return response;
     }
