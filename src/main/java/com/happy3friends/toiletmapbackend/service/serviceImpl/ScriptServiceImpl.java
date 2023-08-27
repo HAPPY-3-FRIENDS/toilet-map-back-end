@@ -410,8 +410,6 @@ public class ScriptServiceImpl implements ScriptService {
             String message;
             if (listAllUsers.get(index).getAccountBalance() == 0 && listAllUsers.get(index).getAccountTurn() == 0) {
                 message = listAllUsers.get(index).getFullName() + " đã hết số dư và số lươt.";
-            } else if (toiletService.checkToilet(randomToiletId).equals("Not available")) {
-                message = processFullToilet(randomToiletId, listAllUsers.get(index).getFullName());
             } else {
                 message = process(randomToiletId, listAllUsers.get(index).getAccountId(), "Đi vệ sinh (tiểu tiện)");
             }
@@ -424,9 +422,6 @@ public class ScriptServiceImpl implements ScriptService {
         for (int i = 0; i < numberOfGuestPee; i++) {
             int randomToiletId = listToiletId.get(random.nextInt(listToiletId.size()));
             String message = checkInGuest(randomToiletId, "Đi vệ sinh (tiểu tiện)");
-            if (toiletService.checkToilet(randomToiletId).equals("Not available")) {
-                message = processFullToiletGuest(randomToiletId);
-            }
 
             listUserCheckIn.add(message);
             listToiletIdPee.add(randomToiletId);
@@ -443,7 +438,12 @@ public class ScriptServiceImpl implements ScriptService {
             } else if (toiletService.checkToilet(randomToiletId).equals("Not available")) {
                 message = processFullToilet(randomToiletId, listAllUsers.get(index).getFullName());
             } else {
-                message = process(randomToiletId, listAllUsers.get(index).getAccountId(), "Đi vệ sinh (đại tiện)");
+                try {
+                    message = process(randomToiletId, listAllUsers.get(index).getAccountId(), "Đi vệ sinh (đại tiện)");
+                } catch (BadRequestException e) {
+                    message = processNotHave(randomToiletId, listAllUsers.get(index).getFullName(), "đại tiện");
+                }
+
             }
             listUserCheckIn.add(message);
             listToiletIdPoop.add(randomToiletId);
@@ -453,7 +453,12 @@ public class ScriptServiceImpl implements ScriptService {
         List<Integer> listToiletIdGuestPoop = new ArrayList<>();
         for (int i = 0; i < numberOfGuestPoop; i++) {
             int randomToiletId = listToiletId.get(random.nextInt(listToiletId.size()));
-            String message = checkInGuest(randomToiletId, "Đi vệ sinh (đại tiện)");
+            String message;
+            try {
+                message = checkInGuest(randomToiletId, "Đi vệ sinh (đại tiện)");
+            } catch (BadRequestException e) {
+                message = processNotHave(randomToiletId, "Khách vãng lai", "đại tiện");
+            }
             if (toiletService.checkToilet(randomToiletId).equals("Not available")) {
                 message = processFullToiletGuest(randomToiletId);
             }
@@ -477,7 +482,12 @@ public class ScriptServiceImpl implements ScriptService {
             } else if (toiletService.checkToilet(randomToiletId).equals("Not available")) {
                 message = processFullToilet(randomToiletId, listAllUsers.get(index).getFullName());
             } else {
-                message = process(randomToiletId, listAllUsers.get(index).getAccountId(), "Đi tắm");
+                try {
+                    message = process(randomToiletId, listAllUsers.get(index).getAccountId(), "Đi tắm");
+                } catch (BadRequestException e) {
+                    message = processNotHave(randomToiletId, listAllUsers.get(index).getFullName(), "đi tắm");
+                }
+
             }
             listUserCheckIn.add(message);
             listToiletIdTakeAShower.add(randomToiletId);
@@ -494,7 +504,11 @@ public class ScriptServiceImpl implements ScriptService {
             } else if (toiletService.checkToilet(randomToiletId).equals("Not available")) {
                 message = processFullToiletGuest(randomToiletId);
             } else {
-                message = checkInGuest(randomToiletId, "Đi tắm");
+                try {
+                    message = checkInGuest(randomToiletId, "Đi tắm");
+                } catch (BadRequestException e) {
+                    message = processNotHave(randomToiletId, "Khách vãng lai", "đi tắm");
+                }
             }
 
             listUserCheckIn.add(message);
@@ -693,5 +707,14 @@ public class ScriptServiceImpl implements ScriptService {
         return "Khách vãng lai không thể check-in vì "
                 + toiletEntity.get().getName()
                 + " đang đầy.";
+    }
+
+    private String processNotHave(int toiletId, String name, String service) {
+        Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
+        return name + " không thể check-in vì "
+                + toiletEntity.get().getName()
+                + " hết phòng "
+                + service
+                + ".";
     }
 }
