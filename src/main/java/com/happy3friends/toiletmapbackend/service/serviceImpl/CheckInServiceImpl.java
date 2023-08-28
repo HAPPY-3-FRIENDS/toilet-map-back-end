@@ -476,10 +476,10 @@ public class CheckInServiceImpl implements CheckInService {
                         }
                     });
 
-                    if (checkInEntity.getBalance() == 15000) {
+                    if (mapServiceNameAndToiletServiceEntity.get(obj.getServiceName()).getServiceId() == 3) {
                         checkout.setTime(now.getTime() + TimeUnit.MINUTES.toMillis(AVG_TIME_USING_BATH.get()));
                         checkInEntity.setCheckoutTime(checkout);
-                    } else if (checkInEntity.getBalance() == 10000) {
+                    } else if (mapServiceNameAndToiletServiceEntity.get(obj.getServiceName()).getServiceId() == 2) {
                         checkout.setTime(now.getTime() + TimeUnit.MINUTES.toMillis(AVG_TIME_USING_POOP.get()));
                         checkInEntity.setCheckoutTime(checkout);
                     }
