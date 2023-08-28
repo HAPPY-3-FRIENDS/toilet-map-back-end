@@ -52,7 +52,7 @@ public class ConfigurationController {
     }
 
     @SecurityRequirement(name = OpenApiConfig.securitySchemeName)
-    @RolesAllowed({RoleConstant.ADMIN})
+    @RolesAllowed({RoleConstant.ADMIN, RoleConstant.USER})
     @GetMapping("/{config-id}")
     public ResponseEntity<BaseResponse<ConfigurationResponse>> getConfigById(@PathVariable("config-id") String configId) {
         ConfigurationResponse responses = configurationService.getConfigById(configId);
