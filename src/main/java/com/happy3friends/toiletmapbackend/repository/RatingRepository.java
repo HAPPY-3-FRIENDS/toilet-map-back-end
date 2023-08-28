@@ -58,17 +58,18 @@ public interface RatingRepository extends JpaRepository<RatingEntity, Integer> {
                                                          Pageable pageable);
 
     @Query(value = "SELECT COUNT(*) " +
-            "FROM Rating r " +
-            "         JOIN Account a " +
-            "              ON r.AccountId = a.Id " +
-            "         JOIN UserInfo ui ON a.Id = ui.AccountId " +
-            "         JOIN Toilet t ON r.ToiletId = t.Id " +
-            "         LEFT JOIN RatingCommonComment rcc ON r.Id = rcc.RatingId " +
-            "WHERE t.Id = :toiletId " +
-            "  AND ((:strListIdCommonComment) IS NULL OR " +
-            "       rcc.CommonCommentId IN (SELECT value FROM STRING_SPLIT((:strListIdCommonComment), ','))) " +
-            "  AND ((:strListStars) IS NULL OR r.Star IN (SELECT value FROM STRING_SPLIT((:strListStars), ','))) " +
-            "  AND ((:strListStatus) IS NULL OR r.Status IN (SELECT value FROM STRING_SPLIT((:strListStatus), ',')))", nativeQuery = true)
+            "FROM (SELECT distinct r.Id " +
+            "      FROM Rating r " +
+            "               JOIN Account a " +
+            "                    ON r.AccountId = a.Id " +
+            "               JOIN UserInfo ui ON a.Id = ui.AccountId " +
+            "               JOIN Toilet t ON r.ToiletId = t.Id " +
+            "               LEFT JOIN RatingCommonComment rcc ON r.Id = rcc.RatingId " +
+            "      WHERE t.Id = :toiletId " +
+            "        AND ((:strListIdCommonComment) IS NULL OR " +
+            "             rcc.CommonCommentId IN (SELECT value FROM STRING_SPLIT((:strListIdCommonComment), ','))) " +
+            "        AND ((:strListStars) IS NULL OR r.Star IN (SELECT value FROM STRING_SPLIT((:strListStars), ','))) " +
+            "        AND ((:strListStatus) IS NULL OR r.Status IN (SELECT value FROM STRING_SPLIT((:strListStatus), ',')))) r", nativeQuery = true)
     long countByToiletId(int toiletId,
                          @Param("strListIdCommonComment") String strListIdCommonComment,
                          @Param("strListStars") String strListStars,
