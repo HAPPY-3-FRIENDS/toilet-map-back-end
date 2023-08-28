@@ -2,14 +2,12 @@ package com.happy3friends.toiletmapbackend.service.serviceImpl;
 
 import com.happy3friends.toiletmapbackend.dto.CheckInFullAToiletTotal;
 import com.happy3friends.toiletmapbackend.dto.CheckInScriptTotal;
-import com.happy3friends.toiletmapbackend.entity.CheckInEntity;
-import com.happy3friends.toiletmapbackend.entity.SuggestionEntity;
-import com.happy3friends.toiletmapbackend.entity.ToiletEntity;
-import com.happy3friends.toiletmapbackend.entity.UserInfoEntity;
+import com.happy3friends.toiletmapbackend.entity.*;
 import com.happy3friends.toiletmapbackend.enums.ToiletMapErrorCodeEnum;
 import com.happy3friends.toiletmapbackend.exception.BadRequestException;
 import com.happy3friends.toiletmapbackend.mapper.SuggestionMapper;
 import com.happy3friends.toiletmapbackend.repository.CheckInRepository;
+import com.happy3friends.toiletmapbackend.repository.ServiceRepository;
 import com.happy3friends.toiletmapbackend.repository.ToiletRepository;
 import com.happy3friends.toiletmapbackend.repository.UserInfoRepository;
 import com.happy3friends.toiletmapbackend.request.CheckInFullAToiletRequest;
@@ -60,6 +58,9 @@ public class ScriptServiceImpl implements ScriptService {
 
     @Autowired
     private ConfigurationService configurationService;
+
+    @Autowired
+    private ServiceRepository serviceRepository;
 
     @Override
     public List<String> random100UserCheckIn() {
@@ -170,8 +171,10 @@ public class ScriptServiceImpl implements ScriptService {
 
         List<UserInfoEntity> listAll = userInfoRepository.findAll();
 
+        ServiceEntity serviceEntity = serviceRepository.getReferenceById(3);
+
         List<UserInfoEntity> listAllUsers = listAll.stream()
-                .filter(user -> user.getAccountTurn() > 3 && user.getAccountBalance() > 15000)
+                .filter(user -> user.getAccountTurn() > serviceEntity.getTurn() && user.getAccountBalance() > serviceEntity.getPrice())
                 .collect(Collectors.toList());
 
         List<UserInfoEntity> listUsers = new ArrayList<>();
@@ -253,19 +256,20 @@ public class ScriptServiceImpl implements ScriptService {
         AtomicInteger numberOfUserBath = new AtomicInteger();
         listCheckInEntity.forEach(checkInEntity -> {
             if (checkInEntity.getTurn() != null) {
-                if (checkInEntity.getTurn() == 2) {
+                if (checkInEntity.getToiletServiceByToiletServiceId().getServiceId() == 2) {
+
                     numberOfUserPoop.getAndIncrement();
                 }
 
-                if (checkInEntity.getTurn() == 3) {
+                if (checkInEntity.getToiletServiceByToiletServiceId().getServiceId() == 3) {
                     numberOfUserBath.getAndIncrement();
                 }
             } else {
-                if (checkInEntity.getBalance() == 10000) {
+                if (checkInEntity.getToiletServiceByToiletServiceId().getServiceId() == 2) {
                     numberOfUserPoop.getAndIncrement();
                 }
 
-                if (checkInEntity.getBalance() == 15000) {
+                if (checkInEntity.getToiletServiceByToiletServiceId().getServiceId() == 3) {
                     numberOfUserBath.getAndIncrement();
                 }
             }
@@ -386,8 +390,10 @@ public class ScriptServiceImpl implements ScriptService {
             throw new BadRequestException(ToiletMapErrorCodeEnum.NOT_ENOUGH_USER, ToiletMapErrorCodeEnum.NOT_ENOUGH_USER.getMessage());
         }
 
+        ServiceEntity serviceEntity = serviceRepository.getReferenceById(3);
+
         List<UserInfoEntity> listAllUsers = listAll.stream()
-                .filter(user -> user.getAccountTurn() > 3 && user.getAccountBalance() > 15000)
+                .filter(user -> user.getAccountTurn() > serviceEntity.getTurn() && user.getAccountBalance() > serviceEntity.getPrice())
                 .collect(Collectors.toList());
 
         Random random = new Random();
