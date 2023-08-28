@@ -177,6 +177,10 @@ public class ScriptServiceImpl implements ScriptService {
                 .filter(user -> user.getAccountTurn() > serviceEntity.getTurn() && user.getAccountBalance() > serviceEntity.getPrice())
                 .collect(Collectors.toList());
 
+        if ((request.getNumberOfRestroom() + request.getNumberOfBathroom()) > listAllUsers.size()) {
+            throw new BadRequestException(ToiletMapErrorCodeEnum.NOT_ENOUGH_USER, ToiletMapErrorCodeEnum.NOT_ENOUGH_USER.getMessage() + ", số lượng user đủ tiền trong hệ thống là " + listAllUsers.size() + " người.");
+        }
+
         List<UserInfoEntity> listUsers = new ArrayList<>();
 
         for (int i = 0; i < request.getNumberOfBathroom() + request.getNumberOfRestroom(); i++) {
