@@ -398,6 +398,7 @@ public class CheckInServiceImpl implements CheckInService {
         Optional<ToiletEntity> toiletEntity = toiletRepository.findById(toiletId);
         if (!toiletEntity.isPresent())
             throw new NotFoundException(ToiletMapErrorCodeEnum.NOT_FOUND_TOILET, ToiletMapErrorCodeEnum.NOT_FOUND_TOILET.getMessage());
+        boolean isToiletFree = toiletEntity.get().isFree();
 
         // Validate Account of Staff duty at Toilet
         Optional<AccountEntity> accountEntity = accountRepository.findById(accountId);
@@ -452,12 +453,16 @@ public class CheckInServiceImpl implements CheckInService {
                     );
                     checkInEntity.setDateTime(now);
                     checkInEntity.setPaymentMethod(PaymentTypeEnum.CASH.getPaymentValue());
-                    checkInEntity.setBalance(
-                            mapServiceNameAndToiletServiceEntity.get(
-                                    obj.getServiceName()
-                            ).getServiceByServiceId()
-                                    .getPrice()
-                    );
+                    if (!isToiletFree) {
+                        checkInEntity.setBalance(
+                                mapServiceNameAndToiletServiceEntity.get(
+                                                obj.getServiceName()
+                                        ).getServiceByServiceId()
+                                        .getPrice()
+                        );
+                    } else {
+                        checkInEntity.setBalance(0);
+                    }
                     checkInEntity.setToiletServiceByToiletServiceId(
                             mapServiceNameAndToiletServiceEntity.get(
                                     obj.getServiceName()
