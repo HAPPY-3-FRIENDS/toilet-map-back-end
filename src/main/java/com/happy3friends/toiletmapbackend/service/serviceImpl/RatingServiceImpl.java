@@ -425,8 +425,8 @@ public class RatingServiceImpl implements RatingService {
         }
 
         List<CustomRatingDetailsDTO> customRatingDetailsDTOS = ratingRepository.getRatingById(ratingId);
-        List<String> imageSources = customRatingDetailsDTOS.stream().map(CustomRatingDetailsDTO::getImageSource).filter(Objects::nonNull).collect(Collectors.toList());
-        List<String> commonComments = customRatingDetailsDTOS.stream().map(CustomRatingDetailsDTO::getCommonComment).filter(Objects::nonNull).collect(Collectors.toList());
+        List<String> imageSources = customRatingDetailsDTOS.stream().map(CustomRatingDetailsDTO::getImageSource).filter(Objects::nonNull).distinct().collect(Collectors.toList());
+        List<String> commonComments = customRatingDetailsDTOS.stream().map(CustomRatingDetailsDTO::getCommonComment).filter(Objects::nonNull).distinct().collect(Collectors.toList());
         RatingResponse ratingResponse = new RatingResponse();
         ratingResponse.setId(customRatingDetailsDTOS.get(0).getId());
         ratingResponse.setStar(customRatingDetailsDTOS.get(0).getStar());
