@@ -598,16 +598,8 @@ public class ToiletServiceImpl implements ToiletService {
                 String value2String = value.toString();
                 toiletEntity.get().setCloseTime(new Time(DateTimeUtil.convertStringToDate(value2String, "HH:mm").getTime()));
             } else if (key.equals("status")) {
-                switch (toiletEntity.get().getStatus()) {
-                    case StatusConstant.ACTIVE:
-                        toiletEntity.get().setStatus(StatusEnum.IN_ACTIVE.getStatus());
-                        break;
-                    case StatusConstant.IN_ACTIVE:
-                        toiletEntity.get().setStatus(StatusEnum.ACTIVE.getStatus());
-                        break;
-                }
+                toiletEntity.get().setStatus(value.toString());
             } else {
-
                 Field field = ReflectionUtils.findField(ToiletEntity.class, key);
                 field.setAccessible(true);
                 ReflectionUtils.setField(field, toiletEntity.get(), value);
