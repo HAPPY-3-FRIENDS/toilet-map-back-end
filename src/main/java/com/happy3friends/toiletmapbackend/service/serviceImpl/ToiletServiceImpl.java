@@ -204,14 +204,20 @@ public class ToiletServiceImpl implements ToiletService {
         // Connect to Goong API
         List<Element> elements = getElementsFromGoongDistanceMatrixAPI(currentLatitude, currentLongitude, destinations, "car");
 
+        Comparator<ToiletDetailsInfoResponse> comparator = Comparator.comparing(toiletDetailsInfoResponse -> toiletDetailsInfoResponse.getDurationValue());
+        comparator = comparator.thenComparing(toiletDetailsInfoResponse -> toiletDetailsInfoResponse.getDistanceValue());
+
         // Map Distance and Duration to response
         return IntStream.range(0, toiletDetailsInfoResponses.size())
                 .mapToObj(index -> {
                     toiletDetailsInfoResponses.get(index).setDuration(elements.get(index).getDuration().getText());
+                    toiletDetailsInfoResponses.get(index).setDurationValue(elements.get(index).getDuration().getValue());
                     toiletDetailsInfoResponses.get(index).setDistance(elements.get(index).getDistance().getText());
+                    toiletDetailsInfoResponses.get(index).setDistanceValue(elements.get(index).getDistance().getValue());
 
                     return toiletDetailsInfoResponses.get(index);
                 })
+                .sorted(comparator)
                 .collect(Collectors.toList());
     }
 

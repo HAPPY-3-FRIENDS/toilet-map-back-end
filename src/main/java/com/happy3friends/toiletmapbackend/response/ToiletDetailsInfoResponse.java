@@ -32,7 +32,9 @@ public class ToiletDetailsInfoResponse {
     private String username;
     private String status;
     private String duration;
+    private Integer durationValue;
     private String distance;
+    private Integer distanceValue;
     private boolean isBelowThreshold;
     private String suggestionMessage;
     private List<SuggestionDTO> suggestions;
