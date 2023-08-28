@@ -33,7 +33,7 @@ public interface RatingRepository extends JpaRepository<RatingEntity, Integer> {
     List<CustomRatingDetailsDTO> getAllRatings(Pageable pageable);
 
     @Query(value = "SELECT * " +
-            "FROM (SELECT r.Id, " +
+            "FROM (SELECT distinct r.Id, " +
             "             ui.FullName, " +
             "             r.Star, " +
             "             CAST(r.Comment AS NVARCHAR(MAX)) AS Comment, " +
