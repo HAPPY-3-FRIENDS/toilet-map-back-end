@@ -387,7 +387,7 @@ public class ScriptServiceImpl implements ScriptService {
         List<UserInfoEntity> listAll = userInfoRepository.findAll();
 
         if (request.getNumberOfUser() > listAll.size()) {
-            throw new BadRequestException(ToiletMapErrorCodeEnum.NOT_ENOUGH_USER, ToiletMapErrorCodeEnum.NOT_ENOUGH_USER.getMessage());
+            throw new BadRequestException(ToiletMapErrorCodeEnum.NOT_ENOUGH_USER, ToiletMapErrorCodeEnum.NOT_ENOUGH_USER.getMessage() + ", số lượng user trong hệ thống là " + listAll.size() + " người.");
         }
 
         ServiceEntity serviceEntity = serviceRepository.getReferenceById(3);
